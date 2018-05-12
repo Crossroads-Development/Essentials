@@ -84,24 +84,26 @@ public class CommonProxy{
 	 */
 	@SubscribeEvent
 	public static void missingBlockMapping(RegistryEvent.MissingMappings<Block> event) {
-		for(RegistryEvent.MissingMappings.Mapping<Block> mapping : event.getMappings()){
-			Essentials.logger.info("Repairing missing mapping: " + mapping.key.toString());
-			switch(mapping.key.getResourcePath().toLowerCase()){
-				case ("candle_lilypad"):
-					mapping.remap(EssentialsBlocks.candleLilyPad);
-					break;
-				case ("fertile_soil"):
-					mapping.remap(EssentialsBlocks.fertileSoil);
-					break;
-				case ("slotted_chest"):
-					mapping.remap(EssentialsBlocks.slottedChest);
-					break;
-				case ("sorting_hopper"):
-					mapping.remap(EssentialsBlocks.sortingHopper);
-					break;
-				case ("port_extender"):
-					mapping.remap(EssentialsBlocks.portExtender);
-					break;
+		for(RegistryEvent.MissingMappings.Mapping<Block> mapping : event.getAllMappings()){
+			if(mapping.key.getResourceDomain().equals("crossroads")){
+				Essentials.logger.info("Repairing missing mapping: " + mapping.key.toString());
+				switch(mapping.key.getResourcePath().toLowerCase()){
+					case ("candle_lilypad"):
+						mapping.remap(EssentialsBlocks.candleLilyPad);
+						break;
+					case ("fertile_soil"):
+						mapping.remap(EssentialsBlocks.fertileSoil);
+						break;
+					case ("slotted_chest"):
+						mapping.remap(EssentialsBlocks.slottedChest);
+						break;
+					case ("sorting_hopper"):
+						mapping.remap(EssentialsBlocks.sortingHopper);
+						break;
+					case ("port_extender"):
+						mapping.remap(EssentialsBlocks.portExtender);
+						break;
+				}
 			}
 		}
 	}

@@ -19,6 +19,7 @@ crash-reports/
 /logs/
 /mods/
 /screenshots/
+/classes/
 
 # File Extensions
 *.psd
@@ -38,9 +39,9 @@ Paulscode*
 README.txt
 LICENSE-fml.txt
 CREDITS-fml.txt
-Crossroads_Client.launch
-Crossroads_Server.launch
+Essentials_Client.launch
+Essentials_Server.launch
 
 usercache.json
-Crossroads_Client NonLogin.launch
-Crossroads.eml
+Essentials_Client NonLogin.launch
+Essentials.eml
