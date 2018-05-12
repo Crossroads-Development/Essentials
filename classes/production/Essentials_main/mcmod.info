@@ -1,0 +1,14 @@
+[
+{
+"modid": "essentials",
+"name": "Essentials",
+"description": "A utilities mod",
+"version": "${version}",
+"mcversion": "${mcversion}",
+"url": "https://github.com/Da-Technomancer/Essentials",
+"authorList": ["Da_Technomancer", "5284973"],
+"credits": "Small portions of the code originally created by vazkii. Many textures created by 5284973.",
+"logoFile": "",
+"screenshots": []
+}
+]

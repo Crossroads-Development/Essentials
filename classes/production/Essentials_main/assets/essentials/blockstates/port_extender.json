@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"facing=north": { "model": "essentials:port_extender", "x": 90},
+		"facing=south": { "model": "essentials:port_extender", "x": 270 },
+		"facing=east": { "model": "essentials:port_extender", "x": 90, "y": 90 },
+		"facing=west": { "model": "essentials:port_extender", "x": 270, "y": 90 },
+		"facing=up": { "model": "essentials:port_extender"},
+		"facing=down": { "model": "essentials:port_extender", "x": 180 }
+	}
+}

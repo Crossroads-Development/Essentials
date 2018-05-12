@@ -1,0 +1,5 @@
+{
+	"variants": {
+		"normal": { "model": "essentials:slotted_chest" }
+	}
+}

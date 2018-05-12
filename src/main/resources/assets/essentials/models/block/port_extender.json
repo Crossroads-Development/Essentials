@@ -1,0 +1,8 @@
+{
+	"parent": "block/cube_bottom_top",
+	"textures": {
+		"top": "essentials:blocks/port_extender_front",
+		"bottom": "essentials:blocks/port_extender_side",
+		"side": "essentials:blocks/port_extender_side"
+	}
+}

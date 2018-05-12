@@ -1,0 +1,74 @@
+package com.Da_Technomancer.essentials.items.crafting;
+
+import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
+import com.Da_Technomancer.essentials.items.EssentialsItems;
+import net.minecraft.block.BlockPlanks;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import java.util.ArrayList;
+
+public class EssentialsCrafting{
+
+	public static final ArrayList<IRecipe> toRegister = new ArrayList<>();
+
+	@SuppressWarnings("unchecked")
+	public static void init(){
+
+		// Obsidian Cutting Kit
+		if(EssentialsConfig.getConfigBool(EssentialsConfig.obsidianKit, false)){
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.obsidianKit, 4), " # ", "#$#", " # ", '$', "obsidian", '#', Items.FLINT));
+		}
+		// Slotted Chest
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.slottedChest, 1), "###", "$@$", "###", '#', "slabWood", '$', Blocks.TRAPDOOR, '@', "chestWood"));
+		// Sorting Hopper
+		if(EssentialsConfig.getConfigBool(EssentialsConfig.goldHopper, false)){
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "# #", "#&#", " * ", '#', "ingotIron", '&', "chestWood", '*', "ingotGold"));
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "#&#", "#*#", '#', "ingotIron", '&', "chestWood", '*', "ingotGold"));
+		}
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "# #", "#&#", " # ", '#', "ingotCopper", '&', "chestWood"));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "#&#", "###", '#', "ingotCopper", '&', "chestWood"));
+		// Candle Lilypad
+		toRegister.add(new ShapelessOreRecipe(null, new ItemStack(EssentialsBlocks.candleLilyPad), Blocks.WATERLILY, "torch"));
+		//Fertile Soil
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 0), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', "cropWheat"));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 1), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', "cropPotato"));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 2), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', "cropCarrot"));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 3), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', Items.BEETROOT));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 4), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.OAK.getMetadata())));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 5), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.BIRCH.getMetadata())));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 6), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.SPRUCE.getMetadata())));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 7), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.JUNGLE.getMetadata())));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 8), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.ACACIA.getMetadata())));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 9), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.DARK_OAK.getMetadata())));
+		//Port Extender
+		if(EssentialsConfig.getConfigBool(EssentialsConfig.goldPortExtender, false)){
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotGold", 'h', Blocks.HOPPER));
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotGold", 'h', EssentialsBlocks.sortingHopper));
+		}
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotTin", 'h', Blocks.HOPPER));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotTin", 'h', EssentialsBlocks.sortingHopper));
+		//Saddle
+		if(EssentialsConfig.getConfigBool(EssentialsConfig.saddleRecipe, false)){
+			toRegister.add(new ShapedOreRecipe(null, Items.SADDLE, "***", "*|*", " - ", '*', "leather", '-', "ingotIron", '|', "string"));
+		}
+		//Nametag
+		if(EssentialsConfig.getConfigBool(EssentialsConfig.nametagRecipe, false)){
+			toRegister.add(new ShapedOreRecipe(null, Items.NAME_TAG, "*", "*", "-", '*', "paper", '-', Items.LEAD));
+		}
+		//Piston
+		if(EssentialsConfig.getConfigBool(EssentialsConfig.pistonRecipe, false)){
+			toRegister.add(new ShapelessOreRecipe(null, Blocks.PISTON, "cobblestone", "ingotIron", "dustRedstone", "logWood"));
+		}
+		//Wrench
+		if(EssentialsConfig.getConfigBool(EssentialsConfig.addWrench, false)){
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.wrench, 1), "* *", "*|*", " | ", '*', "ingotIron", '|', "stickIron"));
+		}
+	}
+}
