@@ -194,6 +194,7 @@ public class SortingHopper extends BlockContainer{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Exactly the same, aside from all the differences.");
+		tooltip.add("Prioritizes insertion over extraction, making it ideal for sorting");
+		tooltip.add("Exactly the same, aside from all the differences");
 	}
 }

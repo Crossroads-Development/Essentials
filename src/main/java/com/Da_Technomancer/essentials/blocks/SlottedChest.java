@@ -66,6 +66,7 @@ public class SlottedChest extends BlockContainer{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("The partitions make it bigger somehow.");
+		tooltip.add("Slots can be locked to only accept one item type");
+		tooltip.add("The partitions make it bigger somehow");
 	}
 }

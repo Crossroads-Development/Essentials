@@ -9,7 +9,7 @@ import net.minecraft.world.IBlockAccess;
 
 public class Wrench extends Item{
 
-	public Wrench(){
+	protected Wrench(){
 		String name = "wrench";
 		setUnlocalizedName(name);
 		setRegistryName(name);
