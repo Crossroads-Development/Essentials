@@ -45,3 +45,4 @@ Essentials_Server.launch
 usercache.json
 Essentials_Client NonLogin.launch
 Essentials.eml
+*.class

@@ -190,7 +190,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	 */
 	@Override
 	public boolean isUsableByPlayer(EntityPlayer player){
-		return world.getTileEntity(pos) != this ? false : player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
+		return world.getTileEntity(pos) == this && player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
 	}
 
 	@Override
@@ -387,11 +387,13 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 			IItemHandler thisHandler = getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
 			for (int i = 0; i < handler.getSlots(); i++){
-				ItemStack extractItem = handler.extractItem(i, 1, false);
+				ItemStack extractItem = handler.extractItem(i, 1, true);
 				if (!extractItem.isEmpty()){
 
 					for (int j = 0; j < getSizeInventory(); j++){
-						if(thisHandler.insertItem(j, extractItem, false).isEmpty()){
+						if(thisHandler.insertItem(j, extractItem, true).isEmpty()){
+							handler.extractItem(i, 1, false);
+							thisHandler.insertItem(j, extractItem, false);
 							return true;
 						}
 					}
@@ -495,10 +497,6 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 		if(inventoryIn instanceof ISidedInventory && side != null){
 			ISidedInventory isidedinventory = (ISidedInventory) inventoryIn;
 			int[] aint = isidedinventory.getSlotsForFace(side);
-
-			if(aint == null){
-				return stack;
-			}
 			for(int k = 0; k < aint.length && !stack.isEmpty(); ++k){
 				stack = insertStack(inventoryIn, stack, aint[k], side);
 			}
@@ -522,7 +520,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	 * specified side?
 	 */
 	private static boolean canInsertItemInSlot(IInventory inventoryIn, ItemStack stack, int index, EnumFacing side){
-		return !inventoryIn.isItemValidForSlot(index, stack) ? false : !(inventoryIn instanceof ISidedInventory) || ((ISidedInventory) inventoryIn).canInsertItem(index, stack, side);
+		return inventoryIn.isItemValidForSlot(index, stack) && (!(inventoryIn instanceof ISidedInventory) || ((ISidedInventory) inventoryIn).canInsertItem(index, stack, side));
 	}
 
 	/**
@@ -612,7 +610,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	}
 
 	private static boolean canCombine(ItemStack stack1, ItemStack stack2){
-		return stack1.getItem() != stack2.getItem() ? false : (stack1.getMetadata() != stack2.getMetadata() ? false : (stack1.getCount() > stack1.getMaxStackSize() ? false : ItemStack.areItemStackTagsEqual(stack1, stack2)));
+		return stack1.getItem() == stack2.getItem() && (stack1.getMetadata() == stack2.getMetadata() && (stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2)));
 	}
 
 	@Override
