@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -30,6 +31,7 @@ public class CommonProxy{
 	}
 
 	protected void init(FMLInitializationEvent e){
+		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerCommon());
 		NetworkRegistry.INSTANCE.registerGuiHandler(Essentials.instance, new EssentialsGuiHandler());
 
 		EssentialsConfig.config.save();
@@ -103,6 +105,9 @@ public class CommonProxy{
 					case ("port_extender"):
 						mapping.remap(EssentialsBlocks.portExtender);
 						break;
+					case ("brazier"):
+						mapping.remap(EssentialsBlocks.brazier);
+						break;
 				}
 			}
 		}
@@ -134,6 +139,9 @@ public class CommonProxy{
 						break;
 					case ("wrench"):
 						mapping.remap(EssentialsItems.wrench);
+						break;
+					case ("brazier"):
+						mapping.remap(Item.getItemFromBlock(EssentialsBlocks.brazier));
 						break;
 				}
 			}

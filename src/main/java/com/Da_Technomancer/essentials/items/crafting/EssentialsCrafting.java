@@ -11,12 +11,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.function.Predicate;
 
 public class EssentialsCrafting{
 
 	public static final ArrayList<IRecipe> toRegister = new ArrayList<>();
+
+
+	/**
+	 * A list of all recipes, Item Array are the ingredients, and itemstack is
+	 * output. A list for poisonous potato recipes and mashed potato recipes.
+	 *
+	 * Under no condition is anyone to add support for the Bobo recipes in JEI (or any other recipe helper).
+	 */
+	public static final ArrayList<Pair<Predicate<ItemStack>[], ItemStack>> brazierBoboRecipes = new ArrayList<Pair<Predicate<ItemStack>[], ItemStack>>();
 
 	@SuppressWarnings("unchecked")
 	public static void init(){

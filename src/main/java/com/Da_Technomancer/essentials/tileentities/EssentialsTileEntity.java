@@ -7,6 +7,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class EssentialsTileEntity{
 
 	public static void init(){
+		registerOld(BrazierTileEntity.class, "brazier");
 		registerOld(SlottedChestTileEntity.class, "slottedChest");
 		registerOld(SortingHopperTileEntity.class, "sortingHopper");
 		register(PortExtenderTileEntity.class, "port_extender", false);

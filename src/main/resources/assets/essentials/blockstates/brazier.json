@@ -1,0 +1,51 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "essentials:brazier",
+		"uvlock": false
+	},
+	"variants": {
+		"br_cont": {
+			"0": {
+				"textures": {
+					"fill": "essentials:blocks/empty"
+				}
+			},
+			"1": {
+				"textures": {
+					"fill": "blocks/water_still"
+				}
+			},
+			"2": {
+				"textures": {
+					"fill": "blocks/lava_still"
+				}
+			},
+			"3": {
+				"textures": {
+					"fill": "essentials:blocks/embers"
+				}
+			},
+			"4": {
+				"textures": {
+					"fill": "blocks/glowstone"
+				}
+			},
+			"5": {
+				"textures": {
+					"fill": "essentials:blocks/empty"
+				}
+			},
+			"6": {
+				"textures": {
+					"fill": "essentials:blocks/block_salt"
+				}
+			},
+			"7": {
+				"textures": {
+					"fill": "essentials:blocks/brazier_potato"
+				}
+			}
+		}
+	}
+}

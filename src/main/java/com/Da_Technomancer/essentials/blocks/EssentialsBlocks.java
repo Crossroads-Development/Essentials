@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class EssentialsBlocks{
 
+	public static Brazier brazier;
 	public static SlottedChest slottedChest;
 	public static SortingHopper sortingHopper;
 	public static PortExtender portExtender;
@@ -60,6 +61,7 @@ public class EssentialsBlocks{
 	}
 
 	public static void init(){
+		brazier = new Brazier();
 		slottedChest = new SlottedChest();
 		sortingHopper = new SortingHopper();
 		candleLilyPad = new CandleLilyPad();
