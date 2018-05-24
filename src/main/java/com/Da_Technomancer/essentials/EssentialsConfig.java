@@ -21,6 +21,7 @@ public final class EssentialsConfig{
 	public static Property obsidianKit;
 	public static Property goldHopper;
 	public static Property pistonRecipe;
+	public static Property brazierRange;
 
 	private static final ArrayList<Property> SYNCED_PROPERTIES = new ArrayList<Property>();
 	public static NBTTagCompound syncPropNBT;
@@ -41,6 +42,7 @@ public final class EssentialsConfig{
 		goldHopper = config.get(CAT_RECIPES, "Add a gold & iron recipe for sorting hoppers (Default true)?", true);
 		SYNCED_PROPERTIES.add(addWrench = config.get(CAT_INTERNAL, "Show the Crossroads wrench in the creative menu? (Default true)", true));
 		SYNCED_PROPERTIES.add(wrenchTypes = config.get(CAT_INTERNAL, "Item ids for wrench items. Should be in format 'modid:itemregistryname', ex. minecraft:apple or crossroads:wrench.", new String[] {Essentials.MODID + ":wrench", "crossroads:liech_wrench", "actuallyadditions:itemlaserwrench", "appliedenergistics2:certus_quartz_wrench", "appliedenergistics2:nether_quartz_wrench", "base:wrench", "enderio:itemyetawrench", "extrautils2:wrench", "bigreactors:wrench", "forestry:wrench", "progressiveautomation:wrench", "thermalfoundation:wrench", "redstonearsenal:tool.wrench_flux", "rftools:smartwrench", "immersiveengineering:tool"}));
+		brazierRange = config.get(CAT_INTERNAL, "Range of the brazier witch-blocking effect. Set to 0 to disable. (Default 64)", 64, null, 0, 512);
 	}
 
 	/**

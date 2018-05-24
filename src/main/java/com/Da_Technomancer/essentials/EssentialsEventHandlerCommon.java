@@ -15,8 +15,7 @@ public class EssentialsEventHandlerCommon{
 	@SubscribeEvent
 	public void onEntitySpawn(LivingSpawnEvent e){
 		if(e.getEntity() instanceof EntityWitch){
-			// 64 squared
-			int RANGE_SQUARED = 4096;
+			int RANGE_SQUARED = (int) Math.pow(EssentialsConfig.getConfigInt(EssentialsConfig.brazierRange, e.getWorld().isRemote), 2);
 
 			for(TileEntity te : e.getWorld().tickableTileEntities){
 				if(te instanceof BrazierTileEntity && te.getDistanceSq(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED){

@@ -63,6 +63,7 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 					break;
 				case 6:
 					server.spawnParticle(EnumParticleTypes.REDSTONE, false, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 0, -1, 0.5D, 1, 0.01D);
+					break;
 				case 7:
 					server.spawnParticle(EnumParticleTypes.SPELL_MOB, false, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 1, 0, 0, 0, 0.01D);
 					ItemStack out = recipeMatch((ArrayList<EntityItem>) world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(1, 1, 1)), EntitySelectors.IS_ALIVE));
