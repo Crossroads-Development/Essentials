@@ -79,7 +79,8 @@ public class EssentialsCrafting{
 		}
 		//Wrench
 		if(EssentialsConfig.getConfigBool(EssentialsConfig.addWrench, false)){
-			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.wrench, 1), "* *", "*|*", " | ", '*', "ingotIron", '|', "stickIron"));
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.wrench, 1), "* *", "*|*", " | ", '*', "ingotIron", '|', "stick"));
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.wrench, 1), "* *", " | ", " | ", '*', "ingotIron", '|', "stickIron"));
 		}
 		// Brazier
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.brazier, 1), "###", " $ ", " $ ", '$', "stoneAndesitePolished", '#', "stoneAndesite"));
