@@ -79,7 +79,7 @@ public class EssentialsCrafting{
 		}
 		//Wrench
 		if(EssentialsConfig.getConfigBool(EssentialsConfig.addWrench, false)){
-			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.wrench, 1), "* *", "*|*", " | ", '*', "ingotIron", '|', "stick"));
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.wrench, 1), "* *", "*|*", " | ", '*', "ingotIron", '|', "stickWood"));
 			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsItems.wrench, 1), "* *", " | ", " | ", '*', "ingotIron", '|', "stickIron"));
 		}
 		// Brazier
