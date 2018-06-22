@@ -1,0 +1,36 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"uvlock": false
+	},
+	"variants": {
+		"cr_version": {
+			"true": {
+				"model": "essentials:item_chute_port_cr"
+			},
+			"false": {
+				"model": "essentials:item_chute_port"
+			}
+		},
+		"facing": {
+			"up": {
+
+			},
+			"down": {
+
+			},
+			"east": {
+				"y": 90
+			},
+			"west": {
+				"y": 270
+			},
+			"north": {
+
+			},
+			"south": {
+				"y": 180
+			}
+		}
+	}
+}

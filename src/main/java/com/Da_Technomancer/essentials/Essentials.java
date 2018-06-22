@@ -1,5 +1,7 @@
 package com.Da_Technomancer.essentials;
 
+import net.minecraftforge.fml.common.FMLContainer;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -14,6 +16,8 @@ public final class Essentials{
 	public static final String MODID = "essentials";
 	public static final String MODNAME = "Essentials";
 	public static final String VERSION = "gradVERSION";
+
+	public static boolean hasCrossroads;
 
 	public static Logger logger;
 
@@ -32,6 +36,10 @@ public final class Essentials{
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent e){
 		proxy.init(e);
+		hasCrossroads = Loader.isModLoaded("crossroads");
+		if(hasCrossroads){
+			logger.info("Found Crossroads, enabling interaction");
+		}
 	}
 
 	@Mod.EventHandler

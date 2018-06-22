@@ -10,6 +10,7 @@ public class EssentialsTileEntity{
 		registerOld(BrazierTileEntity.class, "brazier");
 		registerOld(SlottedChestTileEntity.class, "slottedChest");
 		registerOld(SortingHopperTileEntity.class, "sortingHopper");
+		registerOld(ItemChutePortTileEntity.class, "itemChutePort");
 		register(PortExtenderTileEntity.class, "port_extender", false);
 	}
 

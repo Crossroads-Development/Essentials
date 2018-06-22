@@ -9,6 +9,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,7 +40,7 @@ public class EssentialsCrafting{
 		// Slotted Chest
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.slottedChest, 1), "###", "$@$", "###", '#', "slabWood", '$', Blocks.TRAPDOOR, '@', "chestWood"));
 		// Sorting Hopper
-		if(EssentialsConfig.getConfigBool(EssentialsConfig.goldHopper, false)){
+		if(OreDictionary.getOres("ingotCopper").isEmpty()){
 			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "# #", "#&#", " * ", '#', "ingotIron", '&', "chestWood", '*', "ingotGold"));
 			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "#&#", "#*#", '#', "ingotIron", '&', "chestWood", '*', "ingotGold"));
 		}
@@ -59,7 +60,7 @@ public class EssentialsCrafting{
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 8), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.ACACIA.getMetadata())));
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoil, 3, 9), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.DARK_OAK.getMetadata())));
 		//Port Extender
-		if(EssentialsConfig.getConfigBool(EssentialsConfig.goldPortExtender, false)){
+		if(OreDictionary.getOres("ingotTin").isEmpty()){
 			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotGold", 'h', Blocks.HOPPER));
 			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotGold", 'h', EssentialsBlocks.sortingHopper));
 		}
@@ -84,6 +85,13 @@ public class EssentialsCrafting{
 		}
 		// Brazier
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.brazier, 1), "###", " $ ", " $ ", '$', "stoneAndesitePolished", '#', "stoneAndesite"));
+		// Item Chute
+		if(OreDictionary.getOres("stickIron").isEmpty()){
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.itemChute, 4), "#$#", "#&#", "#$#", '#', "ingotIron", '$', "stickWood", '&', "ingotGold"));
+		}
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.itemChute, 4), "#$#", "#$#", "#$#", '#', "ingotIron", '$', "stickIron"));
+		// Item Chute Port
+		toRegister.add(new ShapelessOreRecipe(null, new ItemStack(EssentialsBlocks.itemChutePort, 1), EssentialsBlocks.itemChute, Blocks.IRON_TRAPDOOR));
 
 	}
 }

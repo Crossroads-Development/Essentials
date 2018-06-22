@@ -221,7 +221,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 			if(--transferCooldown <= 0){
 				transferCooldown = 0;
 				if(world != null && !world.isRemote){
-					if(transferCooldown <= 0 && BlockHopper.isEnabled(getBlockMetadata())){
+					if(BlockHopper.isEnabled(getBlockMetadata())){
 						boolean flag = false;
 
 						if(!isFull()){

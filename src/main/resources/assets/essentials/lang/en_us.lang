@@ -19,3 +19,5 @@ tile.port_extender.name=Port Extender
 tile.candle_lilypad.name=Candle Lilypad
 item.candle_lilypad.name=Candle Lilypad
 tile.brazier.name=Brazier
+tile.item_chute.name=Item Chute
+tile.item_chute_port.name=Item Chute Port

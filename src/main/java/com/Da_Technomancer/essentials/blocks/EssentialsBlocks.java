@@ -17,6 +17,8 @@ public class EssentialsBlocks{
 	public static PortExtender portExtender;
 	public static FertileSoil fertileSoil;
 	public static CandleLilyPad candleLilyPad;
+	public static ItemChute itemChute;
+	public static ItemChutePort itemChutePort;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<Block>();
 
@@ -67,5 +69,7 @@ public class EssentialsBlocks{
 		candleLilyPad = new CandleLilyPad();
 		fertileSoil = new FertileSoil();
 		portExtender = new PortExtender();
+		itemChute = new ItemChute();
+		itemChutePort = new ItemChutePort();
 	}
 }

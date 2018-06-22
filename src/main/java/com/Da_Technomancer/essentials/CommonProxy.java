@@ -108,6 +108,12 @@ public class CommonProxy{
 					case ("brazier"):
 						mapping.remap(EssentialsBlocks.brazier);
 						break;
+					case ("item_chute"):
+						mapping.remap(EssentialsBlocks.itemChute);
+						break;
+					case ("item_chute_port"):
+						mapping.remap(EssentialsBlocks.itemChutePort);
+						break;
 				}
 			}
 		}
@@ -142,6 +148,12 @@ public class CommonProxy{
 						break;
 					case ("brazier"):
 						mapping.remap(Item.getItemFromBlock(EssentialsBlocks.brazier));
+						break;
+					case ("item_chute"):
+						mapping.remap(Item.getItemFromBlock(EssentialsBlocks.itemChute));
+						break;
+					case ("item_chute_port"):
+						mapping.remap(Item.getItemFromBlock(EssentialsBlocks.itemChutePort));
 						break;
 				}
 			}
