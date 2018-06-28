@@ -21,6 +21,7 @@ public final class EssentialsConfig{
 	public static Property pistonRecipe;
 	public static Property brazierRange;
 	public static Property itemChuteRotary;
+	public static Property fertileSoilRate;
 
 	private static final ArrayList<Property> SYNCED_PROPERTIES = new ArrayList<Property>();
 	public static NBTTagCompound syncPropNBT;
@@ -41,6 +42,7 @@ public final class EssentialsConfig{
 		SYNCED_PROPERTIES.add(wrenchTypes = config.get(CAT_INTERNAL, "Item ids for wrench items. Should be in format 'modid:itemregistryname', ex. minecraft:apple or crossroads:wrench.", new String[] {Essentials.MODID + ":wrench", "crossroads:liech_wrench", "actuallyadditions:itemlaserwrench", "appliedenergistics2:certus_quartz_wrench", "appliedenergistics2:nether_quartz_wrench", "base:wrench", "enderio:itemyetawrench", "extrautils2:wrench", "bigreactors:wrench", "forestry:wrench", "progressiveautomation:wrench", "thermalfoundation:wrench", "redstonearsenal:tool.wrench_flux", "rftools:smartwrench", "immersiveengineering:tool"}));
 		SYNCED_PROPERTIES.add(brazierRange = config.get(CAT_INTERNAL, "Range of the brazier witch-blocking effect. Set to 0 to disable. (Default 64)", 64, null, 0, 512));
 		SYNCED_PROPERTIES.add(itemChuteRotary = config.get(CAT_INTERNAL, "Should the Item Chute require Crossroads rotary power when Crossroads is installed? (Default false)", false));
+		fertileSoilRate = config.get(CAT_INTERNAL, "% chance of Fertile Soil creating a plant per growth tick. (Default 100)", 100D, "0 to 100", 0, 100);
 	}
 
 	/**

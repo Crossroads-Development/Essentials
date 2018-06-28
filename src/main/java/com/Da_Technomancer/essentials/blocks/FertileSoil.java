@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -61,15 +62,12 @@ public class FertileSoil extends Block{
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
-		if(state.getValue(EssentialsProperties.PLANT) >= 4){
-			updateTick(worldIn, pos, state, RANDOM);
-		}
-	}
-
-	@Override
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand){
 		if(worldIn.isRemote){
+			return;
+		}
+
+		if(EssentialsConfig.getConfigDouble(EssentialsConfig.fertileSoilRate, false) < 100D * Math.random()){
 			return;
 		}
 
