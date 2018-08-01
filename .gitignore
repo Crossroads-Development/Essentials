@@ -1,5 +1,3 @@
-# General use .gitignore for Minecraft modding.
-
 # Directories
 /.gradle/
 /build/
@@ -20,6 +18,7 @@ crash-reports/
 /mods/
 /screenshots/
 /classes/
+/net/
 
 # File Extensions
 *.psd
