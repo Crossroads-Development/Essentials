@@ -7,9 +7,8 @@
  * CC-BY-NC-SA 3.0 License: https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB
  * 
  * File Created @ [11/01/2016, 22:00:30 (GMT)]
- */
-
-/*
+ *
+ *
  * Let me, (Technomancer), be clear, Vazkii made this class and I take no credit for it. Using the class is permitted by the license.
  */
 package com.Da_Technomancer.essentials.packets;
@@ -27,6 +26,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -102,9 +102,7 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 			return fieldCache.get(clazz);
 		else{
 			Field[] fields = clazz.getFields();
-			Arrays.sort(fields, (Field f1, Field f2) -> {
-				return f1.getName().compareTo(f2.getName());
-			});
+			Arrays.sort(fields, Comparator.comparing(Field::getName));
 			fieldCache.put(clazz, fields);
 			return fields;
 		}
@@ -295,11 +293,11 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 		buf.writeLong(pos.toLong());
 	}
 
-	public static interface Writer<T extends Object> {
+	public static interface Writer<T> {
 		public void write(T t, ByteBuf buf);
 	}
 
-	public static interface Reader<T extends Object> {
+	public static interface Reader<T> {
 		public T read(ByteBuf buf);
 	}
 

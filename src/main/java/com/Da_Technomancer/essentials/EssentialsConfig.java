@@ -23,7 +23,7 @@ public final class EssentialsConfig{
 	public static Property itemChuteRotary;
 	public static Property fertileSoilRate;
 
-	private static final ArrayList<Property> SYNCED_PROPERTIES = new ArrayList<Property>();
+	private static final ArrayList<Property> SYNCED_PROPERTIES = new ArrayList<>();
 	public static NBTTagCompound syncPropNBT;
 
 	private static final String CAT_INTERNAL = "Internal";

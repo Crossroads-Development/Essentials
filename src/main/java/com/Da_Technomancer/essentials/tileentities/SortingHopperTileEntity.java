@@ -67,7 +67,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	 */
 	private class HopperItemHandler extends InvWrapper{
 
-		public HopperItemHandler(){
+		private HopperItemHandler(){
 			super(SortingHopperTileEntity.this);
 		}
 

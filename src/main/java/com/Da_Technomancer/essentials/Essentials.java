@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials;
 
-import net.minecraftforge.fml.common.FMLContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;

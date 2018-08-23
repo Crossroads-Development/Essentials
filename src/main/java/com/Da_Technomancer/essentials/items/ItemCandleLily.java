@@ -43,45 +43,40 @@ public class ItemCandleLily extends ItemLilyPad{
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand hand){
-		RayTraceResult raytraceresult = this.rayTrace(worldIn, playerIn, true);
+		RayTraceResult raytraceresult = rayTrace(worldIn, playerIn, true);
 
-		if(raytraceresult == null){
-			return new ActionResult<ItemStack>(EnumActionResult.PASS, playerIn.getHeldItem(hand));
-		}else{
-			if(raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK){
-				BlockPos blockpos = raytraceresult.getBlockPos();
+		if(raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK){
+			BlockPos blockpos = raytraceresult.getBlockPos();
 
-				if(!worldIn.isBlockModifiable(playerIn, blockpos) || !playerIn.canPlayerEdit(blockpos.offset(raytraceresult.sideHit), raytraceresult.sideHit, playerIn.getHeldItem(hand))){
+			if(!worldIn.isBlockModifiable(playerIn, blockpos) || !playerIn.canPlayerEdit(blockpos.offset(raytraceresult.sideHit), raytraceresult.sideHit, playerIn.getHeldItem(hand))){
+				return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(hand));
+			}
+
+			BlockPos blockpos1 = blockpos.up();
+			IBlockState iblockstate = worldIn.getBlockState(blockpos);
+
+			if(iblockstate.getMaterial() == Material.WATER && iblockstate.getValue(BlockLiquid.LEVEL) == 0 && worldIn.isAirBlock(blockpos1)){
+				// special case for handling block placement with water
+				// lilies
+				net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(worldIn, blockpos1);
+				worldIn.setBlockState(blockpos1, EssentialsBlocks.candleLilyPad.getDefaultState());
+				if(net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(playerIn, blocksnapshot, net.minecraft.util.EnumFacing.UP, hand).isCanceled()){
+					blocksnapshot.restore(true, false);
 					return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(hand));
 				}
 
-				BlockPos blockpos1 = blockpos.up();
-				IBlockState iblockstate = worldIn.getBlockState(blockpos);
+				worldIn.setBlockState(blockpos1, EssentialsBlocks.candleLilyPad.getDefaultState(), 11);
 
-				if(iblockstate.getMaterial() == Material.WATER && iblockstate.getValue(BlockLiquid.LEVEL) == 0 && worldIn.isAirBlock(blockpos1)){
-					// special case for handling block placement with water
-					// lilies
-					net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(worldIn, blockpos1);
-					worldIn.setBlockState(blockpos1, EssentialsBlocks.candleLilyPad.getDefaultState());
-					if(net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(playerIn, blocksnapshot, net.minecraft.util.EnumFacing.UP, hand).isCanceled()){
-						blocksnapshot.restore(true, false);
-						return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(hand));
-					}
-
-					worldIn.setBlockState(blockpos1, EssentialsBlocks.candleLilyPad.getDefaultState(), 11);
-
-					if(!playerIn.capabilities.isCreativeMode){
-						playerIn.getHeldItem(hand).shrink(1);
-					}
-
-					playerIn.addStat(StatList.getObjectUseStats(this));
-					worldIn.playSound(playerIn, blockpos, SoundEvents.BLOCK_WATERLILY_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
-					return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
+				if(!playerIn.capabilities.isCreativeMode){
+					playerIn.getHeldItem(hand).shrink(1);
 				}
+
+				playerIn.addStat(StatList.getObjectUseStats(this));
+				worldIn.playSound(playerIn, blockpos, SoundEvents.BLOCK_WATERLILY_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
+				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
 			}
-
-			return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(hand));
 		}
-	}
 
+		return new ActionResult<ItemStack>(EnumActionResult.FAIL, playerIn.getHeldItem(hand));
+	}
 }

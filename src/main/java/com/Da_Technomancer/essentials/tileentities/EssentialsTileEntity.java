@@ -7,26 +7,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public class EssentialsTileEntity{
 
 	public static void init(){
-		registerOld(BrazierTileEntity.class, "brazier");
-		registerOld(SlottedChestTileEntity.class, "slottedChest");
-		registerOld(SortingHopperTileEntity.class, "sortingHopper");
-		registerOld(ItemChutePortTileEntity.class, "itemChutePort");
-		register(PortExtenderTileEntity.class, "port_extender", false);
-	}
-
-	/**
-	 * @deprecated A single character was wrong. Changing it will destroy all Crossroads stuff in existing worlds. All new tile entities should use the other method. 
-	 */
-	@Deprecated
-	private static void registerOld(Class<? extends TileEntity> locat, String ID){
-		GameRegistry.registerTileEntity(locat, "crossroads" + '_' + ID);
+		register(BrazierTileEntity.class, "brazier");
+		register(SlottedChestTileEntity.class, "slotted_chest");
+		register(SortingHopperTileEntity.class, "sorting_hopper");
+		register(ItemChutePortTileEntity.class, "item_chute_port");
+		register(PortExtenderTileEntity.class, "port_extender");
 	}
 
 	/**
 	 * @param clazz The class of the TileEntity being registered. 
 	 * @param ID Should be lower-case.
 	 */
-	private static void register(Class<? extends TileEntity> clazz, String ID, boolean newTE){
-		GameRegistry.registerTileEntity(clazz, (newTE ? Essentials.MODID : "crossroads") + ':' + ID);
+	private static void register(Class<? extends TileEntity> clazz, String ID){
+		GameRegistry.registerTileEntity(clazz, Essentials.MODID + ':' + ID);
 	}
 }

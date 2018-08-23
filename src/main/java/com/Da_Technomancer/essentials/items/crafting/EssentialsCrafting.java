@@ -28,7 +28,7 @@ public class EssentialsCrafting{
 	 *
 	 * Under no condition is anyone to add support for the Bobo recipes in JEI (or any other recipe helper).
 	 */
-	public static final ArrayList<Pair<Predicate<ItemStack>[], ItemStack>> brazierBoboRecipes = new ArrayList<Pair<Predicate<ItemStack>[], ItemStack>>();
+	public static final ArrayList<Pair<Predicate<ItemStack>[], ItemStack>> brazierBoboRecipes = new ArrayList<>();
 
 	@SuppressWarnings("unchecked")
 	public static void init(){

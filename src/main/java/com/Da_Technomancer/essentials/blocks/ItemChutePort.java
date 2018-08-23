@@ -26,7 +26,7 @@ import java.util.List;
 
 public class ItemChutePort extends BlockContainer{
 
-	public ItemChutePort(){
+	protected ItemChutePort(){
 		super(Material.IRON);
 		String name = "item_chute_port";
 		setUnlocalizedName(name);
