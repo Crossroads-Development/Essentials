@@ -21,3 +21,7 @@ item.candle_lilypad.name=Candle Lilypad
 tile.brazier.name=Brazier
 tile.item_chute.name=Item Chute
 tile.item_chute_port.name=Item Chute Port
+tile.multi_piston_sticky.name=Sticky Multi-Piston
+tile.multi_piston.name=Multi-Piston
+tile.multi_piston_extend_sticky.name=Sticky Multi-Piston Extension
+tile.multi_piston_extend.name=Multi-Piston Extension

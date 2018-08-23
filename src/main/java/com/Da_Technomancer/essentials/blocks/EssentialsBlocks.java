@@ -19,6 +19,10 @@ public class EssentialsBlocks{
 	public static CandleLilyPad candleLilyPad;
 	public static ItemChute itemChute;
 	public static ItemChutePort itemChutePort;
+	public static MultiPistonExtend multiPistonExtend;
+	public static MultiPistonExtend multiPistonExtendSticky;
+	public static MultiPistonBase multiPiston;
+	public static MultiPistonBase multiPistonSticky;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<Block>();
 
@@ -71,5 +75,9 @@ public class EssentialsBlocks{
 		portExtender = new PortExtender();
 		itemChute = new ItemChute();
 		itemChutePort = new ItemChutePort();
+		multiPistonExtend = new MultiPistonExtend(false);
+		multiPistonExtendSticky = new MultiPistonExtend(true);
+		multiPiston = new MultiPistonBase(false);
+		multiPistonSticky = new MultiPistonBase(true);
 	}
 }
