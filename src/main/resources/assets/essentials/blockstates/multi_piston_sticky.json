@@ -1,16 +1,44 @@
 {
+	"forge_marker": 1,
+	"defaults": {
+		"model": "essentials:multi_piston",
+		"uvlock": false
+	},
 	"variants": {
-		"facing=north,redstone_bool=false": { "model": "crossroads:multi_piston_sticky", "x": 90 },
-		"facing=north,redstone_bool=true": { "model": "crossroads:multi_piston_sticky", "x": 90 },
-		"facing=south,redstone_bool=false": { "model": "crossroads:multi_piston_sticky", "x": 90, "y": 180 },
-		"facing=south,redstone_bool=true": { "model": "crossroads:multi_piston_sticky", "x": 90, "y": 180 },
-		"facing=east,redstone_bool=false": { "model": "crossroads:multi_piston_sticky", "x": 90, "y": 90 },
-		"facing=east,redstone_bool=true": { "model": "crossroads:multi_piston_sticky", "x": 90, "y": 90 },
-		"facing=west,redstone_bool=false": { "model": "crossroads:multi_piston_sticky", "x": 90, "y": 270 },
-		"facing=west,redstone_bool=true": { "model": "crossroads:multi_piston_sticky", "x": 90, "y": 270 },
-		"facing=up,redstone_bool=false": { "model": "crossroads:multi_piston_sticky"},
-		"facing=up,redstone_bool=true": { "model": "crossroads:multi_piston_sticky"},
-		"facing=down,redstone_bool=false": { "model": "crossroads:multi_piston_sticky", "x": 180},
-		"facing=down,redstone_bool=true": { "model": "crossroads:multi_piston_sticky", "x": 180}
+		"facing": {
+			"north": {
+				"x": 90
+			},
+			"south": {
+				"x": 90,
+				"y": 180
+			},
+			"east": {
+				"x": 90,
+				"y": 90
+			},
+			"west": {
+				"x": 90,
+				"y": 270
+			},
+			"up": {
+
+			},
+			"down": {
+				"x": 180
+			}
+		},
+		"redstone_bool": {
+			"true": {
+
+			},
+			"false": {
+				"submodel": "essentials:multi_piston_head",
+				"textures": {
+					"front": "essentials:blocks/multi_piston_head_sticky",
+					"side": "essentials:blocks/multi_piston_side_sticky"
+				}
+			}
+		}
 	}
 }

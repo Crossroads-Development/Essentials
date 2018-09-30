@@ -76,7 +76,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 			if(stack.isEmpty()){
 				return ItemStack.EMPTY;
 			}
-			if(simulate || !mayTransfer()){
+			if(simulate || !(transferCooldown <= 1)){
 				return super.insertItem(slot, stack, simulate);
 			}
 
@@ -93,7 +93,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	public void readFromNBT(NBTTagCompound nbt){
 		super.readFromNBT(nbt);
 
-		transferCooldown = nbt.getInteger("transferCooldown");
+		transferCooldown = nbt.getInteger("trans_cooldown");
 
 		for(int i = 0; i < 5; i++){
 			NBTTagCompound stackNBT = nbt.getCompoundTag("inv" + i);
@@ -113,7 +113,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 			}
 		}
 
-		nbt.setInteger("transferCooldown", transferCooldown);
+		nbt.setInteger("trans_cooldown", transferCooldown);
 
 		return nbt;
 	}
@@ -354,10 +354,10 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	/**
 	 * Returns false if the specified IInventory contains any items
 	 */
-	private static boolean isInventoryEmpty(IInventory inventoryIn, EnumFacing side){
+	private static boolean isInventoryEmpty(IInventory inventoryIn){
 		if(inventoryIn instanceof ISidedInventory){
 			ISidedInventory isidedinventory = (ISidedInventory) inventoryIn;
-			int[] aint = isidedinventory.getSlotsForFace(side);
+			int[] aint = isidedinventory.getSlotsForFace(EnumFacing.DOWN);
 
 			for(int i : aint){
 				if(!isidedinventory.getStackInSlot(i).isEmpty()){
@@ -408,7 +408,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 		IInventory iinventory = getInventoryAtPosition(world, pos.offset(EnumFacing.UP));
 
 		if(iinventory != null){
-			if(isInventoryEmpty(iinventory, EnumFacing.DOWN)){
+			if(isInventoryEmpty(iinventory)){
 				return false;
 			}
 
@@ -417,7 +417,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 				int[] aint = isidedinventory.getSlotsForFace(EnumFacing.DOWN);
 
 				for(int i : aint){
-					if(pullItemFromSlot(iinventory, i, EnumFacing.DOWN)){
+					if(pullItemFromSlot(iinventory, i)){
 						return true;
 					}
 				}
@@ -425,7 +425,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 				int j = iinventory.getSizeInventory();
 
 				for(int k = 0; k < j; ++k){
-					if(pullItemFromSlot(iinventory, k, EnumFacing.DOWN)){
+					if(pullItemFromSlot(iinventory, k)){
 						return true;
 					}
 				}
@@ -446,12 +446,12 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	 * Pulls from the specified slot in the inventory and places in any
 	 * available slot in the hopper. Returns true if the entire stack was moved
 	 */
-	private boolean pullItemFromSlot(IInventory inventoryIn, int index, EnumFacing direction){
+	private boolean pullItemFromSlot(IInventory inventoryIn, int index){
 		ItemStack itemstack = inventoryIn.getStackInSlot(index);
 
-		if(!itemstack.isEmpty() && canExtractItemFromSlot(inventoryIn, itemstack, index, direction)){
+		if(!itemstack.isEmpty() && canExtractItemFromSlot(inventoryIn, itemstack, index)){
 			ItemStack itemstack1 = itemstack.copy();
-			ItemStack itemstack2 = putStackInInventoryAllSlots(this, inventoryIn.decrStackSize(index, 1), (EnumFacing) null);
+			ItemStack itemstack2 = putStackInInventoryAllSlots(this, inventoryIn.decrStackSize(index, 1), null);
 
 			if(itemstack2.isEmpty()){
 				inventoryIn.markDirty();
@@ -476,7 +476,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 			return false;
 		}else{
 			ItemStack itemstack = itemIn.getItem().copy();
-			ItemStack itemstack1 = putStackInInventoryAllSlots(p_145898_0_, itemstack, (EnumFacing) null);
+			ItemStack itemstack1 = putStackInInventoryAllSlots(p_145898_0_, itemstack, null);
 
 			if(!itemstack1.isEmpty()){
 				itemIn.setItem(itemstack1);
@@ -527,8 +527,8 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	 * Can this hopper extract the specified item from the specified slot on the
 	 * specified side?
 	 */
-	private static boolean canExtractItemFromSlot(IInventory inventoryIn, ItemStack stack, int index, EnumFacing side){
-		return !(inventoryIn instanceof ISidedInventory) || ((ISidedInventory) inventoryIn).canExtractItem(index, stack, side);
+	private static boolean canExtractItemFromSlot(IInventory inventoryIn, ItemStack stack, int index){
+		return !(inventoryIn instanceof ISidedInventory) || ((ISidedInventory) inventoryIn).canExtractItem(index, stack, EnumFacing.DOWN);
 	}
 
 	/**
@@ -599,7 +599,7 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 
 
 		if(iinventory == null){
-			List<Entity> list = worldIn.getEntitiesInAABBexcluding((Entity) null, new AxisAlignedBB(targetPos.getX(), targetPos.getY(), targetPos.getZ(), targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1), EntitySelectors.HAS_INVENTORY);
+			List<Entity> list = worldIn.getEntitiesInAABBexcluding(null, new AxisAlignedBB(targetPos.getX(), targetPos.getY(), targetPos.getZ(), targetPos.getX() + 1, targetPos.getY() + 1, targetPos.getZ() + 1), EntitySelectors.HAS_INVENTORY);
 
 			if(!list.isEmpty()){
 				iinventory = (IInventory) list.get(worldIn.rand.nextInt(list.size()));
@@ -616,10 +616,6 @@ public class SortingHopperTileEntity extends TileEntityLockable implements ITick
 	@Override
 	public String getGuiID(){
 		return "minecraft:hopper";
-	}
-
-	public boolean mayTransfer(){
-		return transferCooldown <= 1;
 	}
 
 	@Override

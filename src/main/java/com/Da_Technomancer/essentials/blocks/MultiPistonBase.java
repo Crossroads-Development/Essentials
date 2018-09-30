@@ -27,6 +27,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**Notable differences from a normal piston include:
@@ -352,5 +353,16 @@ public class MultiPistonBase extends Block{
 		}
 
 		return found;
+	}
+
+	private static final AxisAlignedBB[] BB = new AxisAlignedBB[] {new AxisAlignedBB(0, 5D / 16D, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 11D / 16D, 1), new AxisAlignedBB(0, 0, 5D / 16D, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 1, 11D / 16D), new AxisAlignedBB(5D / 16D, 0, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 11D / 16D, 1, 1)};
+
+	@Override
+	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, boolean pleaseDontBeRelevantToAnythingOrIWillBeSad){
+		if(state.getValue(EssentialsProperties.REDSTONE_BOOL)){
+			addCollisionBoxToList(pos, mask, list, BB[state.getValue(EssentialsProperties.FACING).getIndex()]);
+		}else{
+			addCollisionBoxToList(pos, mask, list, FULL_BLOCK_AABB);
+		}
 	}
 }

@@ -1,12 +1,32 @@
 {
-	"parent": "block/cube_all",
 	"textures": {
-		"north": "crossroads:blocks/multi_piston_side",
-		"south": "crossroads:blocks/multi_piston_side",
-		"east": "crossroads:blocks/multi_piston_side",
-		"west": "crossroads:blocks/multi_piston_side",
-		"up": "crossroads:blocks/block_tin",
-		"down": "crossroads:blocks/block_bronze",
-		"particle": "crossroads:blocks/multi_piston_side"
-	}
+		"side": "essentials:blocks/multi_piston_side",
+		"back": "essentials:blocks/multi_piston_back",
+		"extend": "essentials:blocks/multi_piston_extend",
+		"particle": "essentials:blocks/multi_piston_back"
+	},
+	"elements": [
+		{
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 11.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#side", "uv": [ 0.0, 5.0, 16.0, 16.0 ] },
+				"east": { "texture": "#side", "uv": [ 0.0, 5.0, 16.0, 16.0 ] },
+				"south": { "texture": "#side", "uv": [ 0.0, 5.0, 16.0, 16.0 ] },
+				"west": { "texture": "#side", "uv": [ 0.0, 5.0, 16.0, 16.0 ] },
+				"up": { "texture": "#back", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#back", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		},
+		{
+			"from": [ 6.0, 11.0, 6.0 ],
+			"to": [ 10.0, 15.999, 10.0 ],
+			"faces": {
+				"north": { "texture": "#extend", "uv": [ 0.0, 11.0, 4.0, 16.0 ] },
+				"east": { "texture": "#extend", "uv": [ 4.0, 11.0, 0.0, 16.0 ] },
+				"south": { "texture": "#extend", "uv": [ 0.0, 11.0, 4.0, 16.0 ] },
+				"west": { "texture": "#extend", "uv": [ 4.0, 11.0, 0.0, 16.0 ] }
+			}
+		}
+	]
 }

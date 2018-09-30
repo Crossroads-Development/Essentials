@@ -1,16 +1,44 @@
 {
+	"forge_marker": 1,
+	"defaults": {
+		"model": "essentials:multi_piston_extend",
+		"uvlock": false
+	},
 	"variants": {
-		"facing=north,head=false": { "model": "crossroads:multi_piston_extend", "x": 90 },
-		"facing=north,head=true": { "model": "crossroads:multi_piston_extend_sticky_head", "x": 90 },
-		"facing=south,head=false": { "model": "crossroads:multi_piston_extend", "x": 90, "y": 180 },
-		"facing=south,head=true": { "model": "crossroads:multi_piston_extend_sticky_head", "x": 90, "y": 180 },
-		"facing=east,head=false": { "model": "crossroads:multi_piston_extend", "x": 90, "y": 90 },
-		"facing=east,head=true": { "model": "crossroads:multi_piston_extend_sticky_head", "x": 90, "y": 90 },
-		"facing=west,head=false": { "model": "crossroads:multi_piston_extend", "x": 90, "y": 270 },
-		"facing=west,head=true": { "model": "crossroads:multi_piston_extend_sticky_head", "x": 90, "y": 270 },
-		"facing=up,head=false": { "model": "crossroads:multi_piston_extend"},
-		"facing=up,head=true": { "model": "crossroads:multi_piston_extend_sticky_head"},
-		"facing=down,head=false": { "model": "crossroads:multi_piston_extend", "x": 180},
-		"facing=down,head=true": { "model": "crossroads:multi_piston_extend_sticky_head", "x": 180}
+		"facing": {
+			"north": {
+				"x": 90
+			},
+			"south": {
+				"x": 90,
+				"y": 180
+			},
+			"east": {
+				"x": 90,
+				"y": 90
+			},
+			"west": {
+				"x": 90,
+				"y": 270
+			},
+			"up": {
+
+			},
+			"down": {
+				"x": 180
+			}
+		},
+		"head": {
+			"true": {
+				"submodel": "essentials:multi_piston_head",
+				"textures": {
+					"front": "essentials:blocks/multi_piston_head_sticky",
+					"side": "essentials:blocks/multi_piston_side_sticky"
+				}
+			},
+			"false": {
+
+			}
+		}
 	}
 }
