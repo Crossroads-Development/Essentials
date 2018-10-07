@@ -1,5 +1,5 @@
 {
-	"parent": "essentials:block/fertile_soil",
+	"parent": "essentials:block/fertile_soil_spruce",
 	"display": {
 		"thirdperson": {
 			"rotation": [ 10, -45, 170],

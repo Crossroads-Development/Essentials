@@ -1,8 +1,9 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.items.EssentialsItems;
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,7 +16,17 @@ public class EssentialsBlocks{
 	public static SlottedChest slottedChest;
 	public static SortingHopper sortingHopper;
 	public static PortExtender portExtender;
-	public static FertileSoil fertileSoil;
+	public static FertileSoil fertileSoilWheat;
+	public static FertileSoil fertileSoilCarrot;
+	public static FertileSoil fertileSoilPotato;
+	public static FertileSoil fertileSoilBeetroot;
+	public static FertileSoil fertileSoilNetherWart;
+	public static FertileSoil fertileSoilOak;
+	public static FertileSoil fertileSoilBirch;
+	public static FertileSoil fertileSoilSpruce;
+	public static FertileSoil fertileSoilJungle;
+	public static FertileSoil fertileSoilDarkOak;
+	public static FertileSoil fertileSoilAcacia;
 	public static CandleLilyPad candleLilyPad;
 	public static ItemChute itemChute;
 	public static ItemChutePort itemChutePort;
@@ -32,37 +43,9 @@ public class EssentialsBlocks{
 	 * @return The passed block for convenience.
 	 */
 	public static <T extends Block> T blockAddQue(T block){
-		return blockAddQue(block, true);
-	}
-
-	/**
-	 * Registers the item form of a block and an if registerModel item model.
-	 * @param block The block to register
-	 * @param registerModel whether to register a model.
-	 * @return The passed block for convenience.
-	 */
-	public static <T extends Block> T blockAddQue(T block, boolean registerModel){
 		Item item = new ItemBlock(block).setRegistryName(block.getRegistryName());
 		EssentialsItems.toRegister.add(item);
-		if(registerModel){
-			EssentialsItems.itemAddQue(item);
-		}
-		return block;
-	}
-
-	/**
-	 * Registers the item form of a block and the item model for each metadata up to endMeta.
-	 * @param block
-	 * @param endMeta The end meta value of the item.
-	 * @param multiItem
-	 * @return The block for convenience.
-	 */
-	public static <T extends Block> T blockAddQueRange(T block, int endMeta, Item multiItem){
-		EssentialsItems.toRegister.add(multiItem);
-		multiItem.setRegistryName(block.getRegistryName());
-		for(int i = 0; i <= endMeta; i++){
-			EssentialsItems.toClientRegister.put(Pair.of(multiItem, i), new ModelResourceLocation(block.getRegistryName(), "inventory"));
-		}
+		EssentialsItems.itemAddQue(item);
 		return block;
 	}
 
@@ -71,7 +54,17 @@ public class EssentialsBlocks{
 		slottedChest = new SlottedChest();
 		sortingHopper = new SortingHopper();
 		candleLilyPad = new CandleLilyPad();
-		fertileSoil = new FertileSoil();
+		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.getDefaultState().withProperty(BlockCrops.AGE, 0));
+		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.getDefaultState().withProperty(BlockCrops.AGE, 0));
+		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.getDefaultState().withProperty(BlockCrops.AGE, 0));
+		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.getDefaultState().withProperty(BlockBeetroot.BEETROOT_AGE, 0));
+		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.getDefaultState().withProperty(BlockNetherWart.AGE, 0));
+		fertileSoilOak = new FertileSoil("oak", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.OAK));
+		fertileSoilBirch = new FertileSoil("birch", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.BIRCH));
+		fertileSoilSpruce = new FertileSoil("spruce", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.SPRUCE));
+		fertileSoilJungle = new FertileSoil("jungle", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.JUNGLE));
+		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.DARK_OAK));
+		fertileSoilAcacia = new FertileSoil("acacia", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.ACACIA));
 		portExtender = new PortExtender();
 		itemChute = new ItemChute();
 		itemChutePort = new ItemChutePort();
