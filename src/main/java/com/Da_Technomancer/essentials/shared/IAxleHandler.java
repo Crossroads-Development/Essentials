@@ -111,4 +111,11 @@ public interface IAxleHandler{
 	 * @return Whether the Master Axis should keep the angle and clientW synchronized to client. If true, this should implement syncAngle, getAngle, setAngle, resetAngle, and getClientW. 
 	 */
 	public boolean shouldManageAngle();
+
+	/**
+	 * Called by the controlling master axis when relinquishing control of this axle. Can be used along with propogate to determine if this axle is actively controlled by an axis
+	 */
+	public default void disconnect(){
+
+	}
 }
