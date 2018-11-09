@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Gears and other rotary connectables use two capabilities, ICogHandler and IAxleHandler. 
  * The AxleHandler represents the core of the block, that can connect to machines and axles.
- * The CogHandler represents the part of the block able to connect to other blocks.
+ * The CogHandler represents the part of the block able to connect to other blocks laterally, like the cogs of two gears meshing together.
  *
  * In most cases, the AxleHandler and CogHandler are on the same side, though there are exceptions. Some blocks may only have one of them.
  */
@@ -57,7 +57,7 @@ public interface IAxleHandler{
 	 */
 	@SideOnly(Side.CLIENT)
 	public default float getNextAngle(){
-		return getAngle();
+		return getAngle() + getClientW() * 9F / (float) Math.PI;
 	}
 
 	/**
@@ -108,7 +108,7 @@ public interface IAxleHandler{
 	}
 	
 	/**
-	 * @return Whether the Master Axis should keep the angle and clientW synchronized to client. If true, this should implement syncAngle, getAngle, setAngle, resetAngle, and getClientW. 
+	 * @return Whether the Master Axis should keep the angle and clientW synchronized to client. If true, this must implement syncAngle, getAngle, setAngle, resetAngle, and getClientW.
 	 */
 	public boolean shouldManageAngle();
 
