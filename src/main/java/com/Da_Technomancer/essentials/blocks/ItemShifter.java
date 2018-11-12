@@ -2,8 +2,10 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
-import com.Da_Technomancer.essentials.tileentities.ItemChutePortTileEntity;
+import com.Da_Technomancer.essentials.tileentities.ItemShifterTileEntity;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -16,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,11 +25,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemChutePort extends BlockContainer{
+public class ItemShifter extends BlockContainer{
 
-	protected ItemChutePort(){
+	protected ItemShifter(){
 		super(Material.IRON);
-		String name = "item_chute_port";
+		String name = "item_shifter";
 		setUnlocalizedName(name);
 		setRegistryName(name);
 		setHardness(2);
@@ -40,7 +41,7 @@ public class ItemChutePort extends BlockContainer{
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta){
-		return new ItemChutePortTileEntity();
+		return new ItemShifterTileEntity();
 	}
 
 	@Override
@@ -50,26 +51,32 @@ public class ItemChutePort extends BlockContainer{
 
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
-		EnumFacing enumfacing = (placer == null) ? EnumFacing.NORTH : placer.getHorizontalFacing().getOpposite();
-		return getDefaultState().withProperty(EssentialsProperties.FACING, enumfacing);
+		return getDefaultState().withProperty(EssentialsProperties.FACING, blockFaceClickedOn == null ? EnumFacing.UP : blockFaceClickedOn.getOpposite());
 	}
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState blockstate){
-		ItemChutePortTileEntity te = (ItemChutePortTileEntity) world.getTileEntity(pos);
+		ItemShifterTileEntity te = (ItemShifterTileEntity) world.getTileEntity(pos);
 		te.dropItems();
 		super.breakBlock(world, pos, blockstate);
 	}
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand), worldIn.isRemote)){
-			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.withProperty(EssentialsProperties.FACING, state.getValue(EssentialsProperties.FACING).rotateY()));
+		boolean isWrench = EssentialsConfig.isWrench(playerIn.getHeldItem(hand), worldIn.isRemote);
+		if(!worldIn.isRemote){
+			if(isWrench){
+				worldIn.setBlockState(pos, state.cycleProperty(EssentialsProperties.FACING));
+				TileEntity te = worldIn.getTileEntity(pos);
+				if(te instanceof ItemShifterTileEntity){
+					((ItemShifterTileEntity) te).refreshCache();
+				}
+			}else{
+				playerIn.openGui(Essentials.instance, EssentialsGuiHandler.ITEM_SHIFTER_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
+				return true;
 			}
-			return true;
 		}
-		return false;
+		return isWrench;
 	}
 
 	@Override
@@ -85,20 +92,13 @@ public class ItemChutePort extends BlockContainer{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		if(Essentials.hasCrossroads && EssentialsConfig.getConfigBool(EssentialsConfig.itemChuteRotary, true)){
-			tooltip.add("I: 2");
-			tooltip.add("Consumes: 0.5J/operation");
-		}
+		tooltip.add("Ejects contained items out the faced side, moved into inventories or dropped onto the ground");
+		tooltip.add("Can 'push' items through a line of up to " + EssentialsConfig.getConfigInt(EssentialsConfig.itemChuteRange, true) + " Item Chutes");
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, EssentialsProperties.FACING, EssentialsProperties.CR_VERSION);
-	}
-
-	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos){
-		return state.withProperty(EssentialsProperties.CR_VERSION, Essentials.hasCrossroads && EssentialsConfig.getConfigBool(EssentialsConfig.itemChuteRotary, true));
+		return new BlockStateContainer(this, EssentialsProperties.FACING);
 	}
 
 	@Override
@@ -109,5 +109,13 @@ public class ItemChutePort extends BlockContainer{
 	@Override
 	public int getMetaFromState(IBlockState state){
 		return state.getValue(EssentialsProperties.FACING).getIndex();
+	}
+
+	@Override
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
+		TileEntity te = worldIn.getTileEntity(pos);
+		if(te instanceof ItemShifterTileEntity){
+			((ItemShifterTileEntity) te).refreshCache();
+		}
 	}
 }

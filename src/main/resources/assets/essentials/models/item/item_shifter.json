@@ -1,5 +1,5 @@
 {
-	"parent": "essentials:block/item_chute_port",
+	"parent": "essentials:block/item_shifter",
 	"display": {
 		"thirdperson": {
 			"rotation": [ 10, -45, 170],

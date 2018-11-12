@@ -52,7 +52,7 @@ public class SlottedChestContainer extends Container{
 	}
 
 	private int dragEvent;
-	private final Set<Slot> dragSlots = Sets.<Slot> newHashSet();
+	private final Set<Slot> dragSlots = Sets.newHashSet();
 	private int dragMode = -1;
 
 	/**
@@ -431,34 +431,22 @@ public class SlottedChestContainer extends Container{
 		}
 
 		if(!toMerge.isEmpty() && chestToPlayer){
-			if(chestToPlayer){
-				i = endIndex - 1;
-			}else{
-				i = startIndex;
-			}
+			i = endIndex - 1;
 
-			while(!chestToPlayer && i < endIndex || chestToPlayer && i >= startIndex){
+			while(i >= startIndex){
 				Slot slot = inventorySlots.get(i);
 				ItemStack currentSlotStack = slot.getStack();
 
 				// Make sure to respect isItemValid in the slot.
-				if(currentSlotStack.isEmpty() && (chestToPlayer || (!chestToPlayer && te.iInv.isItemValidForSlot(slot.getSlotIndex(), toMerge))) && slot.isItemValid(toMerge)){
+				if(currentSlotStack.isEmpty() && slot.isItemValid(toMerge)){
 					slot.putStack(toMerge.copy());
 					slot.onSlotChanged();
-					if(!chestToPlayer){
-						te.lockedInv[i] = toMerge.copy();
-						te.lockedInv[i].setCount(1);
-					}
 					toMerge.setCount(0);
 					flag = true;
 					break;
 				}
 
-				if(chestToPlayer){
-					--i;
-				}else{
-					++i;
-				}
+				--i;
 			}
 		}
 

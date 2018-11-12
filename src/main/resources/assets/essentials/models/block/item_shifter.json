@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "essentials:blocks/item_shifter_side",
+		"south": "essentials:blocks/item_shifter_side",
+		"east": "essentials:blocks/item_shifter_side",
+		"west": "essentials:blocks/item_shifter_side",
+		"up": "essentials:blocks/item_shifter",
+		"down": "blocks/furnace_top",
+		"particle": "essentials:blocks/item_shifter"
+	}
+}

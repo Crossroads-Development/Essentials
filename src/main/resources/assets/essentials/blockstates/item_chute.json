@@ -1,5 +1,7 @@
 {
 	"variants": {
-		"normal": { "model": "essentials:item_chute" }
+		"axis=x": { "model": "essentials:item_chute", "x": 90, "y": 90 },
+		"axis=y": { "model": "essentials:item_chute" },
+		"axis=z": { "model": "essentials:item_chute", "x": 90 }
 	}
 }

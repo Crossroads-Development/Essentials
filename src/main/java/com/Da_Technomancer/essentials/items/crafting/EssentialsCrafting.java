@@ -87,12 +87,9 @@ public class EssentialsCrafting{
 		// Brazier
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.brazier, 1), "###", " $ ", " $ ", '$', "stoneAndesitePolished", '#', "stoneAndesite"));
 		// Item Chute
-		if(OreDictionary.getOres("stickIron").isEmpty()){
-			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.itemChute, 4), "#$#", "#&#", "#$#", '#', "ingotIron", '$', "stickWood", '&', "ingotGold"));
-		}
-		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.itemChute, 4), "#$#", "#$#", "#$#", '#', "ingotIron", '$', "stickIron"));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.itemChute, 6), "I I", "ISI", "I I", 'I', "ingotIron", 'S', "cobblestone"));
 		// Item Chute Port
-		toRegister.add(new ShapelessOreRecipe(null, new ItemStack(EssentialsBlocks.itemChutePort, 1), EssentialsBlocks.itemChute, Blocks.IRON_TRAPDOOR));
+		toRegister.add(new ShapelessOreRecipe(null, new ItemStack(EssentialsBlocks.itemShifter, 1), EssentialsBlocks.itemChute, Blocks.DROPPER));
 
 		//Multi-Piston
 		toRegister.add(new ShapedOreRecipe(null, EssentialsBlocks.multiPiston, "***", "$#$", "$$$", '*', "ingotTin", '$', "ingotBronze", '#', Blocks.PISTON));

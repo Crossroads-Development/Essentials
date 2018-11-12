@@ -2,11 +2,9 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.*;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 
@@ -29,7 +27,7 @@ public class EssentialsBlocks{
 	public static FertileSoil fertileSoilAcacia;
 	public static CandleLilyPad candleLilyPad;
 	public static ItemChute itemChute;
-	public static ItemChutePort itemChutePort;
+	public static ItemShifter itemShifter;
 	public static MultiPistonExtend multiPistonExtend;
 	public static MultiPistonExtend multiPistonExtendSticky;
 	public static MultiPistonBase multiPiston;
@@ -67,7 +65,7 @@ public class EssentialsBlocks{
 		fertileSoilAcacia = new FertileSoil("acacia", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.ACACIA));
 		portExtender = new PortExtender();
 		itemChute = new ItemChute();
-		itemChutePort = new ItemChutePort();
+		itemShifter = new ItemShifter();
 		multiPistonExtend = new MultiPistonExtend(false);
 		multiPistonExtendSticky = new MultiPistonExtend(true);
 		multiPiston = new MultiPistonBase(false);

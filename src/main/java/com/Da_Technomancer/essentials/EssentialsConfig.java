@@ -20,7 +20,7 @@ public final class EssentialsConfig{
 	public static Property obsidianKit;
 	public static Property pistonRecipe;
 	public static Property brazierRange;
-	public static Property itemChuteRotary;
+	public static Property itemChuteRange;
 	public static Property fertileSoilRate;
 
 	private static final ArrayList<Property> SYNCED_PROPERTIES = new ArrayList<>();
@@ -28,6 +28,7 @@ public final class EssentialsConfig{
 
 	private static final String CAT_INTERNAL = "Internal";
 	private static final String CAT_RECIPES = "Recipes";
+	private static final String CAT_BALANCE = "Balance";
 
 	protected static void init(FMLPreInitializationEvent e){
 
@@ -40,9 +41,9 @@ public final class EssentialsConfig{
 		obsidianKit = config.get(CAT_RECIPES, "Add a recipe for obsidian cutting kits (Default true)?", true);
 		SYNCED_PROPERTIES.add(addWrench = config.get(CAT_INTERNAL, "Show the wrench in the creative menu? (Default true)", true));
 		SYNCED_PROPERTIES.add(wrenchTypes = config.get(CAT_INTERNAL, "Item ids for wrench items. Should be in format 'modid:itemregistryname', ex. minecraft:apple or essentials:wrench.", new String[] {Essentials.MODID + ":wrench", "crossroads:liech_wrench", "actuallyadditions:itemlaserwrench", "appliedenergistics2:certus_quartz_wrench", "appliedenergistics2:nether_quartz_wrench", "base:wrench", "enderio:itemyetawrench", "extrautils2:wrench", "bigreactors:wrench", "forestry:wrench", "progressiveautomation:wrench", "thermalfoundation:wrench", "redstonearsenal:tool.wrench_flux", "rftools:smartwrench", "immersiveengineering:tool"}));
-		SYNCED_PROPERTIES.add(brazierRange = config.get(CAT_INTERNAL, "Range of the brazier witch-blocking effect. Set to 0 to disable. (Default 64)", 64, null, 0, 512));
-		SYNCED_PROPERTIES.add(itemChuteRotary = config.get(CAT_INTERNAL, "Should the Item Chute require Crossroads rotary power when Crossroads is installed? (Default false)", false));
-		fertileSoilRate = config.get(CAT_INTERNAL, "% chance of Fertile Soil creating a plant per growth tick. (Default 100)", 100D, "0 to 100", 0, 100);
+		SYNCED_PROPERTIES.add(brazierRange = config.get(CAT_BALANCE, "Range of the brazier witch-blocking effect. Set to 0 to disable. (Default 64)", 64, null, 0, 512));
+		SYNCED_PROPERTIES.add(itemChuteRange = config.get(CAT_BALANCE, "Maximum number of chutes an Item Shifter can act through. (Default 16)", 16, "Must be between 0 and 128, inclusive.", 0, 128));
+		fertileSoilRate = config.get(CAT_BALANCE, "% chance of Fertile Soil creating a plant per growth tick. (Default 100)", 100D, "0 to 100", 0, 100);
 	}
 
 	/**

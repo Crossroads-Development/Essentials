@@ -25,12 +25,10 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class BrazierTileEntity extends TileEntity implements ITickable{
@@ -100,16 +98,10 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 				tar = 7;
 				out = stack.copy();
 				out.shrink(1);
-			}else if(!stack.isEmpty()){
-				int[] ids = OreDictionary.getOreIDs(stack);
-				for(int id : ids){
-					if("blockSalt".equals(OreDictionary.getOreName(id))){
-						tar = 6;
-						out = stack.copy();
-						out.shrink(1);
-						break;
-					}
-				}
+			}else if(stack.getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND)){
+				tar = 6;
+				out = stack.copy();
+				out.shrink(1);
 			}
 			if(tar == 0 && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)){
 				IFluidHandlerItem handler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
@@ -167,14 +159,9 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 					}
 					break;
 				case 6:
-					List<ItemStack> saltBlocks = OreDictionary.getOres("blockSalt");
-					if(saltBlocks.isEmpty()){
-						return ItemStack.EMPTY;
-					}else{
-						if(stack.isEmpty()){
+					if(stack.isEmpty()){
 							world.setBlockState(pos, world.getBlockState(pos).withProperty(EssentialsProperties.BRAZIER_CONTENTS, 0));
-							return saltBlocks.get(0);
-						}
+							return new ItemStack(Blocks.SOUL_SAND);
 					}
 					break;
 				case 7:
@@ -229,12 +216,7 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 				case 4:
 					return new ItemStack(Blocks.GLOWSTONE);
 				case 6:
-					List<ItemStack> saltBlocks = OreDictionary.getOres("blockSalt");
-					if(saltBlocks.isEmpty()){
-						return ItemStack.EMPTY;
-					}else{
-						return saltBlocks.get(0);
-					}
+					return new ItemStack(Blocks.SOUL_SAND);
 				case 7:
 					return new ItemStack(Items.POISONOUS_POTATO);
 				default:
@@ -252,14 +234,8 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 					tar = 4;
 				}else if(stack.getItem() == Items.POISONOUS_POTATO){
 					tar = 7;
-				}else{
-					int[] ids = OreDictionary.getOreIDs(stack);
-					for(int id : ids){
-						if("blockSalt".equals(OreDictionary.getOreName(id))){
-							tar = 6;
-							break;
-						}
-					}
+				}else if(stack.getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND)){
+					tar = 6;
 				}
 
 				if(tar != 0){

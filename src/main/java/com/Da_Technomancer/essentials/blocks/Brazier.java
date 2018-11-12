@@ -9,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -26,8 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -74,7 +73,6 @@ public class Brazier extends BlockContainer{
 				return 15;
 			case 3:
 				return 14;
-			case 6:
 			case 7:
 				return 3;
 			default:
@@ -99,6 +97,9 @@ public class Brazier extends BlockContainer{
 		int type = worldIn.getBlockState(pos).getValue(EssentialsProperties.BRAZIER_CONTENTS);
 		if(type != 1 && type != 2){
 			super.onFallenUpon(worldIn, pos, entityIn, fallDistance);
+		}
+		if(type == 2 && entityIn instanceof EntityItem){
+			entityIn.setDead();
 		}
 	}
 
@@ -158,7 +159,6 @@ public class Brazier extends BlockContainer{
 		if(!world.isRemote){
 			TileEntity te = world.getTileEntity(pos);
 			if(te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)){
-				IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 				ItemStack made = ItemStack.EMPTY;
 				switch(state.getValue(EssentialsProperties.BRAZIER_CONTENTS)){
 					case 3:
@@ -168,10 +168,7 @@ public class Brazier extends BlockContainer{
 						made = new ItemStack(Blocks.GLOWSTONE);
 						break;
 					case 6:
-						List<ItemStack> saltBlocks = OreDictionary.getOres("blockSalt");
-						if(!saltBlocks.isEmpty()){
-							made = saltBlocks.get(0);
-						}
+						made = new ItemStack(Blocks.SOUL_SAND);
 						break;
 					case 7:
 						made = new ItemStack(Items.POISONOUS_POTATO);
@@ -186,7 +183,8 @@ public class Brazier extends BlockContainer{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Able to hold water, lava, glowstone, coal blocks, and salt blocks");
+		tooltip.add("Able to hold Water, Lava, Glowstone, Coal Blocks, and Soul Sand");
+		tooltip.add("Can prevent fall damage with liquid, emit light with Glowstone/Coal/Lava, destroy dropped items with Lava, or block witch spawns with Soul Sand");
 	}
 
 

@@ -2,7 +2,7 @@
 	"ambientocclusion": false,
 	"textures": {
 		"particle": "blocks/iron_block",
-		"main": "essentials:blocks/itemchute"
+		"main": "essentials:blocks/item_chute"
 	},
 	"elements": [
 	             {
