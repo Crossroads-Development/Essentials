@@ -29,7 +29,7 @@ public class ItemCandleLily extends ItemLilyPad{
 		super(EssentialsBlocks.candleLilyPad);
 		String name = "candle_lilypad";
 		setRegistryName(name);
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
 		EssentialsItems.toRegister.add(this);
 		EssentialsItems.itemAddQue(this);

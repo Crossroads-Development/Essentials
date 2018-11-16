@@ -31,7 +31,7 @@ public class MultiPistonExtend extends Block{
 		super(Material.PISTON);
 		this.sticky = sticky;
 		String name = "multi_piston_extend" + (sticky ? "_sticky" : "");
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		setHardness(0.5F);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
@@ -63,7 +63,7 @@ public class MultiPistonExtend extends Block{
 
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(EssentialsProperties.HEAD, (meta & 8) == 8).withProperty(EssentialsProperties.FACING, EnumFacing.getFront(meta & 7));
+		return this.getDefaultState().withProperty(EssentialsProperties.HEAD, (meta & 8) == 8).withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta & 7));
 	}
 
 
@@ -94,7 +94,7 @@ public class MultiPistonExtend extends Block{
 			return null;
 		}else{
 			RayTraceResult untransformed = out.calculateIntercept(start, end);
-			return new RayTraceResult(untransformed.hitVec.addVector(pos.getX(), pos.getY(), pos.getZ()), untransformed.sideHit, pos);
+			return new RayTraceResult(untransformed.hitVec.add(pos.getX(), pos.getY(), pos.getZ()), untransformed.sideHit, pos);
 		}
 	}
 
@@ -110,7 +110,7 @@ public class MultiPistonExtend extends Block{
 		EntityPlayer play = Minecraft.getMinecraft().player;
 		float reDist = Minecraft.getMinecraft().playerController.getBlockReachDistance();
 		Vec3d start = play.getPositionEyes(0F).subtract((double)pos.getX(), (double)pos.getY(), (double)pos.getZ());
-		Vec3d end = start.addVector(play.getLook(0F).x * reDist, play.getLook(0F).y * reDist, play.getLook(0F).z * reDist);
+		Vec3d end = start.add(play.getLook(0F).x * reDist, play.getLook(0F).y * reDist, play.getLook(0F).z * reDist);
 		AxisAlignedBB out = BlockUtil.selectionRaytrace(list, start, end);
 		return (out == null ? list.get(0) : out).offset(pos);
 	}
@@ -131,7 +131,7 @@ public class MultiPistonExtend extends Block{
 	}
 
 	@Override
-	public EnumPushReaction getMobilityFlag(IBlockState state){
+	public EnumPushReaction getPushReaction(IBlockState state){
 		return EnumPushReaction.BLOCK;
 	}
 }

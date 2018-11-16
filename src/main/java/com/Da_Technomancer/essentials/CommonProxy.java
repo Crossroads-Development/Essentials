@@ -67,11 +67,11 @@ public class CommonProxy{
 		EssentialsCrafting.init();
 		for(IRecipe recipe : EssentialsCrafting.toRegister){
 			if(recipe.getRegistryName() == null){
-				ResourceLocation rawLoc = new ResourceLocation(Essentials.MODID, recipe.getRecipeOutput().getItem().getRegistryName().getResourcePath());
+				ResourceLocation rawLoc = new ResourceLocation(Essentials.MODID, recipe.getRecipeOutput().getItem().getRegistryName().getPath());
 				ResourceLocation adjusted = rawLoc;
 				int i = 0;
 				while(CraftingManager.REGISTRY.containsKey(adjusted)){
-					adjusted = new ResourceLocation(Essentials.MODID, rawLoc.getResourcePath() + '_' + i);
+					adjusted = new ResourceLocation(Essentials.MODID, rawLoc.getPath() + '_' + i);
 					i++;
 				}
 				recipe.setRegistryName(adjusted);

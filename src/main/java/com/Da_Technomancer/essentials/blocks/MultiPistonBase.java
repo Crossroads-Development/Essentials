@@ -45,7 +45,7 @@ public class MultiPistonBase extends Block{
 	protected MultiPistonBase(boolean sticky){
 		super(Material.PISTON);
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		this.sticky = sticky;
 		setHardness(0.5F);
@@ -146,7 +146,7 @@ public class MultiPistonBase extends Block{
 						for(int index = list.size() - 1; index >= 0; --index){
 							BlockPos moving = list.get(index);
 
-							if(world.getBlockState(moving.offset(dir.getOpposite())).getMobilityFlag() == EnumPushReaction.DESTROY){
+							if(world.getBlockState(moving.offset(dir.getOpposite())).getPushReaction() == EnumPushReaction.DESTROY){
 								world.getBlockState(moving.offset(dir.getOpposite())).getBlock().dropBlockAsItem(worldIn, moving.offset(dir.getOpposite()), world.getBlockState(moving.offset(dir.getOpposite())), 0);
 							}
 							world.addChange(moving.offset(dir.getOpposite()), world.getBlockState(moving));
@@ -187,14 +187,14 @@ public class MultiPistonBase extends Block{
 			if(list.isEmpty()){
 				for(Entity ent : getEntitiesMultiChunk(FULL_BLOCK_AABB.offset(pos.offset(dir, i)), worldIn)){
 					if(ent.getPushReaction() != EnumPushReaction.IGNORE){
-						ent.setPositionAndUpdate(ent.posX + (double) dir.getFrontOffsetX(), ent.posY + (double) dir.getFrontOffsetY(), ent.posZ + (double) dir.getFrontOffsetZ());
+						ent.setPositionAndUpdate(ent.posX + (double) dir.getXOffset(), ent.posY + (double) dir.getYOffset(), ent.posZ + (double) dir.getZOffset());
 					}
 				}
 			}else{
 				for(int index = list.size() - 1; index >= 0; --index){
 					BlockPos moving = list.get(index);
 
-					if(world.getBlockState(moving.offset(dir)).getMobilityFlag() == EnumPushReaction.DESTROY){
+					if(world.getBlockState(moving.offset(dir)).getPushReaction() == EnumPushReaction.DESTROY){
 						worldIn.destroyBlock(moving.offset(dir), true);
 					}
 					world.addChange(moving.offset(dir), world.getBlockState(moving));
@@ -209,9 +209,9 @@ public class MultiPistonBase extends Block{
 					box = box.offset(moving.offset(dir));
 					for(Entity ent : getEntitiesMultiChunk(box, worldIn)){
 						if(ent.getPushReaction() != EnumPushReaction.IGNORE){
-							ent.setPositionAndUpdate(ent.posX + (double) dir.getFrontOffsetX(), ent.posY + (double) dir.getFrontOffsetY(), ent.posZ + (double) dir.getFrontOffsetZ());
+							ent.setPositionAndUpdate(ent.posX + (double) dir.getXOffset(), ent.posY + (double) dir.getYOffset(), ent.posZ + (double) dir.getZOffset());
 							if(world.getBlockState(moving.offset(dir)).getBlock() == Blocks.SLIME_BLOCK){
-								ent.addVelocity(dir.getFrontOffsetX(), dir.getFrontOffsetY(), dir.getFrontOffsetZ());
+								ent.addVelocity(dir.getXOffset(), dir.getYOffset(), dir.getZOffset());
 								ent.velocityChanged = true;
 							}
 						}
@@ -220,7 +220,7 @@ public class MultiPistonBase extends Block{
 			}
 
 			for(int j = i; j >= 1; j--){
-				if(world.getBlockState(pos.offset(dir, j)).getMobilityFlag() == EnumPushReaction.DESTROY){
+				if(world.getBlockState(pos.offset(dir, j)).getPushReaction() == EnumPushReaction.DESTROY){
 					worldIn.destroyBlock(pos.offset(dir, j), true);
 				}
 				world.addChange(pos.offset(dir, j), GOAL.getDefaultState().withProperty(EssentialsProperties.FACING, dir).withProperty(EssentialsProperties.HEAD, i == j));
@@ -234,9 +234,9 @@ public class MultiPistonBase extends Block{
 
 	private static boolean canPush(IBlockState state, boolean blocking){
 		if(blocking){
-			return (state.getBlock() == Blocks.PISTON || state.getBlock() == Blocks.STICKY_PISTON) ? !state.getValue(BlockPistonBase.EXTENDED) : state.getMobilityFlag() != EnumPushReaction.BLOCK && !state.getBlock().hasTileEntity(state) && state.getBlock() != Blocks.OBSIDIAN && state.getBlockHardness(null, null) >= 0;
+			return (state.getBlock() == Blocks.PISTON || state.getBlock() == Blocks.STICKY_PISTON) ? !state.getValue(BlockPistonBase.EXTENDED) : state.getPushReaction() != EnumPushReaction.BLOCK && !state.getBlock().hasTileEntity(state) && state.getBlock() != Blocks.OBSIDIAN && state.getBlockHardness(null, null) >= 0;
 		}else{
-			return (state.getBlock() == Blocks.PISTON || state.getBlock() == Blocks.STICKY_PISTON) ? !state.getValue(BlockPistonBase.EXTENDED) : state.getMobilityFlag() == EnumPushReaction.NORMAL && state.getMaterial() != Material.AIR && !state.getBlock().hasTileEntity(state) && state.getBlock() != Blocks.OBSIDIAN && state.getBlockHardness(null, null) >= 0;
+			return (state.getBlock() == Blocks.PISTON || state.getBlock() == Blocks.STICKY_PISTON) ? !state.getValue(BlockPistonBase.EXTENDED) : state.getPushReaction() == EnumPushReaction.NORMAL && state.getMaterial() != Material.AIR && !state.getBlock().hasTileEntity(state) && state.getBlock() != Blocks.OBSIDIAN && state.getBlockHardness(null, null) >= 0;
 		}
 	}
 
@@ -306,7 +306,7 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.getFront(meta & 7)).withProperty(EssentialsProperties.REDSTONE_BOOL, (meta & 8) == 8);
+		return this.getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta & 7)).withProperty(EssentialsProperties.REDSTONE_BOOL, (meta & 8) == 8);
 	}
 
 	@Override
@@ -315,7 +315,7 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public EnumPushReaction getMobilityFlag(IBlockState state){
+	public EnumPushReaction getPushReaction(IBlockState state){
 		return state.getValue(EssentialsProperties.REDSTONE_BOOL) ? EnumPushReaction.BLOCK : EnumPushReaction.NORMAL;
 	}
 
@@ -338,7 +338,7 @@ public class MultiPistonBase extends Block{
 		for(int iLoop = i; iLoop <= j; iLoop++){
 			for(int kLoop = k; kLoop <= l; kLoop++){
 				if(((ChunkProviderServer) worldIn.getChunkProvider()).chunkExists(iLoop, kLoop)){
-					Chunk chunk = worldIn.getChunkFromChunkCoords(iLoop, kLoop);
+					Chunk chunk = worldIn.getChunk(iLoop, kLoop);
 					for(int yLoop = yMin; yLoop <= yMax; ++yLoop){
 						if(!chunk.getEntityLists()[yLoop].isEmpty()){
 							for(Entity entity : chunk.getEntityLists()[yLoop]){

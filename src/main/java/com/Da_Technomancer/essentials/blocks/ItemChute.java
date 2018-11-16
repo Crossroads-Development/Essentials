@@ -31,7 +31,7 @@ public class ItemChute extends Block{
 	public ItemChute(){
 		super(Material.IRON);
 		String name = "item_chute";
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
 		setHardness(1.5F);

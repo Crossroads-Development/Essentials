@@ -30,7 +30,7 @@ public class ItemShifter extends BlockContainer{
 	protected ItemShifter(){
 		super(Material.IRON);
 		String name = "item_shifter";
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		setHardness(2);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
@@ -103,7 +103,7 @@ public class ItemShifter extends BlockContainer{
 
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.getFront(meta));
+		return getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta));
 	}
 
 	@Override

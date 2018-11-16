@@ -30,7 +30,7 @@ public class FertileSoil extends Block{
 		super(plant.getBlock() == Blocks.NETHER_WART ? Material.SAND : Material.GROUND);
 		this.plant = plant;
 		String name = "fertile_soil_" + plantName;
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		setHardness(.5F);
 		setSoundType(SoundType.GROUND);

@@ -38,7 +38,7 @@ public class Brazier extends BlockContainer{
 	protected Brazier(){
 		super(Material.ROCK);
 		String name = "brazier";
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setHardness(2);
 		setRegistryName(name);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
@@ -187,10 +187,9 @@ public class Brazier extends BlockContainer{
 		tooltip.add("Can prevent fall damage with liquid, emit light with Glowstone/Coal/Lava, destroy dropped items with Lava, or block witch spawns with Soul Sand");
 	}
 
-
 	@Override
 	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer(){
+	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.CUTOUT;
 	}
 }

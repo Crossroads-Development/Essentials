@@ -20,7 +20,7 @@ public class ObsidianCuttingKit extends Item{
 
 	protected ObsidianCuttingKit(){
 		String name = "obsidian_cutting_kit";
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
 		EssentialsItems.toRegister.add(this);

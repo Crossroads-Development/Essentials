@@ -11,7 +11,7 @@ public class Wrench extends Item{
 
 	protected Wrench(){
 		String name = "wrench";
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		if(EssentialsConfig.getConfigBool(EssentialsConfig.addWrench, false)){
 			setCreativeTab(EssentialsItems.TAB_ESSENTIALS);

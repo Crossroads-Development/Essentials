@@ -18,7 +18,7 @@ public class EssentialsItems{
 
 	public static final CreativeTabs TAB_ESSENTIALS = new CreativeTabs(Essentials.MODID){
 		@Override
-		public ItemStack getTabIconItem(){
+		public ItemStack createIcon(){
 			return new ItemStack(itemCandleLilypad, 1);
 		}
 	};

@@ -29,7 +29,7 @@ public class PortExtender extends BlockContainer{
 	protected PortExtender(){
 		super(Material.IRON);
 		String name = "port_extender";
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		setHardness(2F);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
@@ -61,7 +61,7 @@ public class PortExtender extends BlockContainer{
 
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.getFront(meta));
+		return getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta));
 	}
 
 	@Override

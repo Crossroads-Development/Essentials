@@ -30,7 +30,7 @@ public class SlottedChest extends BlockContainer{
 		super(Material.WOOD);
 		String name = "slotted_chest";
 		setSoundType(SoundType.WOOD);
-		setUnlocalizedName(name);
+		setTranslationKey(name);
 		setRegistryName(name);
 		setHardness(2);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
