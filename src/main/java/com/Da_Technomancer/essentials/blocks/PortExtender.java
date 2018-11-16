@@ -46,7 +46,8 @@ public class PortExtender extends BlockContainer{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Lets item insertion connections stretch another block");
+		tooltip.add("Automation can push/pull items, fluids, and FE through this block to the attached block");
+		tooltip.add("Can be chained together");
 	}
 
 	@Override
@@ -77,7 +78,7 @@ public class PortExtender extends BlockContainer{
 
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, (placer == null) ? EnumFacing.NORTH : EnumFacing.getDirectionFromEntityLiving(pos, placer));
+		return getDefaultState().withProperty(EssentialsProperties.FACING, (placer == null) ? EnumFacing.NORTH : blockFaceClickedOn.getOpposite());
 	}
 
 	@Override
