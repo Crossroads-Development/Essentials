@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -21,6 +22,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
@@ -71,6 +73,21 @@ public class MultiPistonBase extends Block{
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state){
+		return !state.getValue(EssentialsProperties.REDSTONE_BOOL);
+	}
+
+	@Override
+	public boolean isFullCube(IBlockState state){
+		return !state.getValue(EssentialsProperties.REDSTONE_BOOL);
+	}
+
+	@Override
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face){
+		return face == state.getValue(EssentialsProperties.FACING).getOpposite() ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 	}
 
 	protected void safeBreak(World worldIn, BlockPos pos){

@@ -41,7 +41,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 		}
 
 		IBlockState state = world.getBlockState(pos);
-		if(state.getBlock() != EssentialsBlocks.itemShifter){
+		if(inventory.isEmpty() || state.getBlock() != EssentialsBlocks.itemShifter){
 			return;
 		}
 
@@ -80,12 +80,6 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 		}
 
 		endPos = pos.offset(dir, extension);
-	}
-
-	public void dropItems(){
-		world.spawnEntity(new EntityItem(world, pos.offset(world.getBlockState(pos).getValue(EssentialsProperties.FACING)).getX(), pos.getY(), pos.offset(world.getBlockState(pos).getValue(EssentialsProperties.FACING)).getZ(), inventory.copy()));
-		inventory = ItemStack.EMPTY;
-		markDirty();
 	}
 
 	@Override

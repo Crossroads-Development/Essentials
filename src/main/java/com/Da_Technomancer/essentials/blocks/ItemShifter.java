@@ -14,6 +14,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -56,8 +57,7 @@ public class ItemShifter extends BlockContainer{
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState blockstate){
-		ItemShifterTileEntity te = (ItemShifterTileEntity) world.getTileEntity(pos);
-		te.dropItems();
+		InventoryHelper.dropInventoryItems(world, pos, (ItemShifterTileEntity) world.getTileEntity(pos));
 		super.breakBlock(world, pos, blockstate);
 	}
 
