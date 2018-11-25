@@ -52,7 +52,7 @@ public class ItemShifter extends BlockContainer{
 
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, blockFaceClickedOn == null ? EnumFacing.UP : blockFaceClickedOn.getOpposite());
+		return getDefaultState().withProperty(EssentialsProperties.FACING, placer == null ? EnumFacing.UP : EnumFacing.getDirectionFromEntityLiving(pos, placer));
 	}
 
 	@Override
