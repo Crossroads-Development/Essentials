@@ -100,5 +100,9 @@ public class EssentialsCrafting{
 			toRegister.add(new ShapedOreRecipe(null, EssentialsBlocks.multiPiston, "***", "$#$", "$$$", '*', "ingotGold", '$', "ingotIron", '#', Blocks.PISTON));
 			toRegister.add(new ShapedOreRecipe(null, EssentialsBlocks.multiPistonSticky, "***", "$#$", "$$$", '*', "ingotGold", '$', "ingotIron", '#', Blocks.STICKY_PISTON));
 		}
+		//Basic Item Splitter
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.basicItemSplitter, 1), "*^*", "&&&", "*^*", '*', "nuggetIron", '^', Blocks.HOPPER, '&', "ingotGold"));
+		//Redstone Item Splitter
+		toRegister.add(new ShapelessOreRecipe(null, new ItemStack(EssentialsBlocks.itemSplitter, 1), EssentialsBlocks.basicItemSplitter, "dustRedstone", "dustRedstone", "dustRedstone"));
 	}
 }

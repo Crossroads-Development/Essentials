@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"facing=north": { "model": "essentials:basic_item_splitter", "x": 90},
+		"facing=south": { "model": "essentials:basic_item_splitter", "x": 270 },
+		"facing=east": { "model": "essentials:basic_item_splitter", "x": 90, "y": 90 },
+		"facing=west": { "model": "essentials:basic_item_splitter", "x": 270, "y": 90 },
+		"facing=up": { "model": "essentials:basic_item_splitter"},
+		"facing=down": { "model": "essentials:basic_item_splitter", "x": 180 }
+	}
+}

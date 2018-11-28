@@ -275,7 +275,7 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 			return ItemStack.EMPTY;
 		}
 
-		ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+		ArrayList<ItemStack> items = new ArrayList<>();
 
 		for(EntityItem it : itemEnt){
 			if(it.getItem().isEmpty() || it.getItem().getCount() != 1){

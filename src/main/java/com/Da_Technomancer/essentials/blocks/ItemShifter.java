@@ -73,10 +73,9 @@ public class ItemShifter extends BlockContainer{
 				}
 			}else{
 				playerIn.openGui(Essentials.instance, EssentialsGuiHandler.ITEM_SHIFTER_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
-				return true;
 			}
 		}
-		return isWrench;
+		return true;
 	}
 
 	@Override

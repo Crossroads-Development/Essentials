@@ -5,6 +5,7 @@ import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -110,5 +111,10 @@ public class ItemChute extends Block{
 				worldIn.getBlockState(pos).neighborChanged(worldIn, pos, this, fromPos);
 			}
 		}
+	}
+
+	@Override
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face){
+		return face.getAxis() == state.getValue(EssentialsProperties.AXIS) ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
 	}
 }

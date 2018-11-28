@@ -25,6 +25,19 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	private ItemStack inventory = ItemStack.EMPTY;
 	private BlockPos endPos = null;
 
+	private EnumFacing facing = null;
+
+	private EnumFacing getFacing(){
+		if(facing == null){
+			IBlockState state = world.getBlockState(pos);
+			if(!state.getPropertyKeys().contains(EssentialsProperties.FACING)){
+				return EnumFacing.DOWN;
+			}
+			facing = state.getValue(EssentialsProperties.FACING);
+		}
+		return facing;
+	}
+
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState){
 		return oldState.getBlock() != newState.getBlock();
@@ -40,14 +53,14 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 			refreshCache();
 		}
 
-		IBlockState state = world.getBlockState(pos);
-		if(inventory.isEmpty() || state.getBlock() != EssentialsBlocks.itemShifter){
+		if(inventory.isEmpty()){
 			return;
 		}
 
 		TileEntity outputTE = world.getTileEntity(endPos);
-		if(outputTE != null && outputTE.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, state.getValue(EssentialsProperties.FACING).getOpposite())){
-			IItemHandler outHandler = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, state.getValue(EssentialsProperties.FACING).getOpposite());
+		EnumFacing dir = getFacing();
+		if(outputTE != null && outputTE.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite())){
+			IItemHandler outHandler = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite());
 			for(int i = 0; i < outHandler.getSlots(); i++){
 				ItemStack outStack = outHandler.insertItem(i, inventory, false);
 				if(outStack.getCount() != inventory.getCount()){
@@ -68,7 +81,8 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	public void refreshCache(){
-		EnumFacing dir = world.getBlockState(pos).getValue(EssentialsProperties.FACING);
+		facing = null;
+		EnumFacing dir = getFacing();
 		int extension = 1;
 		int maxChutes = EssentialsConfig.getConfigInt(EssentialsConfig.itemChuteRange, false);
 
@@ -142,12 +156,12 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 
 			int moved = Math.min(stack.getCount(), stack.getMaxStackSize() - inventory.getCount());
 
-			if(!simulate){
+			if(!simulate && moved != 0){
 				if(inventory.isEmpty()){
 					inventory = stack.copy();
 					inventory.setCount(moved);
 				}else{
-					inventory.grow(1);
+					inventory.grow(moved);
 				}
 				markDirty();
 			}
@@ -159,7 +173,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate){
-			if(slot != 0 || inventory.isEmpty()){
+			if(slot != 0 || inventory.isEmpty() || amount <= 0){
 				return ItemStack.EMPTY;
 			}
 
@@ -176,7 +190,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 
 		@Override
 		public int getSlotLimit(int slot){
-			return slot == 0 ? 64 : 0;
+			return 64;
 		}
 	}
 

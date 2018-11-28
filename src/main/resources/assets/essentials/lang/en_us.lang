@@ -26,3 +26,5 @@ tile.multi_piston_sticky.name=Sticky Multi-Piston
 tile.multi_piston.name=Multi-Piston
 tile.multi_piston_extend_sticky.name=Sticky Multi-Piston Extension
 tile.multi_piston_extend.name=Multi-Piston Extension
+tile.basic_item_splitter.name=Basic Item Splitter
+tile.item_splitter.name=Item Splitter

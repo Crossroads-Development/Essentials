@@ -32,6 +32,8 @@ public class EssentialsBlocks{
 	public static MultiPistonExtend multiPistonExtendSticky;
 	public static MultiPistonBase multiPiston;
 	public static MultiPistonBase multiPistonSticky;
+	public static BasicItemSplitter basicItemSplitter;
+	public static ItemSplitter itemSplitter;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<Block>();
 
@@ -70,5 +72,7 @@ public class EssentialsBlocks{
 		multiPistonExtendSticky = new MultiPistonExtend(true);
 		multiPiston = new MultiPistonBase(false);
 		multiPistonSticky = new MultiPistonBase(true);
+		basicItemSplitter = new BasicItemSplitter();
+		itemSplitter = new ItemSplitter();
 	}
 }
