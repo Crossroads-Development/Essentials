@@ -10,6 +10,7 @@ public class EssentialsTileEntity{
 		register(BrazierTileEntity.class, "brazier");
 		register(SlottedChestTileEntity.class, "slotted_chest");
 		register(SortingHopperTileEntity.class, "sorting_hopper");
+		register(SpeedHopperTileEntity.class, "speed_hopper");
 		register(ItemShifterTileEntity.class, "item_shifter");
 		register(PortExtenderTileEntity.class, "port_extender");
 		register(BasicItemSplitterTileEntity.class, "basic_item_splitter");

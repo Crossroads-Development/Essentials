@@ -13,6 +13,7 @@ public class EssentialsBlocks{
 	public static Brazier brazier;
 	public static SlottedChest slottedChest;
 	public static SortingHopper sortingHopper;
+	public static SpeedHopper speedHopper;
 	public static PortExtender portExtender;
 	public static FertileSoil fertileSoilWheat;
 	public static FertileSoil fertileSoilCarrot;
@@ -35,7 +36,7 @@ public class EssentialsBlocks{
 	public static BasicItemSplitter basicItemSplitter;
 	public static ItemSplitter itemSplitter;
 
-	public static final ArrayList<Block> toRegister = new ArrayList<Block>();
+	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
 	/**
 	 * Registers the item form of a block and the item model.
@@ -53,6 +54,7 @@ public class EssentialsBlocks{
 		brazier = new Brazier();
 		slottedChest = new SlottedChest();
 		sortingHopper = new SortingHopper();
+		speedHopper = new SpeedHopper();
 		candleLilyPad = new CandleLilyPad();
 		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.getDefaultState().withProperty(BlockCrops.AGE, 0));
 		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.getDefaultState().withProperty(BlockCrops.AGE, 0));

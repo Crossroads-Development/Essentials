@@ -152,12 +152,7 @@ public class SlottedChestContainer extends Container{
 					ItemStack itemstack10 = transferStackInSlot(player, slotId);
 
 					if(!itemstack10.isEmpty()){
-//						Item item = itemstack10.getItem();
 						itemstack = itemstack10.copy();
-//
-//						if(slot6.getStack().getItem() == item){
-//							retrySlotClick(slotId, dragType, true, player);
-//						}
 					}
 				}
 			}else{

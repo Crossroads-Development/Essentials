@@ -42,15 +42,19 @@ public class SortingHopper extends BlockContainer{
 	private static final AxisAlignedBB WEST_AABB = new AxisAlignedBB(0.875D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D);
 	private static final AxisAlignedBB EAST_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.125D, 1.0D, 1.0D);
 
-	protected SortingHopper(){
-		super(Material.IRON);
-		String name = "sorting_hopper";
-		setTranslationKey(name);
-		setRegistryName(name);
+	protected SortingHopper(Material mat){
+		super(mat);
 		setHardness(2);
 		setSoundType(SoundType.METAL);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
 		setDefaultState(getDefaultState().withProperty(FACING, EnumFacing.DOWN).withProperty(ENABLED, true));
+	}
+
+	protected SortingHopper(){
+		this(Material.IRON);
+		String name = "sorting_hopper";
+		setTranslationKey(name);
+		setRegistryName(name);
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}

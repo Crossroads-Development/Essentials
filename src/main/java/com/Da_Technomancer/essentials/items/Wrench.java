@@ -16,6 +16,7 @@ public class Wrench extends Item{
 		if(EssentialsConfig.getConfigBool(EssentialsConfig.addWrench, false)){
 			setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
 		}
+		setMaxStackSize(1);
 		EssentialsItems.toRegister.add(this);
 		EssentialsItems.itemAddQue(this);
 	}

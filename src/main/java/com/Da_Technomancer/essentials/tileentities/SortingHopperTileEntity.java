@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.tileentities;
 
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.SortingHopper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -31,7 +30,7 @@ import javax.annotation.Nullable;
 
 public class SortingHopperTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
 
-	private final ItemStack[] inventory = new ItemStack[5];
+	protected final ItemStack[] inventory = new ItemStack[5];
 	private int transferCooldown = -1;
 	private EnumFacing dir = null;
 
@@ -46,10 +45,10 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		dir = null;
 	}
 
-	private EnumFacing getDir(){
+	protected EnumFacing getDir(){
 		if(dir == null){
 			IBlockState state = world.getBlockState(pos);
-			if(state.getBlock() != EssentialsBlocks.sortingHopper){
+			if(!(state.getBlock() instanceof SortingHopper)){
 				return EnumFacing.DOWN;
 			}
 			dir = state.getValue(SortingHopper.FACING);
@@ -67,7 +66,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		if(!world.isRemote && --transferCooldown <= 0){
 			transferCooldown = 0;
 			IBlockState state = world.getBlockState(pos);
-			if(state.getBlock() == EssentialsBlocks.sortingHopper && state.getValue(SortingHopper.ENABLED)){
+			if(state.getBlock() instanceof SortingHopper && state.getValue(SortingHopper.ENABLED)){
 				boolean flag = false;
 
 				if(!isFull()){
@@ -233,7 +232,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		return true;
 	}
 
-	private boolean isFull(){
+	protected boolean isFull(){
 		for(ItemStack itemstack : inventory){
 			if(itemstack.isEmpty() || itemstack.getCount() != itemstack.getMaxStackSize()){
 				return false;
@@ -243,7 +242,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		return true;
 	}
 
-	private boolean transferItemsOut(){
+	protected boolean transferItemsOut(){
 		EnumFacing facing = getDir();
 		TileEntity te = world.getTileEntity(pos.offset(facing));
 
@@ -268,7 +267,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		return false;
 	}
 
-	private boolean transferItemsIn(){
+	protected boolean transferItemsIn(){
 		TileEntity fromTE = world.getTileEntity(pos.offset(EnumFacing.UP));
 
 		//Transfer from IItemHandler
@@ -320,7 +319,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		}
 	}
 
-	private static boolean canCombine(ItemStack stack1, ItemStack stack2){
+	protected static boolean canCombine(ItemStack stack1, ItemStack stack2){
 		return stack1.getItem() == stack2.getItem() && stack1.getMetadata() == stack2.getMetadata() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2);
 	}
 
@@ -347,7 +346,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		markDirty();
 	}
 
-	private final ItemHandler handler = new ItemHandler();
+	protected ItemHandler handler = new ItemHandler();
 
 	@Override
 	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing){
@@ -374,7 +373,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		return "minecraft:hopper";
 	}
 
-	private class ItemHandler implements IItemHandler{
+	protected class ItemHandler implements IItemHandler{
 
 		@Override
 		public int getSlots(){

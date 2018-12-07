@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "essentials:items/sorting_hopper"
+        "layer0": "essentials:items/speed_hopper"
     }
 }
