@@ -46,6 +46,9 @@ public class EssentialsCrafting{
 		}
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "# #", "#&#", " # ", '#', "ingotCopper", '&', "chestWood"));
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.sortingHopper, 1), "#&#", "###", '#', "ingotCopper", '&', "chestWood"));
+		//Speed Hopper
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.speedHopper, 1), "# #", "#&#", " # ", '#', "ingotGold", '&', "chestWood"));
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.speedHopper, 1), "#&#", "###", '#', "ingotGold", '&', "chestWood"));
 		// Candle Lilypad
 		toRegister.add(new ShapelessOreRecipe(null, new ItemStack(EssentialsBlocks.candleLilyPad), Blocks.WATERLILY, "torch"));
 		//Fertile Soil
