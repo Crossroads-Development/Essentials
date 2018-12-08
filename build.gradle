@@ -8,7 +8,7 @@ buildscript {
 	}
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-version = "1.13.0-2.0.0_BETA_2-SPEED-HOPPER"
+version = "1.13.0-2.0.0_BETA_3-SLOTTED-CHEST"
 group = "com.Da_Technomancer.essentials"
 archivesBaseName = "essentials"
 
