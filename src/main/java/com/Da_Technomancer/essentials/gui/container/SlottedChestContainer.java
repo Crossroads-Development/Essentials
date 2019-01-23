@@ -50,19 +50,9 @@ public class SlottedChestContainer extends Container{
 		dragEvent = 0;
 		dragSlots.clear();
 	}
-	/**
-	 * 0 = new dragEvent
-	 * 1 = ongoing dragEvent
-	 * 2 = finishing dragEvent
-	 */
-	private int dragEvent;
 
+	private int dragEvent;
 	private final Set<Slot> dragSlots = Sets.newHashSet();
-	/**
-	 * 0 = valid, equally distribute items
-	 * 1 = valid, stacksize 1
-	 * 2 = valid in creative, full stacks
-	 */
 	private int dragMode = -1;
 
 	/**
@@ -74,36 +64,23 @@ public class SlottedChestContainer extends Container{
 		InventoryPlayer inventoryplayer = player.inventory;
 
 		if(clickTypeIn == ClickType.QUICK_CRAFT){
-			// SHIFT + LEFT CLICK?
 			int i = this.dragEvent;
 			dragEvent = getDragEvent(dragType);
 
 			if((i != 1 || this.dragEvent != 2) && i != this.dragEvent){
-				// basicly lastSavedDragEvent(i) 0 and thisSavedDragEvent(dragEvent) 1
 				resetDrag();
 			}else if(inventoryplayer.getItemStack().isEmpty()){
-				// hand is empty?
-				if(clickTypeIn == ClickType.QUICK_MOVE){
-					Slot slot9 = inventorySlots.get(slotId);
-					if(te.isInventoryType(slot9.inventory) && !slot9.getHasStack()){
-						te.cleanPreset(slot9.getSlotIndex());
-						slot9.onSlotChanged();//change this maybe? don't know if it works as intended
-					}
-				}
 				resetDrag();
 			}else if(this.dragEvent == 0){
-				//new dragEvent
 				dragMode = extractDragMode(dragType);
 
 				if(isValidDragMode(dragMode, player)){
 					dragEvent = 1;
 					dragSlots.clear();
 				}else{
-					//invalid dragMode
 					resetDrag();
 				}
 			}else if(this.dragEvent == 1){
-				//ongoing dragEvent
 				Slot slot = inventorySlots.get(slotId);
 				ItemStack itemstack1 = inventoryplayer.getItemStack();
 
@@ -111,15 +88,14 @@ public class SlottedChestContainer extends Container{
 					dragSlots.add(slot);
 				}
 			}else if(dragEvent == 2){
-				//finishing dragEvent
 				if(!dragSlots.isEmpty()){
 					ItemStack itemstack5 = inventoryplayer.getItemStack().copy();
 					int l = inventoryplayer.getItemStack().getCount();
 
 					for(Slot slot1 : dragSlots){
 						ItemStack itemstack2 = inventoryplayer.getItemStack();
-						//adding dragMode 1 to this as i changed it to leave 0 stacksize, so we shouldn't be able to run out
-						if(slot1 != null && canAddItemToSlotLocked(slot1, itemstack2, true) && slot1.isItemValid(itemstack2) && (this.dragMode == 1 || this.dragMode == 2 || itemstack2.getCount() >= dragSlots.size()) && canDragIntoSlot(slot1)){
+
+						if(slot1 != null && canAddItemToSlotLocked(slot1, itemstack2, true) && slot1.isItemValid(itemstack2) && (this.dragMode == 2 || itemstack2.getCount() >= dragSlots.size()) && canDragIntoSlot(slot1)){
 							ItemStack itemstack3 = itemstack5.copy();
 							int j = slot1.getHasStack() ? slot1.getStack().getCount() : 0;
 							computeStackSize(dragSlots, dragMode, itemstack3, j);
@@ -148,25 +124,20 @@ public class SlottedChestContainer extends Container{
 				resetDrag();
 			}
 		}else if(this.dragEvent != 0){
-			// otherwise continueing or finishing a dragEvent?
 			resetDrag();
 		}else if((clickTypeIn == ClickType.PICKUP || clickTypeIn == ClickType.QUICK_MOVE) && (dragType == 0 || dragType == 1)){
-			// starting dragmode 0 or 1?
 			if(slotId == -999){
-				//clicking slot -999 ? clicking outside of any slots?
 				if(!inventoryplayer.getItemStack().isEmpty()){
-					//hand not empty
 					if(dragType == 0){
 						player.dropItem(inventoryplayer.getItemStack(), true);
 						inventoryplayer.setItemStack(ItemStack.EMPTY);
-					}//drop stack
+					}
 
 					if(dragType == 1){
 						player.dropItem(inventoryplayer.getItemStack().splitStack(1), true);
-					}//drop single item
+					}
 				}
 			}else if(clickTypeIn == ClickType.QUICK_MOVE){
-				// shift letfclick?
 				if(slotId < 0){
 					return ItemStack.EMPTY;
 				}
@@ -185,7 +156,6 @@ public class SlottedChestContainer extends Container{
 					}
 				}
 			}else{
-				//aka if(clickTypeIn == ClickType.PICKUP) aka left click
 				if(slotId < 0){
 					return ItemStack.EMPTY;
 				}
@@ -316,7 +286,7 @@ public class SlottedChestContainer extends Container{
 							te.lockedInv[slot5.getSlotIndex()].setCount(1);
 							te.filterChanged();
 						}
-
+						
 						if(!inventoryplayer.addItemStackToInventory(itemstack12)){
 							player.dropItem(itemstack12, true);
 						}
@@ -383,26 +353,6 @@ public class SlottedChestContainer extends Container{
 		}
 
 		return itemstack;
-	}
-
-	public static void computeStackSize(Set<Slot> dragSlotsIn, int dragModeIn, ItemStack stack, int slotStackSize)
-	{
-		switch (dragModeIn)
-		{
-			case 0:
-				stack.setCount((int) Math.floor((float) stack.getCount() / (float)dragSlotsIn.size()));
-				break;
-
-			case 1:
-				//changing this to 0 from 1 as the RIGHT_CLICK behavior
-				stack.setCount(0);
-				break;
-
-			case 2:
-				stack.setCount(stack.getItem().getItemStackLimit(stack));
-		}
-
-		stack.grow(slotStackSize);
 	}
 
 	/** Take a stack from the specified inventory slot.
