@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class EssentialsTileEntity{
@@ -15,6 +16,7 @@ public class EssentialsTileEntity{
 		register(PortExtenderTileEntity.class, "port_extender");
 		register(BasicItemSplitterTileEntity.class, "basic_item_splitter");
 		register(ItemSplitterTileEntity.class, "item_splitter");
+		register(FluidShifterTileEntity.class, "fluid_splitter");
 	}
 
 	/**
@@ -22,7 +24,6 @@ public class EssentialsTileEntity{
 	 * @param ID Should be lower-case.
 	 */
 	private static void register(Class<? extends TileEntity> clazz, String ID){
-		GameRegistry.registerTileEntity(clazz, Essentials.MODID + ':' + ID);
-		//TODO switch over once the above method is removed GameRegistry.registerTileEntity(clazz, new ResourceLocation(Essentials.MODID, ID));
+		GameRegistry.registerTileEntity(clazz, new ResourceLocation(Essentials.MODID, ID));
 	}
 }

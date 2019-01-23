@@ -91,9 +91,13 @@ public class EssentialsCrafting{
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.brazier, 1), "###", " $ ", " $ ", '$', "stoneAndesitePolished", '#', "stoneAndesite"));
 		// Item Chute
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.itemChute, 6), "I I", "ISI", "I I", 'I', "ingotIron", 'S', "cobblestone"));
-		// Item Chute Port
+		// Item Shifter
 		toRegister.add(new ShapelessOreRecipe(null, new ItemStack(EssentialsBlocks.itemShifter, 1), EssentialsBlocks.itemChute, Blocks.DROPPER));
-
+		//Fluid Shifter
+		if(OreDictionary.getOres("ingotBronze").isEmpty()){
+			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fluidShifter, 1), "*|*", "*D*", '*', "ingotIron", '|', EssentialsBlocks.itemChute, 'D', Blocks.DROPPER));
+		}
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fluidShifter, 1), "*|*", "*D*", '*', "ingotBronze", '|', EssentialsBlocks.itemChute, 'D', Blocks.DROPPER));
 		//Multi-Piston
 		toRegister.add(new ShapedOreRecipe(null, EssentialsBlocks.multiPiston, "***", "$#$", "$$$", '*', "ingotTin", '$', "ingotBronze", '#', Blocks.PISTON));
 		//Sticky Multi-Piston

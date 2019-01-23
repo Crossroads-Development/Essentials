@@ -29,6 +29,7 @@ public class EssentialsBlocks{
 	public static CandleLilyPad candleLilyPad;
 	public static ItemChute itemChute;
 	public static ItemShifter itemShifter;
+	public static FluidShifter fluidShifter;
 	public static MultiPistonExtend multiPistonExtend;
 	public static MultiPistonExtend multiPistonExtendSticky;
 	public static MultiPistonBase multiPiston;
@@ -70,6 +71,7 @@ public class EssentialsBlocks{
 		portExtender = new PortExtender();
 		itemChute = new ItemChute();
 		itemShifter = new ItemShifter();
+		fluidShifter = new FluidShifter();
 		multiPistonExtend = new MultiPistonExtend(false);
 		multiPistonExtendSticky = new MultiPistonExtend(true);
 		multiPiston = new MultiPistonBase(false);

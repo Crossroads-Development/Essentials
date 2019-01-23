@@ -4,7 +4,7 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
-import com.Da_Technomancer.essentials.tileentities.ItemShifterTileEntity;
+import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
@@ -26,11 +26,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class ItemShifter extends BlockContainer{
+public class FluidShifter extends BlockContainer{
 
-	protected ItemShifter(){
+	protected FluidShifter(){
 		super(Material.IRON);
-		String name = "item_shifter";
+		String name = "fluid_shifter";
 		setTranslationKey(name);
 		setRegistryName(name);
 		setHardness(2);
@@ -42,7 +42,7 @@ public class ItemShifter extends BlockContainer{
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta){
-		return new ItemShifterTileEntity();
+		return new FluidShifterTileEntity();
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class ItemShifter extends BlockContainer{
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState blockstate){
-		InventoryHelper.dropInventoryItems(world, pos, (ItemShifterTileEntity) world.getTileEntity(pos));
+		InventoryHelper.dropInventoryItems(world, pos, (FluidShifterTileEntity) world.getTileEntity(pos));
 		super.breakBlock(world, pos, blockstate);
 	}
 
@@ -68,11 +68,11 @@ public class ItemShifter extends BlockContainer{
 			if(isWrench){
 				worldIn.setBlockState(pos, state.cycleProperty(EssentialsProperties.FACING));
 				TileEntity te = worldIn.getTileEntity(pos);
-				if(te instanceof ItemShifterTileEntity){
-					((ItemShifterTileEntity) te).refreshCache();
+				if(te instanceof FluidShifterTileEntity){
+					((FluidShifterTileEntity) te).refreshCache();
 				}
 			}else{
-				playerIn.openGui(Essentials.instance, EssentialsGuiHandler.ITEM_SHIFTER_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
+				playerIn.openGui(Essentials.instance, EssentialsGuiHandler.FLUID_SHIFTER_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
 			}
 		}
 		return true;
@@ -91,7 +91,7 @@ public class ItemShifter extends BlockContainer{
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Ejects contained items out the faced side, moved into inventories or dropped onto the ground");
+		tooltip.add("Ejects contained fluid out the faced side into an attached inventory");
 		tooltip.add("Can 'push' items through a line of up to " + EssentialsConfig.getConfigInt(EssentialsConfig.itemChuteRange, true) + " Transport Chutes");
 	}
 
@@ -113,8 +113,8 @@ public class ItemShifter extends BlockContainer{
 	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(te instanceof ItemShifterTileEntity){
-			((ItemShifterTileEntity) te).refreshCache();
+		if(te instanceof FluidShifterTileEntity){
+			((FluidShifterTileEntity) te).refreshCache();
 		}
 	}
 }
