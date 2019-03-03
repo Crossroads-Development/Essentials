@@ -1,13 +1,14 @@
 package com.Da_Technomancer.essentials;
 
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-/** This class is for holding a list of changes being made to a world, but that haven't actually happened yet. 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+/**
+ * This class is for holding a list of changes being made to a world, but that haven't actually happened yet.
  * It is able to return the blockstate for a given position as if these changes actually happened. Finally it can do all the saved changes. 
  * This is for making large changes to the world step by step without a huge number of unnecessary block updates.
  * 
@@ -16,7 +17,7 @@ import net.minecraft.world.World;
 public class WorldBuffer{
 	
 	private final World worldObj;
-	private final LinkedHashMap<BlockPos, IBlockState> memory = new LinkedHashMap<>();
+	private final HashMap<BlockPos, IBlockState> memory = new HashMap<>();
 	
 	public WorldBuffer(World worldObj){
 		this.worldObj = worldObj;
@@ -42,7 +43,7 @@ public class WorldBuffer{
 		return worldObj.getBlockState(pos);
 	}
 
-	public void doChanges(){
+	public void applyChanges(){
 		for(Entry<BlockPos, IBlockState> ent : memory.entrySet()){
 			if(worldObj.getBlockState(ent.getKey()) != ent.getValue()){
 				worldObj.setBlockState(ent.getKey(), ent.getValue());

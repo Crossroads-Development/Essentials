@@ -4,7 +4,6 @@ import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.WorldBuffer;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
@@ -14,11 +13,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -27,22 +24,23 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.LinkedHashSet;
 
-/**Notable differences from a normal piston include:
+/**
+ * Notable differences from a normal piston include:
  * 15 block head range, distance controlled by signal strength,
  * No quasi-connectivity,
  * Redstone can be placed on top of the piston,
- * Hit box does not change when extended,
  * Piston extension and retraction is instant, no 2-tick delay or rendering of block movement.
  * Can move up to 64 blocks at a time instead of 12
  */
 public class MultiPistonBase extends Block{
 
+	private static final int DIST_LIMIT = 15;
+	private static final int PUSH_LIMIT = 64;
 	private final boolean sticky;
+
 
 	protected MultiPistonBase(boolean sticky){
 		super(Material.PISTON);
@@ -52,7 +50,7 @@ public class MultiPistonBase extends Block{
 		this.sticky = sticky;
 		setHardness(0.5F);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		setDefaultState(getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.NORTH).withProperty(EssentialsProperties.REDSTONE_BOOL, false));
+		setDefaultState(getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.NORTH).withProperty(EssentialsProperties.EXTENDED, false));
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}
@@ -64,11 +62,10 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand), worldIn.isRemote) && getExtension(worldIn, pos, state.getValue(EssentialsProperties.FACING)) == 0){
+		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand), worldIn.isRemote) && !state.getValue(EssentialsProperties.EXTENDED)){
 			if(!worldIn.isRemote){
 				IBlockState endState = state.cycleProperty(EssentialsProperties.FACING);
 				worldIn.setBlockState(pos, endState);
-				checkRedstone(worldIn, pos, endState.getValue(EssentialsProperties.FACING));
 			}
 			return true;
 		}
@@ -77,230 +74,40 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	public boolean isOpaqueCube(IBlockState state){
-		return !state.getValue(EssentialsProperties.REDSTONE_BOOL);
+		return !state.getValue(EssentialsProperties.EXTENDED);
 	}
 
 	@Override
 	public boolean isFullCube(IBlockState state){
-		return !state.getValue(EssentialsProperties.REDSTONE_BOOL);
+		return !state.getValue(EssentialsProperties.EXTENDED);
+	}
+
+	@Override
+	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+		return side != state.getValue(EssentialsProperties.FACING) || !state.getValue(EssentialsProperties.EXTENDED);
 	}
 
 	@Override
 	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face){
-		return face == state.getValue(EssentialsProperties.FACING).getOpposite() ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+		return face == state.getValue(EssentialsProperties.FACING) && state.getValue(EssentialsProperties.EXTENDED) ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
 	}
 
-	protected void safeBreak(World worldIn, BlockPos pos){
-		if(safeToBreak){
-			worldIn.destroyBlock(pos, true);
-		}
-	}
-
-	private boolean safeToBreak = true;
+	private static final AxisAlignedBB[] BB = new AxisAlignedBB[] {new AxisAlignedBB(0, 5D / 16D, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 11D / 16D, 1), new AxisAlignedBB(0, 0, 5D / 16D, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 1, 11D / 16D), new AxisAlignedBB(5D / 16D, 0, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 11D / 16D, 1, 1)};
 
 	@Override
-	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand){
-		checkRedstone(worldIn, pos, state.getValue(EssentialsProperties.FACING));
-	}
-
-	private void checkRedstone(World worldIn, BlockPos pos, EnumFacing dir){
-		int i = Math.max(worldIn.getRedstonePower(pos.down(), EnumFacing.DOWN), Math.max(worldIn.getRedstonePower(pos.up(), EnumFacing.UP), Math.max(worldIn.getRedstonePower(pos.east(), EnumFacing.EAST), Math.max(worldIn.getRedstonePower(pos.west(), EnumFacing.WEST), Math.max(worldIn.getRedstonePower(pos.north(), EnumFacing.NORTH), worldIn.getRedstonePower(pos.south(), EnumFacing.SOUTH))))));
-		if(i > 0){
-			if(!worldIn.getBlockState(pos).getValue(EssentialsProperties.REDSTONE_BOOL)){
-				worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(EssentialsProperties.REDSTONE_BOOL, true));
-			}
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+		if(state.getValue(EssentialsProperties.EXTENDED)){
+			return BB[state.getValue(EssentialsProperties.FACING).getIndex()];
 		}else{
-			if(worldIn.getBlockState(pos).getValue(EssentialsProperties.REDSTONE_BOOL)){
-				worldIn.setBlockState(pos, worldIn.getBlockState(pos).withProperty(EssentialsProperties.REDSTONE_BOOL, false));
-			}
+			return FULL_BLOCK_AABB;
 		}
-
-		int prev = getExtension(worldIn, pos, dir);
-		if(prev != i && prev != -1){
-			safeToBreak = false;
-			setExtension(worldIn, pos, dir, i, prev);
-			safeToBreak = true;
-			if(!worldIn.isBlockTickPending(pos, this)){
-				worldIn.updateBlockTick(pos, this, 1, -1);
-			}
-		}
-	}
-
-	private int getExtension(World worldIn, BlockPos pos, EnumFacing dir){
-		if(!safeToBreak){
-			return -1;
-		}
-		final Block GOAL = sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend;
-		for(int i = 1; i <= 15; i++){
-			if(worldIn.getBlockState(pos.offset(dir, i)).getBlock() != GOAL || worldIn.getBlockState(pos.offset(dir, i)).getValue(EssentialsProperties.FACING) != dir){
-				return i - 1;
-			}
-		}
-		return 15;
-	}
-
-	private void setExtension(World worldIn, BlockPos pos, EnumFacing dir, int distance, int prev){
-		if(prev == distance){
-			return;
-		}
-
-		final WorldBuffer world = new WorldBuffer(worldIn);
-		final Block GOAL = sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend;
-		for(int i = 1; i <= prev; i++){
-			if(world.getBlockState(pos.offset(dir, i)).getBlock() == GOAL && world.getBlockState(pos.offset(dir, i)).getValue(EssentialsProperties.FACING) == dir){
-				world.addChange(pos.offset(dir, i), Blocks.AIR.getDefaultState());
-			}
-		}
-
-		if(sticky && prev > distance){
-			for(int i = prev + 1; i > distance + 1; i--){
-				ArrayList<BlockPos> list = new ArrayList<>();
-
-				if(canPush(world.getBlockState(pos.offset(dir, i)), false)){
-					if(propogate(list, world, pos.offset(dir, i), dir.getOpposite(), null)){
-						break;
-					}else{
-						for(int index = list.size() - 1; index >= 0; --index){
-							BlockPos moving = list.get(index);
-
-							if(world.getBlockState(moving.offset(dir.getOpposite())).getPushReaction() == EnumPushReaction.DESTROY){
-								world.getBlockState(moving.offset(dir.getOpposite())).getBlock().dropBlockAsItem(worldIn, moving.offset(dir.getOpposite()), world.getBlockState(moving.offset(dir.getOpposite())), 0);
-							}
-							world.addChange(moving.offset(dir.getOpposite()), world.getBlockState(moving));
-							world.addChange(moving, Blocks.AIR.getDefaultState());
-						}
-					}
-				}
-			}
-		}
-
-		if(distance == 0){
-			if(world.hasChanges()){
-				worldIn.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_PISTON_CONTRACT, SoundCategory.BLOCKS, .5F, (worldIn.rand.nextFloat() * .15F) + .6F);
-			}
-			world.doChanges();
-			return;
-		}
-
-		for(int i = 1; i <= distance; i++){
-			ArrayList<BlockPos> list = new ArrayList<>();
-
-			if(canPush(world.getBlockState(pos.offset(dir, i)), false)){
-				if(propogate(list, world, pos.offset(dir, i), dir, null)){
-					if(world.hasChanges()){
-						worldIn.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_PISTON_EXTEND, SoundCategory.BLOCKS, .5F, (worldIn.rand.nextFloat() * .25F) + .6F);
-					}
-					world.doChanges();
-					return;
-				}
-			}else if(!canPush(world.getBlockState(pos.offset(dir, i)), true)){
-				if(world.hasChanges()){
-					worldIn.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_PISTON_EXTEND, SoundCategory.BLOCKS, .5F, (worldIn.rand.nextFloat() * .25F) + .6F);
-				}
-				world.doChanges();
-				return;
-			}
-
-			if(list.isEmpty()){
-				for(Entity ent : getEntitiesMultiChunk(FULL_BLOCK_AABB.offset(pos.offset(dir, i)), worldIn)){
-					if(ent.getPushReaction() != EnumPushReaction.IGNORE){
-						ent.setPositionAndUpdate(ent.posX + (double) dir.getXOffset(), ent.posY + (double) dir.getYOffset(), ent.posZ + (double) dir.getZOffset());
-					}
-				}
-			}else{
-				for(int index = list.size() - 1; index >= 0; --index){
-					BlockPos moving = list.get(index);
-
-					if(world.getBlockState(moving.offset(dir)).getPushReaction() == EnumPushReaction.DESTROY){
-						worldIn.destroyBlock(moving.offset(dir), true);
-					}
-					world.addChange(moving.offset(dir), world.getBlockState(moving));
-					world.addChange(moving, Blocks.AIR.getDefaultState());
-					AxisAlignedBB box;
-					//Due to the fact that the block isn't actually at that position (WorldBuffer), exceptions have to be caught.
-					try{
-						box = world.getBlockState(moving.offset(dir)).getCollisionBoundingBox(worldIn, pos);
-					}catch(Exception e){
-						box = FULL_BLOCK_AABB;
-					}
-					box = box.offset(moving.offset(dir));
-					for(Entity ent : getEntitiesMultiChunk(box, worldIn)){
-						if(ent.getPushReaction() != EnumPushReaction.IGNORE){
-							ent.setPositionAndUpdate(ent.posX + (double) dir.getXOffset(), ent.posY + (double) dir.getYOffset(), ent.posZ + (double) dir.getZOffset());
-							if(world.getBlockState(moving.offset(dir)).getBlock() == Blocks.SLIME_BLOCK){
-								ent.addVelocity(dir.getXOffset(), dir.getYOffset(), dir.getZOffset());
-								ent.velocityChanged = true;
-							}
-						}
-					}
-				}
-			}
-
-			for(int j = i; j >= 1; j--){
-				if(world.getBlockState(pos.offset(dir, j)).getPushReaction() == EnumPushReaction.DESTROY){
-					worldIn.destroyBlock(pos.offset(dir, j), true);
-				}
-				world.addChange(pos.offset(dir, j), GOAL.getDefaultState().withProperty(EssentialsProperties.FACING, dir).withProperty(EssentialsProperties.HEAD, i == j));
-			}
-		}
-		if(world.hasChanges()){
-			worldIn.playSound(null, pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_PISTON_EXTEND, SoundCategory.BLOCKS, .5F, (worldIn.rand.nextFloat() * .25F) + .6F);
-		}
-		world.doChanges();
-	}
-
-	private static boolean canPush(IBlockState state, boolean blocking){
-		if(blocking){
-			return (state.getBlock() == Blocks.PISTON || state.getBlock() == Blocks.STICKY_PISTON) ? !state.getValue(BlockPistonBase.EXTENDED) : state.getPushReaction() != EnumPushReaction.BLOCK && !state.getBlock().hasTileEntity(state) && state.getBlock() != Blocks.OBSIDIAN && state.getBlockHardness(null, null) >= 0;
-		}else{
-			return (state.getBlock() == Blocks.PISTON || state.getBlock() == Blocks.STICKY_PISTON) ? !state.getValue(BlockPistonBase.EXTENDED) : state.getPushReaction() == EnumPushReaction.NORMAL && state.getMaterial() != Material.AIR && !state.getBlock().hasTileEntity(state) && state.getBlock() != Blocks.OBSIDIAN && state.getBlockHardness(null, null) >= 0;
-		}
-	}
-
-	private static final int PUSH_LIMIT = 64;
-
-	/**
-	 * Used recursively to fill a list with the blocks to be moved. Returns true if there is a problem that stops the movement.
-	 */
-	private static boolean propogate(ArrayList<BlockPos> list, WorldBuffer buf, BlockPos pos, EnumFacing dir, @Nullable BlockPos forward){
-		if(list.contains(pos)){
-			return false;
-		}
-		if(!canPush(buf.getBlockState(pos.offset(dir)), true)){
-			return true;
-		}
-		if(forward == null){
-			list.add(pos);
-		}else{
-			list.add(list.indexOf(forward), pos);
-		}
-
-		if(buf.getBlockState(pos).getBlock() == Blocks.SLIME_BLOCK){
-			//The back has to be checked before the sides or the list ordering gets messed up.
-			//Likewise, the sides have to be sent before the front
-			if(canPush(buf.getBlockState(pos.offset(dir.getOpposite())), false)){
-				if(list.size() > PUSH_LIMIT || propogate(list, buf, pos.offset(dir.getOpposite()), dir, pos)){
-					return true;
-				}
-			}
-
-			for(EnumFacing checkDir : EnumFacing.VALUES){
-				if(checkDir != dir && checkDir != dir.getOpposite()){
-					if(canPush(buf.getBlockState(pos.offset(checkDir)), false)){
-						if(list.size() > PUSH_LIMIT || propogate(list, buf, pos.offset(checkDir), dir, pos)){
-							return true;
-						}
-					}
-				}
-			}
-		}
-
-		return canPush(buf.getBlockState(pos.offset(dir)), false) && (list.size() > PUSH_LIMIT || propogate(list, buf, pos.offset(dir), dir, null));
 	}
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state){
-		setExtension(world, pos, state.getValue(EssentialsProperties.FACING), 0, getExtension(world, pos, state.getValue(EssentialsProperties.FACING)));
+		if(state.getValue(EssentialsProperties.EXTENDED)){
+			world.setBlockToAir(pos.offset(state.getValue(EssentialsProperties.FACING)));
+		}
 	}
 
 	@Override
@@ -309,41 +116,264 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
+	public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+		return true;
+	}
+
+	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
-		if(worldIn.isRemote){
+		if(worldIn.isRemote || changingWorld){
 			return;
 		}
-		checkRedstone(worldIn, pos, state.getValue(EssentialsProperties.FACING));
+		activate(worldIn, pos, state);
 	}
 
 	@Override
 	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, EssentialsProperties.FACING, EssentialsProperties.REDSTONE_BOOL);
+		return new BlockStateContainer(this, EssentialsProperties.FACING, EssentialsProperties.EXTENDED);
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta & 7)).withProperty(EssentialsProperties.REDSTONE_BOOL, (meta & 8) == 8);
+		return this.getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta & 7)).withProperty(EssentialsProperties.EXTENDED, (meta & 8) == 8);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state){
-		return state.getValue(EssentialsProperties.FACING).getIndex() + (state.getValue(EssentialsProperties.REDSTONE_BOOL) ? 8 : 0);
+		return state.getValue(EssentialsProperties.FACING).getIndex() + (state.getValue(EssentialsProperties.EXTENDED) ? 8 : 0);
 	}
 
 	@Override
 	public EnumPushReaction getPushReaction(IBlockState state){
-		return state.getValue(EssentialsProperties.REDSTONE_BOOL) ? EnumPushReaction.BLOCK : EnumPushReaction.NORMAL;
+		//If extended, this can not be moved. Otherwise it can be moved
+		return state.getValue(EssentialsProperties.EXTENDED) ? EnumPushReaction.BLOCK : EnumPushReaction.NORMAL;
 	}
 
+	//While true, a multipiston is actively changing the world around it and should ignore incoming block updates
+	protected static boolean changingWorld = false;
+
+	private void activate(World world, BlockPos pos, IBlockState state){
+		int target = 0;
+
+		EnumFacing facing = state.getValue(EssentialsProperties.FACING);
+
+		for(EnumFacing dir : EnumFacing.VALUES){
+			//Don't measure redstone power from the front, as otherwise we end up in an infinite loop just by placing a redstone block there
+			if(dir != facing){
+				target = Math.max(target, world.getRedstonePower(pos.offset(dir), dir));
+			}
+		}
+
+		//A fairly common bug in mods and newly added vanilla blocks is ways to get redstone signal strengths over 15.
+		target = Math.min(target, DIST_LIMIT);
+
+		if(facing == EnumFacing.UP){
+			//Account for world height limits when pointed up
+			target = Math.min(target, world.getHeight() - pos.getY() - 1);
+		}else if(facing == EnumFacing.DOWN){
+			//Check for world floor
+			target = Math.min(target, pos.getY());
+		}
+
+		int currentExtension = 0;
+
+		if(state.getValue(EssentialsProperties.EXTENDED)){
+			BlockPos checkPos = pos.offset(facing);
+			IBlockState curState = world.getBlockState(checkPos);
+			Block tarBlock = sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend;
+
+			//Find the current extension
+			//The distance limit check is in case people mess around with setblock commands
+			EnumFacing.AxisDirection dir;
+			while(curState.getBlock() == tarBlock && curState.getValue(EssentialsProperties.AXIS) == facing.getAxis() && (dir = MultiPistonExtend.getDirFromHead(curState.getValue(EssentialsProperties.HEAD))) != facing.getOpposite().getAxisDirection() && currentExtension != DIST_LIMIT){
+				currentExtension++;
+				checkPos = checkPos.offset(facing);
+				curState = world.getBlockState(checkPos);
+				if(dir != null){
+					//Sanity check to make sure we don't have an invalid extension line
+					break;
+				}
+			}
+		}
+
+		if(currentExtension == target){
+			//No work needs to be done
+			return;
+		}
+
+		changingWorld = true;
+
+		WorldBuffer wBuf = new WorldBuffer(world);
+
+		if(currentExtension < target){
+			for(int i = currentExtension; i < target; i++){
+				if(shiftExtension(wBuf, pos, facing, i, true)){
+					target = i - 1;
+					break;
+				}
+			}
+		}else{
+			for(int i = currentExtension; i > target; i--){
+				shiftExtension(wBuf, pos, facing, i, false);
+			}
+		}
+		wBuf.applyChanges();
+
+
+		if(currentExtension == 0 ^ target == 0){
+			world.setBlockState(pos, state.withProperty(EssentialsProperties.EXTENDED, target != 0));
+		}
+		changingWorld = false;
+	}
+
+	/**
+	 * Adjusts the extension of the multipiston by one block in a WorldBuffer, and moves entities in the path
+	 * @param world The WorldBuffer to read/write changes from
+	 * @param pos The multipiston position
+	 * @param facing The multipiston facing
+	 * @param currentExtension The current extension of the multipiston (in the WorldBuffer)
+	 * @param out Increase the extension if true, decrease otherwise
+	 * @return true if this action was blocked
+	 */
+	private boolean shiftExtension(WorldBuffer world, BlockPos pos, EnumFacing facing, int currentExtension, boolean out){
+		EnumFacing moveDir = out ? facing : facing.getOpposite();
+		LinkedHashSet<BlockPos> movedBlocks = new LinkedHashSet<>(PUSH_LIMIT + 1);
+		BlockPos prevHeadPos = pos.offset(facing, currentExtension);
+		Block extendBlock = sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend;
+		if(!out){
+			//Temporarily add the piston head to prevent it blocking movement paths
+			movedBlocks.add(prevHeadPos);
+		}
+		//Only build a moveset if we are moving out or we are retracting with a sticky head
+		if((out || sticky) && buildMoveset(pos, world, prevHeadPos.offset(facing), moveDir, movedBlocks, !out)){
+			//Something is in the way
+			if(!out){
+				//If retracting, leave attached blocks behind but finish retracting
+				movedBlocks.clear();
+			}else{
+				//If extending, stop here
+				return true;
+			}
+		}
+		if(!out){
+			movedBlocks.remove(prevHeadPos);
+		}
+
+		//Change the current head
+		if(currentExtension != 0){
+			world.addChange(prevHeadPos, out ? extendBlock.getDefaultState().withProperty(EssentialsProperties.AXIS, facing.getAxis()) : Blocks.AIR.getDefaultState());
+		}
+
+		for(BlockPos changePos : movedBlocks){
+
+			//Move blocks forward
+			IBlockState prevState = world.getBlockState(changePos);
+			if(prevState.getPushReaction() == EnumPushReaction.DESTROY){
+				world.getWorld().destroyBlock(changePos, true);//Destroy the block in the actual world to drop items
+			}else{
+				world.addChange(changePos.offset(moveDir), prevState);
+			}
+			world.addChange(changePos, Blocks.AIR.getDefaultState());
+
+			//Find and move entities
+			moveEnts(world.getWorld(), changePos, moveDir, isStickyBlock(prevState));
+		}
+
+		//Find and move entities at the piston head itself
+		moveEnts(world.getWorld(), prevHeadPos, moveDir, false);
+
+		if(out){
+			//Add the extended head
+			world.addChange(pos.offset(facing, currentExtension + 1), extendBlock.getDefaultState().withProperty(EssentialsProperties.AXIS, facing.getAxis()).withProperty(EssentialsProperties.HEAD, facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 2));
+		}else if(currentExtension != 1){
+			//Add the retracted head
+			world.addChange(pos.offset(facing, currentExtension - 1), extendBlock.getDefaultState().withProperty(EssentialsProperties.AXIS, facing.getAxis()).withProperty(EssentialsProperties.HEAD, facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 2));
+		}
+
+		return false;
+	}
+
+	private void moveEnts(World world, BlockPos activePos, EnumFacing moveDir, boolean sticky){
+		AxisAlignedBB BB = new AxisAlignedBB(activePos.offset(moveDir));
+		ArrayList<Entity> movingEnts = new ArrayList<>(4);
+		getEntitiesMultiChunk(BB, world, movingEnts);
+		for(Entity ent : movingEnts){
+			if(ent.getPushReaction() != EnumPushReaction.IGNORE){
+				ent.setPositionAndUpdate(ent.posX + (double) moveDir.getXOffset(), ent.posY + (double) moveDir.getYOffset(), ent.posZ + (double) moveDir.getZOffset());
+				//If the entity is on a "sticky" block, bounce them
+				if(sticky){
+					ent.addVelocity(moveDir.getXOffset(), moveDir.getYOffset(), moveDir.getZOffset());
+					ent.velocityChanged = true;
+				}
+			}
+		}
+		movingEnts.clear();
+	}
+
+	private boolean buildMoveset(BlockPos pistonPos, WorldBuffer world, BlockPos curPos, EnumFacing moveDir, LinkedHashSet<BlockPos> movedBlocks, boolean dragging){
+		if(movedBlocks.contains(curPos)){
+			return false;
+		}
+		IBlockState state = world.getBlockState(curPos);
+		EnumPushReaction reaction = state.getPushReaction();
+		if(state.getBlock().isAir(state, world.getWorld(), curPos)){
+			reaction = EnumPushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
+		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock().hasTileEntity(state) || pistonPos.equals(curPos)){
+			reaction = EnumPushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable block. It's special cased. whhhhyyyyyyyyyy?
+		}
+
+		boolean blocked = false;
+		switch(reaction){
+			case PUSH_ONLY:
+				if(dragging){
+					break;
+				}
+			case NORMAL:
+				//Check for world height
+				if(moveDir == EnumFacing.UP && curPos.getY() == world.getWorld().getHeight() || moveDir == EnumFacing.DOWN && curPos.getY() == 0){
+					blocked = true;
+					break;
+				}
+
+				blocked = movedBlocks.size() > PUSH_LIMIT || buildMoveset(pistonPos, world, curPos.offset(moveDir), moveDir, movedBlocks, false);
+
+				movedBlocks.add(curPos);
+
+				//Do blocks behind this if sticky
+				if(isStickyBlock(state)){
+					blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(moveDir.getOpposite()), moveDir, movedBlocks, true) || blocked;
+				}
+
+				//Do blocks on the sides if sticky
+				if(isStickyBlock(state)){
+					for(EnumFacing side : EnumFacing.VALUES){
+						if(side.getAxis() != moveDir.getAxis()){
+							blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(side), moveDir, movedBlocks, true) || blocked;
+						}
+					}
+				}
+
+				break;
+			case DESTROY:
+				if(!dragging){
+					movedBlocks.add(curPos);
+				}
+				break;
+			case BLOCK:
+				blocked = !dragging;
+				break;
+			case IGNORE:
+				break;
+		}
+
+		return blocked || movedBlocks.size() > PUSH_LIMIT;
+	}
 
 	/**
 	 * An alternate version of World#getEntitiesWithinAABBExcludingEntity that checks a 3x3x3 cube of mini chunks (16x16x16 cubes within chunks) for entities.
-	 * This is less efficient than the standard method, but necessary to fix a bug.
+	 * This is less efficient than the standard method, but necessary to fix a vanilla bug whereby repeated getEntity calls break if entities were moved between chunks in the same tick.
 	 */
-	private static ArrayList<Entity> getEntitiesMultiChunk(AxisAlignedBB checkBox, World worldIn){
-		ArrayList<Entity> found = new ArrayList<Entity>();
-
+	private static void getEntitiesMultiChunk(AxisAlignedBB checkBox, World worldIn, ArrayList<Entity> entList){
 		int i = MathHelper.floor((checkBox.minX - World.MAX_ENTITY_RADIUS) / 16.0D) - 1;
 		int j = MathHelper.floor((checkBox.maxX + World.MAX_ENTITY_RADIUS) / 16.0D) + 1;
 		int k = MathHelper.floor((checkBox.minZ - World.MAX_ENTITY_RADIUS) / 16.0D) - 1;
@@ -356,30 +386,17 @@ public class MultiPistonBase extends Block{
 			for(int kLoop = k; kLoop <= l; kLoop++){
 				if(((ChunkProviderServer) worldIn.getChunkProvider()).chunkExists(iLoop, kLoop)){
 					Chunk chunk = worldIn.getChunk(iLoop, kLoop);
-					for(int yLoop = yMin; yLoop <= yMax; ++yLoop){
+					for(int yLoop = yMin; yLoop <= yMax; yLoop++){
 						if(!chunk.getEntityLists()[yLoop].isEmpty()){
 							for(Entity entity : chunk.getEntityLists()[yLoop]){
 								if(entity.getEntityBoundingBox().intersects(checkBox)){
-									found.add(entity);
+									entList.add(entity);
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-
-		return found;
-	}
-
-	private static final AxisAlignedBB[] BB = new AxisAlignedBB[] {new AxisAlignedBB(0, 5D / 16D, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 11D / 16D, 1), new AxisAlignedBB(0, 0, 5D / 16D, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 1, 11D / 16D), new AxisAlignedBB(5D / 16D, 0, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 11D / 16D, 1, 1)};
-
-	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, boolean pleaseDontBeRelevantToAnythingOrIWillBeSad){
-		if(state.getValue(EssentialsProperties.REDSTONE_BOOL)){
-			addCollisionBoxToList(pos, mask, list, BB[state.getValue(EssentialsProperties.FACING).getIndex()]);
-		}else{
-			addCollisionBoxToList(pos, mask, list, FULL_BLOCK_AABB);
 		}
 	}
 }

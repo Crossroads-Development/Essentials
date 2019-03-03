@@ -5,39 +5,36 @@
 		"uvlock": false
 	},
 	"variants": {
-		"facing": {
-			"north": {
-				"x": 90
-			},
-			"south": {
-				"x": 90,
-				"y": 180
-			},
-			"east": {
+		"axis": {
+			"x": {
 				"x": 90,
 				"y": 90
 			},
-			"west": {
-				"x": 90,
-				"y": 270
-			},
-			"up": {
+			"y": {
 
 			},
-			"down": {
-				"x": 180
+			"z": {
+				"x": 270
 			}
 		},
 		"head": {
-			"true": {
+			"0": {
+
+			},
+			"1": {
 				"submodel": "essentials:multi_piston_head",
 				"textures": {
 					"front": "essentials:blocks/multi_piston_head",
 					"side": "essentials:blocks/multi_piston_side"
 				}
 			},
-			"false": {
-
+			"2": {
+				"submodel": "essentials:multi_piston_head",
+				"textures": {
+					"front": "essentials:blocks/multi_piston_head",
+					"side": "essentials:blocks/multi_piston_side"
+				},
+				"x": 180
 			}
 		}
 	}
