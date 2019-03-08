@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.packets;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -28,7 +29,7 @@ public class SendSlotFilterToClient extends Message<SendSlotFilterToClient>{
 	@Override
 	public IMessage handleMessage(MessageContext context){
 		if(context.side != Side.CLIENT){
-			System.err.println("MessageToClient received on wrong side:" + context.side);
+			Essentials.logger.error("MessageToClient received on wrong side:" + context.side);
 			return null;
 		}
 

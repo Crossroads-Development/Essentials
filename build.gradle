@@ -8,7 +8,7 @@ buildscript {
 	}
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
-version = "1.13.0-2.0.0_BETA_5-MultiPiston"
+version = "1.13.0-2.0.0_BETA_6-Packets"
 group = "com.Da_Technomancer.essentials"
 archivesBaseName = "essentials"
 

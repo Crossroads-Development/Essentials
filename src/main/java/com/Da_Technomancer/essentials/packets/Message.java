@@ -1,15 +1,15 @@
-/**
- * This class was created by <Vazkii>. It's distributed as
- * part of the Psi Mod. Get the Source Code in github:
- * https://github.com/Vazkii/Psi
- * 
- * Psi is Open Source and distributed under the
- * CC-BY-NC-SA 3.0 License: https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB
- * 
- * File Created @ [11/01/2016, 22:00:30 (GMT)]
- *
- *
- * Let me, (Technomancer), be clear, Vazkii made this class and I take no credit for it. Using the class is permitted by the license.
+/*
+  This class was created by <Vazkii>. It's distributed as
+  part of the Psi Mod. Get the Source Code in github:
+  https://github.com/Vazkii/Psi
+
+  Psi is Open Source and distributed under the
+  CC-BY-NC-SA 3.0 License: https://creativecommons.org/licenses/by-nc-sa/3.0/deed.en_GB
+
+  File Created @ [11/01/2016, 22:00:30 (GMT)]
+
+
+  Let me, (Technomancer), be clear, Vazkii made this class and I take no credit for it. Using the class is permitted by the license.
  */
 package com.Da_Technomancer.essentials.packets;
 
@@ -31,24 +31,22 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @SuppressWarnings({"serial", "rawtypes"})
-public class Message<REQ extends Message> implements Serializable, IMessage, IMessageHandler<REQ, IMessage>{
+public abstract class Message<REQ extends Message> implements Serializable, IMessage, IMessageHandler<REQ, IMessage>{
+
 	@SuppressWarnings("unchecked")
-	private static final HashMap<Class, Pair<Reader, Writer>> handlers = new HashMap();
+	private static final HashMap<Class, Pair<Reader, Writer>> handlers = new HashMap<>();
 	@SuppressWarnings("unchecked")
-	private static final HashMap<Class, Field[]> fieldCache = new HashMap();
+	private static final HashMap<Class, Field[]> fieldCache = new HashMap<>();
 
 	static{
 		map(byte.class, Message::readByte, Message::writeByte);
-		// map(short.class, Message::readShort, Message::writeShort);
 		map(int.class, Message::readInt, Message::writeInt);
 		map(long.class, Message::readLong, Message::writeLong);
 		map(float.class, Message::readFloat, Message::writeFloat);
 		map(double.class, Message::readDouble, Message::writeDouble);
 		map(boolean.class, Message::readBoolean, Message::writeBoolean);
-		// map(char.class, Message::readChar, Message::writeChar);
 		map(String.class, Message::readString, Message::writeString);
 		map(NBTTagCompound.class, Message::readNBT, Message::writeNBT);
-		// map(ItemStack.class, Message::readItemStack, Message::writeItemStack);
 		map(BlockPos.class, Message::readBlockPos, Message::writeBlockPos);
 		map(byte[][].class, Message::readByte2DArray, Message::writeByte2DArray);
 		map(int[].class, Message::readIntArray, Message::writeIntArray);
@@ -56,13 +54,10 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 		map(UUID.class, Message::readUUID, Message::writeUUID);
 	}
 
-	// The thing you override!
-	public IMessage handleMessage(MessageContext context){
-		return null;
-	}
+	public abstract IMessage handleMessage(MessageContext context);
 
 	@Override
-	public final IMessage onMessage(REQ message, MessageContext context){
+	public IMessage onMessage(REQ message, MessageContext context){
 		return message.handleMessage(context);
 	}
 
@@ -98,9 +93,9 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 	}
 
 	private static Field[] getClassFields(Class<?> clazz){
-		if(fieldCache.containsValue(clazz))
+		if(fieldCache.containsKey(clazz)){
 			return fieldCache.get(clazz);
-		else{
+		}else{
 			Field[] fields = clazz.getFields();
 			Arrays.sort(fields, Comparator.comparing(Field::getName));
 			fieldCache.put(clazz, fields);
@@ -109,32 +104,33 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 	}
 
 	@SuppressWarnings("unchecked")
-	private final void writeField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException{
+	private void writeField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException{
 		Pair<Reader, Writer> handler = getHandler(clazz);
 		handler.getRight().write(f.get(this), buf);
 	}
 
-	private final void readField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException{
+	private void readField(Field f, Class clazz, ByteBuf buf) throws IllegalArgumentException, IllegalAccessException{
 		Pair<Reader, Writer> handler = getHandler(clazz);
 		f.set(this, handler.getLeft().read(buf));
 	}
 
 	private static Pair<Reader, Writer> getHandler(Class<?> clazz){
 		Pair<Reader, Writer> pair = handlers.get(clazz);
-		if(pair == null)
+		if(pair == null){
 			throw new RuntimeException("No R/W handler for  " + clazz);
+		}
 		return pair;
 	}
 
 	private static boolean acceptField(Field f, Class<?> type){
 		int mods = f.getModifiers();
-		if(Modifier.isFinal(mods) || Modifier.isStatic(mods) || Modifier.isTransient(mods))
+		if(Modifier.isFinal(mods) || Modifier.isStatic(mods) || Modifier.isTransient(mods)){
 			return false;
-
+		}
 		return handlers.containsKey(type);
 	}
 
-	private static <T extends Object> void map(Class<T> type, Reader<T> reader, Writer<T> writer){
+	private static <T> void map(Class<T> type, Reader<T> reader, Writer<T> writer){
 		handlers.put(type, Pair.of(reader, writer));
 	}
 
@@ -145,13 +141,6 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 	private static void writeByte(byte b, ByteBuf buf){
 		buf.writeByte(b);
 	}
-
-	/*
-	 * private static short readShort(ByteBuf buf) { return buf.readShort(); }
-	 * 
-	 * private static void writeShort(short s, ByteBuf buf) { buf.writeShort(s);
-	 * }
-	 */
 
 	private static int readInt(ByteBuf buf){
 		return buf.readInt();
@@ -168,7 +157,6 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 	private static void writeLong(long l, ByteBuf buf) {
 		buf.writeLong(l); 
 	}
-
 
 	private static float readFloat(ByteBuf buf){
 		return buf.readFloat();
@@ -202,12 +190,6 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 		buf.writeLong(id.getMostSignificantBits());
 		buf.writeLong(id.getLeastSignificantBits());
 	}
-
-	/*
-	 * private static char readChar(ByteBuf buf) { return buf.readChar(); }
-	 * 
-	 * private static void writeChar(char c, ByteBuf buf) { buf.writeChar(c); }
-	 */
 
 	private static byte[][] readByte2DArray(ByteBuf buf){
 		int outerSize = buf.readInt();
@@ -277,14 +259,6 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 		ByteBufUtils.writeTag(buf, cmp);
 	}
 
-	/*
-	 * private static ItemStack readItemStack(ByteBuf buf) { return
-	 * ByteBufUtils.readItemStack(buf); }
-	 * 
-	 * private static void writeItemStack(ItemStack stack, ByteBuf buf) {
-	 * ByteBufUtils.writeItemStack(buf, stack); }
-	 */
-
 	private static BlockPos readBlockPos(ByteBuf buf){
 		return BlockPos.fromLong(buf.readLong());
 	}
@@ -293,12 +267,11 @@ public class Message<REQ extends Message> implements Serializable, IMessage, IMe
 		buf.writeLong(pos.toLong());
 	}
 
-	public static interface Writer<T> {
+	public static interface Writer<T>{
 		public void write(T t, ByteBuf buf);
 	}
 
-	public static interface Reader<T> {
+	public static interface Reader<T>{
 		public T read(ByteBuf buf);
 	}
-
 }
