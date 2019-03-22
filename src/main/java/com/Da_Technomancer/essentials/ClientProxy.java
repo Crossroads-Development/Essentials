@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.items.EssentialsItems;
+import com.Da_Technomancer.essentials.render.TESRRegistry;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -20,6 +21,7 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	protected void init(FMLInitializationEvent e){
 		super.init(e);
+		TESRRegistry.init();
 	}
 
 	@Override

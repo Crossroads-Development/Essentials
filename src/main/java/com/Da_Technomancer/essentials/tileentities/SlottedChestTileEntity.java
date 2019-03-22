@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
+import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
-public class SlottedChestTileEntity extends TileEntity{
+public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
 	public SlottedChestTileEntity(){
 		super();
@@ -118,6 +119,17 @@ public class SlottedChestTileEntity extends TileEntity{
 		return inv instanceof Inventory;
 	}
 
+	@Override
+	public void receiveNBT(NBTTagCompound nbt){
+		for(int i = 0; i < 54; i++){
+			if(nbt.hasKey("lock" + i)){
+				lockedInv[i] = new ItemStack(nbt.getCompoundTag("lock" + i));
+			}else{
+				lockedInv[i] = ItemStack.EMPTY;
+			}
+		}
+	}
+
 	private class InventoryHandler implements IItemHandler{
 
 		@Override
@@ -207,9 +219,7 @@ public class SlottedChestTileEntity extends TileEntity{
 				return ItemStack.EMPTY;
 			}
 
-			ItemStack stack = inv[index].splitStack(count);
-
-			return stack;
+			return inv[index].splitStack(count);
 		}
 
 		@Override

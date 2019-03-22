@@ -13,7 +13,7 @@ public class EssentialsTileEntity{
 		register(SortingHopperTileEntity.class, "sorting_hopper");
 		register(SpeedHopperTileEntity.class, "speed_hopper");
 		register(ItemShifterTileEntity.class, "item_shifter");
-		register(PortExtenderTileEntity.class, "port_extender");
+		register(HopperFilterTileEntity.class, "hopper_filter");
 		register(BasicItemSplitterTileEntity.class, "basic_item_splitter");
 		register(ItemSplitterTileEntity.class, "item_splitter");
 		register(FluidShifterTileEntity.class, "fluid_splitter");

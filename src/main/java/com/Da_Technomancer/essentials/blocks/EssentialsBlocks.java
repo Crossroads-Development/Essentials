@@ -14,7 +14,7 @@ public class EssentialsBlocks{
 	public static SlottedChest slottedChest;
 	public static SortingHopper sortingHopper;
 	public static SpeedHopper speedHopper;
-	public static PortExtender portExtender;
+	public static HopperFilter hopperFilter;
 	public static FertileSoil fertileSoilWheat;
 	public static FertileSoil fertileSoilCarrot;
 	public static FertileSoil fertileSoilPotato;
@@ -68,7 +68,7 @@ public class EssentialsBlocks{
 		fertileSoilJungle = new FertileSoil("jungle", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.JUNGLE));
 		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.DARK_OAK));
 		fertileSoilAcacia = new FertileSoil("acacia", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.ACACIA));
-		portExtender = new PortExtender();
+		hopperFilter = new HopperFilter();
 		itemChute = new ItemChute();
 		itemShifter = new ItemShifter();
 		fluidShifter = new FluidShifter();

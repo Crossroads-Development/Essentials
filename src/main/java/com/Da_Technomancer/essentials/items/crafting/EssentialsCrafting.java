@@ -23,8 +23,8 @@ public class EssentialsCrafting{
 
 
 	/**
-	 * A list of all recipes, Item Array are the ingredients, and itemstack is
-	 * output. A list for poisonous potato recipes and mashed potato recipes.
+	 * A list of all recipes, Item Array are the ingredients, and itemstack is output.
+	 * A list for poisonous potato recipes.
 	 *
 	 * Under no condition is anyone to add support for the Bobo recipes in JEI (or any other recipe helper).
 	 */
@@ -63,13 +63,8 @@ public class EssentialsCrafting{
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoilJungle, 3), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.JUNGLE.getMetadata())));
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoilDarkOak, 3), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.DARK_OAK.getMetadata())));
 		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.fertileSoilAcacia, 3), "#$#", "***", "^^^", '#', new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage()), '$', Items.FERMENTED_SPIDER_EYE, '^', "dirt", '*', new ItemStack(Blocks.SAPLING, 1, BlockPlanks.EnumType.ACACIA.getMetadata())));
-		//Port Extender
-		if(OreDictionary.getOres("ingotTin").isEmpty()){
-			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotGold", 'h', Blocks.HOPPER));
-			toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotGold", 'h', EssentialsBlocks.sortingHopper));
-		}
-		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotTin", 'h', Blocks.HOPPER));
-		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.portExtender, 1), " # ", "#h#", " # ", '#', "ingotTin", 'h', EssentialsBlocks.sortingHopper));
+		//Hopper Filter
+		toRegister.add(new ShapedOreRecipe(null, new ItemStack(EssentialsBlocks.hopperFilter, 1), "BRB", " G ", "BRB", 'B', Blocks.BRICK_BLOCK, 'R', "dustRedstone", 'G', "blockGlass"));
 		//Saddle
 		if(EssentialsConfig.getConfigBool(EssentialsConfig.saddleRecipe, false)){
 			toRegister.add(new ShapedOreRecipe(null, Items.SADDLE, "***", "*|*", " - ", '*', "leather", '-', "ingotIron", '|', "string"));

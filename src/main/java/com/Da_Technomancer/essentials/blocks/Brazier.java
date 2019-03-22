@@ -33,7 +33,7 @@ import java.util.List;
 
 public class Brazier extends BlockContainer{
 
-	private static final AxisAlignedBB BB = new AxisAlignedBB(0, 0, 0, 1, .875D, 1);
+	private static final AxisAlignedBB BB = new AxisAlignedBB(0.0625D, 0, 0.0625D, 0.9375D, .875D, 0.9375D);
 
 	protected Brazier(){
 		super(Material.ROCK);

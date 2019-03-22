@@ -1,9 +1,7 @@
 package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -39,15 +37,8 @@ public class SendSlotFilterToClient extends Message<SendSlotFilterToClient>{
 			public void run(){
 				TileEntity te = minecraft.world.getTileEntity(pos);
 
-				if(te instanceof SlottedChestTileEntity){
-					SlottedChestTileEntity chest = ((SlottedChestTileEntity) te);
-					for(int i = 0; i < 54; i++){
-						if(nbt.hasKey("lock" + i)){
-							chest.lockedInv[i] = new ItemStack(nbt.getCompoundTag("lock" + i));
-						}else{
-							chest.lockedInv[i] = ItemStack.EMPTY;
-						}
-					}
+				if(te instanceof INBTReceiver){
+					((INBTReceiver) te).receiveNBT(nbt);
 				}
 			}
 		});
