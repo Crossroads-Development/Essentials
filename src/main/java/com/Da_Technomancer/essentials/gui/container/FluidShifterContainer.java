@@ -16,7 +16,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.OnlyIn;
 
 public class FluidShifterContainer extends Container{
 
@@ -78,7 +78,7 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public void updateProgressBar(int id, int data){
 		te.setField(id, data);
 	}
@@ -236,7 +236,7 @@ public class FluidShifterContainer extends Container{
 
 			@Override
 			public ItemStack decrStackSize(int index, int count){
-				return stacks[index].splitStack(count);
+				return stacks[index].split(count);
 			}
 
 			@Override

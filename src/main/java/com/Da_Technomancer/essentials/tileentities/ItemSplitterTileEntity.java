@@ -1,26 +1,31 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 
+	@ObjectHolder("item_splitter")
+	private static final TileEntityType<ItemSplitterTileEntity> TYPE = null;
+
 	public ItemSplitterTileEntity(){
-		super();
+		super(TYPE);
 	}
 
 	public int redstone;
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		super.writeToNBT(nbt);
-		nbt.setInteger("reds", redstone);
+	public NBTTagCompound write(NBTTagCompound nbt){
+		super.write(nbt);
+		nbt.putInt("reds", redstone);
 		return nbt;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
-		redstone = nbt.getInteger("reds");
+	public void read(NBTTagCompound nbt){
+		super.read(nbt);
+		redstone = nbt.getInt("reds");
 	}
 
 	@Override

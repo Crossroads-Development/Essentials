@@ -1,47 +1,109 @@
 package com.Da_Technomancer.essentials;
 
+import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
+import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
+import com.Da_Technomancer.essentials.items.EssentialsItems;
+import com.Da_Technomancer.essentials.packets.EssentialsPackets;
+import com.Da_Technomancer.essentials.tileentities.*;
+import com.mojang.datafixers.DataFixUtils;
+import com.mojang.datafixers.types.Type;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.SharedConstants;
+import net.minecraft.util.datafix.DataFixesManager;
+import net.minecraft.util.datafix.TypeReferences;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = Essentials.MODID, name = Essentials.MODNAME, version = Essentials.VERSION, acceptedMinecraftVersions = "[1.12,1.13)", dependencies = "required-after:forge@[13.20.0.2271,]; after:jei")
+import java.util.function.Supplier;
+
+import static com.Da_Technomancer.essentials.Essentials.MODID;
+
+@Mod(MODID)
 public final class Essentials{
 
 	public static final String MODID = "essentials";
 	public static final String MODNAME = "Essentials";
-	public static final String VERSION = "gradVERSION";
-
-	public static Logger logger;
-
-	@SidedProxy(clientSide = "com.Da_Technomancer.essentials.ClientProxy", serverSide = "com.Da_Technomancer.essentials.ServerProxy")
-	public static CommonProxy proxy;
-
-	@Mod.Instance
+	public static final Logger logger = LogManager.getLogger(MODNAME);
 	public static Essentials instance;
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent e){
-		logger = e.getModLog();
-		proxy.preInit(e);
+
+	public Essentials(){
+		instance = this;
+
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonInit);
+
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent e){
-		proxy.init(e);
+	private void commonInit(FMLCommonSetupEvent e){
+		//Pre
+		EssentialsConfig.init();
+		EssentialsPackets.preInit();
+		//Main
+		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerCommon());
+		NetworkRegistry.INSTANCE.registerGuiHandler(Essentials.instance, new EssentialsGuiHandler());
 	}
 
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent e){
-		proxy.postInit(e);
+	@SubscribeEvent
+	public static void registerBlocks(RegistryEvent.Register<Block> e){
+		IForgeRegistry<Block> registry = e.getRegistry();
+		EssentialsBlocks.init();
+		for(Block block : EssentialsBlocks.toRegister){
+			registry.register(block);
+		}
+		EssentialsBlocks.toRegister.clear();
 	}
 
-	@Mod.EventHandler
-	public void serverStarted(FMLServerStartedEvent e){
-		//For singleplayer.
-		EssentialsConfig.syncPropNBT = EssentialsConfig.nbtToSyncConfig();
+	@SubscribeEvent
+	public static void registerItems(RegistryEvent.Register<Item> e){
+		IForgeRegistry<Item> registry = e.getRegistry();
+		EssentialsItems.init();
+		for(Item item : EssentialsItems.toRegister){
+			registry.register(item);
+		}
+		EssentialsItems.toRegister.clear();
 	}
+
+	@SubscribeEvent
+	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<? extends TileEntity>> e){
+		IForgeRegistry<TileEntityType<?>> reg = e.getRegistry();
+		register(BrazierTileEntity::new, "brazier", reg);
+		register(SlottedChestTileEntity::new, "slotted_chest", reg);
+		register(SortingHopperTileEntity::new, "sorting_hopper", reg);
+		register(SpeedHopperTileEntity::new, "speed_hopper", reg);
+		register(ItemShifterTileEntity::new, "item_shifter", reg);
+		register(HopperFilterTileEntity::new, "hopper_filter", reg);
+		register(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg);
+		register(ItemSplitterTileEntity::new, "item_splitter", reg);
+		register(FluidShifterTileEntity::new, "fluid_splitter", reg);
+	}
+
+	private static void register(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg){
+		Type type = null;
+
+		try{
+			//2372 chosen at random
+			type = DataFixesManager.getDataFixer().getSchema(DataFixUtils.makeKey(2372)).getChoiceType(TypeReferences.BLOCK_ENTITY, id);
+		}catch (IllegalArgumentException ex){
+			if(SharedConstants.developmentMode){
+				throw ex;
+			}
+			Essentials.logger.warn("No data fixer registered for block entity {}", id);
+		}
+		reg.register(TileEntityType.Builder.create(cons).build(type));
+	}
+
+	//TODO register recipes
 }

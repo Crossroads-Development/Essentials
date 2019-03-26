@@ -11,6 +11,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -24,21 +25,30 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SortingHopperTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
 
+	@ObjectHolder("sorting_hopper")
+	private static final TileEntityType<SortingHopperTileEntity> TYPE = null;
+
+
 	protected final ItemStack[] inventory = new ItemStack[5];
 	private int transferCooldown = -1;
 	private EnumFacing dir = null;
 
-	public SortingHopperTileEntity(){
-		super();
+	protected SortingHopperTileEntity(TileEntityType<?> type){
+		super(type);
 		for(int i = 0; i < 5; i++){
 			inventory[i] = ItemStack.EMPTY;
 		}
+	}
+
+	public SortingHopperTileEntity(){
+		this(TYPE);
 	}
 
 	public void resetCache(){
@@ -51,7 +61,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 			if(!(state.getBlock() instanceof SortingHopper)){
 				return EnumFacing.DOWN;
 			}
-			dir = state.getValue(SortingHopper.FACING);
+			dir = state.get(SortingHopper.FACING);
 		}
 		return dir;
 	}
@@ -62,11 +72,11 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	@Override
-	public void update(){
+	public void tick(){
 		if(!world.isRemote && --transferCooldown <= 0){
 			transferCooldown = 0;
 			IBlockState state = world.getBlockState(pos);
-			if(state.getBlock() instanceof SortingHopper && state.getValue(SortingHopper.ENABLED)){
+			if(state.getBlock() instanceof SortingHopper && state.get(SortingHopper.ENABLED)){
 				boolean flag = false;
 
 				if(!isFull()){
@@ -101,29 +111,29 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
-		transferCooldown = nbt.getInteger("trans_cooldown");
+	public void read(NBTTagCompound nbt){
+		super.read(nbt);
+		transferCooldown = nbt.getInt("trans_cooldown");
 
 		for(int i = 0; i < 5; i++){
-			NBTTagCompound stackNBT = nbt.getCompoundTag("inv_" + i);
+			NBTTagCompound stackNBT = nbt.getCompound("inv_" + i);
 			inventory[i] = new ItemStack(stackNBT);
 		}
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		super.writeToNBT(nbt);
+	public NBTTagCompound write(NBTTagCompound nbt){
+		super.write(nbt);
 
 		for(int i = 0; i < 5; i++){
 			if(!inventory[i].isEmpty()){
 				NBTTagCompound stackNBT = new NBTTagCompound();
-				inventory[i].writeToNBT(stackNBT);
-				nbt.setTag("inv_" + i, stackNBT);
+				inventory[i].write(stackNBT);
+				nbt.put("inv_" + i, stackNBT);
 			}
 		}
 
-		nbt.setInteger("trans_cooldown", transferCooldown);
+		nbt.putInt("trans_cooldown", transferCooldown);
 
 		return nbt;
 	}
@@ -154,7 +164,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 			return ItemStack.EMPTY;
 		}
 		markDirty();
-		return inventory[index].splitStack(count);
+		return inventory[index].split(count);
 	}
 
 	/**
@@ -308,7 +318,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 				}
 
 				if(remain.isEmpty()){
-					entityitem.setDead();
+					entityitem.remove();
 					changed = true;
 				}else if(remain.getCount() != stack.getCount()){
 					entityitem.setItem(remain);
@@ -440,7 +450,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 
 			if(!simulate){
 				markDirty();
-				return inventory[slot].splitStack(removed);
+				return inventory[slot].split(removed);
 			}
 
 			ItemStack out = inventory[slot].copy();

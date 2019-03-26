@@ -18,9 +18,9 @@ public class HopperFilterRenderer extends TileEntitySpecialRenderer<HopperFilter
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x + 0.5D, y + 0.5D, z + 0.5D);
 		GlStateManager.scale(0.5F, 0.5F, 0.5F);
-		GlStateManager.pushAttrib();
+		GlStateManager.pushLightingAttrib();
 		RenderHelper.enableStandardItemLighting();
-		Minecraft.getMinecraft().getRenderItem().renderItem(te.getFilter(), ItemCameraTransforms.TransformType.FIXED);
+		Minecraft.getInstance().getRenderItem().renderItem(te.getFilter(), ItemCameraTransforms.TransformType.FIXED);
 		RenderHelper.disableStandardItemLighting();
 		GlStateManager.popAttrib();
 		GlStateManager.popMatrix();

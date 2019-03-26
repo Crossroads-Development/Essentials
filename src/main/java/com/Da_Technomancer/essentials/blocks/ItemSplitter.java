@@ -1,35 +1,36 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.items.EssentialsItems;
 import com.Da_Technomancer.essentials.tileentities.ItemSplitterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public class ItemSplitter extends BlockContainer{
 
 	public ItemSplitter(){
-		super(Material.IRON);
+		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(3));
 		String name = "item_splitter";
-		setTranslationKey(name);
 		setRegistryName(name);
-		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		setHardness(3);
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta){
+	public TileEntity createNewTileEntity(IBlockReader world){
 		return new ItemSplitterTileEntity();
 	}
 	
@@ -53,23 +54,14 @@ public class ItemSplitter extends BlockContainer{
 		}
 	}
 
+	@Nullable
 	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, (placer == null) ? EnumFacing.NORTH : EnumFacing.getDirectionFromEntityLiving(pos, placer));
+	public IBlockState getStateForPlacement(BlockItemUseContext context){
+		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, EssentialsProperties.FACING);
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta & 7));
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state){
-		return state.getValue(EssentialsProperties.FACING).getIndex();
+	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
+		builder.add(EssentialsProperties.FACING);
 	}
 }

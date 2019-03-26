@@ -1,57 +1,53 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class ItemChute extends Block{
 
-	private static final AxisAlignedBB[] BB = new AxisAlignedBB[] {new AxisAlignedBB(0, .125D, .125D, 1, .875D, .875D), new AxisAlignedBB(.125D, 0, .125D, .875D, 1, .875D), new AxisAlignedBB(.125D, .125D, 0, .875D, .875D, 1)};
+	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, .125D, .125D, 1, .875D, .875D), makeCuboidShape(.125D, 0, .125D, .875D, 1, .875D), makeCuboidShape(.125D, .125D, 0, .875D, .875D, 1)};
 	
-	public ItemChute(){
-		super(Material.IRON);
+	protected ItemChute(){
+		super(Properties.create(Material.IRON).hardnessAndResistance(1.5F).sound(SoundType.METAL));
 		String name = "item_chute";
-		setTranslationKey(name);
 		setRegistryName(name);
-		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		setHardness(1.5F);
-		setSoundType(SoundType.METAL);
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}
 
+	@Nullable
 	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
-		return getDefaultState().withProperty(EssentialsProperties.AXIS, blockFaceClickedOn == null ? EnumFacing.Axis.Y : blockFaceClickedOn.getAxis());
+	public IBlockState getStateForPlacement(BlockItemUseContext context){
+		return getDefaultState().with(EssentialsProperties.AXIS, context.getFace().getAxis());
 	}
 
-
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand), worldIn.isRemote)){
+	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.cycleProperty(EssentialsProperties.AXIS));
+				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.AXIS));
 			}
 			return true;
 		}
@@ -59,43 +55,23 @@ public class ItemChute extends Block{
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
-		return BB[state.getValue(EssentialsProperties.AXIS).ordinal()];
+	public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos){
+		return BB[state.get(EssentialsProperties.AXIS).ordinal()];
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Safe for decoration");
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+		tooltip.add(new TextComponentString("Safe for decoration"));
 	}
 
 	@Override
-	public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity, boolean isActualState){
-		addCollisionBoxToList(pos, mask, list, BB[state.getValue(EssentialsProperties.AXIS).ordinal()]);
-	}
-
-	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, EssentialsProperties.AXIS);
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state){
-		return state.getValue(EssentialsProperties.AXIS).ordinal();
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(EssentialsProperties.AXIS, EnumFacing.Axis.values()[meta]);
+	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
+		builder.add(EssentialsProperties.AXIS);
 	}
 
 	@Override
 	public boolean isFullCube(IBlockState state){
-		return false;
-	}
-	
-	@Override
-	public boolean isOpaqueCube(IBlockState state){
 		return false;
 	}
 
@@ -103,7 +79,7 @@ public class ItemChute extends Block{
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
 		//Block updates are propogated down lines of Item Chutes, allowing caching of target positions for Item Shifters
 		if(fromPos != null){
-			EnumFacing.Axis axis = state.getValue(EssentialsProperties.AXIS);
+			EnumFacing.Axis axis = state.get(EssentialsProperties.AXIS);
 			EnumFacing dir = EnumFacing.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
 			if(dir.getAxis() == axis){
 				fromPos = pos;
@@ -114,7 +90,7 @@ public class ItemChute extends Block{
 	}
 
 	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face){
-		return face.getAxis() == state.getValue(EssentialsProperties.AXIS) ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
+	public BlockFaceShape getBlockFaceShape(IBlockReader worldIn, IBlockState state, BlockPos pos, EnumFacing face){
+		return face.getAxis() == state.get(EssentialsProperties.AXIS) ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
 	}
 }

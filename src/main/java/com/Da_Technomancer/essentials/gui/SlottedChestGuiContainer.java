@@ -32,14 +32,14 @@ public class SlottedChestGuiContainer extends GuiContainer{
 	}
 	
 	/**
-	 * Draw the foreground layer for the GuiContainer (everything in front of
-	 * the items)
+	 * Draw the foreground layer for the GuiContainer
+	 * (everything in front of the items)
 	 */
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
-		fontRenderer.drawString(te.iInv.getDisplayName().getUnformattedText(), 8, 6, 4210752);
-		fontRenderer.drawString(playerInventory.getDisplayName().getUnformattedText(), 8, ySize - 94, 4210752);
-		GlStateManager.pushAttrib();
+		fontRenderer.drawString(te.iInv.getDisplayName().getFormattedText(), 8, 6, 4210752);
+		fontRenderer.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 4210752);
+		GlStateManager.pushLightingAttrib();
 		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.disableLighting();
 		for(int i = 0; i < 54; i++){
@@ -60,7 +60,7 @@ public class SlottedChestGuiContainer extends GuiContainer{
 	 */
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-		GlStateManager.color(1, 1, 1);
+		GlStateManager.color3f(1, 1, 1);
 		mc.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
 		int i = (width - xSize) / 2;
 		int j = (height - ySize) / 2;

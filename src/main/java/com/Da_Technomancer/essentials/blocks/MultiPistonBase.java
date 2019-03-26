@@ -2,28 +2,34 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.WorldBuffer;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 
@@ -43,28 +49,26 @@ public class MultiPistonBase extends Block{
 
 
 	protected MultiPistonBase(boolean sticky){
-		super(Material.PISTON);
+		super(Properties.create(Material.PISTON).hardnessAndResistance(0.5F).sound(SoundType.METAL));
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
-		setTranslationKey(name);
 		setRegistryName(name);
 		this.sticky = sticky;
-		setHardness(0.5F);
-		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		setDefaultState(getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.NORTH).withProperty(EssentialsProperties.EXTENDED, false));
+		setDefaultState(getDefaultState().with(EssentialsProperties.FACING, EnumFacing.NORTH).with(EssentialsProperties.EXTENDED, false));
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}
 
+	@Nullable
 	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer));
+	public IBlockState getStateForPlacement(BlockItemUseContext context){
+		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand), worldIn.isRemote) && !state.getValue(EssentialsProperties.EXTENDED)){
+	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand)) && !state.get(EssentialsProperties.EXTENDED)){
 			if(!worldIn.isRemote){
-				IBlockState endState = state.cycleProperty(EssentialsProperties.FACING);
+				IBlockState endState = state.cycle(EssentialsProperties.FACING);
 				worldIn.setBlockState(pos, endState);
 			}
 			return true;
@@ -73,40 +77,30 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState state){
-		return !state.getValue(EssentialsProperties.EXTENDED);
-	}
-
-	@Override
 	public boolean isFullCube(IBlockState state){
-		return !state.getValue(EssentialsProperties.EXTENDED);
+		return !state.get(EssentialsProperties.EXTENDED);
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
-		return side != state.getValue(EssentialsProperties.FACING) || !state.getValue(EssentialsProperties.EXTENDED);
+	public BlockFaceShape getBlockFaceShape(IBlockReader worldIn, IBlockState state, BlockPos pos, EnumFacing face){
+		return face == state.get(EssentialsProperties.FACING) && state.get(EssentialsProperties.EXTENDED) ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
 	}
 
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face){
-		return face == state.getValue(EssentialsProperties.FACING) && state.getValue(EssentialsProperties.EXTENDED) ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
-	}
-
-	private static final AxisAlignedBB[] BB = new AxisAlignedBB[] {new AxisAlignedBB(0, 5D / 16D, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 11D / 16D, 1), new AxisAlignedBB(0, 0, 5D / 16D, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 1, 1, 11D / 16D), new AxisAlignedBB(5D / 16D, 0, 0, 1, 1, 1), new AxisAlignedBB(0, 0, 0, 11D / 16D, 1, 1)};
+	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, 5D / 16D, 0, 1, 1, 1), makeCuboidShape(0, 0, 0, 1, 11D / 16D, 1), makeCuboidShape(0, 0, 5D / 16D, 1, 1, 1), makeCuboidShape(0, 0, 0, 1, 1, 11D / 16D), makeCuboidShape(5D / 16D, 0, 0, 1, 1, 1), makeCuboidShape(0, 0, 0, 11D / 16D, 1, 1)};
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
-		if(state.getValue(EssentialsProperties.EXTENDED)){
-			return BB[state.getValue(EssentialsProperties.FACING).getIndex()];
+	public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos){
+		if(state.get(EssentialsProperties.EXTENDED)){
+			return BB[state.get(EssentialsProperties.FACING).getIndex()];
 		}else{
-			return FULL_BLOCK_AABB;
+			return VoxelShapes.fullCube();
 		}
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state){
-		if(state.getValue(EssentialsProperties.EXTENDED)){
-			world.setBlockToAir(pos.offset(state.getValue(EssentialsProperties.FACING)));
+	public void onPlayerDestroy(IWorld world, BlockPos pos, IBlockState state){
+		if(state.get(EssentialsProperties.EXTENDED)){
+			world.removeBlock(pos.offset(state.get(EssentialsProperties.FACING)));
 		}
 	}
 
@@ -116,7 +110,7 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+	public boolean shouldCheckWeakPower(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing side){
 		return true;
 	}
 
@@ -129,24 +123,14 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, EssentialsProperties.FACING, EssentialsProperties.EXTENDED);
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta & 7)).withProperty(EssentialsProperties.EXTENDED, (meta & 8) == 8);
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state){
-		return state.getValue(EssentialsProperties.FACING).getIndex() + (state.getValue(EssentialsProperties.EXTENDED) ? 8 : 0);
+	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
+		builder.add(EssentialsProperties.FACING, EssentialsProperties.EXTENDED);
 	}
 
 	@Override
 	public EnumPushReaction getPushReaction(IBlockState state){
 		//If extended, this can not be moved. Otherwise it can be moved
-		return state.getValue(EssentialsProperties.EXTENDED) ? EnumPushReaction.BLOCK : EnumPushReaction.NORMAL;
+		return state.get(EssentialsProperties.EXTENDED) ? EnumPushReaction.BLOCK : EnumPushReaction.NORMAL;
 	}
 
 	//While true, a multipiston is actively changing the world around it and should ignore incoming block updates
@@ -155,9 +139,9 @@ public class MultiPistonBase extends Block{
 	private void activate(World world, BlockPos pos, IBlockState state){
 		int target = 0;
 
-		EnumFacing facing = state.getValue(EssentialsProperties.FACING);
+		EnumFacing facing = state.get(EssentialsProperties.FACING);
 
-		for(EnumFacing dir : EnumFacing.VALUES){
+		for(EnumFacing dir : EnumFacing.values()){
 			//Don't measure redstone power from the front, as otherwise we end up in an infinite loop just by placing a redstone block there
 			if(dir != facing){
 				target = Math.max(target, world.getRedstonePower(pos.offset(dir), dir));
@@ -177,7 +161,7 @@ public class MultiPistonBase extends Block{
 
 		int currentExtension = 0;
 
-		if(state.getValue(EssentialsProperties.EXTENDED)){
+		if(state.get(EssentialsProperties.EXTENDED)){
 			BlockPos checkPos = pos.offset(facing);
 			IBlockState curState = world.getBlockState(checkPos);
 			Block tarBlock = sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend;
@@ -185,7 +169,7 @@ public class MultiPistonBase extends Block{
 			//Find the current extension
 			//The distance limit check is in case people mess around with setblock commands
 			EnumFacing.AxisDirection dir;
-			while(curState.getBlock() == tarBlock && curState.getValue(EssentialsProperties.AXIS) == facing.getAxis() && (dir = MultiPistonExtend.getDirFromHead(curState.getValue(EssentialsProperties.HEAD))) != facing.getOpposite().getAxisDirection() && currentExtension != DIST_LIMIT){
+			while(curState.getBlock() == tarBlock && curState.get(EssentialsProperties.AXIS) == facing.getAxis() && (dir = MultiPistonExtend.getDirFromHead(curState.get(EssentialsProperties.HEAD))) != facing.getOpposite().getAxisDirection() && currentExtension != DIST_LIMIT){
 				currentExtension++;
 				checkPos = checkPos.offset(facing);
 				curState = world.getBlockState(checkPos);
@@ -221,7 +205,7 @@ public class MultiPistonBase extends Block{
 
 
 		if(currentExtension == 0 ^ target == 0){
-			world.setBlockState(pos, state.withProperty(EssentialsProperties.EXTENDED, target != 0));
+			world.setBlockState(pos, state.with(EssentialsProperties.EXTENDED, target != 0));
 		}
 		changingWorld = false;
 	}
@@ -261,7 +245,7 @@ public class MultiPistonBase extends Block{
 
 		//Change the current head
 		if(currentExtension != 0){
-			world.addChange(prevHeadPos, out ? extendBlock.getDefaultState().withProperty(EssentialsProperties.AXIS, facing.getAxis()) : Blocks.AIR.getDefaultState());
+			world.addChange(prevHeadPos, out ? extendBlock.getDefaultState().with(EssentialsProperties.AXIS, facing.getAxis()) : Blocks.AIR.getDefaultState());
 		}
 
 		for(BlockPos changePos : movedBlocks){
@@ -284,10 +268,10 @@ public class MultiPistonBase extends Block{
 
 		if(out){
 			//Add the extended head
-			world.addChange(pos.offset(facing, currentExtension + 1), extendBlock.getDefaultState().withProperty(EssentialsProperties.AXIS, facing.getAxis()).withProperty(EssentialsProperties.HEAD, facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 2));
+			world.addChange(pos.offset(facing, currentExtension + 1), extendBlock.getDefaultState().with(EssentialsProperties.AXIS, facing.getAxis()).with(EssentialsProperties.HEAD, facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 2));
 		}else if(currentExtension != 1){
 			//Add the retracted head
-			world.addChange(pos.offset(facing, currentExtension - 1), extendBlock.getDefaultState().withProperty(EssentialsProperties.AXIS, facing.getAxis()).withProperty(EssentialsProperties.HEAD, facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 2));
+			world.addChange(pos.offset(facing, currentExtension - 1), extendBlock.getDefaultState().with(EssentialsProperties.AXIS, facing.getAxis()).with(EssentialsProperties.HEAD, facing.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE ? 1 : 2));
 		}
 
 		return false;
@@ -341,14 +325,14 @@ public class MultiPistonBase extends Block{
 
 				//Do blocks behind this if sticky
 				if(isStickyBlock(state)){
-					blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(moveDir.getOpposite()), moveDir, movedBlocks, true) || blocked;
+					blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(moveDir.getOpposite()), moveDir, movedBlocks, true);
 				}
 
 				//Do blocks on the sides if sticky
 				if(isStickyBlock(state)){
-					for(EnumFacing side : EnumFacing.VALUES){
+					for(EnumFacing side : EnumFacing.values()){
 						if(side.getAxis() != moveDir.getAxis()){
-							blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(side), moveDir, movedBlocks, true) || blocked;
+							blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(side), moveDir, movedBlocks, true);
 						}
 					}
 				}
@@ -374,13 +358,14 @@ public class MultiPistonBase extends Block{
 	 * This is less efficient than the standard method, but necessary to fix a vanilla bug whereby repeated getEntity calls break if entities were moved between chunks in the same tick.
 	 */
 	private static void getEntitiesMultiChunk(AxisAlignedBB checkBox, World worldIn, ArrayList<Entity> entList){
-		int i = MathHelper.floor((checkBox.minX - World.MAX_ENTITY_RADIUS) / 16.0D) - 1;
-		int j = MathHelper.floor((checkBox.maxX + World.MAX_ENTITY_RADIUS) / 16.0D) + 1;
-		int k = MathHelper.floor((checkBox.minZ - World.MAX_ENTITY_RADIUS) / 16.0D) - 1;
-		int l = MathHelper.floor((checkBox.maxZ + World.MAX_ENTITY_RADIUS) / 16.0D) + 1;
+		final double maxEntityRad = worldIn.getMaxEntityRadius();
+		int i = MathHelper.floor((checkBox.minX - maxEntityRad) / 16.0D) - 1;
+		int j = MathHelper.floor((checkBox.maxX + maxEntityRad) / 16.0D) + 1;
+		int k = MathHelper.floor((checkBox.minZ - maxEntityRad) / 16.0D) - 1;
+		int l = MathHelper.floor((checkBox.maxZ + maxEntityRad) / 16.0D) + 1;
 
-		int yMin = MathHelper.clamp(MathHelper.floor((checkBox.minY - World.MAX_ENTITY_RADIUS) / 16.0D) - 1, 0, 15);
-		int yMax = MathHelper.clamp(MathHelper.floor((checkBox.maxY + World.MAX_ENTITY_RADIUS) / 16.0D) + 1, 0, 15);
+		int yMin = MathHelper.clamp(MathHelper.floor((checkBox.minY - maxEntityRad) / 16.0D) - 1, 0, 15);
+		int yMax = MathHelper.clamp(MathHelper.floor((checkBox.maxY + maxEntityRad) / 16.0D) + 1, 0, 15);
 
 		for(int iLoop = i; iLoop <= j; iLoop++){
 			for(int kLoop = k; kLoop <= l; kLoop++){
@@ -389,7 +374,7 @@ public class MultiPistonBase extends Block{
 					for(int yLoop = yMin; yLoop <= yMax; yLoop++){
 						if(!chunk.getEntityLists()[yLoop].isEmpty()){
 							for(Entity entity : chunk.getEntityLists()[yLoop]){
-								if(entity.getEntityBoundingBox().intersects(checkBox)){
+								if(entity.getBoundingBox().intersects(checkBox)){
 									entList.add(entity);
 								}
 							}

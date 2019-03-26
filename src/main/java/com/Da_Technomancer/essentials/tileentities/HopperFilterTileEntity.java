@@ -5,28 +5,32 @@ import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
+import net.minecraft.block.BlockShulkerBox;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ItemShulkerBox;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
 public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState){
-		return oldState.getBlock() == newState.getBlock();
+	@ObjectHolder("hopper_filter")
+	private static final TileEntityType<HopperFilterTileEntity> TYPE = null;
+
+	public HopperFilterTileEntity(){
+		super(TYPE);
 	}
 
 	private EnumFacing.Axis axisCache = null;
@@ -38,7 +42,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	public void setFilter(ItemStack filter){
 		this.filter = filter;
-		EssentialsPackets.network.sendToAllAround(new SendSlotFilterToClient(filter.writeToNBT(new NBTTagCompound()), pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 512));
+		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(filter.write(new NBTTagCompound()), pos));
 		markDirty();
 	}
 
@@ -46,7 +50,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		if(axisCache == null){
 			IBlockState state = world.getBlockState(pos);
 			if(state.getBlock() == EssentialsBlocks.hopperFilter){
-				axisCache = state.getValue(EssentialsProperties.AXIS);
+				axisCache = state.get(EssentialsProperties.AXIS);
 			}else{
 				return EnumFacing.Axis.Y;
 			}
@@ -56,50 +60,52 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	public void clearCache(){
 		axisCache = null;
+		if(passedHandler != null){
+			passedHandler.invalidate();
+			passedHandler = null;
+		}
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		super.writeToNBT(nbt);
-		filter.writeToNBT(nbt);
+	public NBTTagCompound write(NBTTagCompound nbt){
+		super.write(nbt);
+		filter.write(nbt);
 		return nbt;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
-		filter = new ItemStack(nbt);
+	public void read(NBTTagCompound nbt){
+		super.read(nbt);
+		filter = ItemStack.read(nbt);
 	}
 
 	@Override
 	public NBTTagCompound getUpdateTag(){
-		return writeToNBT(super.getUpdateTag());
+		return write(super.getUpdateTag());
 	}
 
 	@Override
 	public void receiveNBT(NBTTagCompound nbt){
-		filter = new ItemStack(nbt);
+		filter = ItemStack.read(nbt);
 	}
 
-	@Override
-	public boolean hasCapability(Capability<?> cap, EnumFacing side){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side.getAxis() == getAxis()){
-			TileEntity te = world.getTileEntity(pos.offset(side.getOpposite()));
-			return te != null && te.hasCapability(cap, side);
-		}
-
-		return super.hasCapability(cap, side);
-	}
+	private LazyOptional<IItemHandler> passedHandler = null;
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getCapability(Capability<T> cap, EnumFacing side){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing side){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side.getAxis() == getAxis()){
-			TileEntity te = world.getTileEntity(pos.offset(side.getOpposite()));
-			IItemHandler srcHandler;
-			if(te != null && (srcHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)) != null){
-				return (T) new ProxyItemHandler(srcHandler);
+			if(passedHandler == null){
+				TileEntity te = world.getTileEntity(pos.offset(side.getOpposite()));
+				LazyOptional<IItemHandler> src;
+				if(te != null && (src = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)).isPresent()){
+					passedHandler = LazyOptional.of(() -> new ProxyItemHandler(src));
+				}else{
+					return LazyOptional.empty();
+				}
 			}
+
+			return (LazyOptional<T>) passedHandler;
 		}
 
 		return super.getCapability(cap, side);
@@ -111,7 +117,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		}
 
 		NBTTagCompound nbt;
-		if(filt.getItem() instanceof ItemShulkerBox && (nbt = filt.getTagCompound()) != null && (nbt = nbt.getCompoundTag("BlockEntityTag")).hasKey("Items", 9)){
+		if(filt.getItem() instanceof ItemBlock && ((ItemBlock) filt.getItem()).getBlock() instanceof BlockShulkerBox && (nbt = filt.getTag()) != null && (nbt = nbt.getCompound("BlockEntityTag")).contains("Items", 9)){
 			NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
 			ItemStackHelper.loadAllItems(nbt, nonnulllist);
 
@@ -122,33 +128,80 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 			}
 			return false;
 		}
-		return query.getItem() == filt.getItem() && query.getMetadata() == filt.getMetadata();
+		return query.getItem() == filt.getItem();
 	}
 
-	private class ProxyItemHandler implements IItemHandler{
-
-		private final IItemHandler src;
-
-		private ProxyItemHandler(IItemHandler src){
-			this.src = src;
-		}
-
+	private static class BlankHandler implements IItemHandler{
 		@Override
 		public int getSlots(){
-			return src.getSlots();
+			return 0;
 		}
 
 		@Nonnull
 		@Override
 		public ItemStack getStackInSlot(int slot){
-			return src.getStackInSlot(slot);
+			return ItemStack.EMPTY;
+		}
+
+		@Nonnull
+		@Override
+		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
+			return stack;
+		}
+
+		@Nonnull
+		@Override
+		public ItemStack extractItem(int slot, int amount, boolean simulate){
+			return ItemStack.EMPTY;
+		}
+
+		@Override
+		public int getSlotLimit(int slot){
+			return 0;
+		}
+
+		@Override
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+			return false;
+		}
+	}
+
+	private class ProxyItemHandler implements IItemHandler{
+
+		private final LazyOptional<IItemHandler> src;
+
+		private ProxyItemHandler(LazyOptional<IItemHandler> src){
+			this.src = src;
+		}
+
+		private IItemHandler getHandler(){
+			if(src.isPresent()){
+				return src.orElseThrow(NullPointerException::new);
+			}else{
+				if(passedHandler != null){
+					passedHandler.invalidate();
+				}
+				passedHandler = null;
+				return new BlankHandler();
+			}
+		}
+
+		@Override
+		public int getSlots(){
+			return getHandler().getSlots();
+		}
+
+		@Nonnull
+		@Override
+		public ItemStack getStackInSlot(int slot){
+			return getHandler().getStackInSlot(slot);
 		}
 
 		@Nonnull
 		@Override
 		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
 			if(matchFilter(stack, filter)){
-				return src.insertItem(slot, stack, simulate);
+				return getHandler().insertItem(slot, stack, simulate);
 			}
 			return stack;
 		}
@@ -157,14 +210,19 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate){
 			if(matchFilter(getStackInSlot(slot), filter)){
-				return src.extractItem(slot, amount, simulate);
+				return getHandler().extractItem(slot, amount, simulate);
 			}
 			return ItemStack.EMPTY;
 		}
 
 		@Override
 		public int getSlotLimit(int slot){
-			return src.getSlotLimit(slot);
+			return getHandler().getSlotLimit(slot);
+		}
+
+		@Override
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+			return matchFilter(stack, filter) && getHandler().isItemValid(slot, stack);
 		}
 	}
 }

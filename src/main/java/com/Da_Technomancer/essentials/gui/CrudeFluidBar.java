@@ -81,31 +81,31 @@ public class CrudeFluidBar{
 	}
 
 	public boolean drawBack(float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer){
-		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 		Gui.drawRect(x + windowX, y + windowY - MAX_HEIGHT, x + windowX + 16, y + windowY, 0xFF959595);
-		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.color3f(1, 1, 1, 1);
 
 		FluidStack fluid = packetToFluid((short) gui.te.getField(fieldIndex0), (short) gui.te.getField(fieldIndex1));
 		if(fluid == null){
 			return true;
 		}
 
-		TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getTextureExtry(fluid.getFluid().getStill().toString());
+		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureMapBlocks().getTextureExtry(fluid.getFluid().getStill().toString());
 		if(sprite == null){
-			sprite = Minecraft.getMinecraft().getTextureMapBlocks().getMissingSprite();
+			sprite = Minecraft.getInstance().getTextureMapBlocks().getMissingSprite();
 		}
-		//Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		//Minecraft.getInstance().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
 		int col = fluid.getFluid().getColor(fluid);
 		int height = (int) (MAX_HEIGHT * (float) fluid.amount / (float) capacity);
-		GlStateManager.color((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, ((float) ((col >>> 24) & 0xFF)) / 255F);
+		GlStateManager.color3f((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, ((float) ((col >>> 24) & 0xFF)) / 255F);
 		gui.drawTexturedModalRect(x + windowX, y + windowY - height, sprite, 16, height);
-		GlStateManager.color(1, 1, 1);
+		GlStateManager.color3f(1, 1, 1);
 		return true;
 	}
 
 	public boolean drawFore(int mouseX, int mouseY, FontRenderer fontRenderer){
-		Minecraft.getMinecraft().getTextureManager().bindTexture(OVERLAY);
+		Minecraft.getInstance().getTextureManager().bindTexture(OVERLAY);
 		Gui.drawModalRectWithCustomSizedTexture(x, y - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
 
 		if(mouseX >= x + windowX && mouseX <= x + windowX + 16 && mouseY >= y + windowY - MAX_HEIGHT && mouseY <= y + windowY){

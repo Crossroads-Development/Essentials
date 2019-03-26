@@ -3,25 +3,28 @@ package com.Da_Technomancer.essentials.blocks;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
 import com.Da_Technomancer.essentials.tileentities.ItemShifterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -29,19 +32,15 @@ import java.util.List;
 public class ItemShifter extends BlockContainer{
 
 	protected ItemShifter(){
-		super(Material.IRON);
+		super(Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL));
 		String name = "item_shifter";
-		setTranslationKey(name);
 		setRegistryName(name);
-		setHardness(2);
-		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		setSoundType(SoundType.METAL);
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta){
+	public TileEntity createNewTileEntity(IBlockReader world){
 		return new ItemShifterTileEntity();
 	}
 
@@ -50,23 +49,23 @@ public class ItemShifter extends BlockContainer{
 		return EnumBlockRenderType.MODEL;
 	}
 
+	@Nullable
 	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing blockFaceClickedOn, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, placer == null ? EnumFacing.UP : EnumFacing.getDirectionFromEntityLiving(pos, placer));
+	public IBlockState getStateForPlacement(BlockItemUseContext context){
+		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState blockstate){
-		InventoryHelper.dropInventoryItems(world, pos, (ItemShifterTileEntity) world.getTileEntity(pos));
-		super.breakBlock(world, pos, blockstate);
+	public void onPlayerDestroy(IWorld world, BlockPos pos, IBlockState blockstate){
+		InventoryHelper.dropInventoryItems(world.getWorld(), pos, (ItemShifterTileEntity) world.getTileEntity(pos));
+		super.onPlayerDestroy(world, pos, blockstate);
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
-		boolean isWrench = EssentialsConfig.isWrench(playerIn.getHeldItem(hand), worldIn.isRemote);
+	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		if(!worldIn.isRemote){
-			if(isWrench){
-				worldIn.setBlockState(pos, state.cycleProperty(EssentialsProperties.FACING));
+			if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.FACING));
 				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof ItemShifterTileEntity){
 					((ItemShifterTileEntity) te).refreshCache();
@@ -79,35 +78,25 @@ public class ItemShifter extends BlockContainer{
 	}
 
 	@Override
-	public IBlockState withRotation(IBlockState state, Rotation rot){
-		return state.withProperty(EssentialsProperties.FACING, rot.rotate(state.getValue(EssentialsProperties.FACING)));
+	public IBlockState rotate(IBlockState state, Rotation rot){
+		return state.with(EssentialsProperties.FACING, rot.rotate(state.get(EssentialsProperties.FACING)));
 	}
 
 	@Override
-	public IBlockState withMirror(IBlockState state, Mirror mirrorIn){
-		return state.withRotation(mirrorIn.toRotation(state.getValue(EssentialsProperties.FACING)));
+	public IBlockState mirror(IBlockState state, Mirror mirrorIn){
+		return state.rotate(mirrorIn.toRotation(state.get(EssentialsProperties.FACING)));
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Ejects contained items out the faced side, moved into inventories or dropped onto the ground");
-		tooltip.add("Can 'push' items through a line of up to " + EssentialsConfig.getConfigInt(EssentialsConfig.itemChuteRange, true) + " Transport Chutes");
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+		tooltip.add(new TextComponentString("Ejects contained items out the faced side, moved into inventories or dropped onto the ground"));
+		tooltip.add(new TextComponentString("Can 'push' items through a line of up to " + EssentialsConfig.itemChuteRange.get() + " Transport Chutes"));
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, EssentialsProperties.FACING);
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta){
-		return getDefaultState().withProperty(EssentialsProperties.FACING, EnumFacing.byIndex(meta));
-	}
-
-	@Override
-	public int getMetaFromState(IBlockState state){
-		return state.getValue(EssentialsProperties.FACING).getIndex();
+	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
+		builder.add(EssentialsProperties.FACING);
 	}
 
 	@Override

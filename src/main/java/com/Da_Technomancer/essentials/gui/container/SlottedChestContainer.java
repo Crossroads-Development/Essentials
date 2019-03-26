@@ -134,7 +134,7 @@ public class SlottedChestContainer extends Container{
 					}
 
 					if(dragType == 1){
-						player.dropItem(inventoryplayer.getItemStack().splitStack(1), true);
+						player.dropItem(inventoryplayer.getItemStack().split(1), true);
 					}
 				}
 			}else if(clickTypeIn == ClickType.QUICK_MOVE){
@@ -178,7 +178,7 @@ public class SlottedChestContainer extends Container{
 								l2 = slot7.getItemStackLimit(itemstack13);
 							}
 
-							slot7.putStack(itemstack13.splitStack(l2));
+							slot7.putStack(itemstack13.split(l2));
 							if(te.isInventoryType(slot7.inventory) && te.lockedInv[slot7.getSlotIndex()].isEmpty()){
 								te.lockedInv[slot7.getSlotIndex()] = slot7.getStack().copy();
 								te.lockedInv[slot7.getSlotIndex()].setCount(1);
@@ -259,7 +259,7 @@ public class SlottedChestContainer extends Container{
 						int k1 = slot5.getItemStackLimit(itemstack9);
 
 						if(itemstack9.getCount() > k1){
-							slot5.putStack(itemstack9.splitStack(k1));
+							slot5.putStack(itemstack9.split(k1));
 							if(te.isInventoryType(slot5.inventory) && te.lockedInv[slot5.getSlotIndex()].isEmpty()){
 								te.lockedInv[slot5.getSlotIndex()] = slot5.getStack().copy();
 								te.lockedInv[slot5.getSlotIndex()].setCount(1);
@@ -279,7 +279,7 @@ public class SlottedChestContainer extends Container{
 					int l1 = slot5.getItemStackLimit(itemstack9);
 
 					if(itemstack9.getCount() > l1){
-						slot5.putStack(itemstack9.splitStack(l1));
+						slot5.putStack(itemstack9.split(l1));
 						slot5.onTake(player, itemstack12);
 						if(te.isInventoryType(slot5.inventory) && te.lockedInv[slot5.getSlotIndex()].isEmpty()){
 							te.lockedInv[slot5.getSlotIndex()] = slot5.getStack().copy();

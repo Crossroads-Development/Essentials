@@ -2,7 +2,6 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
@@ -17,9 +16,13 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -27,27 +30,23 @@ import java.util.List;
 public class SlottedChest extends BlockContainer{
 
 	protected SlottedChest(){
-		super(Material.WOOD);
+		super(Properties.create(Material.WOOD).hardnessAndResistance(2).sound(SoundType.WOOD));
 		String name = "slotted_chest";
-		setSoundType(SoundType.WOOD);
-		setTranslationKey(name);
 		setRegistryName(name);
-		setHardness(2);
-		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta){
+	public TileEntity createNewTileEntity(IBlockReader world){
 		return new SlottedChestTileEntity();
 	}
 
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState blockstate){
+	public void onPlayerDestroy(IWorld world, BlockPos pos, IBlockState blockstate){
 		SlottedChestTileEntity te = (SlottedChestTileEntity) world.getTileEntity(pos);
-		InventoryHelper.dropInventoryItems(world, pos, te.iInv);
-		super.breakBlock(world, pos, blockstate);
+		InventoryHelper.dropInventoryItems(world.getWorld(), pos, te.iInv);
+		super.onPlayerDestroy(world, pos, blockstate);
 	}
 
 	@Override
@@ -56,7 +55,7 @@ public class SlottedChest extends BlockContainer{
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		if(!worldIn.isRemote){
 			playerIn.openGui(Essentials.instance, EssentialsGuiHandler.SLOTTED_CHEST_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
@@ -64,9 +63,9 @@ public class SlottedChest extends BlockContainer{
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Slots can be locked to only accept one item type");
-		tooltip.add("The partitions make it bigger somehow");
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+		tooltip.add(new TextComponentString("Slots can be locked to only accept one item type"));
+		tooltip.add(new TextComponentString("The partitions make it bigger somehow"));
 	}
 }

@@ -16,7 +16,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -33,16 +33,16 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta){
+	public TileEntity createNewTileEntity(IBlockReader world){
 		return new SpeedHopperTileEntity();
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		if(!worldIn.isRemote){
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand), false)){
-				worldIn.setBlockState(pos, state.cycleProperty(FACING));
+				worldIn.setBlockState(pos, state.cycle(FACING));
 				if(te instanceof SortingHopperTileEntity){
 					((SortingHopperTileEntity) te).resetCache();
 				}
@@ -58,7 +58,7 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state){
+	public void onPlayerDestroy(IWorld worldIn, BlockPos pos, IBlockState state){
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 		if(tileentity instanceof SortingHopperTileEntity){
 			InventoryHelper.dropInventoryItems(worldIn, pos, (SortingHopperTileEntity) tileentity);
@@ -68,8 +68,8 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add("Inserts or extracts entire stacks at a time");
 		tooltip.add("Exactly the same, aside from all the differences");
 	}

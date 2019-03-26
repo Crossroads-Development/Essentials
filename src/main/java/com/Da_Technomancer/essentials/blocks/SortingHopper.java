@@ -24,10 +24,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -47,7 +47,7 @@ public class SortingHopper extends BlockContainer{
 		setHardness(2);
 		setSoundType(SoundType.METAL);
 		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		setDefaultState(getDefaultState().withProperty(FACING, EnumFacing.DOWN).withProperty(ENABLED, true));
+		setDefaultState(getDefaultState().with(FACING, EnumFacing.DOWN).with(ENABLED, true));
 	}
 
 	protected SortingHopper(){
@@ -75,20 +75,20 @@ public class SortingHopper extends BlockContainer{
 			enumfacing = EnumFacing.DOWN;
 		}
 
-		return getDefaultState().withProperty(FACING, enumfacing).withProperty(ENABLED, !worldIn.isBlockPowered(pos));
+		return getDefaultState().with(FACING, enumfacing).with(ENABLED, !worldIn.isBlockPowered(pos));
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta){
+	public TileEntity createNewTileEntity(IBlockReader world){
 		return new SortingHopperTileEntity();
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		if(!worldIn.isRemote){
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand), false)){
-				worldIn.setBlockState(pos, state.cycleProperty(FACING));
+				worldIn.setBlockState(pos, state.cycle(FACING));
 				if(te instanceof SortingHopperTileEntity){
 					((SortingHopperTileEntity) te).resetCache();
 				}
@@ -107,13 +107,13 @@ public class SortingHopper extends BlockContainer{
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
 		boolean flag = !worldIn.isBlockPowered(pos);
 
-		if(flag != state.getValue(ENABLED)){
-			worldIn.setBlockState(pos, state.withProperty(ENABLED, flag), 4);
+		if(flag != state.get(ENABLED)){
+			worldIn.setBlockState(pos, state.with(ENABLED, flag), 4);
 		}
 	}
 
 	@Override
-	public void breakBlock(World worldIn, BlockPos pos, IBlockState state){
+	public void onPlayerDestroy(IWorld worldIn, BlockPos pos, IBlockState state){
 		TileEntity tileentity = worldIn.getTileEntity(pos);
 		if(tileentity instanceof SortingHopperTileEntity){
 			InventoryHelper.dropInventoryItems(worldIn, pos, (SortingHopperTileEntity) tileentity);
@@ -138,8 +138,8 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side){
+	@OnlyIn(Dist.CLIENT)
+	public boolean shouldSideBeRendered(IBlockState blockState, IWorldReader blockAccess, BlockPos pos, EnumFacing side){
 		return true;
 	}
 
@@ -154,39 +154,39 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public BlockRenderLayer getRenderLayer(){
 		return BlockRenderLayer.CUTOUT_MIPPED;
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta){
-		return this.getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta & 7)).withProperty(ENABLED, (meta & 8) == 0);
+		return this.getDefaultState().with(FACING, EnumFacing.byIndex(meta & 7)).with(ENABLED, (meta & 8) == 0);
 	}
 
 	@Override
 	public int getMetaFromState(IBlockState state){
-		return state.getValue(FACING).getIndex() + (state.getValue(ENABLED) ? 0 : 8);
+		return state.get(FACING).getIndex() + (state.get(ENABLED) ? 0 : 8);
 	}
 
 	@Override
-	public IBlockState withRotation(IBlockState state, Rotation rot){
-		return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+	public IBlockState rotate(IBlockState state, Rotation rot){
+		return state.with(FACING, rot.rotate(state.get(FACING)));
 	}
 
 	@Override
-	public IBlockState withMirror(IBlockState state, Mirror mirrorIn){
-		return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
+	public IBlockState mirror(IBlockState state, Mirror mirrorIn){
+		return state.rotate(mirrorIn.toRotation(state.get(FACING)));
 	}
 
 	@Override
-	protected BlockStateContainer createBlockState(){
+	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
 		return new BlockStateContainer(this, FACING, ENABLED);
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add("Prioritizes insertion over extraction, making it ideal for sorting");
 		tooltip.add("Exactly the same, aside from all the differences");
 	}

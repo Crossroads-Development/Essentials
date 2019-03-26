@@ -9,18 +9,24 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
+	@ObjectHolder("slotted_chest")
+	private static final TileEntityType<SlottedChestTileEntity> TYPE = null;
+
 	public SlottedChestTileEntity(){
-		super();
+		super(TYPE);
 		for(int i = 0; i < 54; i++){
 			inv[i] = ItemStack.EMPTY;
 			lockedInv[i] = ItemStack.EMPTY;
@@ -37,38 +43,38 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		NBTTagCompound slotNBT = new NBTTagCompound();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				slotNBT.setTag("lock" + i, lockedInv[i].writeToNBT(new NBTTagCompound()));
+				slotNBT.put("lock" + i, lockedInv[i].write(new NBTTagCompound()));
 			}
 		}
-		EssentialsPackets.network.sendToAllAround(new SendSlotFilterToClient(slotNBT, pos), new TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 10));
+		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(slotNBT, pos));
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
+	public void read(NBTTagCompound nbt){
+		super.read(nbt);
 
 		for(int i = 0; i < 54; ++i){
-			if(nbt.hasKey("slot" + i)){
-				inv[i] = new ItemStack(nbt.getCompoundTag("slot" + i));
+			if(nbt.contains("slot" + i)){
+				inv[i] = ItemStack.read(nbt.getCompound("slot" + i));
 				//Backward compatibility.
-				lockedInv[i] = new ItemStack(nbt.getCompoundTag("slot" + i));
+				lockedInv[i] = ItemStack.read(nbt.getCompound("slot" + i));
 			}
-			if(nbt.hasKey("lockSlot" + i)){
-				lockedInv[i] = new ItemStack(nbt.getCompoundTag("lockSlot" + i));
+			if(nbt.contains("lockSlot" + i)){
+				lockedInv[i] = ItemStack.read(nbt.getCompound("lockSlot" + i));
 			}
 		}
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		super.writeToNBT(nbt);
+	public NBTTagCompound write(NBTTagCompound nbt){
+		super.write(nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(!inv[i].isEmpty()){
-				nbt.setTag("slot" + i, inv[i].writeToNBT(new NBTTagCompound()));
+				nbt.put("slot" + i, inv[i].write(new NBTTagCompound()));
 			}
 			if(!lockedInv[i].isEmpty()){
-				nbt.setTag("lockSlot" + i, lockedInv[i].writeToNBT(new NBTTagCompound()));
+				nbt.put("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
 			}
 		}
 
@@ -80,7 +86,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		NBTTagCompound nbt = super.getUpdateTag();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				nbt.setTag("lockSlot" + i, lockedInv[i].writeToNBT(new NBTTagCompound()));
+				nbt.put("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
 			}
 		}
 		return nbt;
@@ -93,21 +99,12 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		filterChanged();
 	}
 
-	@Override
-	public boolean hasCapability(Capability<?> cap, EnumFacing facing){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return true;
-		}
-
-		return super.hasCapability(cap, facing);
-	}
-
 	public final IInventory iInv = new Inventory();
 	private final InventoryHandler handler = new InventoryHandler();
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> cap, EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return (T) handler;
 		}
@@ -122,8 +119,8 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 	@Override
 	public void receiveNBT(NBTTagCompound nbt){
 		for(int i = 0; i < 54; i++){
-			if(nbt.hasKey("lock" + i)){
-				lockedInv[i] = new ItemStack(nbt.getCompoundTag("lock" + i));
+			if(nbt.contains("lock" + i)){
+				lockedInv[i] = ItemStack.read(nbt.getCompound("lock" + i));
 			}else{
 				lockedInv[i] = ItemStack.EMPTY;
 			}
@@ -219,7 +216,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 				return ItemStack.EMPTY;
 			}
 
-			return inv[index].splitStack(count);
+			return inv[index].split(count);
 		}
 
 		@Override

@@ -5,16 +5,21 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class BasicItemSplitterTileEntity extends TileEntity implements ITickable{
+
+	@ObjectHolder("basic_item_splitter")
+	private static final TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
 
 	public static final int[] MODES = {1, 2, 3};
 	private int mode = 1;
@@ -22,25 +27,34 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 
 	private EnumFacing facing = null;
 
+	public BasicItemSplitterTileEntity(TileEntityType<?> type){
+		super(type);
+	}
+
+	public BasicItemSplitterTileEntity(){
+		this(TYPE);
+	}
+
 	private EnumFacing getFacing(){
 		if(facing == null){
 			IBlockState state = world.getBlockState(pos);
-			if(!state.getPropertyKeys().contains(EssentialsProperties.FACING)){
+			if(!state.has(EssentialsProperties.FACING)){
 				return EnumFacing.DOWN;
 			}
-			facing = state.getValue(EssentialsProperties.FACING);
+			facing = state.get(EssentialsProperties.FACING);
 		}
 		return facing;
 	}
 
 	@Override
-	public void update(){
+	public void tick(){
 		EnumFacing dir = getFacing();
 		for(int i = 0; i < 2; i++){
 			EnumFacing side = i == 0 ? dir : dir.getOpposite();
 			TileEntity outputTE = world.getTileEntity(pos.offset(side));
-			IItemHandler outHandler;
-			if(outputTE != null && (outHandler = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())) != null){
+			LazyOptional<IItemHandler> outHandlerCon;
+			if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())).isPresent()){
+				IItemHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);
 				for(int j = 0; j < outHandler.getSlots(); j++){
 					ItemStack outStack = outHandler.insertItem(j, inventory[i], false);
 					if(outStack.getCount() != inventory[i].getCount()){
@@ -64,47 +78,40 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	private final OutItemHandler secondaryHandler = new OutItemHandler(0);
 	private final InHandler inHandler = new InHandler();
 
-	@Override
-	public boolean hasCapability(Capability<?> cap, @Nullable EnumFacing facing){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return true;
-		}
-		return super.hasCapability(cap, facing);
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> cap, EnumFacing side){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing side){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			EnumFacing dir = getFacing();
-			return side == dir ? (T) primaryHandler : side == dir.getOpposite() ? (T) secondaryHandler : (T) inHandler;
+
+			return side == dir ? LazyOptional.of(() -> (T) new OutItemHandler(1)) : side == dir.getOpposite() ? LazyOptional.of(() -> (T) new OutItemHandler(0)) : LazyOptional.of(() -> (T) new InHandler());
 		}
 
 		return super.getCapability(cap, side);
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		super.writeToNBT(nbt);
-		nbt.setInteger("mode", mode);
-		nbt.setInteger("transfered", transfered);
+	public NBTTagCompound write(NBTTagCompound nbt){
+		super.write(nbt);
+		nbt.putInt("mode", mode);
+		nbt.putInt("transfered", transfered);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
 				NBTTagCompound inner = new NBTTagCompound();
-				inventory[i].writeToNBT(inner);
-				nbt.setTag("inv_" + i, inner);
+				inventory[i].write(inner);
+				nbt.put("inv_" + i, inner);
 			}
 		}
 		return nbt;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
-		mode = nbt.getInteger("mode");
-		transfered = nbt.getInteger("transfered");
+	public void read(NBTTagCompound nbt){
+		super.read(nbt);
+		mode = nbt.getInt("mode");
+		transfered = nbt.getInt("transfered");
 		for(int i = 0; i < 2; i++){
-			inventory[i] = new ItemStack(nbt.getCompoundTag("inv_" + i));
+			inventory[i] = ItemStack.read(nbt.getCompound("inv_" + i));
 		}
 	}
 
@@ -181,6 +188,11 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		public int getSlotLimit(int slot){
 			return 64;
 		}
+
+		@Override
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+			return slot == 0;
+		}
 	}
 
 	protected class OutItemHandler implements IItemHandler{
@@ -217,15 +229,20 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 
 			int moved = Math.min(amount, inventory[index].getCount());
 			if(simulate){
-				return new ItemStack(inventory[index].getItem(), moved, inventory[index].getMetadata());
+				return new ItemStack(inventory[index].getItem(), moved, inventory[index].getTag());
 			}
 			markDirty();
-			return inventory[index].splitStack(moved);
+			return inventory[index].split(moved);
 		}
 
 		@Override
 		public int getSlotLimit(int slot){
 			return 64;
+		}
+
+		@Override
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+			return false;
 		}
 	}
 } 

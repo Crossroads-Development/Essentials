@@ -1,18 +1,17 @@
 package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 public class EssentialsPackets{
 
-	public static SimpleNetworkWrapper network;
+	public static SimpleChannel channel;
 
 	public static void preInit(){
-		network = NetworkRegistry.INSTANCE.newSimpleChannel(Essentials.MODID + ".chan");
+		channel = NetworkRegistry.newSimpleChannel(new ResourceLocation(Essentials.MODID, "channel"), () -> "1.0.0", (s) -> s.equals("1.0.0"), (s) -> s.equals("1.0.0"));
 
-		int packetId = 5;
-		network.registerMessage(SendSlotFilterToClient.class, SendSlotFilterToClient.class, packetId++, Side.CLIENT);
+		channel.registerMessage(0, SendSlotFilterToClient.class, PacketManager::encode, (buf) -> PacketManager.decode(buf, SendSlotFilterToClient.class), PacketManager::activate);
 	}
 }

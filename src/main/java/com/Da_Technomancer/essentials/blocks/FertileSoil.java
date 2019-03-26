@@ -1,7 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -11,12 +10,15 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -27,50 +29,45 @@ public class FertileSoil extends Block{
 	private final IBlockState plant;
 
 	protected FertileSoil(String plantName, IBlockState plant){
-		super(plant.getBlock() == Blocks.NETHER_WART ? Material.SAND : Material.GROUND);
+		super(Block.Properties.create(plant.getBlock() == Blocks.NETHER_WART ? Material.SAND : Material.GROUND).hardnessAndResistance(0.5F).sound(SoundType.GROUND).tickRandomly());
 		this.plant = plant;
 		String name = "fertile_soil_" + plantName;
-		setTranslationKey(name);
 		setRegistryName(name);
-		setHardness(.5F);
-		setSoundType(SoundType.GROUND);
-		setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		setTickRandomly(true);
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
 	}
 
 	@Override
-	public boolean isToolEffective(String type, IBlockState state){
-		return "shovel".equals(type);
+	public boolean isToolEffective(IBlockState state, ToolType tool){
+		return tool == ToolType.SHOVEL;
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced){
-		tooltip.add("Slowly creates the seed plant/sapling on top of it, for free");
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+		tooltip.add(new TextComponentString("Slowly creates the seed plant/sapling on top of it, for free"));
 		if(plant.getBlock() == Blocks.NETHER_WART){
-			tooltip.add("Made with farmer souls");
+			tooltip.add(new TextComponentString("Made with farmer souls"));
 		}
 	}
 
 	@Override
-	public boolean canSustainPlant(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing direction, IPlantable plantable){
+	public boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing direction, IPlantable plantable){
 		return (plant.getBlock() == Blocks.NETHER_WART) == (plantable.getPlantType(world, pos.offset(direction)) == EnumPlantType.Nether);
 	}
 
 	@Override
-	public boolean isFertile(World world, BlockPos pos){
+	public boolean isFertile(IBlockState state, IBlockReader world, BlockPos pos){
 		return true;
 	}
 
 	@Override
-	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand){
+	public void tick(IBlockState state, World worldIn, BlockPos pos, Random random){
 		if(worldIn.isRemote){
 			return;
 		}
 
-		if(EssentialsConfig.getConfigDouble(EssentialsConfig.fertileSoilRate, false) < 100D * Math.random()){
+		if(EssentialsConfig.fertileSoilRate.get() < 100D * Math.random()){
 			return;
 		}
 

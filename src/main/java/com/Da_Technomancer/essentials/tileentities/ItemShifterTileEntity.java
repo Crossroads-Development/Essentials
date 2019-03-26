@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.blocks.ItemShifter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +11,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -19,13 +21,21 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.registries.ObjectHolder;
 
 public class ItemShifterTileEntity extends TileEntity implements ITickable, IInventory{
+
+	@ObjectHolder("item_shifter")
+	private static final TileEntityType<ItemShifterTileEntity> TYPE = null;
 
 	private ItemStack inventory = ItemStack.EMPTY;
 	private BlockPos endPos = null;
 
 	private EnumFacing facing = null;
+
+	public ItemShifterTileEntity(){
+		super(TYPE);
+	}
 
 	private EnumFacing getFacing(){
 		if(facing == null){
@@ -33,7 +43,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 			if(!state.getPropertyKeys().contains(EssentialsProperties.FACING)){
 				return EnumFacing.DOWN;
 			}
-			facing = state.getValue(EssentialsProperties.FACING);
+			facing = state.get(EssentialsProperties.FACING);
 		}
 		return facing;
 	}
@@ -44,7 +54,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	@Override
-	public void update(){
+	public void tick(){
 		if(world.isRemote){
 			return;
 		}
@@ -88,7 +98,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 
 		for(; extension <= maxChutes; extension++){
 			IBlockState target = world.getBlockState(pos.offset(dir, extension));
-			if(target.getBlock() != EssentialsBlocks.itemChute || target.getValue(EssentialsProperties.AXIS) != dir.getAxis()){
+			if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
 				break;
 			}
 		}
@@ -97,21 +107,21 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		super.writeToNBT(nbt);
+	public NBTTagCompound write(NBTTagCompound nbt){
+		super.write(nbt);
 
 		if(!inventory.isEmpty()){
-			nbt.setTag("inv", inventory.writeToNBT(new NBTTagCompound()));
+			nbt.put("inv", inventory.write(new NBTTagCompound()));
 		}
 		return nbt;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
+	public void read(NBTTagCompound nbt){
+		super.read(nbt);
 
-		if(nbt.hasKey("inv")){
-			inventory = new ItemStack(nbt.getCompoundTag("inv"));
+		if(nbt.contains("inv")){
+			inventory = new ItemStack(nbt.getCompound("inv"));
 		}
 	}
 
@@ -212,7 +222,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	@Override
 	public ItemStack decrStackSize(int index, int count){
 		markDirty();
-		return index == 0 ? inventory.splitStack(count) : ItemStack.EMPTY;
+		return index == 0 ? inventory.split(count) : ItemStack.EMPTY;
 	}
 
 	@Override

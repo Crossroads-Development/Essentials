@@ -10,23 +10,27 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
+import net.minecraftforge.registries.ObjectHolder;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class FluidShifterTileEntity extends TileEntity implements ITickable, IInventory{
+
+	@ObjectHolder("fluid_splitter")
+	private static final TileEntityType<FluidShifterTileEntity> TYPE = null;
 
 	private FluidStack inventory = null;
 	private BlockPos endPos = null;
@@ -34,24 +38,23 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 
 	private EnumFacing facing = null;
 
+	public FluidShifterTileEntity(){
+		super(TYPE);
+	}
+
 	private EnumFacing getFacing(){
 		if(facing == null){
 			IBlockState state = world.getBlockState(pos);
-			if(!state.getPropertyKeys().contains(EssentialsProperties.FACING)){
+			if(!state.has(EssentialsProperties.FACING)){
 				return EnumFacing.DOWN;
 			}
-			facing = state.getValue(EssentialsProperties.FACING);
+			facing = state.get(EssentialsProperties.FACING);
 		}
 		return facing;
 	}
 
 	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState){
-		return oldState.getBlock() != newState.getBlock();
-	}
-
-	@Override
-	public void update(){
+	public void tick(){
 		if(world.isRemote){
 			return;
 		}
@@ -66,8 +69,9 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 
 		TileEntity outputTE = world.getTileEntity(endPos);
 		EnumFacing dir = getFacing();
-		IFluidHandler outHandler;
-		if(outputTE != null && (outHandler = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite())) != null){
+		LazyOptional<IFluidHandler> outHandlerCon;
+		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite())).isPresent()){
+			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);
 			int filled = outHandler.fill(inventory, true);
 			if(filled != 0){
 				if(inventory.amount == filled){
@@ -84,11 +88,11 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 		facing = null;
 		EnumFacing dir = getFacing();
 		int extension = 1;
-		int maxChutes = EssentialsConfig.getConfigInt(EssentialsConfig.itemChuteRange, false);
+		int maxChutes = EssentialsConfig.itemChuteRange.get();
 
 		for(; extension <= maxChutes; extension++){
 			IBlockState target = world.getBlockState(pos.offset(dir, extension));
-			if(target.getBlock() != EssentialsBlocks.itemChute || target.getValue(EssentialsProperties.AXIS) != dir.getAxis()){
+			if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
 				break;
 			}
 		}
@@ -97,40 +101,31 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 	}
 
 	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		super.writeToNBT(nbt);
+	public NBTTagCompound write(NBTTagCompound nbt){
+		super.write(nbt);
 
 		if(inventory != null){
-			nbt.setTag("inv", inventory.writeToNBT(new NBTTagCompound()));
+			nbt.put("inv", inventory.writeToNBT(new NBTTagCompound()));
 		}
 		return nbt;
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
+	public void read(NBTTagCompound nbt){
+		super.read(nbt);
 
-		if(nbt.hasKey("inv")){
-			inventory = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("inv"));
+		if(nbt.contains("inv")){
+			inventory = FluidStack.loadFluidStackFromNBT(nbt.getCompound("inv"));
 		}
-	}
-
-	@Override
-	public boolean hasCapability(Capability<?> cap, EnumFacing facing){
-		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-			return true;
-		}
-
-		return super.hasCapability(cap, facing);
 	}
 
 	private final IFluidHandler handler = new FluidHandler();
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> cap, EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing facing){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-			return (T) handler;
+			return LazyOptional.of(() -> (T) handler);
 		}
 
 		return super.getCapability(cap, facing);
@@ -205,8 +200,8 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 	}
 
 	@Override
-	public String getName(){
-		return "container.fluid_shifter";
+	public ITextComponent getName(){
+		return new TextComponentTranslation("container.fluid_shifter");
 	}
 
 	@Override
@@ -214,10 +209,10 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 		return false;
 	}
 
+	@Nullable
 	@Override
-	@Nonnull
-	public ITextComponent getDisplayName(){
-		return new TextComponentTranslation(getName());
+	public ITextComponent getCustomName(){
+		return null;
 	}
 
 	@Override

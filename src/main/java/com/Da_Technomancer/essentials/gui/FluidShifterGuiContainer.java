@@ -54,7 +54,7 @@ public class FluidShifterGuiContainer extends GuiContainer{
 		if(fluidBar != null){
 			fluidBar.drawFore(mouseX, mouseY, fontRenderer);
 		}
-		fontRenderer.drawString(te.getDisplayName().getUnformattedText(), 8, 6, 0x404040);
-		fontRenderer.drawString(playerInv.getDisplayName().getUnformattedText(), FluidShifterContainer.invStart[0], FluidShifterContainer.invStart[1] - 12, 0x404040);
+		fontRenderer.drawString(te.getDisplayName().getFormattedText(), 8, 6, 0x404040);
+		fontRenderer.drawString(playerInv.getDisplayName().getFormattedText(), FluidShifterContainer.invStart[0], FluidShifterContainer.invStart[1] - 12, 0x404040);
 	}
 }

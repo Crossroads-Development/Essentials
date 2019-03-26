@@ -1,54 +1,89 @@
 buildscript {
-	repositories {
-    	jcenter()
-    	maven { url = "http://files.minecraftforge.net/maven" }
-	}
-	dependencies {
-    	classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-	}
+    repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+    }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-version = "1.13.0-2.0.0_BETA_7-Filter"
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
+
+
+version = "1.13.0-2.0.0_BETA_8-Migration"
 group = "com.Da_Technomancer.essentials"
 archivesBaseName = "essentials"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava.options.encoding = 'UTF-8'
 
 tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
+    options.encoding = 'UTF-8'
 }
 
 minecraft {
-	version = "1.12.2-14.23.5.2768"
-	runDir = "run"
-		
-	mappings = 'stable_39'
-		
-	replace 'gradVERSION', project.version
-	replaceIn 'Essentials.java'
+    mappings channel: 'snapshot', version: '20190323-1.13.2'
+
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                essentials {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                essentials {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": "essentials",
+                "Specification-Vendor": "Da_Technomancer",
+                "Specification-Version": "1",
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"Da_Technomancer",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }
 
 repositories {
-	maven { url "http://dvs1.progwml6.com/files/maven" }
+    maven { url "http://dvs1.progwml6.com/files/maven" }
 }
 
 dependencies {
-	deobfCompile "mezz.jei:jei_1.12.2:4.8.5.159"
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.92'
+
+    deobf "mezz.jei:jei_1.13.2:5.0.0.8"
 }
 
-processResources {
-	inputs.property "version", project.version
-	inputs.property "mcversion", project.minecraft.version
-
-	from(sourceSets.main.resources.srcDirs) {
-		include 'mcmod.info'
-		
-		expand 'version':project.version, 'mcversion':project.minecraft.version
-	}
-	
-	from(sourceSets.main.resources.srcDirs) {
-		exclude 'mcmod.info'
-	}
-}

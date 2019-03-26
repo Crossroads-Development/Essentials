@@ -1,7 +1,10 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.items.EssentialsItems;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockBeetroot;
+import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockNetherWart;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -39,15 +42,16 @@ public class EssentialsBlocks{
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
+	public static final Item.Properties itemBlockProp = new Item.Properties().group(EssentialsItems.TAB_ESSENTIALS);
+
 	/**
 	 * Registers the item form of a block and the item model.
 	 * @param block The block to register
 	 * @return The passed block for convenience.
 	 */
 	public static <T extends Block> T blockAddQue(T block){
-		Item item = new ItemBlock(block).setRegistryName(block.getRegistryName());
+		Item item = new ItemBlock(block, itemBlockProp).setRegistryName(block.getRegistryName());
 		EssentialsItems.toRegister.add(item);
-		EssentialsItems.itemAddQue(item);
 		return block;
 	}
 
@@ -57,21 +61,21 @@ public class EssentialsBlocks{
 		sortingHopper = new SortingHopper();
 		speedHopper = new SpeedHopper();
 		candleLilyPad = new CandleLilyPad();
-		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.getDefaultState().withProperty(BlockCrops.AGE, 0));
-		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.getDefaultState().withProperty(BlockCrops.AGE, 0));
-		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.getDefaultState().withProperty(BlockCrops.AGE, 0));
-		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.getDefaultState().withProperty(BlockBeetroot.BEETROOT_AGE, 0));
-		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.getDefaultState().withProperty(BlockNetherWart.AGE, 0));
-		fertileSoilOak = new FertileSoil("oak", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.OAK));
-		fertileSoilBirch = new FertileSoil("birch", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.BIRCH));
-		fertileSoilSpruce = new FertileSoil("spruce", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.SPRUCE));
-		fertileSoilJungle = new FertileSoil("jungle", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.JUNGLE));
-		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.DARK_OAK));
-		fertileSoilAcacia = new FertileSoil("acacia", Blocks.SAPLING.getDefaultState().withProperty(BlockSapling.TYPE, BlockPlanks.EnumType.ACACIA));
+		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.getDefaultState().with(BlockCrops.AGE, 0));
+		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.getDefaultState().with(BlockCrops.AGE, 0));
+		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.getDefaultState().with(BlockCrops.AGE, 0));
+		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.getDefaultState().with(BlockBeetroot.BEETROOT_AGE, 0));
+		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.getDefaultState().with(BlockNetherWart.AGE, 0));
+		fertileSoilOak = new FertileSoil("oak", Blocks.OAK_SAPLING.getDefaultState());
+		fertileSoilBirch = new FertileSoil("birch", Blocks.BIRCH_SAPLING.getDefaultState());
+		fertileSoilSpruce = new FertileSoil("spruce", Blocks.SPRUCE_SAPLING.getDefaultState());
+		fertileSoilJungle = new FertileSoil("jungle", Blocks.JUNGLE_SAPLING.getDefaultState());
+		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.DARK_OAK_SAPLING.getDefaultState());
+		fertileSoilAcacia = new FertileSoil("acacia", Blocks.ACACIA_SAPLING.getDefaultState());
 		hopperFilter = new HopperFilter();
 		itemChute = new ItemChute();
 		itemShifter = new ItemShifter();
-		fluidShifter = new FluidShifter();
+		//TODO fluidShifter = new FluidShifter();
 		multiPistonExtend = new MultiPistonExtend(false);
 		multiPistonExtendSticky = new MultiPistonExtend(true);
 		multiPiston = new MultiPistonBase(false);

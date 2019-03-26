@@ -1,21 +1,27 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.blocks.SpeedHopper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
 public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
+	@ObjectHolder("speed_hopper")
+	private static final TileEntityType<SpeedHopperTileEntity> TYPE = null;
+
 	public SpeedHopperTileEntity(){
-		super();
+		super(TYPE);
 		handler = new SpeedItemHandler();
 	}
 
@@ -92,7 +98,7 @@ public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 				}
 
 				if(remain.isEmpty()){
-					entityitem.setDead();
+					entityitem.remove();
 					changed = true;
 				}else if(remain.getCount() != stack.getCount()){
 					entityitem.setItem(remain);
@@ -117,7 +123,7 @@ public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
 			if(!simulate){
 				markDirty();
-				return inventory[slot].splitStack(removed);
+				return inventory[slot].split(removed);
 			}
 
 			ItemStack out = inventory[slot].copy();

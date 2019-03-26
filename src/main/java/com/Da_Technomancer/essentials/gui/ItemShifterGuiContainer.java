@@ -32,8 +32,8 @@ public class ItemShifterGuiContainer extends GuiContainer{
 	 */
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
-		fontRenderer.drawString(te.getDisplayName().getUnformattedText(), 8, 6, 0x404040);
-		fontRenderer.drawString(playerInventory.getDisplayName().getUnformattedText(), 8, ySize - 94, 0x404040);
+		fontRenderer.drawString(te.getDisplayName().getFormattedText(), 8, 6, 0x404040);
+		fontRenderer.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 0x404040);
 	}
 
 	/**

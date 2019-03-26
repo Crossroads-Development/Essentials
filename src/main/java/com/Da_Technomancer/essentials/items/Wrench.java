@@ -5,24 +5,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReader;
 
 public class Wrench extends Item{
 
 	protected Wrench(){
+		super(new Item.Properties().maxStackSize(1).group(EssentialsConfig.addWrench.get() ? EssentialsItems.TAB_ESSENTIALS : null));
 		String name = "wrench";
-		setTranslationKey(name);
 		setRegistryName(name);
-		if(EssentialsConfig.getConfigBool(EssentialsConfig.addWrench, false)){
-			setCreativeTab(EssentialsItems.TAB_ESSENTIALS);
-		}
-		setMaxStackSize(1);
 		EssentialsItems.toRegister.add(this);
-		EssentialsItems.itemAddQue(this);
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(ItemStack stack, IBlockAccess world, BlockPos pos, EntityPlayer player){
+	public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, EntityPlayer player){
 		return true;
 	}
 }

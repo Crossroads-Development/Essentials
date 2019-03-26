@@ -5,12 +5,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.NetworkEvent;
 
-@SuppressWarnings("serial")
-public class SendSlotFilterToClient extends Message<SendSlotFilterToClient>{
+import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
+
+public class SendSlotFilterToClient extends Packet{
 
 	public SendSlotFilterToClient(){
 		
@@ -24,25 +25,37 @@ public class SendSlotFilterToClient extends Message<SendSlotFilterToClient>{
 		this.pos = pos;
 	}
 
+	private static final Field[] FIELDS = new Field[2];
+
+	static{
+		try{
+			FIELDS[0] = SendSlotFilterToClient.class.getDeclaredField("nbt");
+			FIELDS[1] = SendSlotFilterToClient.class.getDeclaredField("pos");
+		}catch(NoSuchFieldException e){
+			Essentials.logger.error("Failure to specify packet: " + SendSlotFilterToClient.class.toString() + "; Report to mod author", e);
+		}
+	}
+
+	@Nonnull
 	@Override
-	public IMessage handleMessage(MessageContext context){
-		if(context.side != Side.CLIENT){
-			Essentials.logger.error("MessageToClient received on wrong side:" + context.side);
-			return null;
+	protected Field[] getFields(){
+		return FIELDS;
+	}
+
+	@Override
+	protected void consume(NetworkEvent.Context context){
+		if(context.getDirection() != NetworkDirection.PLAY_TO_CLIENT){
+			Essentials.logger.error("Packet " + toString() + " received on wrong side:" + context.getDirection());
+			return;
 		}
 
-		Minecraft minecraft = Minecraft.getMinecraft();
-			minecraft.addScheduledTask(new Runnable(){
-			@Override
-			public void run(){
-				TileEntity te = minecraft.world.getTileEntity(pos);
+		Minecraft minecraft = Minecraft.getInstance();
+		minecraft.addScheduledTask(() -> {
+			TileEntity te = minecraft.world.getTileEntity(pos);
 
-				if(te instanceof INBTReceiver){
-					((INBTReceiver) te).receiveNBT(nbt);
-				}
+			if(te instanceof INBTReceiver){
+				((INBTReceiver) te).receiveNBT(nbt);
 			}
 		});
-
-		return null;
 	}
 }
