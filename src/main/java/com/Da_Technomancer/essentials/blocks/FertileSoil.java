@@ -46,6 +46,7 @@ public class FertileSoil extends Block{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TextComponentString("Slowly creates the seed plant/sapling on top of it, for free"));
+		tooltip.add(new TextComponentString("Doesn't need a water source, and can't be trampled"));
 		if(plant.getBlock() == Blocks.NETHER_WART){
 			tooltip.add(new TextComponentString("Made with farmer souls"));
 		}

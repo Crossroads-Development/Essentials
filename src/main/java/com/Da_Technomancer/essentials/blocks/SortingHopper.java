@@ -206,7 +206,6 @@ public class SortingHopper extends BlockContainer{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TextComponentString("Prioritizes insertion over extraction, making it ideal for sorting"));
-		tooltip.add(new TextComponentString("Exactly the same, aside from all the differences"));
+		tooltip.add(new TextComponentString("Doesn't allow items to be drawn from it by other hoppers if this hopper can output them"));
 	}
 }

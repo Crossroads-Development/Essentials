@@ -6,6 +6,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -14,10 +15,15 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class ItemSplitter extends BlockContainer{
 
@@ -58,6 +64,13 @@ public class ItemSplitter extends BlockContainer{
 	@Override
 	public IBlockState getStateForPlacement(BlockItemUseContext context){
 		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
+	}
+
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+		tooltip.add(new TextComponentString("Splits incoming items between the two outputs"));
+		tooltip.add(new TextComponentString("Splitting ratio controlled via redstone signal strength: (signal strength)/15"));
 	}
 
 	@Override

@@ -62,6 +62,7 @@ public class ItemChute extends Block{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+		tooltip.add(new TextComponentString("Extends the output range of Item Shifters along a line of chutes"));
 		tooltip.add(new TextComponentString("Safe for decoration"));
 	}
 

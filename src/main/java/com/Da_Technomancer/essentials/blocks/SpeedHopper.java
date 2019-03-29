@@ -74,7 +74,7 @@ public class SpeedHopper extends SortingHopper{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+		tooltip.add(new TextComponentString("Has the same sorting properties as a Sorting Hopper"));
 		tooltip.add(new TextComponentString("Inserts or extracts entire stacks at a time"));
-		tooltip.add(new TextComponentString("Exactly the same, aside from all the differences"));
 	}
 }

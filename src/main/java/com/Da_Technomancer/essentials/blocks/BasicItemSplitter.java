@@ -45,7 +45,7 @@ public class BasicItemSplitter extends BlockContainer{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TextComponentString("Splits incoming items between the two outputs"));
-		tooltip.add(new TextComponentString("Configure with a Wrench"));
+		tooltip.add(new TextComponentString("Configure splitting ratio with a Wrench"));
 	}
 
 	@Override

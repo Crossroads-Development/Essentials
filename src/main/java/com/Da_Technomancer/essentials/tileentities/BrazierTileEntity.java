@@ -3,7 +3,6 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
-import com.Da_Technomancer.essentials.items.crafting.EssentialsCrafting;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -24,11 +23,9 @@ import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ObjectHolder;
-import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.function.Predicate;
 
 @ObjectHolder(Essentials.MODID)
 public class BrazierTileEntity extends TileEntity implements ITickable{
@@ -313,6 +310,7 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 			return ItemStack.EMPTY;
 		}
 
+		/*
 		for(Pair<Predicate<ItemStack>[], ItemStack> craft : EssentialsCrafting.brazierBoboRecipes){
 			ArrayList<ItemStack> itemCop = new ArrayList<>(items);
 
@@ -329,6 +327,7 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 				}
 			}
 		}
+		*/
 
 		return ItemStack.EMPTY;
 	}

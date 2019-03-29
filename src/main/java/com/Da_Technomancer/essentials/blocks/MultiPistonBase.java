@@ -8,6 +8,7 @@ import net.minecraft.block.material.EnumPushReaction;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
@@ -32,6 +35,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * Notable differences from a normal piston include:
@@ -79,6 +83,12 @@ public class MultiPistonBase extends Block{
 	@Override
 	public boolean isFullCube(IBlockState state){
 		return !state.get(EssentialsProperties.EXTENDED);
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+		tooltip.add(new TextComponentString("An uber piston that can push up to 15 blocks away, move 64 blocks at a time, and extends instantly"));
+		tooltip.add(new TextComponentString("Extension length controlled by signal strength"));
 	}
 
 	@Override
