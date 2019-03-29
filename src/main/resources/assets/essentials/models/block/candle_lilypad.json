@@ -1,10 +1,10 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "essentials:blocks/waterlily",
-        "texture": "essentials:blocks/waterlily",
-        "candle": "blocks/bone_block_side",
-        "flame": "blocks/magma"
+        "particle": "essentials:block/waterlily",
+        "texture": "essentials:block/waterlily",
+        "candle": "block/bone_block_side",
+        "flame": "block/magma"
     },
     "elements": [
         {   

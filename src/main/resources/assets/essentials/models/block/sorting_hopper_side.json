@@ -1,10 +1,10 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "essentials:blocks/sorting_hopper_outside",
-        "top": "essentials:blocks/sorting_hopper_top",
-        "side": "essentials:blocks/sorting_hopper_outside",
-        "inside": "essentials:blocks/sorting_hopper_inside"
+        "particle": "essentials:block/sorting_hopper_outside",
+        "top": "essentials:block/sorting_hopper_top",
+        "side": "essentials:block/sorting_hopper_outside",
+        "inside": "essentials:block/sorting_hopper_inside"
     },
     "elements": [
         {   "from": [ 0, 10, 0 ],

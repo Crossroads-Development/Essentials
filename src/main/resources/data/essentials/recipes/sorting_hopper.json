@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "essentials:sorting_hopper"
+  },
+  "pattern": [
+    "# #",
+    "#\u0026#",
+    " * "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "tag": "forge:ingots/iron"
+    },
+    "\u0026": {
+      "tag": "forge:chests"
+    },
+    "*": {
+      "tag": "forge:ingots/gold"
+    }
+  }
+}

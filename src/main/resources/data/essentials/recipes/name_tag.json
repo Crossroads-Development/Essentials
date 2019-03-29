@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "minecraft:name_tag"
+  },
+  "pattern": [
+    "*",
+    "*",
+    "-"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "*": {
+      "item": "minecraft:paper"
+    },
+    "-": {
+      "item": "minecraft:lead"
+    }
+  }
+}

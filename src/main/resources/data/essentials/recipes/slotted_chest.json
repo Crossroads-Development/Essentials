@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "essentials:slotted_chest"
+  },
+  "pattern": [
+    "###",
+    "$@$",
+    "###"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "@": {
+      "tag": "forge:chests"
+    },
+    "#": {
+      "tag": "minecraft:wooden_slabs"
+    },
+    "$": {
+      "constant": "essentials:wooden_trapdoors"
+    }
+  }
+}

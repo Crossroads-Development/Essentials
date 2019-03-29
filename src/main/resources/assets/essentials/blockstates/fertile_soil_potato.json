@@ -1,5 +1,5 @@
 {
 	"variants": {
-		"normal": { "model": "essentials:fertile_soil_potato" }
+		"": { "model": "essentials:block/fertile_soil_potato" }
 	}
 }

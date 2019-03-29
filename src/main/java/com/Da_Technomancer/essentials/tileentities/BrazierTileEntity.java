@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.items.crafting.EssentialsCrafting;
@@ -29,14 +30,14 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.function.Predicate;
 
+@ObjectHolder(Essentials.MODID)
 public class BrazierTileEntity extends TileEntity implements ITickable{
 
 	@ObjectHolder("brazier")
-	private static final TileEntityType<BrazierTileEntity> TYPE = null;
+	private static TileEntityType<BrazierTileEntity> TYPE = null;
 
 	public BrazierTileEntity(){
 		super(TYPE);
-		world.getChunk(pos).getBlockState(1, 1, 1);
 	}
 
 	@Override

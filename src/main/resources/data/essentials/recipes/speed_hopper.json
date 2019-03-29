@@ -1,0 +1,19 @@
+{
+  "result": {
+    "item": "essentials:speed_hopper"
+  },
+  "pattern": [
+    "# #",
+    "#\u0026#",
+    " # "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "tag": "forge:ingots/gold"
+    },
+    "\u0026": {
+      "tag": "forge:chests"
+    }
+  }
+}

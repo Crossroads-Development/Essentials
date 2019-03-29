@@ -1,10 +1,14 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +17,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -20,10 +25,14 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ObjectHolder;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@ObjectHolder(Essentials.MODID)
 public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
 	@ObjectHolder("slotted_chest")
-	private static final TileEntityType<SlottedChestTileEntity> TYPE = null;
+	private static TileEntityType<SlottedChestTileEntity> TYPE = null;
 
 	public SlottedChestTileEntity(){
 		super(TYPE);
@@ -99,14 +108,13 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		filterChanged();
 	}
 
-	public final IInventory iInv = new Inventory();
-	private final InventoryHandler handler = new InventoryHandler();
+	public final Inventory iInv = new Inventory();
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return (T) handler;
+			return LazyOptional.of(() -> (T) new InventoryHandler());
 		}
 
 		return super.getCapability(cap, facing);
@@ -181,14 +189,14 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		public int getSlotLimit(int slot){
 			return slot < 54 ? 64 : 0;
 		}
-	}
-
-	private class Inventory implements IInventory{
 
 		@Override
-		public String getName(){
-			return "container.slotted_chest";
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+			return slot < 54 && ItemStack.areItemsEqual(stack, lockedInv[slot]) && ItemStack.areItemStackTagsEqual(stack, lockedInv[slot]);
 		}
+	}
+
+	public class Inventory implements IInventory, IInteractionObject{
 
 		@Override
 		public boolean hasCustomName(){
@@ -196,8 +204,14 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		}
 
 		@Override
-		public ITextComponent getDisplayName(){
-			return new TextComponentTranslation(getName());
+		public ITextComponent getName(){
+			return new TextComponentTranslation("container.slotted_chest");
+		}
+
+		@Nullable
+		@Override
+		public ITextComponent getCustomName(){
+			return null;
 		}
 
 		@Override
@@ -303,6 +317,16 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 				}
 			}
 			return true;
+		}
+
+		@Override
+		public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn){
+			return new SlottedChestContainer(playerInventory, SlottedChestTileEntity.this);
+		}
+
+		@Override
+		public String getGuiID(){
+			return EssentialsGuiHandler.SLOTTED_CHEST_GUI;
 		}
 	}
 }

@@ -45,8 +45,8 @@ public class WorldBuffer{
 
 	public void applyChanges(){
 		for(Entry<BlockPos, IBlockState> ent : memory.entrySet()){
-			if(worldObj.getBlockState(ent.getKey()) != ent.get()){
-				worldObj.setBlockState(ent.getKey(), ent.get());
+			if(worldObj.getBlockState(ent.getKey()) != ent.getValue()){
+				worldObj.setBlockState(ent.getKey(), ent.getValue());
 			}
 		}
 		memory.clear();

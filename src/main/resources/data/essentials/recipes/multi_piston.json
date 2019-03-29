@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "essentials:multi_piston"
+  },
+  "pattern": [
+    "***",
+    "$#$",
+    "$$$"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:piston"
+    },
+    "$": {
+      "tag": "forge:ingots/iron"
+    },
+    "*": {
+      "tag": "forge:ingots/gold"
+    }
+  }
+}

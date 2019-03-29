@@ -14,16 +14,16 @@ public class ItemShifterContainer extends Container{
 	public ItemShifterContainer(IInventory playerInventory, ItemShifterTileEntity te){
 		this.te = te;
 
-		addSlotToContainer(new Slot(te, 0, 80, 32));
+		addSlot(new Slot(te, 0, 80, 32));
 
 		for(int i = 0; i < 3; i++){
 			for(int j = 0; j < 9; j++){
-				addSlotToContainer(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+				addSlot(new Slot(playerInventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
 			}
 		}
 
 		for(int i = 0; i < 9; i++){
-			addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18, 142));
+			addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
 		}
 	}
 

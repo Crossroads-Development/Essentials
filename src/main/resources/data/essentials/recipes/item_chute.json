@@ -1,0 +1,20 @@
+{
+  "result": {
+    "item": "essentials:item_chute",
+    "count": 6
+  },
+  "pattern": [
+    "I I",
+    "ISI",
+    "I I"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "S": {
+      "tag": "forge:cobblestone"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    }
+  }
+}

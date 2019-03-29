@@ -10,13 +10,16 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.OnlyIn;
+
+import javax.annotation.Nullable;
 
 public class FluidShifterContainer extends Container{
 
@@ -28,17 +31,17 @@ public class FluidShifterContainer extends Container{
 	public FluidShifterContainer(IInventory playerInv, FluidShifterTileEntity te){
 		this.playerInv = playerInv;
 		this.te = te;
-		addSlotToContainer(new FluidSlot(this, 100, 19, 100, 54));
+		addSlot(new FluidSlot(this, 100, 19, 100, 54));
 
 		//Hotbar
 		for(int x = 0; x < 9; ++x){
-			addSlotToContainer(new Slot(playerInv, x, invStart[0] + x * 18, invStart[1] + 58));
+			addSlot(new Slot(playerInv, x, invStart[0] + x * 18, invStart[1] + 58));
 		}
 
 		//Main player inv
 		for(int y = 0; y < 3; ++y){
 			for(int x = 0; x < 9; ++x){
-				addSlotToContainer(new Slot(playerInv, x + y * 9 + 9, invStart[0] + x * 18, invStart[1] + y * 18));
+				addSlot(new Slot(playerInv, x + y * 9 + 9, invStart[0] + x * 18, invStart[1] + y * 18));
 			}
 		}
 	}
@@ -109,7 +112,7 @@ public class FluidShifterContainer extends Container{
 
 
 		if(!te.getWorld().isRemote){
-			if(playerIn.isEntityAlive() && !(playerIn instanceof EntityPlayerMP && ((EntityPlayerMP) playerIn).hasDisconnected())){
+			if(playerIn.isAlive() && !(playerIn instanceof EntityPlayerMP && ((EntityPlayerMP) playerIn).hasDisconnected())){
 				playerIn.inventory.placeItemBackInInventory(te.getWorld(), inventorySlots.get(0).getStack());
 				playerIn.inventory.placeItemBackInInventory(te.getWorld(), inventorySlots.get(1).getStack());
 			}else{
@@ -148,7 +151,7 @@ public class FluidShifterContainer extends Container{
 					return stack;
 				}
 			};
-			container.addSlotToContainer(outputSlot);
+			container.addSlot(outputSlot);
 		}
 
 		@Override
@@ -164,10 +167,12 @@ public class FluidShifterContainer extends Container{
 				ItemStack stack = getStack().copy();
 				if(!stack.isEmpty()){
 					stack.setCount(1);
-					IFluidHandler teHandler = cont.te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-					IFluidHandlerItem stackHandler = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+					LazyOptional<IFluidHandler> teCap = cont.te.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+					LazyOptional<IFluidHandlerItem> stackCap = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
 
-					if(teHandler != null && stackHandler != null){
+					if(teCap.isPresent() && stackCap.isPresent()){
+						IFluidHandler teHandler = teCap.orElseThrow(NullPointerException::new);
+						IFluidHandlerItem stackHandler = stackCap.orElseThrow(NullPointerException::new);
 						FluidStack stFs = stackHandler.drain(Integer.MAX_VALUE, false);
 						FluidStack teFs = teHandler.drain(Integer.MAX_VALUE, false);
 						ItemStack outputStack = inventory.getStackInSlot(1);
@@ -278,7 +283,7 @@ public class FluidShifterContainer extends Container{
 
 			@Override
 			public boolean isItemValidForSlot(int index, ItemStack stack){
-				return index == 0 && stack.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null);
+				return index == 0 && stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).isPresent();
 			}
 
 			@Override
@@ -303,17 +308,18 @@ public class FluidShifterContainer extends Container{
 			}
 
 			@Override
-			public String getName(){
-				return "";
-			}
-
-			@Override
 			public boolean hasCustomName(){
 				return false;
 			}
 
+			@Nullable
 			@Override
-			public ITextComponent getDisplayName(){
+			public ITextComponent getCustomName(){
+				return null;
+			}
+
+			@Override
+			public ITextComponent getName(){
 				return new TextComponentString("");
 			}
 		}

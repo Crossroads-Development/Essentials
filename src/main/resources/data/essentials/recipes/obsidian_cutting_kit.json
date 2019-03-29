@@ -1,0 +1,20 @@
+{
+  "result": {
+    "item": "essentials:obsidian_cutting_kit",
+    "count": 4
+  },
+  "pattern": [
+    " # ",
+    "#$#",
+    " # "
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "#": {
+      "item": "minecraft:flint"
+    },
+    "$": {
+      "item": "minecraft:obsidian"
+    }
+  }
+}

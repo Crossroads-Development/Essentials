@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -16,10 +17,11 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
+@ObjectHolder(Essentials.MODID)
 public class BasicItemSplitterTileEntity extends TileEntity implements ITickable{
 
 	@ObjectHolder("basic_item_splitter")
-	private static final TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
+	private static TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
 
 	public static final int[] MODES = {1, 2, 3};
 	private int mode = 1;

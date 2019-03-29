@@ -1,6 +1,6 @@
 {
 	"parent": "block/cube_all",
 	"textures": {
-		"all": "essentials:blocks/fertile_soil_acacia"
+		"all": "essentials:block/fertile_soil_acacia"
 	}
 }

@@ -2,7 +2,7 @@
 	"textures": {
 		"side": "#side",
 		"front": "#front",
-		"back": "essentials:blocks/multi_piston_head",
+		"back": "essentials:block/multi_piston_head",
 		"particle": "#front"
 	},
 	"elements": [{

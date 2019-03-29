@@ -82,8 +82,8 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.92'
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.100'
 
-    deobf "mezz.jei:jei_1.13.2:5.0.0.8"
+   // deobf "mezz.jei:jei-1.13.2:5.0.0.11"
 }
 

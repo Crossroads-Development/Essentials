@@ -1,7 +1,7 @@
 {
 	"textures": {
-		"side": "essentials:blocks/multi_piston_extend",
-		"particle": "essentials:blocks/multi_piston_extend"
+		"side": "essentials:block/multi_piston_extend",
+		"particle": "essentials:block/multi_piston_extend"
 	},
 	"elements": [{
 		"from": [ 6.0, 0.0, 6.0 ], 

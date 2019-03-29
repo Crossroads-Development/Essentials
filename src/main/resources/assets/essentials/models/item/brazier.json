@@ -1,7 +1,7 @@
 {
 	"parent": "essentials:block/brazier",
 	"textures":{
-		"fill": "essentials:blocks/empty"
+		"fill": "essentials:block/empty"
 	},
 	"display": {
 		"thirdperson": {

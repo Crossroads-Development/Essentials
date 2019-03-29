@@ -1,9 +1,9 @@
 {
 	"ambientocclusion": false,
 	"textures": {
-		"main": "blocks/brick",
-		"glass": "blocks/glass",
-		"particle": "blocks/brick"
+		"main": "block/bricks",
+		"glass": "block/glass",
+		"particle": "block/bricks"
 	},
 	"elements": [
 		{

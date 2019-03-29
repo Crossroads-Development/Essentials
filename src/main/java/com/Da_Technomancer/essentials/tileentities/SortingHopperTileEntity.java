@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.SortingHopper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -16,12 +17,11 @@ import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.IInteractionObject;
-import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -30,11 +30,11 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@ObjectHolder(Essentials.MODID)
 public class SortingHopperTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
 
 	@ObjectHolder("sorting_hopper")
-	private static final TileEntityType<SortingHopperTileEntity> TYPE = null;
-
+	private static TileEntityType<SortingHopperTileEntity> TYPE = null;
 
 	protected final ItemStack[] inventory = new ItemStack[5];
 	private int transferCooldown = -1;
@@ -67,11 +67,6 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState){
-		return oldState.getBlock() != newState.getBlock();
-	}
-
-	@Override
 	public void tick(){
 		if(!world.isRemote && --transferCooldown <= 0){
 			transferCooldown = 0;
@@ -96,18 +91,19 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	@Override
-	public String getName(){
-		return "container.sorting_hopper";
-	}
-
-	@Override
-	public ITextComponent getDisplayName(){
-		return new TextComponentTranslation(getName());
+	public ITextComponent getName(){
+		return new TextComponentTranslation("container.sorting_hopper");
 	}
 
 	@Override
 	public boolean hasCustomName(){
 		return false;
+	}
+
+	@Nullable
+	@Override
+	public ITextComponent getCustomName(){
+		return null;
 	}
 
 	@Override
@@ -117,7 +113,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 
 		for(int i = 0; i < 5; i++){
 			NBTTagCompound stackNBT = nbt.getCompound("inv_" + i);
-			inventory[i] = new ItemStack(stackNBT);
+			inventory[i] = ItemStack.read(stackNBT);
 		}
 	}
 
@@ -252,21 +248,26 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		return true;
 	}
 
+	protected int transferQuantity(){
+		return 1;
+	}
+
 	protected boolean transferItemsOut(){
 		EnumFacing facing = getDir();
 		TileEntity te = world.getTileEntity(pos.offset(facing));
 
 		//Insertion via IItemHandler
-		if(te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())){
-			IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+		LazyOptional<IItemHandler> outCap;
+		if(te != null && (outCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
+			IItemHandler handler = outCap.orElseThrow(NullPointerException::new);
 			for(int i = 0; i < getSizeInventory(); i++){
 				ItemStack stackInSlot = getStackInSlot(i);
 				if(!stackInSlot.isEmpty()){
 					ItemStack insert = stackInSlot.copy();
-					insert.setCount(1);
+					insert.setCount(Math.min(insert.getCount(), transferQuantity()));
 					ItemStack newStack = ItemHandlerHelper.insertItem(handler, insert, true);
-					if(newStack.isEmpty()){
-						ItemHandlerHelper.insertItem(handler, decrStackSize(i, 1), false);
+					if(newStack.getCount() < insert.getCount()){
+						ItemHandlerHelper.insertItem(handler, decrStackSize(i, insert.getCount() - newStack.getCount()), false);
 						markDirty();
 						return true;
 					}
@@ -281,16 +282,17 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		TileEntity fromTE = world.getTileEntity(pos.offset(EnumFacing.UP));
 
 		//Transfer from IItemHandler
-		if(fromTE != null && fromTE.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN)){
-			IItemHandler otherHandler = fromTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN);
+		LazyOptional<IItemHandler> inCap;
+		if(fromTE != null && (inCap = fromTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN)).isPresent()){
+			IItemHandler otherHandler = inCap.orElseThrow(NullPointerException::new);
 
 			for (int i = 0; i < otherHandler.getSlots(); i++){
-				ItemStack extractItem = otherHandler.extractItem(i, 1, true);
+				ItemStack extractItem = otherHandler.extractItem(i, transferQuantity(), true);
 				if (!extractItem.isEmpty()){
-
 					for (int j = 0; j < getSizeInventory(); j++){
-						if(handler.insertItem(j, extractItem, false).isEmpty()){
-							otherHandler.extractItem(i, 1, false);
+						ItemStack uninserted = handler.insertItem(j, extractItem, false);
+						if(uninserted.getCount() < extractItem.getCount()){
+							otherHandler.extractItem(i, extractItem.getCount() - uninserted.getCount(), false);
 							return true;
 						}
 					}
@@ -330,7 +332,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	protected static boolean canCombine(ItemStack stack1, ItemStack stack2){
-		return stack1.getItem() == stack2.getItem() && stack1.getMetadata() == stack2.getMetadata() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2);
+		return stack1.getItem() == stack2.getItem() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2);
 	}
 
 	@Override
@@ -359,16 +361,10 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	protected ItemHandler handler = new ItemHandler();
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing){
-		return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
-	}
-
-	@Nullable
-	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable EnumFacing facing){
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return (T) handler;
+			return LazyOptional.of(() -> (T) handler);
 		}
 		return super.getCapability(capability, facing);
 	}
@@ -436,8 +432,9 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 			EnumFacing facing = getDir();
 
 			TileEntity te = world.getTileEntity(pos.offset(facing));
-			if(te != null && te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())){
-				IItemHandler otherHandler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite());
+			LazyOptional<IItemHandler> otherCap;
+			if(te != null && (otherCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
+				IItemHandler otherHandler = otherCap.orElseThrow(NullPointerException::new);
 				int slots = otherHandler.getSlots();
 				for(int i = 0; i < slots; i++){
 					if(otherHandler.insertItem(i, inventory[slot], true).getCount() < inventory[slot].getCount()){
@@ -461,6 +458,11 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		@Override
 		public int getSlotLimit(int slot){
 			return getInventoryStackLimit();
+		}
+
+		@Override
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+			return true;
 		}
 	}
 }

@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -49,7 +51,7 @@ public class FluidShifter extends BlockContainer{
 
 	@Override
 	public IBlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
+		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
@@ -65,14 +67,14 @@ public class FluidShifter extends BlockContainer{
 	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		boolean isWrench = EssentialsConfig.isWrench(playerIn.getHeldItem(hand));
 		if(!worldIn.isRemote){
+			TileEntity te = worldIn.getTileEntity(pos);
 			if(isWrench){
 				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.FACING));
-				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof FluidShifterTileEntity){
 					((FluidShifterTileEntity) te).refreshCache();
 				}
-			}else{
-				//TODO playerIn.openGui(Essentials.instance, EssentialsGuiHandler.FLUID_SHIFTER_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			}else if(te instanceof FluidShifterTileEntity){
+				NetworkHooks.openGui((EntityPlayerMP) playerIn, (FluidShifterTileEntity) te, pos);
 			}
 		}
 		return true;

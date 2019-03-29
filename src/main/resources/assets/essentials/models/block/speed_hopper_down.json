@@ -1,10 +1,10 @@
 {
     "ambientocclusion": false,
     "textures": {
-        "particle": "essentials:blocks/speed_hopper_outside",
-        "top": "essentials:blocks/speed_hopper_top",
-        "side": "essentials:blocks/speed_hopper_outside",
-        "inside": "essentials:blocks/speed_hopper_inside"
+        "particle": "essentials:block/speed_hopper_outside",
+        "top": "essentials:block/speed_hopper_top",
+        "side": "essentials:block/speed_hopper_outside",
+        "inside": "essentials:block/speed_hopper_inside"
     },
     "elements": [
         {   "from": [ 0, 10, 0 ],

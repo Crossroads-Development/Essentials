@@ -1,12 +1,12 @@
 {
 	"parent": "block/cube_all",
 	"textures": {
-		"north": "essentials:blocks/item_splitter_side_redstone",
-		"south": "essentials:blocks/item_splitter_side_redstone",
-		"east": "essentials:blocks/item_splitter_side_redstone",
-		"west": "essentials:blocks/item_splitter_side_redstone",
-		"up": "essentials:blocks/item_splitter_out",
-		"down": "essentials:blocks/item_splitter_out",
-		"particle": "essentials:blocks/item_splitter_side_redstone"
+		"north": "essentials:block/item_splitter_side_redstone",
+		"south": "essentials:block/item_splitter_side_redstone",
+		"east": "essentials:block/item_splitter_side_redstone",
+		"west": "essentials:block/item_splitter_side_redstone",
+		"up": "essentials:block/item_splitter_out",
+		"down": "essentials:block/item_splitter_out",
+		"particle": "essentials:block/item_splitter_side_redstone"
 	}
 }

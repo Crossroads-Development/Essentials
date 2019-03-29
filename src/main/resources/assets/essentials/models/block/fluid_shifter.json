@@ -1,12 +1,12 @@
 {
 	"parent": "block/cube_all",
 	"textures": {
-		"north": "essentials:blocks/fluid_shifter_side",
-		"south": "essentials:blocks/fluid_shifter_side",
-		"east": "essentials:blocks/fluid_shifter_side",
-		"west": "essentials:blocks/fluid_shifter_side",
-		"up": "essentials:blocks/fluid_shifter",
-		"down": "blocks/furnace_top",
-		"particle": "essentials:blocks/fluid_shifter"
+		"north": "essentials:block/fluid_shifter_side",
+		"south": "essentials:block/fluid_shifter_side",
+		"east": "essentials:block/fluid_shifter_side",
+		"west": "essentials:block/fluid_shifter_side",
+		"up": "essentials:block/fluid_shifter",
+		"down": "block/furnace_top",
+		"particle": "essentials:block/fluid_shifter"
 	}
 }

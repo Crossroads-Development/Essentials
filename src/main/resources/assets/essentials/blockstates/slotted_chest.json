@@ -1,5 +1,5 @@
 {
 	"variants": {
-		"normal": { "model": "essentials:slotted_chest" }
+		"": { "model": "essentials:block/slotted_chest" }
 	}
 }

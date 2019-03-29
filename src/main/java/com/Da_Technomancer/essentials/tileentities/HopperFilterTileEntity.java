@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
@@ -24,10 +25,11 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
+@ObjectHolder(Essentials.MODID)
 public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	@ObjectHolder("hopper_filter")
-	private static final TileEntityType<HopperFilterTileEntity> TYPE = null;
+	private static TileEntityType<HopperFilterTileEntity> TYPE = null;
 
 	public HopperFilterTileEntity(){
 		super(TYPE);
@@ -100,6 +102,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 				LazyOptional<IItemHandler> src;
 				if(te != null && (src = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)).isPresent()){
 					passedHandler = LazyOptional.of(() -> new ProxyItemHandler(src));
+					src.addListener((handler) -> {if(passedHandler != null) passedHandler.invalidate(); passedHandler = null;});
 				}else{
 					return LazyOptional.empty();
 				}

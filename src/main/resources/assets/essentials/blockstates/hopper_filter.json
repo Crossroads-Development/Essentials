@@ -1,7 +1,7 @@
 {
 	"variants": {
-		"axis=x": { "model": "essentials:hopper_filter", "x": 90, "y": 90 },
-		"axis=y": { "model": "essentials:hopper_filter"},
-		"axis=z": { "model": "essentials:hopper_filter", "x": 90 }
+		"axis=x": { "model": "essentials:block/hopper_filter", "x": 90, "y": 90 },
+		"axis=y": { "model": "essentials:block/hopper_filter"},
+		"axis=z": { "model": "essentials:block/hopper_filter", "x": 90 }
 	}
 }

@@ -24,18 +24,18 @@ public class SlottedChestContainer extends Container{
 
 		for(int j = 0; j < numRows; ++j){
 			for(int k = 0; k < 9; ++k){
-				addSlotToContainer(new Slot(chest.iInv, k + j * 9, 8 + k * 18, 18 + j * 18));
+				addSlot(new Slot(chest.iInv, k + j * 9, 8 + k * 18, 18 + j * 18));
 			}
 		}
 
 		for(int l = 0; l < 3; ++l){
 			for(int j1 = 0; j1 < 9; ++j1){
-				addSlotToContainer(new Slot(playerInventory, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + i));
+				addSlot(new Slot(playerInventory, j1 + l * 9 + 9, 8 + j1 * 18, 103 + l * 18 + i));
 			}
 		}
 
 		for(int i1 = 0; i1 < 9; ++i1){
-			addSlotToContainer(new Slot(playerInventory, i1, 8 + i1 * 18, 161 + i));
+			addSlot(new Slot(playerInventory, i1, 8 + i1 * 18, 161 + i));
 		}
 	}
 
@@ -201,7 +201,7 @@ public class SlottedChestContainer extends Container{
 								slot7.onTake(player, inventoryplayer.getItemStack());
 							}
 						}else if(slot7.isItemValid(itemstack13)){
-							if(itemstack11.getItem() == itemstack13.getItem() && itemstack11.getMetadata() == itemstack13.getMetadata() && ItemStack.areItemStackTagsEqual(itemstack11, itemstack13)){
+							if(itemstack11.getItem() == itemstack13.getItem() && ItemStack.areItemStackTagsEqual(itemstack11, itemstack13)){
 								int j2 = dragType == 0 ? itemstack13.getCount() : 1;
 
 								if(j2 > slot7.getItemStackLimit(itemstack13) - itemstack11.getCount()){
@@ -223,7 +223,7 @@ public class SlottedChestContainer extends Container{
 								}
 								inventoryplayer.setItemStack(itemstack11);
 							}
-						}else if(itemstack11.getItem() == itemstack13.getItem() && itemstack13.getMaxStackSize() > 1 && (!itemstack11.getHasSubtypes() || itemstack11.getMetadata() == itemstack13.getMetadata()) && ItemStack.areItemStackTagsEqual(itemstack11, itemstack13) && !itemstack11.isEmpty()){
+						}else if(itemstack11.getItem() == itemstack13.getItem() && itemstack13.getMaxStackSize() > 1 && ItemStack.areItemStackTagsEqual(itemstack11, itemstack13) && !itemstack11.isEmpty()){
 							int i2 = itemstack11.getCount();
 
 							if(i2 + itemstack13.getCount() <= itemstack13.getMaxStackSize()){
@@ -302,7 +302,7 @@ public class SlottedChestContainer extends Container{
 					}
 				}
 			}
-		}else if(clickTypeIn == ClickType.CLONE && player.capabilities.isCreativeMode && inventoryplayer.getItemStack().isEmpty() && slotId >= 0){
+		}else if(clickTypeIn == ClickType.CLONE && player.isCreative() && inventoryplayer.getItemStack().isEmpty() && slotId >= 0){
 			Slot slot4 = this.inventorySlots.get(slotId);
 
 			if(slot4 != null && slot4.getHasStack()){
@@ -457,6 +457,6 @@ public class SlottedChestContainer extends Container{
 	}
 
 	public static boolean doStackContentsMatch(ItemStack stackA, ItemStack stackB){
-		return stackB.getItem() == stackA.getItem() && (!stackA.getHasSubtypes() || stackA.getMetadata() == stackB.getMetadata()) && ItemStack.areItemStackTagsEqual(stackA, stackB);
+		return stackB.getItem() == stackA.getItem() && ItemStack.areItemStackTagsEqual(stackA, stackB);
 	}
 }

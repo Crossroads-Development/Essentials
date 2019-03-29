@@ -21,6 +21,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockReader;
@@ -39,7 +40,7 @@ public class Brazier extends BlockContainer{
 	private static final VoxelShape SHAPE;
 
 	static{
-		SHAPE = Block.makeCuboidShape(0.0625D, 0, 0.0625D, 0.9375D, .875D, 0.9375D);
+		SHAPE = VoxelShapes.or(Block.makeCuboidShape(4, 0, 4, 12, 10, 12), Block.makeCuboidShape(1, 10, 1, 15, 14, 15));
 	}
 
 

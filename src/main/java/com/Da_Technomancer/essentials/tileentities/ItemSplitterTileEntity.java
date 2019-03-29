@@ -1,13 +1,15 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
+@ObjectHolder(Essentials.MODID)
 public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 
 	@ObjectHolder("item_splitter")
-	private static final TileEntityType<ItemSplitterTileEntity> TYPE = null;
+	private static TileEntityType<ItemSplitterTileEntity> TYPE = null;
 
 	public ItemSplitterTileEntity(){
 		super(TYPE);

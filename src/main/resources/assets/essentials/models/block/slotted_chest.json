@@ -1,12 +1,12 @@
 {
 	"parent": "block/cube_all",
 	"textures": {
-		"north": "essentials:blocks/slotted_chest",
-		"south": "essentials:blocks/slotted_chest",
-		"east": "essentials:blocks/slotted_chest",
-		"west": "essentials:blocks/slotted_chest",
-		"up": "essentials:blocks/slotted_chest_top",
-		"down": "essentials:blocks/slotted_chest_bottom",
-		"particle": "essentials:blocks/slotted_chest"
+		"north": "essentials:block/slotted_chest",
+		"south": "essentials:block/slotted_chest",
+		"east": "essentials:block/slotted_chest",
+		"west": "essentials:block/slotted_chest",
+		"up": "essentials:block/slotted_chest_top",
+		"down": "essentials:block/slotted_chest_bottom",
+		"particle": "essentials:block/slotted_chest"
 	}
 }

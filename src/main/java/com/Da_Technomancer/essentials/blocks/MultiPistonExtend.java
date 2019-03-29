@@ -79,8 +79,8 @@ public class MultiPistonExtend extends Block{
 		builder.add(EssentialsProperties.AXIS, EssentialsProperties.HEAD);
 	}
 
-	private static final VoxelShape[] ROD_BB = new VoxelShape[] {makeCuboidShape(0.001D, .375D, .375D, 0.999D, .625D, .625D), makeCuboidShape(.375D, 0.001D, .375D, .625D, 0.999D, .625D), makeCuboidShape(.375D, .375D, 0.001D, .625D, .625D, 0.999D)};
-	private static final VoxelShape[] HEAD_BB = new VoxelShape[] {makeCuboidShape(0, 0, 0, 1, 5D / 16D, 1), makeCuboidShape(0, 11D / 16D, 0, 1, 1, 1), makeCuboidShape(0, 0, 0, 1, 1, 5D / 16D), makeCuboidShape(0, 0, 11D / 16D, 1, 1, 1), makeCuboidShape(0, 0, 0, 5D / 16D, 1, 1), makeCuboidShape(11D / 16D, 0, 0, 1, 1, 1)};
+	private static final VoxelShape[] ROD_BB = new VoxelShape[] {makeCuboidShape(0.001D, 6, 6, 15.999D, 10, 10), makeCuboidShape(6, 0.001D, 6, 10, 15.999D, 10), makeCuboidShape(6, 6, 0.001D, 10, 10, 15.999D)};
+	private static final VoxelShape[] HEAD_BB = new VoxelShape[] {makeCuboidShape(0, 0, 0, 16, 5, 16), makeCuboidShape(0, 11, 0, 16, 16, 16), makeCuboidShape(0, 0, 0, 16, 16, 5), makeCuboidShape(0, 0, 11, 16, 16, 16), makeCuboidShape(0, 0, 0, 5, 16, 16), makeCuboidShape(11D, 0, 0, 16, 16, 16)};
 
 	@Override
 	public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos){

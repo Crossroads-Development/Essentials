@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "essentials:basic_item_splitter"
+  },
+  "pattern": [
+    "*^*",
+    "\u0026\u0026\u0026",
+    "*^*"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "\u0026": {
+      "tag": "forge:ingots/gold"
+    },
+    "*": {
+      "tag": "forge:nuggets/iron"
+    },
+    "^": {
+      "item": "minecraft:hopper"
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "result": {
+    "item": "minecraft:piston"
+  },
+  "ingredients": [
+    {
+      "tag": "forge:cobblestone"
+    },
+    {
+      "tag": "forge:ingots/iron"
+    },
+    {
+      "tag": "forge:dusts/redstone"
+    },
+    {
+      "tag": "minecraft:logs"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

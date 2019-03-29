@@ -1,0 +1,25 @@
+[
+	{
+		"name": "essentials:wooden_trapdoors",
+		"items":[
+			{
+				"item": "minecraft:oak_trapdoor"
+			},
+			{
+				"item": "minecraft:birch_trapdoor"
+			},
+			{
+				"item": "minecraft:spruce_trapdoor"
+			},
+			{
+				"item": "minecraft:jungle_trapdoor"
+			},
+			{
+				"item": "minecraft:acacia_trapdoor"
+			},
+			{
+				"item": "minecraft:dark_oak_trapdoor"
+			}
+		]
+	}
+]

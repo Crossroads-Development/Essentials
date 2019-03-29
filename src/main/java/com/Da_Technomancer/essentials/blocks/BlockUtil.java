@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class BlockUtil{
 
 	/**
-	 * For finding which bounding box within a block is targetted by raytracing. Used for blocks with multiple bounding boxes
+	 * For finding which bounding box within a block is targetted by raytracing. Used for block with multiple bounding boxes
 	 * @param boxes A list containing bounding boxes. May contain null elements
 	 * @param start The starting position vector. Subtracting the block's position from this in advance is suggested
 	 * @param end The ending position vector. Subtracting the block's position from this in advance is suggested

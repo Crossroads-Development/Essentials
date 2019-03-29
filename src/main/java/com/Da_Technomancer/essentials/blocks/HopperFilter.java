@@ -68,9 +68,9 @@ public class HopperFilter extends BlockContainer{
 	private static final VoxelShape[] BB = new VoxelShape[3];
 
 	static{
-		BB[0] = VoxelShapes.combine(makeCuboidShape(0, 0, 0, 0.25, 1, 1), VoxelShapes.combine(makeCuboidShape(0.75, 0, 0, 1, 1, 1), makeCuboidShape(0.25, 0.1875, 0.1875, 0.75, 0.8125, 0.8125), IBooleanFunction.OR), IBooleanFunction.OR);//X axis
-		BB[1] = VoxelShapes.combine(makeCuboidShape(0, 0, 0, 1, 0.25, 1), VoxelShapes.combine(makeCuboidShape(0, 0.75, 0, 1, 1, 1), makeCuboidShape(0.1875, 0.25, 0.1875, 0.8125, 0.75, 0.8125), IBooleanFunction.OR), IBooleanFunction.OR);//Y axis
-		BB[2] = VoxelShapes.combine(makeCuboidShape(0, 0, 0, 1, 1, 0.25), VoxelShapes.combine(makeCuboidShape(0, 0, 0.75, 1, 1, 1), makeCuboidShape(0.1875, 0.1875, 0.25, 0.8125, 0.8125, 0.75), IBooleanFunction.OR), IBooleanFunction.OR);//Z axis
+		BB[0] = VoxelShapes.combine(makeCuboidShape(0, 0, 0, 4, 16, 16), VoxelShapes.combine(makeCuboidShape(12, 0, 0, 16, 16, 16), makeCuboidShape(4, 4, 4, 12, 12, 12), IBooleanFunction.OR), IBooleanFunction.OR);//X axis
+		BB[1] = VoxelShapes.combine(makeCuboidShape(0, 0, 0, 16, 4, 16), VoxelShapes.combine(makeCuboidShape(0, 12, 0, 16, 16, 16), makeCuboidShape(4, 4, 4, 12, 12, 12), IBooleanFunction.OR), IBooleanFunction.OR);//Y axis
+		BB[2] = VoxelShapes.combine(makeCuboidShape(0, 0, 0, 16, 16, 4), VoxelShapes.combine(makeCuboidShape(0, 0, 12, 16, 16, 16), makeCuboidShape(4, 4, 4, 12, 12, 12), IBooleanFunction.OR), IBooleanFunction.OR);//Z axis
 	}
 
 	@Override

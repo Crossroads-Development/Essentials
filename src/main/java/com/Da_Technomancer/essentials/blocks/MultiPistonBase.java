@@ -39,7 +39,7 @@ import java.util.LinkedHashSet;
  * No quasi-connectivity,
  * Redstone can be placed on top of the piston,
  * Piston extension and retraction is instant, no 2-tick delay or rendering of block movement.
- * Can move up to 64 blocks at a time instead of 12
+ * Can move up to 64 block at a time instead of 12
  */
 public class MultiPistonBase extends Block{
 
@@ -86,7 +86,7 @@ public class MultiPistonBase extends Block{
 		return face == state.get(EssentialsProperties.FACING) && state.get(EssentialsProperties.EXTENDED) ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
 	}
 
-	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, 5D / 16D, 0, 1, 1, 1), makeCuboidShape(0, 0, 0, 1, 11D / 16D, 1), makeCuboidShape(0, 0, 5D / 16D, 1, 1, 1), makeCuboidShape(0, 0, 0, 1, 1, 11D / 16D), makeCuboidShape(5D / 16D, 0, 0, 1, 1, 1), makeCuboidShape(0, 0, 0, 11D / 16D, 1, 1)};
+	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, 5, 0, 16, 16, 16), makeCuboidShape(0, 0, 0, 16, 11, 16), makeCuboidShape(0, 0, 5, 16, 16, 1), makeCuboidShape(0, 0, 0, 16, 16, 11), makeCuboidShape(5, 0, 0, 16, 16, 16), makeCuboidShape(0, 0, 0, 11, 16, 16)};
 
 	@Override
 	public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos){
@@ -148,7 +148,7 @@ public class MultiPistonBase extends Block{
 			}
 		}
 
-		//A fairly common bug in mods and newly added vanilla blocks is ways to get redstone signal strengths over 15.
+		//A fairly common bug in mods and newly added vanilla block is ways to get redstone signal strengths over 15.
 		target = Math.min(target, DIST_LIMIT);
 
 		if(facing == EnumFacing.UP){
@@ -232,7 +232,7 @@ public class MultiPistonBase extends Block{
 		if((out || sticky) && buildMoveset(pos, world, prevHeadPos.offset(facing), moveDir, movedBlocks, !out)){
 			//Something is in the way
 			if(!out){
-				//If retracting, leave attached blocks behind but finish retracting
+				//If retracting, leave attached block behind but finish retracting
 				movedBlocks.clear();
 			}else{
 				//If extending, stop here
@@ -250,7 +250,7 @@ public class MultiPistonBase extends Block{
 
 		for(BlockPos changePos : movedBlocks){
 
-			//Move blocks forward
+			//Move block forward
 			IBlockState prevState = world.getBlockState(changePos);
 			if(prevState.getPushReaction() == EnumPushReaction.DESTROY){
 				world.getWorld().destroyBlock(changePos, true);//Destroy the block in the actual world to drop items
@@ -323,12 +323,12 @@ public class MultiPistonBase extends Block{
 
 				movedBlocks.add(curPos);
 
-				//Do blocks behind this if sticky
+				//Do block behind this if sticky
 				if(isStickyBlock(state)){
 					blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(moveDir.getOpposite()), moveDir, movedBlocks, true);
 				}
 
-				//Do blocks on the sides if sticky
+				//Do block on the sides if sticky
 				if(isStickyBlock(state)){
 					for(EnumFacing side : EnumFacing.values()){
 						if(side.getAxis() != moveDir.getAxis()){

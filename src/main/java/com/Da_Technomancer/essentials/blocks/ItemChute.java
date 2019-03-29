@@ -27,7 +27,7 @@ import java.util.List;
 
 public class ItemChute extends Block{
 
-	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, .125D, .125D, 1, .875D, .875D), makeCuboidShape(.125D, 0, .125D, .875D, 1, .875D), makeCuboidShape(.125D, .125D, 0, .875D, .875D, 1)};
+	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, 2, 2, 16, 14, 14), makeCuboidShape(2, 0, 2, 14, 16, 14), makeCuboidShape(2, 2, 0, 14, 14, 16)};
 	
 	protected ItemChute(){
 		super(Properties.create(Material.IRON).hardnessAndResistance(1.5F).sound(SoundType.METAL));

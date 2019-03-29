@@ -1,8 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
 import com.Da_Technomancer.essentials.tileentities.ItemShifterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -11,6 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -25,6 +24,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -52,26 +52,29 @@ public class ItemShifter extends BlockContainer{
 	@Nullable
 	@Override
 	public IBlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
+		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
 	public void onPlayerDestroy(IWorld world, BlockPos pos, IBlockState blockstate){
-		InventoryHelper.dropInventoryItems(world.getWorld(), pos, (ItemShifterTileEntity) world.getTileEntity(pos));
+		TileEntity te = world.getTileEntity(pos);
+		if(te instanceof ItemShifterTileEntity){
+			InventoryHelper.dropInventoryItems(world.getWorld(), pos, (ItemShifterTileEntity) te);
+		}
 		super.onPlayerDestroy(world, pos, blockstate);
 	}
 
 	@Override
 	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
 		if(!worldIn.isRemote){
+			TileEntity te = worldIn.getTileEntity(pos);
 			if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
 				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.FACING));
-				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof ItemShifterTileEntity){
 					((ItemShifterTileEntity) te).refreshCache();
 				}
-			}else{
-				playerIn.openGui(Essentials.instance, EssentialsGuiHandler.ITEM_SHIFTER_GUI, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			}else if(te instanceof ItemShifterTileEntity){
+				NetworkHooks.openGui((EntityPlayerMP) playerIn, (ItemShifterTileEntity) te, pos);
 			}
 		}
 		return true;

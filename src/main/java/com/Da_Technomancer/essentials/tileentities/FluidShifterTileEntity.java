@@ -1,11 +1,16 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.gui.CrudeFluidBar;
+import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
+import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +21,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,10 +33,11 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 
-public class FluidShifterTileEntity extends TileEntity implements ITickable, IInventory{
+@ObjectHolder(Essentials.MODID)
+public class FluidShifterTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
 
 	@ObjectHolder("fluid_splitter")
-	private static final TileEntityType<FluidShifterTileEntity> TYPE = null;
+	private static TileEntityType<FluidShifterTileEntity> TYPE = null;
 
 	private FluidStack inventory = null;
 	private BlockPos endPos = null;
@@ -129,6 +136,16 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 		}
 
 		return super.getCapability(cap, facing);
+	}
+
+	@Override
+	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn){
+		return new FluidShifterContainer(playerInventory, this);
+	}
+
+	@Override
+	public String getGuiID(){
+		return EssentialsGuiHandler.FLUID_SHIFTER_GUI;
 	}
 
 	private class FluidHandler implements IFluidHandler{

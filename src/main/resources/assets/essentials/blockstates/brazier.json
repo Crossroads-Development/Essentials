@@ -8,42 +8,42 @@
 		"br_cont": {
 			"0": {
 				"textures": {
-					"fill": "essentials:blocks/empty"
+					"fill": "essentials:block/empty"
 				}
 			},
 			"1": {
 				"textures": {
-					"fill": "blocks/water_still"
+					"fill": "block/water_still"
 				}
 			},
 			"2": {
 				"textures": {
-					"fill": "blocks/lava_still"
+					"fill": "block/lava_still"
 				}
 			},
 			"3": {
 				"textures": {
-					"fill": "essentials:blocks/embers"
+					"fill": "essentials:block/embers"
 				}
 			},
 			"4": {
 				"textures": {
-					"fill": "blocks/glowstone"
+					"fill": "block/glowstone"
 				}
 			},
 			"5": {
 				"textures": {
-					"fill": "essentials:blocks/empty"
+					"fill": "essentials:block/empty"
 				}
 			},
 			"6": {
 				"textures": {
-					"fill": "blocks/soul_sand"
+					"fill": "block/soul_sand"
 				}
 			},
 			"7": {
 				"textures": {
-					"fill": "essentials:blocks/brazier_potato"
+					"fill": "essentials:block/brazier_potato"
 				}
 			}
 		}

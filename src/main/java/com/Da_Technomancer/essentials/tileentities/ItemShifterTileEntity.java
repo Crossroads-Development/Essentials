@@ -1,12 +1,16 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
-import com.Da_Technomancer.essentials.blocks.ItemShifter;
+import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
+import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,16 +21,21 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.World;
+import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ObjectHolder;
 
-public class ItemShifterTileEntity extends TileEntity implements ITickable, IInventory{
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@ObjectHolder(Essentials.MODID)
+public class ItemShifterTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
 
 	@ObjectHolder("item_shifter")
-	private static final TileEntityType<ItemShifterTileEntity> TYPE = null;
+	private static TileEntityType<ItemShifterTileEntity> TYPE = null;
 
 	private ItemStack inventory = ItemStack.EMPTY;
 	private BlockPos endPos = null;
@@ -40,17 +49,12 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	private EnumFacing getFacing(){
 		if(facing == null){
 			IBlockState state = world.getBlockState(pos);
-			if(!state.getPropertyKeys().contains(EssentialsProperties.FACING)){
+			if(!state.has(EssentialsProperties.FACING)){
 				return EnumFacing.DOWN;
 			}
 			facing = state.get(EssentialsProperties.FACING);
 		}
 		return facing;
-	}
-
-	@Override
-	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState){
-		return oldState.getBlock() != newState.getBlock();
 	}
 
 	@Override
@@ -69,8 +73,9 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 
 		TileEntity outputTE = world.getTileEntity(endPos);
 		EnumFacing dir = getFacing();
-		if(outputTE != null && outputTE.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite())){
-			IItemHandler outHandler = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite());
+		LazyOptional<IItemHandler> outputCap;
+		if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite())).isPresent()){
+			IItemHandler outHandler = outputCap.orElseThrow(NullPointerException::new);
 			for(int i = 0; i < outHandler.getSlots(); i++){
 				ItemStack outStack = outHandler.insertItem(i, inventory, false);
 				if(outStack.getCount() != inventory.getCount()){
@@ -93,10 +98,10 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	public void refreshCache(){
 		facing = null;
 		EnumFacing dir = getFacing();
-		int extension = 1;
-		int maxChutes = EssentialsConfig.getConfigInt(EssentialsConfig.itemChuteRange, false);
+		int extension;
+		int maxChutes = EssentialsConfig.itemChuteRange.get();
 
-		for(; extension <= maxChutes; extension++){
+		for(extension = 1; extension <= maxChutes; extension++){
 			IBlockState target = world.getBlockState(pos.offset(dir, extension));
 			if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
 				break;
@@ -121,29 +126,28 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 		super.read(nbt);
 
 		if(nbt.contains("inv")){
-			inventory = new ItemStack(nbt.getCompound("inv"));
+			inventory = ItemStack.read(nbt.getCompound("inv"));
 		}
 	}
-
-	@Override
-	public boolean hasCapability(Capability<?> cap, EnumFacing facing){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return true;
-		}
-
-		return super.hasCapability(cap, facing);
-	}
-
-	private final IItemHandler handler = new InventoryHandler();
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getCapability(Capability<T> cap, EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return (T) handler;
+			return LazyOptional.of(() -> (T) new InventoryHandler());
 		}
 
 		return super.getCapability(cap, facing);
+	}
+
+	@Override
+	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn){
+		return new ItemShifterContainer(playerInventory, this);
+	}
+
+	@Override
+	public String getGuiID(){
+		return EssentialsGuiHandler.ITEM_SHIFTER_GUI;
 	}
 
 	private class InventoryHandler implements IItemHandler{
@@ -201,6 +205,11 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 		@Override
 		public int getSlotLimit(int slot){
 			return 64;
+		}
+
+		@Override
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
+			return true;
 		}
 	}
 
@@ -291,8 +300,8 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	@Override
-	public String getName(){
-		return "Item Shifter";
+	public ITextComponent getName(){
+		return new TextComponentString("Item Shifter");
 	}
 
 	@Override
@@ -300,8 +309,9 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 		return false;
 	}
 
+	@Nullable
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TextComponentString(getName());
+	public ITextComponent getCustomName(){
+		return null;
 	}
 }

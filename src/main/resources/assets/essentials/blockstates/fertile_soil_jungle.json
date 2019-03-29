@@ -1,5 +1,5 @@
 {
 	"variants": {
-		"normal": { "model": "essentials:fertile_soil_jungle" }
+		"": { "model": "essentials:block/fertile_soil_jungle" }
 	}
 }

@@ -1,8 +1,8 @@
 {
 	"textures": {
-		"side": "essentials:blocks/multi_piston_side_sticky",
-		"top": "essentials:blocks/multi_piston_head_sticky",
-		"bottom": "essentials:blocks/multi_piston_back"
+		"side": "essentials:block/multi_piston_side_sticky",
+		"top": "essentials:block/multi_piston_head_sticky",
+		"bottom": "essentials:block/multi_piston_back"
 	},
 	"elements": [
 		{
