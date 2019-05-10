@@ -55,7 +55,7 @@ public class ItemChutePortTileEntity extends TileEntity implements ITickable{
 	}
 	
 	public void dropItems(){
-		world.spawnEntity(new EntityItem(world, pos.offset(world.getBlockState(pos).getValue(EssentialsProperties.FACING)).getX(), pos.getY(), pos.offset(world.getBlockState(pos).getValue(EssentialsProperties.FACING)).getZ(), inventory.copy()));
+		world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), inventory.copy()));
 		inventory = ItemStack.EMPTY;
 		markDirty();
 	}
