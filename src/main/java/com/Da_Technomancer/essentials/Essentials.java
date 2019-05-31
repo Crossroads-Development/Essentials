@@ -116,6 +116,4 @@ public final class Essentials{
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}
-
-	//TODO register recipes
 }

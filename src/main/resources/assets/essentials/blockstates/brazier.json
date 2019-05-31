@@ -1,50 +1,33 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"model": "essentials:brazier",
 		"uvlock": false
 	},
 	"variants": {
 		"br_cont": {
 			"0": {
-				"textures": {
-					"fill": "essentials:block/empty"
-				}
+				"model": "essentials:brazier"
 			},
 			"1": {
-				"textures": {
-					"fill": "block/water_still"
-				}
+				"model": "essentials:brazier_w"
 			},
 			"2": {
-				"textures": {
-					"fill": "block/lava_still"
-				}
+				"model": "essentials:brazier_l"
 			},
 			"3": {
-				"textures": {
-					"fill": "essentials:block/embers"
-				}
+				"model": "essentials:brazier_e"
 			},
 			"4": {
-				"textures": {
-					"fill": "block/glowstone"
-				}
+				"model": "essentials:brazier_g"
 			},
 			"5": {
-				"textures": {
-					"fill": "essentials:block/empty"
-				}
+				"model": "essentials:brazier"
 			},
 			"6": {
-				"textures": {
-					"fill": "block/soul_sand"
-				}
+				"model": "essentials:brazier_s"
 			},
 			"7": {
-				"textures": {
-					"fill": "essentials:block/brazier_potato"
-				}
+				"model": "essentials:brazier_p"
 			}
 		}
 	}

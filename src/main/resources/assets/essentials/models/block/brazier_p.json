@@ -4,7 +4,7 @@
 		"particle": "block/polished_andesite",
 		"side": "block/polished_andesite",
 		"top": "block/andesite",
-		"inside": "essentials:block/empty"
+		"inside": "essentials:block/brazier_potato"
 	},
     "elements": [
         {	"from": [ 4, 0, 4 ],

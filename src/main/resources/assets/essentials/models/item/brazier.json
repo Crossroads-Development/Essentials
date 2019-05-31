@@ -1,8 +1,5 @@
 {
 	"parent": "essentials:block/brazier",
-	"textures":{
-		"fill": "essentials:block/empty"
-	},
 	"display": {
 		"thirdperson": {
 			"rotation": [ 10, -45, 170],

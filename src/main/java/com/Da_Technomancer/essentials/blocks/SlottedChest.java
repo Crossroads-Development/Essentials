@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -43,10 +44,16 @@ public class SlottedChest extends BlockContainer{
 	}
 
 	@Override
-	public void onPlayerDestroy(IWorld world, BlockPos pos, IBlockState blockstate){
-		SlottedChestTileEntity te = (SlottedChestTileEntity) world.getTileEntity(pos);
-		InventoryHelper.dropInventoryItems(world.getWorld(), pos, te.iInv);
-		super.onPlayerDestroy(world, pos, blockstate);
+	public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
+		if (state.getBlock() != newState.getBlock()) {
+			TileEntity te = worldIn.getTileEntity(pos);
+			if (te instanceof SlottedChestTileEntity) {
+				InventoryHelper.dropInventoryItems(worldIn, pos, ((SlottedChestTileEntity) te).iInv);
+				worldIn.updateComparatorOutputLevel(pos, this);
+			}
+
+			super.onReplaced(state, worldIn, pos, newState, isMoving);
+		}
 	}
 
 	@Override
@@ -64,7 +71,7 @@ public class SlottedChest extends BlockContainer{
 		}
 		return true;
 	}
-	
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){

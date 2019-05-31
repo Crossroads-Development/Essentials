@@ -28,7 +28,6 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -153,13 +152,16 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	public void onPlayerDestroy(IWorld worldIn, BlockPos pos, IBlockState state){
-		TileEntity tileentity = worldIn.getTileEntity(pos);
-		if(tileentity instanceof SortingHopperTileEntity){
-			InventoryHelper.dropInventoryItems(worldIn.getWorld(), pos, (SortingHopperTileEntity) tileentity);
-			worldIn.getWorld().updateComparatorOutputLevel(pos, this);
+	public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
+		if (state.getBlock() != newState.getBlock()) {
+			TileEntity te = worldIn.getTileEntity(pos);
+			if (te instanceof SortingHopperTileEntity) {
+				InventoryHelper.dropInventoryItems(worldIn, pos, (SortingHopperTileEntity) te);
+				worldIn.updateComparatorOutputLevel(pos, this);
+			}
+
+			super.onReplaced(state, worldIn, pos, newState, isMoving);
 		}
-		super.onPlayerDestroy(worldIn, pos, state);
 	}
 
 	@Override

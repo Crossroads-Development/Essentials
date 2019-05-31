@@ -22,18 +22,10 @@
 
 			},
 			"1": {
-				"submodel": "essentials:multi_piston_head",
-				"textures": {
-					"front": "essentials:blocks/multi_piston_head_sticky",
-					"side": "essentials:blocks/multi_piston_side_sticky"
-				}
+				"submodel": "essentials:multi_piston_head_sticky"
 			},
 			"2": {
-				"submodel": "essentials:multi_piston_head",
-				"textures": {
-					"front": "essentials:blocks/multi_piston_head_sticky",
-					"side": "essentials:blocks/multi_piston_side_sticky"
-				},
+				"submodel": "essentials:multi_piston_head_sticky",
 				"x": 180
 			}
 		}

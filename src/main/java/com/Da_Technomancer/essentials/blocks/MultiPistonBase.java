@@ -65,7 +65,7 @@ public class MultiPistonBase extends Block{
 	@Nullable
 	@Override
 	public IBlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
+		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override

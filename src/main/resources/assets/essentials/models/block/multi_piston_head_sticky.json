@@ -1,9 +1,9 @@
 {
 	"textures": {
-		"side": "essentials:blocks/multi_piston_side",
-		"front": "essentials:blocks/multi_piston_head",
+		"side": "essentials:blocks/multi_piston_side_sticky",
+		"front": "essentials:blocks/multi_piston_head_sticky",
 		"back": "essentials:block/multi_piston_head",
-		"particle": "essentials:blocks/multi_piston_head"
+		"particle": "essentials:blocks/multi_piston_head_sticky"
 	},
 	"elements": [{
 		"from": [ 0.0, 11.0, 0.0 ],

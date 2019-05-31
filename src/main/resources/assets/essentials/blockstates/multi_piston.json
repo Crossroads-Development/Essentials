@@ -33,11 +33,7 @@
 
 			},
 			"false": {
-				"submodel": "essentials:multi_piston_head",
-				"textures": {
-					"front": "essentials:blocks/multi_piston_head",
-					"side": "essentials:blocks/multi_piston_side"
-				}
+				"submodel": "essentials:multi_piston_head"
 			}
 		}
 	}

@@ -25,12 +25,10 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -137,10 +135,10 @@ public class Brazier extends BlockContainer{
 	}
 
 	@Override
-	public void onPlayerDestroy(IWorld world, BlockPos pos, IBlockState state){
-		if(!world.getWorld().isRemote){
-			TileEntity te = world.getTileEntity(pos);
-			if(te != null && te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).isPresent()){
+	public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
+		if (state.getBlock() != newState.getBlock()) {
+			TileEntity te = worldIn.getTileEntity(pos);
+			if (te instanceof BrazierTileEntity) {
 				ItemStack made = ItemStack.EMPTY;
 				switch(state.get(EssentialsProperties.BRAZIER_CONTENTS)){
 					case 3:
@@ -156,10 +154,12 @@ public class Brazier extends BlockContainer{
 						made = new ItemStack(Items.POISONOUS_POTATO);
 						break;
 				}
-				InventoryHelper.spawnItemStack(world.getWorld(), pos.getX(), pos.getY(), pos.getZ(), made);
+				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), made);
+				worldIn.updateComparatorOutputLevel(pos, this);
 			}
+
+			super.onReplaced(state, worldIn, pos, newState, isMoving);
 		}
-		super.onPlayerDestroy(world, pos, state);
 	}
 
 	@Override
