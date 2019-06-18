@@ -4,7 +4,7 @@ import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
@@ -20,9 +20,10 @@ public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 		handler = new SpeedItemHandler();
 	}
 
+
 	@Override
-	public ITextComponent getName(){
-		return new TextComponentTranslation( "container.speed_hopper");
+	public ITextComponent getDisplayName(){
+		return new TranslationTextComponent( "container.speed_hopper");
 	}
 
 	@Override

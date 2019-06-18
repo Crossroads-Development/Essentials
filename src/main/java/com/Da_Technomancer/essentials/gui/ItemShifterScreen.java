@@ -2,26 +2,22 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
-import com.Da_Technomancer.essentials.tileentities.ItemShifterTileEntity;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 
-public class ItemShifterGuiContainer extends GuiContainer{
+public class ItemShifterScreen extends ContainerScreen<ItemShifterContainer>{
 
 	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/item_shifter.png");
-	private final IInventory playerInventory;
-	private final ItemShifterTileEntity te;
-
-	protected ItemShifterGuiContainer(IInventory playerInventory, ItemShifterTileEntity te){
-		super(new ItemShifterContainer(playerInventory, te));
-		this.playerInventory = playerInventory;
-		this.te = te;
+	
+	public ItemShifterScreen(ItemShifterContainer cont, PlayerInventory playerInventory, ITextComponent text){
+		super(cont, playerInventory, text);
 	}
 
 	@Override
 	public void render(int mouseX, int mouseY, float partialTicks){
-		drawDefaultBackground();
+		renderBackground();
 		super.render(mouseX, mouseY, partialTicks);
 		renderHoveredToolTip(mouseX, mouseY);
 	}
@@ -32,8 +28,8 @@ public class ItemShifterGuiContainer extends GuiContainer{
 	 */
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
-		fontRenderer.drawString(te.getDisplayName().getFormattedText(), 8, 6, 0x404040);
-		fontRenderer.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 0x404040);
+		font.drawString(title.getFormattedText(), 8, 6, 0x404040);
+		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 0x404040);
 	}
 
 	/**
@@ -41,7 +37,8 @@ public class ItemShifterGuiContainer extends GuiContainer{
 	 */
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-		mc.getTextureManager().bindTexture(GUI_TEXTURE);
-		drawTexturedModalRect((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
+		minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
+		//drawTexturedModelRectangle
+		blit((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
 	}
 }

@@ -2,24 +2,24 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.SortingHopper;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ContainerHopper;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.HopperContainer;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.IInteractionObject;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -31,14 +31,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class SortingHopperTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
+public class SortingHopperTileEntity extends TileEntity implements ITickableTileEntity, IInventory, INamedContainerProvider{
 
 	@ObjectHolder("sorting_hopper")
 	private static TileEntityType<SortingHopperTileEntity> TYPE = null;
 
 	protected final ItemStack[] inventory = new ItemStack[5];
 	private int transferCooldown = -1;
-	private EnumFacing dir = null;
+	private Direction dir = null;
 
 	protected SortingHopperTileEntity(TileEntityType<?> type){
 		super(type);
@@ -55,11 +55,11 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 		dir = null;
 	}
 
-	protected EnumFacing getDir(){
+	protected Direction getDir(){
 		if(dir == null){
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(!(state.getBlock() instanceof SortingHopper)){
-				return EnumFacing.DOWN;
+				return Direction.DOWN;
 			}
 			dir = state.get(SortingHopper.FACING);
 		}
@@ -70,7 +70,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	public void tick(){
 		if(!world.isRemote && --transferCooldown <= 0){
 			transferCooldown = 0;
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(state.getBlock() instanceof SortingHopper && state.get(SortingHopper.ENABLED)){
 				boolean flag = false;
 
@@ -91,39 +91,23 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	@Override
-	public ITextComponent getName(){
-		return new TextComponentTranslation("container.sorting_hopper");
-	}
-
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
-
-	@Nullable
-	@Override
-	public ITextComponent getCustomName(){
-		return null;
-	}
-
-	@Override
-	public void read(NBTTagCompound nbt){
+	public void read(CompoundNBT nbt){
 		super.read(nbt);
 		transferCooldown = nbt.getInt("trans_cooldown");
 
 		for(int i = 0; i < 5; i++){
-			NBTTagCompound stackNBT = nbt.getCompound("inv_" + i);
+			CompoundNBT stackNBT = nbt.getCompound("inv_" + i);
 			inventory[i] = ItemStack.read(stackNBT);
 		}
 	}
 
 	@Override
-	public NBTTagCompound write(NBTTagCompound nbt){
+	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 
 		for(int i = 0; i < 5; i++){
 			if(!inventory[i].isEmpty()){
-				NBTTagCompound stackNBT = new NBTTagCompound();
+				CompoundNBT stackNBT = new CompoundNBT();
 				inventory[i].write(stackNBT);
 				nbt.put("inv_" + i, stackNBT);
 			}
@@ -208,17 +192,17 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	 * with Container
 	 */
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer player){
+	public boolean isUsableByPlayer(PlayerEntity player){
 		return world.getTileEntity(pos) == this && player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
 	}
 
 	@Override
-	public void openInventory(EntityPlayer player){
+	public void openInventory(PlayerEntity player){
 
 	}
 
 	@Override
-	public void closeInventory(EntityPlayer player){
+	public void closeInventory(PlayerEntity player){
 
 	}
 
@@ -253,7 +237,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	protected boolean transferItemsOut(){
-		EnumFacing facing = getDir();
+		Direction facing = getDir();
 		TileEntity te = world.getTileEntity(pos.offset(facing));
 
 		//Insertion via IItemHandler
@@ -279,11 +263,11 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	protected boolean transferItemsIn(){
-		TileEntity fromTE = world.getTileEntity(pos.offset(EnumFacing.UP));
+		TileEntity fromTE = world.getTileEntity(pos.offset(Direction.UP));
 
 		//Transfer from IItemHandler
 		LazyOptional<IItemHandler> inCap;
-		if(fromTE != null && (inCap = fromTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, EnumFacing.DOWN)).isPresent()){
+		if(fromTE != null && (inCap = fromTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN)).isPresent()){
 			IItemHandler otherHandler = inCap.orElseThrow(NullPointerException::new);
 
 			for (int i = 0; i < otherHandler.getSlots(); i++){
@@ -304,7 +288,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 			boolean changed = false;
 
 			//Suck up dropped items
-			for(EntityItem entityitem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.getX(), pos.getY() + 0.5D, pos.getZ(), pos.getX() + 1, pos.getY() + 2D, pos.getZ() + 1), EntitySelectors.IS_ALIVE)){
+			for(ItemEntity entityitem : world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.getX(), pos.getY() + 0.5D, pos.getZ(), pos.getX() + 1, pos.getY() + 2D, pos.getZ() + 1), EntityPredicates.IS_ALIVE)){
 				if(entityitem == null){
 					continue;
 				}
@@ -336,21 +320,6 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	@Override
-	public int getField(int id){
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value){
-
-	}
-
-	@Override
-	public int getFieldCount(){
-		return 0;
-	}
-
-	@Override
 	public void clear(){
 		for(int i = 0; i < 5; ++i){
 			inventory[i] = ItemStack.EMPTY;
@@ -362,7 +331,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing){
 		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return LazyOptional.of(() -> (T) handler);
 		}
@@ -370,13 +339,14 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 	}
 
 	@Override
-	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn){
-		return new ContainerHopper(playerInventory, this, playerIn);
+	public ITextComponent getDisplayName(){
+		return new TranslationTextComponent("container.sorting_hopper");
 	}
 
+	@Nullable
 	@Override
-	public String getGuiID(){
-		return "minecraft:hopper";
+	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+		return new HopperContainer(id, playerInventory, this);
 	}
 
 	protected class ItemHandler implements IItemHandler{
@@ -429,7 +399,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 				return ItemStack.EMPTY;
 			}
 
-			EnumFacing facing = getDir();
+			Direction facing = getDir();
 
 			TileEntity te = world.getTileEntity(pos.offset(facing));
 			LazyOptional<IItemHandler> otherCap;

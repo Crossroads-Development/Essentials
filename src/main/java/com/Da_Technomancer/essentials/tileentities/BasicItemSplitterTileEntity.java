@@ -2,13 +2,13 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -18,7 +18,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 
 @ObjectHolder(Essentials.MODID)
-public class BasicItemSplitterTileEntity extends TileEntity implements ITickable{
+public class BasicItemSplitterTileEntity extends TileEntity implements ITickableTileEntity{
 
 	@ObjectHolder("basic_item_splitter")
 	private static TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
@@ -27,7 +27,7 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	private int mode = 1;
 	private ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 
-	private EnumFacing facing = null;
+	private Direction facing = null;
 
 	public BasicItemSplitterTileEntity(TileEntityType<?> type){
 		super(type);
@@ -37,11 +37,11 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		this(TYPE);
 	}
 
-	private EnumFacing getFacing(){
+	private Direction getFacing(){
 		if(facing == null){
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(!state.has(EssentialsProperties.FACING)){
-				return EnumFacing.DOWN;
+				return Direction.DOWN;
 			}
 			facing = state.get(EssentialsProperties.FACING);
 		}
@@ -50,9 +50,9 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 
 	@Override
 	public void tick(){
-		EnumFacing dir = getFacing();
+		Direction dir = getFacing();
 		for(int i = 0; i < 2; i++){
-			EnumFacing side = i == 0 ? dir : dir.getOpposite();
+			Direction side = i == 0 ? dir : dir.getOpposite();
 			TileEntity outputTE = world.getTileEntity(pos.offset(side));
 			LazyOptional<IItemHandler> outHandlerCon;
 			if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())).isPresent()){
@@ -82,9 +82,9 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing side){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			EnumFacing dir = getFacing();
+			Direction dir = getFacing();
 
 			return side == dir ? LazyOptional.of(() -> (T) new OutItemHandler(1)) : side == dir.getOpposite() ? LazyOptional.of(() -> (T) new OutItemHandler(0)) : LazyOptional.of(() -> (T) new InHandler());
 		}
@@ -93,13 +93,13 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	}
 
 	@Override
-	public NBTTagCompound write(NBTTagCompound nbt){
+	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 		nbt.putInt("mode", mode);
 		nbt.putInt("transfered", transfered);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
-				NBTTagCompound inner = new NBTTagCompound();
+				CompoundNBT inner = new CompoundNBT();
 				inventory[i].write(inner);
 				nbt.put("inv_" + i, inner);
 			}
@@ -108,7 +108,7 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	}
 
 	@Override
-	public void read(NBTTagCompound nbt){
+	public void read(CompoundNBT nbt){
 		super.read(nbt);
 		mode = nbt.getInt("mode");
 		transfered = nbt.getInt("transfered");

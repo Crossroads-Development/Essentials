@@ -3,13 +3,13 @@ package com.Da_Technomancer.essentials.gui;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 
-public class FluidShifterGuiContainer extends GuiContainer{
+public class FluidShifterGuiContainer extends ContainerScreen{
 
 	protected FluidShifterTileEntity te;
 	private IInventory playerInv;

@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -17,10 +17,10 @@ public class SendSlotFilterToClient extends Packet{
 		
 	}
 
-	public NBTTagCompound nbt;
+	public CompoundNBT nbt;
 	public BlockPos pos;
 
-	public SendSlotFilterToClient(NBTTagCompound nbt, BlockPos pos){
+	public SendSlotFilterToClient(CompoundNBT nbt, BlockPos pos){
 		this.nbt = nbt;
 		this.pos = pos;
 	}
@@ -50,7 +50,7 @@ public class SendSlotFilterToClient extends Packet{
 		}
 
 		Minecraft minecraft = Minecraft.getInstance();
-		minecraft.addScheduledTask(() -> {
+		minecraft.enqueue(() -> {
 			TileEntity te = minecraft.world.getTileEntity(pos);
 
 			if(te instanceof INBTReceiver){

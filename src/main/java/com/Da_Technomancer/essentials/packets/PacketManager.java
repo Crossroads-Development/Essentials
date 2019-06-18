@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -25,7 +25,7 @@ public class PacketManager{
 		writeMap.put(Float.class, (val, buf) -> buf.writeFloat((Float) val));
 		writeMap.put(Double.class, (val, buf) -> buf.writeDouble((Double) val));
 		writeMap.put(BlockPos.class, (val, buf) -> buf.writeBlockPos((BlockPos) val));
-		writeMap.put(NBTTagCompound.class, (val, buf) -> buf.writeCompoundTag((NBTTagCompound) val));
+		writeMap.put(CompoundNBT.class, (val, buf) -> buf.writeCompoundTag((CompoundNBT) val));
 
 		readMap.put(Boolean.class, PacketBuffer::readBoolean);
 		readMap.put(Byte.class, PacketBuffer::readByte);
@@ -34,7 +34,7 @@ public class PacketManager{
 		readMap.put(Float.class, PacketBuffer::readFloat);
 		readMap.put(Double.class, PacketBuffer::readDouble);
 		readMap.put(BlockPos.class, PacketBuffer::readBlockPos);
-		readMap.put(NBTTagCompound.class, PacketBuffer::readCompoundTag);
+		readMap.put(CompoundNBT.class, PacketBuffer::readCompoundTag);
 	}
 
 	public static <T extends Packet> void encode(T packet, PacketBuffer buf){

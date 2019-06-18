@@ -4,24 +4,24 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
-import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.IInteractionObject;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -32,7 +32,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class ItemShifterTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
+public class ItemShifterTileEntity extends TileEntity implements ITickableTileEntity, IInventory, INamedContainerProvider{
 
 	@ObjectHolder("item_shifter")
 	private static TileEntityType<ItemShifterTileEntity> TYPE = null;
@@ -40,17 +40,17 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	private ItemStack inventory = ItemStack.EMPTY;
 	private BlockPos endPos = null;
 
-	private EnumFacing facing = null;
+	private Direction facing = null;
 
 	public ItemShifterTileEntity(){
 		super(TYPE);
 	}
 
-	private EnumFacing getFacing(){
+	private Direction getFacing(){
 		if(facing == null){
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(!state.has(EssentialsProperties.FACING)){
-				return EnumFacing.DOWN;
+				return Direction.DOWN;
 			}
 			facing = state.get(EssentialsProperties.FACING);
 		}
@@ -72,7 +72,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 		}
 
 		TileEntity outputTE = world.getTileEntity(endPos);
-		EnumFacing dir = getFacing();
+		Direction dir = getFacing();
 		LazyOptional<IItemHandler> outputCap;
 		if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, dir.getOpposite())).isPresent()){
 			IItemHandler outHandler = outputCap.orElseThrow(NullPointerException::new);
@@ -87,22 +87,21 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 			return;
 		}
 
-		EntityItem ent = new EntityItem(world, endPos.getX() + 0.5D, endPos.getY() + 0.5D, endPos.getZ() + 0.5D, inventory);
-		ent.motionX = 0;
-		ent.motionZ = 0;
-		world.spawnEntity(ent);
+		ItemEntity ent = new ItemEntity(world, endPos.getX() + 0.5D, endPos.getY() + 0.5D, endPos.getZ() + 0.5D, inventory);
+		ent.setMotion(Vec3d.ZERO);
+		world.addEntity(ent);
 		inventory = ItemStack.EMPTY;
 		markDirty();
 	}
 
 	public void refreshCache(){
 		facing = null;
-		EnumFacing dir = getFacing();
+		Direction dir = getFacing();
 		int extension;
 		int maxChutes = EssentialsConfig.itemChuteRange.get();
 
 		for(extension = 1; extension <= maxChutes; extension++){
-			IBlockState target = world.getBlockState(pos.offset(dir, extension));
+			BlockState target = world.getBlockState(pos.offset(dir, extension));
 			if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
 				break;
 			}
@@ -112,17 +111,17 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	@Override
-	public NBTTagCompound write(NBTTagCompound nbt){
+	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 
 		if(!inventory.isEmpty()){
-			nbt.put("inv", inventory.write(new NBTTagCompound()));
+			nbt.put("inv", inventory.write(new CompoundNBT()));
 		}
 		return nbt;
 	}
 
 	@Override
-	public void read(NBTTagCompound nbt){
+	public void read(CompoundNBT nbt){
 		super.read(nbt);
 
 		if(nbt.contains("inv")){
@@ -132,7 +131,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return LazyOptional.of(() -> (T) new InventoryHandler());
 		}
@@ -141,13 +140,14 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	@Override
-	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn){
-		return new ItemShifterContainer(playerInventory, this);
+	public ITextComponent getDisplayName(){
+		return new TranslationTextComponent("container.item_shifter");
 	}
 
+	@Nullable
 	@Override
-	public String getGuiID(){
-		return EssentialsGuiHandler.ITEM_SHIFTER_GUI;
+	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+		return new ItemShifterContainer(id, playerInventory, this);
 	}
 
 	private class InventoryHandler implements IItemHandler{
@@ -259,18 +259,8 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer player){
+	public boolean isUsableByPlayer(PlayerEntity player){
 		return player.getPosition().distanceSq(pos) < 64;
-	}
-
-	@Override
-	public void openInventory(EntityPlayer player){
-
-	}
-
-	@Override
-	public void closeInventory(EntityPlayer player){
-
 	}
 
 	@Override
@@ -279,39 +269,8 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	}
 
 	@Override
-	public int getField(int id){
-		return 0;
-	}
-
-	@Override
-	public void setField(int id, int value){
-
-	}
-
-	@Override
-	public int getFieldCount(){
-		return 0;
-	}
-
-	@Override
 	public void clear(){
 		inventory = ItemStack.EMPTY;
 		markDirty();
-	}
-
-	@Override
-	public ITextComponent getName(){
-		return new TextComponentString("Item Shifter");
-	}
-
-	@Override
-	public boolean hasCustomName(){
-		return false;
-	}
-
-	@Nullable
-	@Override
-	public ITextComponent getCustomName(){
-		return null;
 	}
 }

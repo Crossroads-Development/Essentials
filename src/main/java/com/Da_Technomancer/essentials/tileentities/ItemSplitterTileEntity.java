@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -18,14 +18,14 @@ public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 	public int redstone;
 
 	@Override
-	public NBTTagCompound write(NBTTagCompound nbt){
+	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 		nbt.putInt("reds", redstone);
 		return nbt;
 	}
 
 	@Override
-	public void read(NBTTagCompound nbt){
+	public void read(CompoundNBT nbt){
 		super.read(nbt);
 		redstone = nbt.getInt("reds");
 	}

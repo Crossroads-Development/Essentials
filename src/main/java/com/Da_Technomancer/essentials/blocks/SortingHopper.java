@@ -2,31 +2,28 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.tileentities.SortingHopperTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockHopper;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -35,10 +32,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SortingHopper extends BlockContainer{
+public class SortingHopper extends ContainerBlock{
 
-	public static final DirectionProperty FACING = BlockHopper.FACING;
-	public static final BooleanProperty ENABLED = BlockHopper.ENABLED;
+	public static final DirectionProperty FACING = HopperBlock.FACING;
+	public static final BooleanProperty ENABLED = HopperBlock.ENABLED;
 
 	//Taken from vanilla hopper to ensure similarity
 	private static final VoxelShape INPUT_SHAPE = Block.makeCuboidShape(0.0D, 10.0D, 0.0D, 16.0D, 16.0D, 16.0D);
@@ -59,7 +56,7 @@ public class SortingHopper extends BlockContainer{
 
 	protected SortingHopper(Properties prop){
 		super(prop);
-		setDefaultState(getDefaultState().with(FACING, EnumFacing.DOWN).with(ENABLED, true));
+		setDefaultState(getDefaultState().with(FACING, Direction.DOWN).with(ENABLED, true));
 	}
 
 	protected SortingHopper(){
@@ -71,7 +68,7 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos){
+	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
 		switch(state.get(FACING)){
 			case DOWN:
 				return DOWN_SHAPE;
@@ -89,7 +86,7 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	public VoxelShape getRaytraceShape(IBlockState state, IBlockReader worldIn, BlockPos pos){
+	public VoxelShape getRaytraceShape(BlockState state, IBlockReader worldIn, BlockPos pos){
 		switch(state.get(FACING)){
 			case DOWN:
 				return DOWN_RAYTRACE_SHAPE;
@@ -108,10 +105,10 @@ public class SortingHopper extends BlockContainer{
 
 	@Nullable
 	@Override
-	public IBlockState getStateForPlacement(BlockItemUseContext context){
-		EnumFacing enumfacing = context.getFace().getOpposite();
-		if(enumfacing == EnumFacing.UP){
-			enumfacing = EnumFacing.DOWN;
+	public BlockState getStateForPlacement(BlockItemUseContext context){
+		Direction enumfacing = context.getFace().getOpposite();
+		if(enumfacing == Direction.UP){
+			enumfacing = Direction.DOWN;
 		}
 
 		return getDefaultState().with(FACING, enumfacing).with(ENABLED, !context.getWorld().isBlockPowered(context.getPos()));
@@ -123,7 +120,7 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(!worldIn.isRemote){
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
@@ -135,24 +132,24 @@ public class SortingHopper extends BlockContainer{
 			}
 
 			if(te instanceof SortingHopperTileEntity){
-				playerIn.displayGUIChest((SortingHopperTileEntity) te);
-				playerIn.addStat(StatList.INSPECT_HOPPER);
+				playerIn.openContainer((SortingHopperTileEntity) te);
+//				playerIn.addStat(Stats.INSPECT_HOPPER);
 			}
 		}
 		return true;
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
-		boolean flag = !worldIn.isBlockPowered(pos);
+	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
+		boolean block = !worldIn.isBlockPowered(pos);
 
-		if(flag != state.get(ENABLED)){
-			worldIn.setBlockState(pos, state.with(ENABLED, flag), 4);
+		if(block != state.get(ENABLED)){
+			worldIn.setBlockState(pos, state.with(ENABLED, block), 4);
 		}
 	}
 
 	@Override
-	public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
+	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
 			TileEntity te = worldIn.getTileEntity(pos);
 			if (te instanceof SortingHopperTileEntity) {
@@ -165,22 +162,17 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state){
-		return EnumBlockRenderType.MODEL;
+	public BlockRenderType getRenderType(BlockState state){
+		return BlockRenderType.MODEL;
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state){
-		return false;
-	}
-
-	@Override
-	public boolean hasComparatorInputOverride(IBlockState state){
+	public boolean hasComparatorInputOverride(BlockState state){
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(IBlockState blockState, World worldIn, BlockPos pos){
+	public int getComparatorInputOverride(BlockState blockState, World worldIn, BlockPos pos){
 		return Container.calcRedstone(worldIn.getTileEntity(pos));
 	}
 
@@ -191,23 +183,23 @@ public class SortingHopper extends BlockContainer{
 	}
 
 	@Override
-	public IBlockState rotate(IBlockState state, Rotation rot){
+	public BlockState rotate(BlockState state, Rotation rot){
 		return state.with(FACING, rot.rotate(state.get(FACING)));
 	}
 
 	@Override
-	public IBlockState mirror(IBlockState state, Mirror mirrorIn){
+	public BlockState mirror(BlockState state, Mirror mirrorIn){
 		return state.rotate(mirrorIn.toRotation(state.get(FACING)));
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(FACING, ENABLED);
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TextComponentString("Doesn't allow items to be drawn from it by other hoppers if this hopper can output them"));
+		tooltip.add(new StringTextComponent("Doesn't allow items to be drawn from it by other hoppers if this hopper can output them"));
 	}
 }

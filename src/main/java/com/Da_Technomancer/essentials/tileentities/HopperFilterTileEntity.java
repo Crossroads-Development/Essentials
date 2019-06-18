@@ -6,15 +6,15 @@ import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
-import net.minecraft.block.BlockShulkerBox;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -35,7 +35,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		super(TYPE);
 	}
 
-	private EnumFacing.Axis axisCache = null;
+	private Direction.Axis axisCache = null;
 	private ItemStack filter = ItemStack.EMPTY;
 
 	public ItemStack getFilter(){
@@ -44,17 +44,17 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	public void setFilter(ItemStack filter){
 		this.filter = filter;
-		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(filter.write(new NBTTagCompound()), pos));
+		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(filter.write(new CompoundNBT()), pos));
 		markDirty();
 	}
 
-	private EnumFacing.Axis getAxis(){
+	private Direction.Axis getAxis(){
 		if(axisCache == null){
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(state.getBlock() == EssentialsBlocks.hopperFilter){
 				axisCache = state.get(EssentialsProperties.AXIS);
 			}else{
-				return EnumFacing.Axis.Y;
+				return Direction.Axis.Y;
 			}
 		}
 		return axisCache;
@@ -69,25 +69,25 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public NBTTagCompound write(NBTTagCompound nbt){
+	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 		filter.write(nbt);
 		return nbt;
 	}
 
 	@Override
-	public void read(NBTTagCompound nbt){
+	public void read(CompoundNBT nbt){
 		super.read(nbt);
 		filter = ItemStack.read(nbt);
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag(){
+	public CompoundNBT getUpdateTag(){
 		return write(super.getUpdateTag());
 	}
 
 	@Override
-	public void receiveNBT(NBTTagCompound nbt){
+	public void receiveNBT(CompoundNBT nbt){
 		filter = ItemStack.read(nbt);
 	}
 
@@ -95,7 +95,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing side){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side.getAxis() == getAxis()){
 			if(passedHandler == null){
 				TileEntity te = world.getTileEntity(pos.offset(side.getOpposite()));
@@ -119,8 +119,8 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 			return true;
 		}
 
-		NBTTagCompound nbt;
-		if(filt.getItem() instanceof ItemBlock && ((ItemBlock) filt.getItem()).getBlock() instanceof BlockShulkerBox && (nbt = filt.getTag()) != null && (nbt = nbt.getCompound("BlockEntityTag")).contains("Items", 9)){
+		CompoundNBT nbt;
+		if(filt.getItem() instanceof BlockItem && ((BlockItem) filt.getItem()).getBlock() instanceof ShulkerBoxBlock && (nbt = filt.getTag()) != null && (nbt = nbt.getCompound("BlockEntityTag")).contains("Items", 9)){
 			NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
 			ItemStackHelper.loadAllItems(nbt, nonnulllist);
 

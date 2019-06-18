@@ -1,9 +1,14 @@
 package com.Da_Technomancer.essentials;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -14,10 +19,10 @@ import java.util.Map.Entry;
  * 
  * Note that the changes are saved in a LinkedHashMap, so the last change set will be performed last when doChanges() is called
  */
-public class WorldBuffer{
+public class WorldBuffer implements IBlockReader{
 	
 	private final World worldObj;
-	private final HashMap<BlockPos, IBlockState> memory = new HashMap<>();
+	private final HashMap<BlockPos, BlockState> memory = new HashMap<>();
 	
 	public WorldBuffer(World worldObj){
 		this.worldObj = worldObj;
@@ -27,15 +32,22 @@ public class WorldBuffer{
 		return worldObj;
 	}
 	
-	public void addChange(BlockPos pos, IBlockState state){
+	public void addChange(BlockPos pos, BlockState state){
 		pos = pos.toImmutable();
 		if(getBlockState(pos) == state){
 			return;
 		}
 		memory.put(pos, state);
 	}
-	
-	public IBlockState getBlockState(BlockPos pos){
+
+	@Nullable
+	@Override
+	public TileEntity getTileEntity(BlockPos pos){
+		return null;
+	}
+
+	@Override
+	public BlockState getBlockState(BlockPos pos){
 		if(memory.containsKey(pos)){
 			return memory.get(pos);
 		}
@@ -43,8 +55,13 @@ public class WorldBuffer{
 		return worldObj.getBlockState(pos);
 	}
 
+	@Override
+	public IFluidState getFluidState(BlockPos pos){
+		return Fluids.EMPTY.getDefaultState();//TODO fluid support when forge is ready
+	}
+
 	public void applyChanges(){
-		for(Entry<BlockPos, IBlockState> ent : memory.entrySet()){
+		for(Entry<BlockPos, BlockState> ent : memory.entrySet()){
 			if(worldObj.getBlockState(ent.getKey()) != ent.getValue()){
 				worldObj.setBlockState(ent.getKey(), ent.getValue());
 			}

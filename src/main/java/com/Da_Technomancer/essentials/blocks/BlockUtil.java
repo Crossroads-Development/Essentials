@@ -1,11 +1,11 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class BlockUtil{
 
@@ -28,9 +28,9 @@ public class BlockUtil{
 			if(box == null){
 				continue;
 			}
-			RayTraceResult raytraceresult = box.calculateIntercept(start, end);
-			if(raytraceresult != null && dist > raytraceresult.hitVec.subtract(start).lengthSquared()){
-				dist = (float) raytraceresult.hitVec.subtract(start).lengthSquared();
+			Optional<Vec3d> result = box.rayTrace(start, end);
+			if(result.isPresent() && dist > result.get().subtract(start).lengthSquared()){
+				dist = (float) result.get().subtract(start).lengthSquared();
 				closest = box;
 			}
 		}

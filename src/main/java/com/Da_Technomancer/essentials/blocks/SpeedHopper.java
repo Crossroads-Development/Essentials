@@ -1,24 +1,14 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.tileentities.SortingHopperTileEntity;
 import com.Da_Technomancer.essentials.tileentities.SpeedHopperTileEntity;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -41,42 +31,9 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
-		if(!worldIn.isRemote){
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
-				worldIn.setBlockState(pos, state.cycle(FACING));
-				if(te instanceof SortingHopperTileEntity){
-					((SortingHopperTileEntity) te).resetCache();
-				}
-				return true;
-			}
-
-			if(te instanceof SortingHopperTileEntity){
-				playerIn.displayGUIChest((SortingHopperTileEntity) te);
-				playerIn.addStat(StatList.INSPECT_HOPPER);
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public void onReplaced(IBlockState state, World worldIn, BlockPos pos, IBlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getTileEntity(pos);
-			if (te instanceof SpeedHopperTileEntity) {
-				InventoryHelper.dropInventoryItems(worldIn, pos, (SpeedHopperTileEntity) te);
-				worldIn.updateComparatorOutputLevel(pos, this);
-			}
-
-			super.onReplaced(state, worldIn, pos, newState, isMoving);
-		}
-	}
-
-	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TextComponentString("Has the same sorting properties as a Sorting Hopper"));
-		tooltip.add(new TextComponentString("Inserts or extracts entire stacks at a time"));
+		tooltip.add(new StringTextComponent("Has the same sorting properties as a Sorting Hopper"));
+		tooltip.add(new StringTextComponent("Inserts or extracts entire stacks at a time"));
 	}
 }

@@ -1,23 +1,22 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.IInteractionObject;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -29,7 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
+public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, INamedContainerProvider{
 
 	@ObjectHolder("slotted_chest")
 	private static TileEntityType<SlottedChestTileEntity> TYPE = null;
@@ -45,21 +44,21 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 	private ItemStack[] inv = new ItemStack[54];
 	public ItemStack[] lockedInv = new ItemStack[54];
 
-	public void filterChanged(){
+	private void filterChanged(){
 		if(world.isRemote){
 			return;
 		}
-		NBTTagCompound slotNBT = new NBTTagCompound();
+		CompoundNBT slotNBT = new CompoundNBT();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				slotNBT.put("lock" + i, lockedInv[i].write(new NBTTagCompound()));
+				slotNBT.put("lock" + i, lockedInv[i].write(new CompoundNBT()));
 			}
 		}
 		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(slotNBT, pos));
 	}
 
 	@Override
-	public void read(NBTTagCompound nbt){
+	public void read(CompoundNBT nbt){
 		super.read(nbt);
 
 		for(int i = 0; i < 54; ++i){
@@ -75,15 +74,15 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public NBTTagCompound write(NBTTagCompound nbt){
+	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(!inv[i].isEmpty()){
-				nbt.put("slot" + i, inv[i].write(new NBTTagCompound()));
+				nbt.put("slot" + i, inv[i].write(new CompoundNBT()));
 			}
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
+				nbt.put("lockSlot" + i, lockedInv[i].write(new CompoundNBT()));
 			}
 		}
 
@@ -91,28 +90,21 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public NBTTagCompound getUpdateTag(){
-		NBTTagCompound nbt = super.getUpdateTag();
+	public CompoundNBT getUpdateTag(){
+		CompoundNBT nbt = super.getUpdateTag();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
+				nbt.put("lockSlot" + i, lockedInv[i].write(new CompoundNBT()));
 			}
 		}
 		return nbt;
 	}
 
-	public void cleanPreset(int slot){
-		if(slot < 54 && inv[slot].isEmpty()){
-			lockedInv[slot] = ItemStack.EMPTY;
-		}
-		filterChanged();
-	}
-
-	public final Inventory iInv = new Inventory();
+	public final Inventory iInv = new Inventory(inv, lockedInv, this);
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return LazyOptional.of(() -> (T) new InventoryHandler());
 		}
@@ -120,12 +112,8 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		return super.getCapability(cap, facing);
 	}
 
-	public boolean isInventoryType(IInventory inv){
-		return inv instanceof Inventory;
-	}
-
 	@Override
-	public void receiveNBT(NBTTagCompound nbt){
+	public void receiveNBT(CompoundNBT nbt){
 		for(int i = 0; i < 54; i++){
 			if(nbt.contains("lock" + i)){
 				lockedInv[i] = ItemStack.read(nbt.getCompound("lock" + i));
@@ -133,6 +121,17 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 				lockedInv[i] = ItemStack.EMPTY;
 			}
 		}
+	}
+
+	@Override
+	public ITextComponent getDisplayName(){
+		return new TranslationTextComponent("container.slotted_chest");
+	}
+
+	@Nullable
+	@Override
+	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+		return new SlottedChestContainer(id, playerInventory, iInv, lockedInv);
 	}
 
 	private class InventoryHandler implements IItemHandler{
@@ -195,38 +194,32 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 			return slot < 54 && ItemStack.areItemsEqual(stack, lockedInv[slot]) && ItemStack.areItemStackTagsEqual(stack, lockedInv[slot]);
 		}
 	}
+	public static class Inventory implements IInventory{
 
-	public class Inventory implements IInventory, IInteractionObject{
-
-		@Override
-		public boolean hasCustomName(){
-			return false;
-		}
-
-		@Override
-		public ITextComponent getName(){
-			return new TextComponentTranslation("container.slotted_chest");
-		}
-
+		private final ItemStack[] inv;
+		private final ItemStack[] lockedInv;
 		@Nullable
-		@Override
-		public ITextComponent getCustomName(){
-			return null;
+		private final SlottedChestTileEntity te;
+
+		public Inventory(ItemStack[] inv, ItemStack[] filter, @Nullable SlottedChestTileEntity te){
+			this.inv = inv;
+			lockedInv = filter;
+			this.te = te;
 		}
 
 		@Override
 		public int getSizeInventory(){
-			return 54;
+			return inv.length;
 		}
 
 		@Override
 		public ItemStack getStackInSlot(int index){
-			return index >= 54 ? ItemStack.EMPTY : inv[index];
+			return index >= inv.length ? ItemStack.EMPTY : inv[index];
 		}
 
 		@Override
 		public ItemStack decrStackSize(int index, int count){
-			if(index >= 54 || inv[index].isEmpty()){
+			if(index >= inv.length || inv[index].isEmpty()){
 				return ItemStack.EMPTY;
 			}
 
@@ -235,7 +228,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
 		@Override
 		public ItemStack removeStackFromSlot(int index){
-			if(index >= 54){
+			if(index >= inv.length){
 				return ItemStack.EMPTY;
 			}
 
@@ -246,7 +239,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
 		@Override
 		public void setInventorySlotContents(int index, ItemStack stack){
-			if(index < 54){
+			if(index < inv.length){
 				inv[index] = stack;
 				if(!stack.isEmpty()){
 					lockedInv[index] = stack.copy();
@@ -262,47 +255,24 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
 		@Override
 		public void markDirty(){
-			SlottedChestTileEntity.this.markDirty();
+			if(te != null){
+				te.markDirty();
+			}
 		}
 
 		@Override
-		public boolean isUsableByPlayer(EntityPlayer player){
-			return world.getTileEntity(pos) == SlottedChestTileEntity.this && player.getDistanceSq(pos.add(0.5, 0.5, 0.5)) <= 64;
-		}
-
-		@Override
-		public void openInventory(EntityPlayer player){
-			filterChanged();
-		}
-
-		@Override
-		public void closeInventory(EntityPlayer player){
-
+		public boolean isUsableByPlayer(PlayerEntity playerEntity){
+			return true;
 		}
 
 		@Override
 		public boolean isItemValidForSlot(int index, ItemStack stack){
-			return index < 54 && (inv[index].isEmpty() ? lockedInv[index].isEmpty() || SlottedChestContainer.doStackContentsMatch(stack, lockedInv[index]) : SlottedChestContainer.doStackContentsMatch(stack, inv[index]));
-		}
-
-		@Override
-		public int getField(int id){
-			return 0;
-		}
-
-		@Override
-		public void setField(int id, int value){
-
-		}
-
-		@Override
-		public int getFieldCount(){
-			return 0;
+			return index < inv.length && (inv[index].isEmpty() ? lockedInv[index].isEmpty() || SlottedChestContainer.doStackContentsMatch(stack, lockedInv[index]) : SlottedChestContainer.doStackContentsMatch(stack, inv[index]));
 		}
 
 		@Override
 		public void clear(){
-			for(int i = 0; i < 54; i++){
+			for(int i = 0; i < inv.length; i++){
 				inv[i] = ItemStack.EMPTY;
 				lockedInv[i] = ItemStack.EMPTY;
 			}
@@ -311,22 +281,18 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
 		@Override
 		public boolean isEmpty(){
-			for(int i = 0; i < 54; i++){
-				if(!inv[i].isEmpty()){
+			for(ItemStack itemStack : inv){
+				if(!itemStack.isEmpty()){
 					return false;
 				}
 			}
 			return true;
 		}
 
-		@Override
-		public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn){
-			return new SlottedChestContainer(playerInventory, SlottedChestTileEntity.this);
-		}
-
-		@Override
-		public String getGuiID(){
-			return EssentialsGuiHandler.SLOTTED_CHEST_GUI;
+		public void filterChanged(){
+			if(te != null){
+				te.filterChanged();
+			}
 		}
 	}
 }

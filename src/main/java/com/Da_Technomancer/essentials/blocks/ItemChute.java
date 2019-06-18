@@ -2,21 +2,22 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,12 +40,12 @@ public class ItemChute extends Block{
 
 	@Nullable
 	@Override
-	public IBlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockItemUseContext context){
 		return getDefaultState().with(EssentialsProperties.AXIS, context.getFace().getAxis());
 	}
 
 	@Override
-	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.AXIS));
@@ -55,43 +56,33 @@ public class ItemChute extends Block{
 	}
 
 	@Override
-	public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos){
+	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
 		return BB[state.get(EssentialsProperties.AXIS).ordinal()];
 	}
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TextComponentString("Extends the output range of Item Shifters along a line of chutes"));
-		tooltip.add(new TextComponentString("Safe for decoration"));
+		tooltip.add(new StringTextComponent("Extends the output range of Item Shifters along a line of chutes"));
+		tooltip.add(new StringTextComponent("Safe for decoration"));
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(EssentialsProperties.AXIS);
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state){
-		return false;
-	}
-
-	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
+	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
 		//Block updates are propogated down lines of Item Chutes, allowing caching of target positions for Item Shifters
 		if(fromPos != null){
-			EnumFacing.Axis axis = state.get(EssentialsProperties.AXIS);
-			EnumFacing dir = EnumFacing.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
+			Direction.Axis axis = state.get(EssentialsProperties.AXIS);
+			Direction dir = Direction.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
 			if(dir.getAxis() == axis){
 				fromPos = pos;
 				pos = pos.offset(dir);
-				worldIn.getBlockState(pos).neighborChanged(worldIn, pos, this, fromPos);
+				worldIn.getBlockState(pos).neighborChanged(worldIn, pos, this, fromPos, false);
 			}
 		}
-	}
-
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockReader worldIn, IBlockState state, BlockPos pos, EnumFacing face){
-		return face.getAxis() == state.get(EssentialsProperties.AXIS) ? BlockFaceShape.CENTER_BIG : BlockFaceShape.UNDEFINED;
 	}
 }

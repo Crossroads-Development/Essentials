@@ -2,28 +2,24 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,7 +28,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class HopperFilter extends BlockContainer{
+public class HopperFilter extends ContainerBlock{
 
 	protected HopperFilter(){
 		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2));
@@ -55,14 +51,9 @@ public class HopperFilter extends BlockContainer{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TextComponentString("Allows items to be moved through it only if they match the filter"));
-		tooltip.add(new TextComponentString("Doesn't move items on its own"));
-		tooltip.add(new TextComponentString("Setting a Shulker Box as a filter matches everything in the Shulker Box"));
-	}
-
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockReader worldIn, IBlockState state, BlockPos pos, EnumFacing face){
-		return face.getAxis() == state.get(EssentialsProperties.AXIS) ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+		tooltip.add(new StringTextComponent("Allows items to be moved through it only if they match the filter"));
+		tooltip.add(new StringTextComponent("Doesn't move items on its own"));
+		tooltip.add(new StringTextComponent("Setting a Shulker Box as a filter matches everything in the Shulker Box"));
 	}
 
 	private static final VoxelShape[] BB = new VoxelShape[3];
@@ -74,22 +65,17 @@ public class HopperFilter extends BlockContainer{
 	}
 
 	@Override
-	public VoxelShape getShape(IBlockState state, IBlockReader worldIn, BlockPos pos){
+	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
 		return BB[state.get(EssentialsProperties.AXIS).ordinal()];
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state){
-		return false;
-	}
-
-	@Override
-	public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder){
+	public void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(EssentialsProperties.AXIS);
 	}
 
 	@Override
-	public boolean onBlockActivated(IBlockState state, World worldIn, BlockPos pos, EntityPlayer playerIn, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
+	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.AXIS));
@@ -120,12 +106,12 @@ public class HopperFilter extends BlockContainer{
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockItemUseContext context){
 		return getDefaultState().with(EssentialsProperties.AXIS, context.getFace().getAxis());
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state){
-		return EnumBlockRenderType.MODEL;
+	public BlockRenderType getRenderType(BlockState state){
+		return BlockRenderType.MODEL;
 	}
 }

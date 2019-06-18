@@ -1,20 +1,33 @@
 package com.Da_Technomancer.essentials.gui.container;
 
-import com.Da_Technomancer.essentials.tileentities.ItemShifterTileEntity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import com.Da_Technomancer.essentials.Essentials;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.registries.ObjectHolder;
 
+@ObjectHolder(Essentials.MODID)
 public class ItemShifterContainer extends Container{
 
-	private final ItemShifterTileEntity te;
+	@ObjectHolder("item_shifter")
+	private static ContainerType<ItemShifterContainer> TYPE = null;
 
-	public ItemShifterContainer(IInventory playerInventory, ItemShifterTileEntity te){
-		this.te = te;
+	private final IInventory inv;
 
-		addSlot(new Slot(te, 0, 80, 32));
+	public ItemShifterContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
+		this(id, playerInventory, new Inventory(1));
+	}
+
+	public ItemShifterContainer(int id, PlayerInventory playerInventory, IInventory inv){
+		super(TYPE, id);
+		this.inv = inv;
+		addSlot(new Slot(inv, 0, 80, 32));
 
 		for(int i = 0; i < 3; i++){
 			for(int j = 0; j < 9; j++){
@@ -28,12 +41,12 @@ public class ItemShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer playerIn){
-		return te.isUsableByPlayer(playerIn);
+	public boolean canInteractWith(PlayerEntity playerIn){
+		return inv.isUsableByPlayer(playerIn);
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer playerIn, int fromSlot){
+	public ItemStack transferStackInSlot(PlayerEntity playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(fromSlot);
 

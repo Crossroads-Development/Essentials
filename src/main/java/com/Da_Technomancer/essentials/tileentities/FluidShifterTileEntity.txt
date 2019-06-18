@@ -4,23 +4,22 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
-import com.Da_Technomancer.essentials.gui.CrudeFluidBar;
-import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ITickableTileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -34,7 +33,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class FluidShifterTileEntity extends TileEntity implements ITickable, IInventory, IInteractionObject{
+public class FluidShifterTileEntity extends TileEntity implements ITickableTileEntity, IInventory, IInteractionObject{
 
 	@ObjectHolder("fluid_splitter")
 	private static TileEntityType<FluidShifterTileEntity> TYPE = null;
@@ -43,17 +42,17 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 	private BlockPos endPos = null;
 	public static final int CAPACITY = 4_000;
 
-	private EnumFacing facing = null;
+	private Direction facing = null;
 
 	public FluidShifterTileEntity(){
 		super(TYPE);
 	}
 
-	private EnumFacing getFacing(){
+	private Direction getFacing(){
 		if(facing == null){
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(!state.has(EssentialsProperties.FACING)){
-				return EnumFacing.DOWN;
+				return Direction.DOWN;
 			}
 			facing = state.get(EssentialsProperties.FACING);
 		}
@@ -75,7 +74,7 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 		}
 
 		TileEntity outputTE = world.getTileEntity(endPos);
-		EnumFacing dir = getFacing();
+		Direction dir = getFacing();
 		LazyOptional<IFluidHandler> outHandlerCon;
 		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite())).isPresent()){
 			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);
@@ -93,12 +92,12 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 
 	public void refreshCache(){
 		facing = null;
-		EnumFacing dir = getFacing();
+		Direction dir = getFacing();
 		int extension = 1;
 		int maxChutes = EssentialsConfig.itemChuteRange.get();
 
 		for(; extension <= maxChutes; extension++){
-			IBlockState target = world.getBlockState(pos.offset(dir, extension));
+			BlockState target = world.getBlockState(pos.offset(dir, extension));
 			if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
 				break;
 			}
@@ -108,17 +107,17 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 	}
 
 	@Override
-	public NBTTagCompound write(NBTTagCompound nbt){
+	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 
 		if(inventory != null){
-			nbt.put("inv", inventory.writeToNBT(new NBTTagCompound()));
+			nbt.put("inv", inventory.writeToNBT(new CompoundNBT()));
 		}
 		return nbt;
 	}
 
 	@Override
-	public void read(NBTTagCompound nbt){
+	public void read(CompoundNBT nbt){
 		super.read(nbt);
 
 		if(nbt.contains("inv")){
@@ -130,7 +129,7 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing facing){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
 			return LazyOptional.of(() -> (T) handler);
 		}
@@ -139,7 +138,7 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 	}
 
 	@Override
-	public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn){
+	public Container createContainer(PlayerInventory playerInventory, PlayerEntity playerIn){
 		return new FluidShifterContainer(playerInventory, this);
 	}
 
@@ -218,7 +217,7 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 
 	@Override
 	public ITextComponent getName(){
-		return new TextComponentTranslation("container.fluid_shifter");
+		return new TranslationTextComponent("container.fluid_shifter");
 	}
 
 	@Override
@@ -233,17 +232,17 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 	}
 
 	@Override
-	public boolean isUsableByPlayer(EntityPlayer player){
+	public boolean isUsableByPlayer(PlayerEntity player){
 		return world.getTileEntity(pos) == this && player.getDistanceSq(pos.add(0.5, 0.5, 0.5)) <= 64;
 	}
 
 	@Override
-	public void openInventory(EntityPlayer player){
+	public void openInventory(PlayerEntity player){
 
 	}
 
 	@Override
-	public void closeInventory(EntityPlayer player){
+	public void closeInventory(PlayerEntity player){
 
 	}
 

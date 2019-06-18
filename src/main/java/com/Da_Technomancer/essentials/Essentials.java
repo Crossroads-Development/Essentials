@@ -1,14 +1,20 @@
 package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.gui.EssentialsGuiHandler;
+import com.Da_Technomancer.essentials.gui.ItemShifterScreen;
+import com.Da_Technomancer.essentials.gui.SlottedChestScreen;
+import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
+import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
-import com.Da_Technomancer.essentials.items.crafting.EssentialsCrafting;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.Da_Technomancer.essentials.tileentities.*;
-import com.mojang.datafixers.types.Type;
+import com.mojang.datafixers.DSL;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -16,12 +22,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.IContainerFactory;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,14 +59,13 @@ public final class Essentials{
 		EssentialsPackets.preInit();
 		//Main
 		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerCommon());
-		ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.GUIFACTORY, EssentialsGuiHandler::new);
-		EssentialsCrafting.init();
 	}
 
 	private void clientInit(FMLClientSetupEvent e){
 		TESRRegistry.init();
 	}
 
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> e){
 		IForgeRegistry<Block> registry = e.getRegistry();
@@ -72,6 +76,7 @@ public final class Essentials{
 		EssentialsBlocks.toRegister.clear();
 	}
 
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> e){
 		IForgeRegistry<Item> registry = e.getRegistry();
@@ -82,38 +87,39 @@ public final class Essentials{
 		EssentialsItems.toRegister.clear();
 	}
 
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> e){
 		IForgeRegistry<TileEntityType<?>> reg = e.getRegistry();
-		register(BrazierTileEntity::new, "brazier", reg);
-		register(SlottedChestTileEntity::new, "slotted_chest", reg);
-		register(SortingHopperTileEntity::new, "sorting_hopper", reg);
-		register(SpeedHopperTileEntity::new, "speed_hopper", reg);
-		register(ItemShifterTileEntity::new, "item_shifter", reg);
-		register(HopperFilterTileEntity::new, "hopper_filter", reg);
-		register(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg);
-		register(ItemSplitterTileEntity::new, "item_splitter", reg);
-		register(FluidShifterTileEntity::new, "fluid_splitter", reg);
+		registerTE(BrazierTileEntity::new, "brazier", reg, EssentialsBlocks.brazier);
+		registerTE(SlottedChestTileEntity::new, "slotted_chest", reg, EssentialsBlocks.slottedChest);
+		registerTE(SortingHopperTileEntity::new, "sorting_hopper", reg, EssentialsBlocks.sortingHopper);
+		registerTE(SpeedHopperTileEntity::new, "speed_hopper", reg, EssentialsBlocks.speedHopper);
+		registerTE(ItemShifterTileEntity::new, "item_shifter", reg, EssentialsBlocks.itemShifter);
+		registerTE(HopperFilterTileEntity::new, "hopper_filter", reg, EssentialsBlocks.hopperFilter);
+		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, EssentialsBlocks.basicItemSplitter);
+		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, EssentialsBlocks.itemSplitter);
+//		registerTE(FluidShifterTileEntity::new, "fluid_splitter", reg, EssentialsBlocks.fluidShifter);
 	}
 
-	private static void register(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg){
-		TileEntityType teType;
-
-		Type type = null;
-		/*
-		try{
-			//1631 probably the wrong number
-			type = DataFixesManager.getDataFixer().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.BLOCK_ENTITY, id);
-		}catch (IllegalArgumentException ex){
-			if(SharedConstants.developmentMode){
-				throw ex;
-			}
-			Essentials.logger.warn("No data fixer registered for block entity {}", id);
-			return;
-		}
-		*/
-		teType = TileEntityType.Builder.create(cons).build(type);
+	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block block){
+		TileEntityType teType = TileEntityType.Builder.create(cons, block).build(DSL.nilType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
+	}
+
+
+	@SubscribeEvent
+	@SuppressWarnings("unused")
+	public static void registerContainers(RegistryEvent.Register<ContainerType<?>> e){
+		registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
+		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
+	}
+
+	private static <T extends Container> void registerCon(IContainerFactory<T> cons, ScreenManager.IScreenFactory<T, ContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<ContainerType<?>> reg){
+		ContainerType<T> contType = new ContainerType<>(cons);
+		contType.setRegistryName(new ResourceLocation(MODID, id));
+		reg.getRegistry().register(contType);
+		ScreenManager.registerFactory(contType, screenFactory);
 	}
 }

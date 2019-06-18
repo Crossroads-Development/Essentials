@@ -1,15 +1,15 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IContainerListener;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
@@ -47,7 +47,7 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer playerIn, int fromSlot){
+	public ItemStack transferStackInSlot(PlayerEntity playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(fromSlot);
 
@@ -76,7 +76,7 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer playerIn){
+	public boolean canInteractWith(PlayerEntity playerIn){
 		return te.isUsableByPlayer(playerIn);
 	}
 
@@ -107,12 +107,12 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public void onContainerClosed(EntityPlayer playerIn){
+	public void onContainerClosed(PlayerEntity playerIn){
 		super.onContainerClosed(playerIn);
 
 
 		if(!te.getWorld().isRemote){
-			if(playerIn.isAlive() && !(playerIn instanceof EntityPlayerMP && ((EntityPlayerMP) playerIn).hasDisconnected())){
+			if(playerIn.isAlive() && !(playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected())){
 				playerIn.inventory.placeItemBackInInventory(te.getWorld(), inventorySlots.get(0).getStack());
 				playerIn.inventory.placeItemBackInInventory(te.getWorld(), inventorySlots.get(1).getStack());
 			}else{
@@ -146,7 +146,7 @@ public class FluidShifterContainer extends Container{
 				}
 
 				@Override
-				public ItemStack onTake(EntityPlayer thePlayer, ItemStack stack){
+				public ItemStack onTake(PlayerEntity thePlayer, ItemStack stack){
 					FluidSlot.this.onSlotChanged();
 					return stack;
 				}
@@ -267,17 +267,17 @@ public class FluidShifterContainer extends Container{
 			}
 
 			@Override
-			public boolean isUsableByPlayer(EntityPlayer player){
+			public boolean isUsableByPlayer(PlayerEntity player){
 				return true;
 			}
 
 			@Override
-			public void openInventory(EntityPlayer player){
+			public void openInventory(PlayerEntity player){
 
 			}
 
 			@Override
-			public void closeInventory(EntityPlayer player){
+			public void closeInventory(PlayerEntity player){
 
 			}
 
@@ -320,7 +320,7 @@ public class FluidShifterContainer extends Container{
 
 			@Override
 			public ITextComponent getName(){
-				return new TextComponentString("");
+				return new StringTextComponent("");
 			}
 		}
 	}

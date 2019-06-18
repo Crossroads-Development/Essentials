@@ -1,13 +1,11 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.items.EssentialsItems;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockBeetroot;
-import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockNetherWart;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.*;
+import net.minecraft.block.BeetrootBlock;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
+import net.minecraft.item.BlockItem;
 
 import java.util.ArrayList;
 
@@ -32,7 +30,7 @@ public class EssentialsBlocks{
 	public static CandleLilyPad candleLilyPad;
 	public static ItemChute itemChute;
 	public static ItemShifter itemShifter;
-	public static FluidShifter fluidShifter;
+//	public static FluidShifter fluidShifter;
 	public static MultiPistonExtend multiPistonExtend;
 	public static MultiPistonExtend multiPistonExtendSticky;
 	public static MultiPistonBase multiPiston;
@@ -50,7 +48,7 @@ public class EssentialsBlocks{
 	 * @return The passed block for convenience.
 	 */
 	public static <T extends Block> T blockAddQue(T block){
-		Item item = new ItemBlock(block, itemBlockProp).setRegistryName(block.getRegistryName());
+		Item item = new BlockItem(block, itemBlockProp).setRegistryName(block.getRegistryName());
 		EssentialsItems.toRegister.add(item);
 		return block;
 	}
@@ -61,11 +59,11 @@ public class EssentialsBlocks{
 		sortingHopper = new SortingHopper();
 		speedHopper = new SpeedHopper();
 		candleLilyPad = new CandleLilyPad();
-		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.getDefaultState().with(BlockCrops.AGE, 0));
-		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.getDefaultState().with(BlockCrops.AGE, 0));
-		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.getDefaultState().with(BlockCrops.AGE, 0));
-		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.getDefaultState().with(BlockBeetroot.BEETROOT_AGE, 0));
-		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.getDefaultState().with(BlockNetherWart.AGE, 0));
+		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.getDefaultState().with(CropsBlock.AGE, 0));
+		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.getDefaultState().with(CropsBlock.AGE, 0));
+		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.getDefaultState().with(CropsBlock.AGE, 0));
+		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.getDefaultState().with(BeetrootBlock.BEETROOT_AGE, 0));
+		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.getDefaultState().with(NetherWartBlock.AGE, 0));
 		fertileSoilOak = new FertileSoil("oak", Blocks.OAK_SAPLING.getDefaultState());
 		fertileSoilBirch = new FertileSoil("birch", Blocks.BIRCH_SAPLING.getDefaultState());
 		fertileSoilSpruce = new FertileSoil("spruce", Blocks.SPRUCE_SAPLING.getDefaultState());

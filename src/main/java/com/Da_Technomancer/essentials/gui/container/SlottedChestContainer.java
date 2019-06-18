@@ -1,30 +1,68 @@
 package com.Da_Technomancer.essentials.gui.container;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import com.google.common.collect.Sets;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.ClickType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 import java.util.Set;
 
+@ObjectHolder(Essentials.MODID)
 public class SlottedChestContainer extends Container{
 
-	private final SlottedChestTileEntity te;
 
-	public SlottedChestContainer(IInventory playerInventory, SlottedChestTileEntity chest){
-		this.te = chest;
-		int numRows = chest.iInv.getSizeInventory() / 9;
+	@ObjectHolder("slotted_chest")
+	private static ContainerType<ItemShifterContainer> TYPE = null;
+
+	private final SlottedChestTileEntity.Inventory inv;
+	/**
+	 * Holds the locked filter for the slotted chest
+	 * On the virtual server side, this instance is shared with the TE, and changes will write back and be saved
+	 * On the virtual client, changes will not write back
+	 */
+	public final ItemStack[] filter;
+
+	/**
+	 * This is a slightly hacky way to make the Container and TE share filter instance without messy constructors. Never use this for anything outside what it was made for
+	 */
+	@Nullable
+	private static ItemStack[] filtTrans;
+
+	public SlottedChestContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
+		this(id, playerInventory, new SlottedChestTileEntity.Inventory(new ItemStack[54], filtTrans = decodeBuffer(data), null), filtTrans);
+	}
+
+	private static ItemStack[] decodeBuffer(PacketBuffer buf){
+		if(buf == null){
+			Essentials.logger.warn("Received empty data for SlottedChest! This is a bug!");
+			return new ItemStack[54];
+		}
+		ItemStack[] filter = new ItemStack[54];
+		for(int i = 0; i < 54; i++){
+			filter[i] = buf.readItemStack();
+		}
+		return filter;
+	}
+
+	public SlottedChestContainer(int id, PlayerInventory playerInventory, SlottedChestTileEntity.Inventory inv, ItemStack[] filter){
+		super(TYPE, id);
+		this.filter = filter;
+		this.inv = inv;
+		int numRows = inv.getSizeInventory() / 9;
 		int i = (numRows - 4) * 18;
 
 		for(int j = 0; j < numRows; ++j){
 			for(int k = 0; k < 9; ++k){
-				addSlot(new Slot(chest.iInv, k + j * 9, 8 + k * 18, 18 + j * 18));
+				addSlot(new Slot(inv, k + j * 9, 8 + k * 18, 18 + j * 18));
 			}
 		}
 
@@ -40,8 +78,8 @@ public class SlottedChestContainer extends Container{
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer playerIn){
-		return te.iInv.isUsableByPlayer(playerIn);
+	public boolean canInteractWith(PlayerEntity playerIn){
+		return inv.isUsableByPlayer(playerIn);
 	}
 
 	@Override
@@ -59,9 +97,9 @@ public class SlottedChestContainer extends Container{
 	 * This abomination of a method is copied from the minecraft source code. It is slightly modified to set filters where necessary (and sometimes even when not, because I can't be bothered to reverse engineer this thing).
 	 */
 	@Override
-	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player){
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
 		ItemStack itemstack = ItemStack.EMPTY;
-		InventoryPlayer inventoryplayer = player.inventory;
+		PlayerInventory inventoryplayer = player.inventory;
 
 		if(clickTypeIn == ClickType.QUICK_CRAFT){
 			int i = this.dragEvent;
@@ -107,10 +145,10 @@ public class SlottedChestContainer extends Container{
 
 							l -= itemstack3.getCount() - j;
 							slot1.putStack(itemstack3);
-							if(te.isInventoryType(slot1.inventory) && te.lockedInv[slot1.getSlotIndex()].isEmpty()){
-								te.lockedInv[slot1.getSlotIndex()] = slot1.getStack().copy();
-								te.lockedInv[slot1.getSlotIndex()].setCount(1);
-								te.filterChanged();
+							if(slot1.inventory instanceof SlottedChestTileEntity.Inventory && filter[slot1.getSlotIndex()].isEmpty()){
+								filter[slot1.getSlotIndex()] = slot1.getStack().copy();
+								filter[slot1.getSlotIndex()].setCount(1);
+								inv.filterChanged();
 							}
 						}
 					}
@@ -144,8 +182,9 @@ public class SlottedChestContainer extends Container{
 
 				Slot slot6 = inventorySlots.get(slotId);
 				//Clear filter on shift left empty click
-				if(te.isInventoryType(slot6.inventory) && !slot6.getHasStack()){
-					te.cleanPreset(slot6.getSlotIndex());
+				if(slot6.inventory instanceof SlottedChestTileEntity.Inventory && !slot6.getHasStack()){
+					filter[slot6.getSlotIndex()] = ItemStack.EMPTY;
+					inv.filterChanged();
 				}
 
 				if(slot6.canTakeStack(player)){
@@ -179,10 +218,10 @@ public class SlottedChestContainer extends Container{
 							}
 
 							slot7.putStack(itemstack13.split(l2));
-							if(te.isInventoryType(slot7.inventory) && te.lockedInv[slot7.getSlotIndex()].isEmpty()){
-								te.lockedInv[slot7.getSlotIndex()] = slot7.getStack().copy();
-								te.lockedInv[slot7.getSlotIndex()].setCount(1);
-								te.filterChanged();
+							if(slot7.inventory instanceof SlottedChestTileEntity.Inventory && filter[slot7.getSlotIndex()].isEmpty()){
+								filter[slot7.getSlotIndex()] = slot7.getStack().copy();
+								filter[slot7.getSlotIndex()].setCount(1);
+								inv.filterChanged();
 							}
 						}
 					}else if(slot7.canTakeStack(player)){
@@ -216,10 +255,10 @@ public class SlottedChestContainer extends Container{
 								itemstack11.grow(j2);
 							}else if(itemstack13.getCount() <= slot7.getItemStackLimit(itemstack13)){
 								slot7.putStack(itemstack13);
-								if(te.isInventoryType(slot7.inventory) && te.lockedInv[slot7.getSlotIndex()].isEmpty()){
-									te.lockedInv[slot7.getSlotIndex()] = slot7.getStack().copy();
-									te.lockedInv[slot7.getSlotIndex()].setCount(1);
-									te.filterChanged();
+								if(slot7.inventory instanceof SlottedChestTileEntity.Inventory && filter[slot7.getSlotIndex()].isEmpty()){
+									filter[slot7.getSlotIndex()] = slot7.getStack().copy();
+									filter[slot7.getSlotIndex()].setCount(1);
+									inv.filterChanged();
 								}
 								inventoryplayer.setItemStack(itemstack11);
 							}
@@ -260,17 +299,17 @@ public class SlottedChestContainer extends Container{
 
 						if(itemstack9.getCount() > k1){
 							slot5.putStack(itemstack9.split(k1));
-							if(te.isInventoryType(slot5.inventory) && te.lockedInv[slot5.getSlotIndex()].isEmpty()){
-								te.lockedInv[slot5.getSlotIndex()] = slot5.getStack().copy();
-								te.lockedInv[slot5.getSlotIndex()].setCount(1);
-								te.filterChanged();
+							if(slot5.inventory instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+								filter[slot5.getSlotIndex()] = slot5.getStack().copy();
+								filter[slot5.getSlotIndex()].setCount(1);
+								inv.filterChanged();
 							}
 						}else{
 							slot5.putStack(itemstack9);
-							if(te.isInventoryType(slot5.inventory) && te.lockedInv[slot5.getSlotIndex()].isEmpty()){
-								te.lockedInv[slot5.getSlotIndex()] = slot5.getStack().copy();
-								te.lockedInv[slot5.getSlotIndex()].setCount(1);
-								te.filterChanged();
+							if(slot5.inventory instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+								filter[slot5.getSlotIndex()] = slot5.getStack().copy();
+								filter[slot5.getSlotIndex()].setCount(1);
+								inv.filterChanged();
 							}
 							inventoryplayer.setInventorySlotContents(dragType, ItemStack.EMPTY);
 						}
@@ -281,21 +320,21 @@ public class SlottedChestContainer extends Container{
 					if(itemstack9.getCount() > l1){
 						slot5.putStack(itemstack9.split(l1));
 						slot5.onTake(player, itemstack12);
-						if(te.isInventoryType(slot5.inventory) && te.lockedInv[slot5.getSlotIndex()].isEmpty()){
-							te.lockedInv[slot5.getSlotIndex()] = slot5.getStack().copy();
-							te.lockedInv[slot5.getSlotIndex()].setCount(1);
-							te.filterChanged();
+						if(slot5.inventory instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+							filter[slot5.getSlotIndex()] = slot5.getStack().copy();
+							filter[slot5.getSlotIndex()].setCount(1);
+							inv.filterChanged();
 						}
-						
+
 						if(!inventoryplayer.addItemStackToInventory(itemstack12)){
 							player.dropItem(itemstack12, true);
 						}
 					}else{
 						slot5.putStack(itemstack9);
-						if(te.isInventoryType(slot5.inventory) && te.lockedInv[slot5.getSlotIndex()].isEmpty()){
-							te.lockedInv[slot5.getSlotIndex()] = slot5.getStack().copy();
-							te.lockedInv[slot5.getSlotIndex()].setCount(1);
-							te.filterChanged();
+						if(slot5.inventory instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+							filter[slot5.getSlotIndex()] = slot5.getStack().copy();
+							filter[slot5.getSlotIndex()].setCount(1);
+							inv.filterChanged();
 						}
 						inventoryplayer.setInventorySlotContents(dragType, itemstack12);
 						slot5.onTake(player, itemstack12);
@@ -359,7 +398,7 @@ public class SlottedChestContainer extends Container{
 	 * Also this version tries to shift click it out if it was in the chest inventory
 	 * for some reason I can't remember. */
 	@Override
-	public ItemStack transferStackInSlot(EntityPlayer playerIn, int index){
+	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index){
 		ItemStack outStack = ItemStack.EMPTY;
 		Slot slot = inventorySlots.get(index);
 
@@ -397,10 +436,10 @@ public class SlottedChestContainer extends Container{
 				Slot slot = inventorySlots.get(i);
 				ItemStack currentSlotStack = slot.getStack();
 
-				if(!(currentSlotStack.isEmpty() && (chestToPlayer || te.lockedInv[i].isEmpty())) && (doStackContentsMatch(toMerge, currentSlotStack) || (!chestToPlayer && doStackContentsMatch(te.lockedInv[i], toMerge)))){
+				if(!(currentSlotStack.isEmpty() && (chestToPlayer || filter[i].isEmpty())) && (doStackContentsMatch(toMerge, currentSlotStack) || (!chestToPlayer && doStackContentsMatch(filter[i], toMerge)))){
 					int totalCount = currentSlotStack.getCount() + toMerge.getCount();
 					if(currentSlotStack.isEmpty()){
-						slot.putStack(te.lockedInv[i].copy());
+						slot.putStack(filter[i].copy());
 						currentSlotStack = slot.getStack();
 						currentSlotStack.setCount(0);
 					}
@@ -449,8 +488,8 @@ public class SlottedChestContainer extends Container{
 	}
 
 	private boolean canAddItemToSlotLocked(@Nullable Slot slotIn, ItemStack stack, boolean stackSizeMatters){
-		if(slotIn != null && te.isInventoryType(slotIn.inventory)){
-			return (te.lockedInv[slotIn.getSlotIndex()].isEmpty() || doStackContentsMatch(te.lockedInv[slotIn.getSlotIndex()], stack)) && (slotIn.getStack().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize());
+		if(slotIn != null && slotIn.inventory instanceof SlottedChestTileEntity.Inventory){
+			return (filter[slotIn.getSlotIndex()].isEmpty() || doStackContentsMatch(filter[slotIn.getSlotIndex()], stack)) && (slotIn.getStack().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize());
 		}
 		boolean flag = slotIn == null || !slotIn.getHasStack();
 		return !flag && stack.isItemEqual(slotIn.getStack()) && ItemStack.areItemStackTagsEqual(slotIn.getStack(), stack) ? slotIn.getStack().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize() : flag;

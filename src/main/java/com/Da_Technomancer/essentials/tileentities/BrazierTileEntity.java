@@ -3,20 +3,21 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.Particles;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
+import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
@@ -28,7 +29,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 @ObjectHolder(Essentials.MODID)
-public class BrazierTileEntity extends TileEntity implements ITickable{
+public class BrazierTileEntity extends TileEntity implements ITickableTileEntity{
 
 	@ObjectHolder("brazier")
 	private static TileEntityType<BrazierTileEntity> TYPE = null;
@@ -44,35 +45,35 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 		}
 
 		if(world.getGameTime() % 10 == 0){
-			WorldServer server = (WorldServer) world;
+			ServerWorld server = (ServerWorld) world;
 
-			IBlockState state = world.getBlockState(pos);
+			BlockState state = world.getBlockState(pos);
 			if(state.getBlock() != EssentialsBlocks.brazier){
 				remove();
 				return;
 			}
 			switch(world.getBlockState(pos).get(EssentialsProperties.BRAZIER_CONTENTS)){
 				case 2:
-					server.spawnParticle(Particles.LAVA, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
+					server.spawnParticle(ParticleTypes.LAVA, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
 					break;
 				case 3:
-					server.spawnParticle(Particles.FLAME, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
+					server.spawnParticle(ParticleTypes.FLAME, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
 					break;
 				case 6:
-					server.spawnParticle(Particles.POOF, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 0, -1, 0.5D, 1, 0.01D);
+					server.spawnParticle(ParticleTypes.POOF, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 0, -1, 0.5D, 1, 0.01D);
 					break;
 				case 7:
-					server.spawnParticle(Particles.AMBIENT_ENTITY_EFFECT, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 1, 0, 0, 0, 0.01D);
-					ItemStack out = recipeMatch((ArrayList<EntityItem>) world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(1, 1, 1)), EntitySelectors.IS_ALIVE));
+					server.spawnParticle(ParticleTypes.AMBIENT_ENTITY_EFFECT, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 1, 0, 0, 0, 0.01D);
+					ItemStack out = recipeMatch((ArrayList<ItemEntity>) world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(1, 1, 1)), EntityPredicates.IS_ALIVE));
 					if(!out.isEmpty()){
-						for(EntityItem item : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(1, 1, 1)), EntitySelectors.IS_ALIVE)){
+						for(ItemEntity item : world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(1, 1, 1)), EntityPredicates.IS_ALIVE)){
 							item.remove();
 						}
 
-						server.createExplosion(null, pos.getX() + 0.5D, pos.getY() + 1.5D, pos.getZ() + 0.5D, 0, false);
-						EntityItem item = new EntityItem(world, pos.getX(), pos.getY() + 1, pos.getZ(), out.copy());
+						server.createExplosion(null, pos.getX() + 0.5D, pos.getY() + 1.5D, pos.getZ() + 0.5D, 0, Explosion.Mode.NONE);
+						ItemEntity item = new ItemEntity(world, pos.getX(), pos.getY() + 1, pos.getZ(), out.copy());
 						item.setInvulnerable(true);
-						world.spawnEntity(item);
+						world.addEntity(item);
 						world.setBlockState(pos, world.getBlockState(pos).with(EssentialsProperties.BRAZIER_CONTENTS, 0));
 					}
 					break;
@@ -208,7 +209,7 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, EnumFacing side){
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			return LazyOptional.of((NonNullSupplier) () -> fuelHandler);
 		}
@@ -292,14 +293,14 @@ public class BrazierTileEntity extends TileEntity implements ITickable{
 
 
 	@Nonnull
-	private static ItemStack recipeMatch(ArrayList<EntityItem> itemEnt){
+	private static ItemStack recipeMatch(ArrayList<ItemEntity> itemEnt){
 		if(itemEnt == null){
 			return ItemStack.EMPTY;
 		}
 
 		ArrayList<ItemStack> items = new ArrayList<>();
 
-		for(EntityItem it : itemEnt){
+		for(ItemEntity it : itemEnt){
 			if(it.getItem().isEmpty() || it.getItem().getCount() != 1){
 				return ItemStack.EMPTY;
 			}
