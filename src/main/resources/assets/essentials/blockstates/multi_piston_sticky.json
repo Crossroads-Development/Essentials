@@ -1,7 +1,6 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"model": "essentials:multi_piston",
 		"uvlock": false
 	},
 	"variants": {
@@ -30,10 +29,10 @@
 		},
 		"extended": {
 			"true": {
-
+				"model": "essentials:multi_piston"
 			},
 			"false": {
-				"submodel": "essentials:multi_piston_head_sticky"
+				"model": "essentials:multi_piston_full_sticky"
 			}
 		}
 	}
