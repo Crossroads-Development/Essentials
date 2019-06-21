@@ -2,7 +2,7 @@
 	"parent": "minecraft:recipes/root",
 	"rewards": {
 		"recipes": [
-			"minecraft:name_tag"
+			"essentials:name_tag"
 		]
 	},
 	"criteria": {
@@ -19,7 +19,7 @@
 		"has_recipe": {
 			"trigger": "minecraft:recipe_unlocked",
 			"conditions": {
-				"recipe": "minecraft:name_tag"
+				"recipe": "essentials:name_tag"
 			}
 		}
 	},

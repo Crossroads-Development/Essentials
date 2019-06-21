@@ -2,7 +2,7 @@
 	"parent": "minecraft:recipes/root",
 	"rewards": {
 		"recipes": [
-			"minecraft:saddle"
+			"essentials:saddle"
 		]
 	},
 	"criteria": {
@@ -19,7 +19,7 @@
 		"has_recipe": {
 			"trigger": "minecraft:recipe_unlocked",
 			"conditions": {
-				"recipe": "minecraft:saddle"
+				"recipe": "essentials:saddle"
 			}
 		}
 	},
