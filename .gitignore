@@ -27,6 +27,8 @@ crash-reports/
 *.iws
 *.classpath
 *.project
+*.launch
+*.class
 
 # Specific files
 Thumbs.db
@@ -38,10 +40,5 @@ Paulscode*
 README.txt
 LICENSE-fml.txt
 CREDITS-fml.txt
-Essentials_Client.launch
-Essentials_Server.launch
-
 usercache.json
-Essentials_Client NonLogin.launch
 Essentials.eml
-*.class
