@@ -17,7 +17,7 @@
       "item": "minecraft:fermented_spider_eye"
     },
     "*": {
-      "item": "minecraft:wheat"
+      "item": "minecraft:wheat_seeds"
     },
     "^": {
       "item": "minecraft:dirt"

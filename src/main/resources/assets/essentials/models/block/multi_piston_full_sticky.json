@@ -1,0 +1,22 @@
+{
+	"textures": {
+		"side": "essentials:block/multi_piston_side_sticky",
+		"back": "essentials:block/multi_piston_back",
+		"front": "essentials:block/multi_piston_head_sticky",
+		"particle": "essentials:block/multi_piston_back"
+	},
+	"elements": [
+		{
+			"from": [ 0.0, 0.0, 0.0 ],
+			"to": [ 16.0, 16.0, 16.0 ],
+			"faces": {
+				"north": { "texture": "#side", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"east": { "texture": "#side", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"south": { "texture": "#side", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"west": { "texture": "#side", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"down": { "texture": "#back", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+				"up": { "texture": "#front", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+			}
+		}
+	]
+}

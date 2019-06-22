@@ -1,0 +1,32 @@
+{
+	"parent": "minecraft:recipes/root",
+	"rewards": {
+		"recipes": [
+			"essentials:saddle"
+		]
+	},
+	"criteria": {
+		"has_ingr": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"item": "minecraft:leather"
+					}
+				]
+			}
+		},
+		"has_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "essentials:saddle"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_ingr",
+			"has_recipe"
+		]
+	]
+}

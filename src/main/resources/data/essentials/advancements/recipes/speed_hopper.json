@@ -1,0 +1,32 @@
+{
+	"parent": "minecraft:recipes/root",
+	"rewards": {
+		"recipes": [
+			"essentials:speed_hopper"
+		]
+	},
+	"criteria": {
+		"has_ingr": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"item": "minecraft:hopper"
+					}
+				]
+			}
+		},
+		"has_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "essentials:speed_hopper"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_ingr",
+			"has_recipe"
+		]
+	]
+}

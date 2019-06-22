@@ -1,10 +1,20 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"model": "essentials:multi_piston_extend",
 		"uvlock": false
 	},
 	"variants": {
+		"head": {
+			"0": {
+				"model": "essentials:multi_piston_extend"
+			},
+			"1": {
+				"model": "essentials:multi_piston_extend_head"
+			},
+			"2": {
+				"model": "essentials:multi_piston_extend_head_rev"
+			}
+		},
 		"axis": {
 			"x": {
 				"x": 90,
@@ -15,18 +25,6 @@
 			},
 			"z": {
 				"x": 270
-			}
-		},
-		"head": {
-			"0": {
-
-			},
-			"1": {
-				"submodel": "essentials:multi_piston_head"
-			},
-			"2": {
-				"submodel": "essentials:multi_piston_head",
-				"x": 180
 			}
 		}
 	}

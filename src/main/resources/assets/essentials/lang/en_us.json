@@ -26,6 +26,7 @@
 	"block.essentials.item_chute": "Transport Chute",
 	"block.essentials.item_shifter": "Item Shifter",
 	"block.essentials.fluid_shifter": "Fluid Shifter",
+	"container.item_shifter": "Item Shifter",
 	"container.fluid_shifter": "Fluid Shifter",
 	"block.essentials.multi_piston_sticky": "Sticky Multi-Piston",
 	"block.essentials.multi_piston": "Multi-Piston",
