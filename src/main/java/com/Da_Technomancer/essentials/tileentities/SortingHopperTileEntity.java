@@ -125,11 +125,11 @@ public class SortingHopperTileEntity extends TileEntity implements ITickable, II
 			if(!inventory[i].isEmpty()){
 				NBTTagCompound stackNBT = new NBTTagCompound();
 				inventory[i].write(stackNBT);
-				nbt.put("inv_" + i, stackNBT);
+				nbt.setTag("inv_" + i, stackNBT);
 			}
 		}
 
-		nbt.putInt("trans_cooldown", transferCooldown);
+		nbt.setInt("trans_cooldown", transferCooldown);
 
 		return nbt;
 	}

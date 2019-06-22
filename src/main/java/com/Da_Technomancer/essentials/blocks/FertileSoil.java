@@ -29,7 +29,7 @@ public class FertileSoil extends Block{
 	private final IBlockState plant;
 
 	protected FertileSoil(String plantName, IBlockState plant){
-		super(Block.Properties.create(plant.getBlock() == Blocks.NETHER_WART ? Material.SAND : Material.GROUND).hardnessAndResistance(0.5F).sound(SoundType.GROUND).tickRandomly());
+		super(Block.Properties.create(plant.getBlock() == Blocks.NETHER_WART ? Material.SAND : Material.GROUND).hardnessAndResistance(0.5F).sound(SoundType.GROUND).needsRandomTick());
 		this.plant = plant;
 		String name = "fertile_soil_" + plantName;
 		setRegistryName(name);

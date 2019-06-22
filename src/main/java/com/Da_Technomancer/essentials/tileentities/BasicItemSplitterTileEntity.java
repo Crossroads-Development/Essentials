@@ -95,13 +95,13 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	@Override
 	public NBTTagCompound write(NBTTagCompound nbt){
 		super.write(nbt);
-		nbt.putInt("mode", mode);
-		nbt.putInt("transfered", transfered);
+		nbt.setInt("mode", mode);
+		nbt.setInt("transfered", transfered);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
 				NBTTagCompound inner = new NBTTagCompound();
 				inventory[i].write(inner);
-				nbt.put("inv_" + i, inner);
+				nbt.setTag("inv_" + i, inner);
 			}
 		}
 		return nbt;

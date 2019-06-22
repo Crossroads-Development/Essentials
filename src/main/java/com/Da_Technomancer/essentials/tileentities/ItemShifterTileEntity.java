@@ -116,7 +116,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 		super.write(nbt);
 
 		if(!inventory.isEmpty()){
-			nbt.put("inv", inventory.write(new NBTTagCompound()));
+			nbt.setTag("inv", inventory.write(new NBTTagCompound()));
 		}
 		return nbt;
 	}
@@ -125,7 +125,7 @@ public class ItemShifterTileEntity extends TileEntity implements ITickable, IInv
 	public void read(NBTTagCompound nbt){
 		super.read(nbt);
 
-		if(nbt.contains("inv")){
+		if(nbt.hasKey("inv")){
 			inventory = ItemStack.read(nbt.getCompound("inv"));
 		}
 	}

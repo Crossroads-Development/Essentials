@@ -20,7 +20,7 @@ public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 	@Override
 	public NBTTagCompound write(NBTTagCompound nbt){
 		super.write(nbt);
-		nbt.putInt("reds", redstone);
+		nbt.setInt("reds", redstone);
 		return nbt;
 	}
 

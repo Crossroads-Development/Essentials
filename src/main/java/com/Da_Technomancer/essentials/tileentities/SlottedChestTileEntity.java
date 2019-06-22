@@ -52,7 +52,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		NBTTagCompound slotNBT = new NBTTagCompound();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				slotNBT.put("lock" + i, lockedInv[i].write(new NBTTagCompound()));
+				slotNBT.setTag("lock" + i, lockedInv[i].write(new NBTTagCompound()));
 			}
 		}
 		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(slotNBT, pos));
@@ -63,12 +63,12 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		super.read(nbt);
 
 		for(int i = 0; i < 54; ++i){
-			if(nbt.contains("slot" + i)){
+			if(nbt.hasKey("slot" + i)){
 				inv[i] = ItemStack.read(nbt.getCompound("slot" + i));
 				//Backward compatibility.
 				lockedInv[i] = ItemStack.read(nbt.getCompound("slot" + i));
 			}
-			if(nbt.contains("lockSlot" + i)){
+			if(nbt.hasKey("lockSlot" + i)){
 				lockedInv[i] = ItemStack.read(nbt.getCompound("lockSlot" + i));
 			}
 		}
@@ -80,10 +80,10 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 
 		for(int i = 0; i < 54; ++i){
 			if(!inv[i].isEmpty()){
-				nbt.put("slot" + i, inv[i].write(new NBTTagCompound()));
+				nbt.setTag("slot" + i, inv[i].write(new NBTTagCompound()));
 			}
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
+				nbt.setTag("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
 			}
 		}
 
@@ -95,7 +95,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 		NBTTagCompound nbt = super.getUpdateTag();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
+				nbt.setTag("lockSlot" + i, lockedInv[i].write(new NBTTagCompound()));
 			}
 		}
 		return nbt;
@@ -127,7 +127,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver{
 	@Override
 	public void receiveNBT(NBTTagCompound nbt){
 		for(int i = 0; i < 54; i++){
-			if(nbt.contains("lock" + i)){
+			if(nbt.hasKey("lock" + i)){
 				lockedInv[i] = ItemStack.read(nbt.getCompound("lock" + i));
 			}else{
 				lockedInv[i] = ItemStack.EMPTY;

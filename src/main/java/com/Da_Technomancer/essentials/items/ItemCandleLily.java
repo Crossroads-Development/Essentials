@@ -65,7 +65,7 @@ public class ItemCandleLily extends ItemLilyPad{
 					// special case for handling block placement with water lilies
 					net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(worldIn, blockpos1);
 					worldIn.setBlockState(blockpos1, EssentialsBlocks.candleLilyPad.getDefaultState(), 11);
-					if(net.minecraftforge.event.ForgeEventFactory.onPlayerBlockPlace(playerIn, blocksnapshot, net.minecraft.util.EnumFacing.UP, hand).isCanceled()){
+					if(net.minecraftforge.event.ForgeEventFactory.onBlockPlace(playerIn, blocksnapshot, net.minecraft.util.EnumFacing.UP)){
 						blocksnapshot.restore(true, false);
 						return new ActionResult<>(EnumActionResult.FAIL, itemstack);
 					}

@@ -112,7 +112,7 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 		super.write(nbt);
 
 		if(inventory != null){
-			nbt.put("inv", inventory.writeToNBT(new NBTTagCompound()));
+			nbt.setTag("inv", inventory.writeToNBT(new NBTTagCompound()));
 		}
 		return nbt;
 	}
@@ -121,7 +121,7 @@ public class FluidShifterTileEntity extends TileEntity implements ITickable, IIn
 	public void read(NBTTagCompound nbt){
 		super.read(nbt);
 
-		if(nbt.contains("inv")){
+		if(nbt.hasKey("inv")){
 			inventory = FluidStack.loadFluidStackFromNBT(nbt.getCompound("inv"));
 		}
 	}

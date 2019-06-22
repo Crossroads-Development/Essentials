@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+  <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="development files"/>
+  <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="net.minecraftforge.userdev.LaunchTesting"/>
+  <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Dforge.logging.console.level=debug -Dforge.logging.markers=SCAN,REGISTRIES,REGISTRYDUMP -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump &quot;-Dos.name=Windows 10&quot; -Dos.version=10.0"/>
+  <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value=""/>
+  <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="C:\Users\Max\Desktop\games\MC modding\Essentials\development files\run"/>
+  <mapAttribute key="org.eclipse.debug.core.environmentVariables">
+    <mapEntry key="MOD_CLASSES" value="essentials%%C:\Users\Max\Desktop\games\MC modding\Essentials\development files\bin\main;essentials%%C:\Users\Max\Desktop\games\MC modding\Essentials\development files\bin\main"/>
+    <mapEntry key="MCP_MAPPINGS" value="snapshot_20180921-1.13"/>
+    <mapEntry key="MCP_VERSION" value="20190213.203750"/>
+    <mapEntry key="FORGE_VERSION" value="25.0.219"/>
+    <mapEntry key="assetIndex" value="1.13.1"/>
+    <mapEntry key="assetDirectory" value="C:\Users\Max\.gradle\caches\forge_gradle\assets"/>
+    <mapEntry key="nativesDirectory" value="C:\Users\Max\Desktop\games\MC modding\Essentials\development files\build\natives"/>
+    <mapEntry key="FORGE_GROUP" value="net.minecraftforge"/>
+    <mapEntry key="target" value="fmluserdevclient"/>
+    <mapEntry key="MC_VERSION" value="1.13.2"/>
+  </mapAttribute>
+</launchConfiguration>

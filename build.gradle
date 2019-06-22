@@ -13,7 +13,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 
-version = "1.13.2-2.0.1"
+version = "1.13.2-2.0.2"
 group = "com.Da_Technomancer.essentials"
 archivesBaseName = "essentials"
 
@@ -25,7 +25,7 @@ tasks.withType(JavaCompile) {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20190323-1.13.2'
+    mappings channel: 'snapshot', version: '20180921-1.13'
 
 
     runs {
@@ -82,7 +82,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.13.2-25.0.100'
+    minecraft 'net.minecraftforge:forge:1.13.2-25.0.219'
 
    // deobf "mezz.jei:jei-1.13.2:5.0.0.11"
 }
