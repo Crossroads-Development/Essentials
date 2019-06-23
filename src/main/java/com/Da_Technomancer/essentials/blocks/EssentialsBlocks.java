@@ -27,6 +27,7 @@ public class EssentialsBlocks{
 	public static FertileSoil fertileSoilJungle;
 	public static FertileSoil fertileSoilDarkOak;
 	public static FertileSoil fertileSoilAcacia;
+	public static FertileSoil fertileSoilBerry;
 	public static CandleLilyPad candleLilyPad;
 	public static ItemChute itemChute;
 	public static ItemShifter itemShifter;
@@ -70,6 +71,7 @@ public class EssentialsBlocks{
 		fertileSoilJungle = new FertileSoil("jungle", Blocks.JUNGLE_SAPLING.getDefaultState());
 		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.DARK_OAK_SAPLING.getDefaultState());
 		fertileSoilAcacia = new FertileSoil("acacia", Blocks.ACACIA_SAPLING.getDefaultState());
+		fertileSoilBerry = new FertileSoil("berry", Blocks.SWEET_BERRY_BUSH.getDefaultState());
 		hopperFilter = new HopperFilter();
 		itemChute = new ItemChute();
 		itemShifter = new ItemShifter();

@@ -1,10 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -54,7 +51,15 @@ public class FertileSoil extends Block{
 
 	@Override
 	public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction direction, IPlantable plantable){
-		return (plant.getBlock() == Blocks.NETHER_WART) == (plantable.getPlantType(world, pos.offset(direction)) == PlantType.Nether);
+		PlantType tar = plantable.getPlantType(world, pos.offset(direction));
+
+		if(plant.getBlock() == Blocks.NETHER_WART){
+			return tar == PlantType.Nether;
+		}else if(plant.getBlock() instanceof SaplingBlock || plant.getBlock() instanceof SweetBerryBushBlock){
+			return tar == PlantType.Plains;
+		}else{
+			return tar == PlantType.Crop;
+		}
 	}
 
 	@Override

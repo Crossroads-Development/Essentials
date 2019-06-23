@@ -1,5 +1,5 @@
 modLoader="javafml" #mandatory
-loaderVersion="[25,)" #mandatory
+loaderVersion="[26,)" #mandatory
 issueTrackerURL="https://github.com/Da-Technomancer/Essentials" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
 [[mods]] #mandatory
@@ -20,7 +20,7 @@ Adds several utility blocks that expand vanilla-style automation
 [[dependencies.essentials]] #optional
     modId="forge" #mandatory
     mandatory=true #mandatory
-    versionRange="[25,)" #mandatory
+    versionRange="[26,)" #mandatory
     ordering="NONE"
     side="BOTH"
 [[dependencies.essentials]]
