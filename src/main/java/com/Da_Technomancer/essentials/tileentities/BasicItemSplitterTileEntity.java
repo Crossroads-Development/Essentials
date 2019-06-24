@@ -27,7 +27,7 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	private int mode = 1;
 	private ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 
-	private Direction facing = null;
+	public Direction facing = null;
 
 	public BasicItemSplitterTileEntity(TileEntityType<?> type){
 		super(type);

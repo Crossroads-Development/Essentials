@@ -29,6 +29,10 @@ import java.util.List;
 
 public class BasicItemSplitter extends ContainerBlock{
 
+	protected BasicItemSplitter(Properties prop){
+		super(prop);
+	}
+
 	public BasicItemSplitter(){
 		super(Block.Properties.create(Material.IRON).hardnessAndResistance(3));
 		String name = "basic_item_splitter";
@@ -46,17 +50,26 @@ public class BasicItemSplitter extends ContainerBlock{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new StringTextComponent("Splits incoming items between the two outputs"));
-		tooltip.add(new StringTextComponent("Configure splitting ratio with a Wrench"));
+		tooltip.add(new StringTextComponent("Configure splitting ratio by shift-right-clicking with a Wrench"));
 	}
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
 		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				TileEntity te = worldIn.getTileEntity(pos);
-				if(te instanceof BasicItemSplitterTileEntity){
-					int mode = ((BasicItemSplitterTileEntity) te).increaseMode();
-					playerIn.sendMessage(new StringTextComponent("Sending " + BasicItemSplitterTileEntity.MODES[mode] + "/4 of items downwards"));
+				if(playerIn.isSneaking()){
+					TileEntity te = worldIn.getTileEntity(pos);
+					if(te instanceof BasicItemSplitterTileEntity){
+						int mode = ((BasicItemSplitterTileEntity) te).increaseMode();
+						playerIn.sendMessage(new StringTextComponent("Sending " + BasicItemSplitterTileEntity.MODES[mode] + "/4 of items downwards"));
+					}
+				}else{
+					BlockState endState = state.cycle(EssentialsProperties.FACING);
+					worldIn.setBlockState(pos, endState);
+					TileEntity te = worldIn.getTileEntity(pos);
+					if(te instanceof BasicItemSplitterTileEntity){
+						((BasicItemSplitterTileEntity) te).facing = null;
+					}
 				}
 			}
 			return true;

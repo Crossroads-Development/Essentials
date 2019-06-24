@@ -1,13 +1,7 @@
 {
-	"itemGroup.essentials": "Essentials",
-	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
-	"item.essentials.wrench": "Wrench",
-	"container.slotted_chest": "Slotted Chest",
 	"block.essentials.slotted_chest": "Slotted Chest",
 	"block.essentials.sorting_hopper": "Sorting Hopper",
-	"container.sorting_hopper": "Sorting Hopper",
 	"block.essentials.speed_hopper": "High-Throughput Hopper",
-	"container.speed_hopper": "High-Throughput Hopper",
 	"block.essentials.fertile_soil_wheat": "Wheat Fertile Soil",
 	"block.essentials.fertile_soil_carrot": "Carrot Fertile Soil",
 	"block.essentials.fertile_soil_potato": "Potato Fertile Soil",
@@ -22,19 +16,31 @@
 	"block.essentials.fertile_soil_berry": "Sweet Berry Fertile Soil",
 	"block.essentials.hopper_filter": "Hopper Filter",
 	"block.essentials.candle_lilypad": "Candle Lilypad",
-	"item.essentials.candle_lilypad": "Candle Lilypad",
 	"block.essentials.brazier": "Brazier",
 	"block.essentials.item_chute": "Transport Chute",
 	"block.essentials.item_shifter": "Item Shifter",
 	"block.essentials.fluid_shifter": "Fluid Shifter",
-	"container.item_shifter": "Item Shifter",
-	"container.fluid_shifter": "Fluid Shifter",
 	"block.essentials.multi_piston_sticky": "Sticky Multi-Piston",
 	"block.essentials.multi_piston": "Multi-Piston",
 	"block.essentials.multi_piston_extend_sticky": "Sticky Multi-Piston Extension",
 	"block.essentials.multi_piston_extend": "Multi-Piston Extension",
 	"block.essentials.basic_item_splitter": "Basic Item Splitter",
 	"block.essentials.item_splitter": "Item Splitter",
+	"block.essentials.wither_cannon": "Wither Cannon",
+
+	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
+	"item.essentials.wrench": "Wrench",
+	"item.essentials.candle_lilypad": "Candle Lilypad",
 	"item.essentials.animal_feed": "Animal Feed",
-	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers"
+
+	"container.slotted_chest": "Slotted Chest",
+	"container.sorting_hopper": "Sorting Hopper",
+	"container.speed_hopper": "High-Throughput Hopper",
+	"container.item_shifter": "Item Shifter",
+	"container.fluid_shifter": "Fluid Shifter",
+
+	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
+	"tt.essentials.wither_cannon": "Shoots an exploding wither skull when powered",
+
+	"itemGroup.essentials": "Essentials"
 }

@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "essentials:block/wither_cannon_side",
+		"south": "essentials:block/wither_cannon_side",
+		"east": "essentials:block/wither_cannon_side",
+		"west": "essentials:block/wither_cannon_side",
+		"up": "essentials:block/wither_cannon_front",
+		"down": "essentials:block/wither_cannon_back",
+		"particle": "essentials:block/wither_cannon_side"
+	}
+}

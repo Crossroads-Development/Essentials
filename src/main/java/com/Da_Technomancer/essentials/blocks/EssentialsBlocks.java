@@ -38,6 +38,7 @@ public class EssentialsBlocks{
 	public static MultiPistonBase multiPistonSticky;
 	public static BasicItemSplitter basicItemSplitter;
 	public static ItemSplitter itemSplitter;
+	public static WitherCannon witherCannon;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -82,5 +83,6 @@ public class EssentialsBlocks{
 		multiPistonSticky = new MultiPistonBase(true);
 		basicItemSplitter = new BasicItemSplitter();
 		itemSplitter = new ItemSplitter();
+		witherCannon = new WitherCannon();
 	}
 }
