@@ -34,5 +34,7 @@
 	"block.essentials.multi_piston_extend_sticky": "Sticky Multi-Piston Extension",
 	"block.essentials.multi_piston_extend": "Multi-Piston Extension",
 	"block.essentials.basic_item_splitter": "Basic Item Splitter",
-	"block.essentials.item_splitter": "Item Splitter"
+	"block.essentials.item_splitter": "Item Splitter",
+	"item.essentials.animal_feed": "Animal Feed",
+	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers"
 }

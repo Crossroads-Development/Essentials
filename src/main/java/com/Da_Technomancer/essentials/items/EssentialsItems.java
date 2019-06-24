@@ -19,6 +19,7 @@ public class EssentialsItems{
 	public static ObsidianCuttingKit obsidianKit;
 	public static ItemCandleLily itemCandleLilypad;
 	public static Wrench wrench;
+	public static AnimalFeed animalFeed;
 
 	public static final ArrayList<Item> toRegister = new ArrayList<>();
 
@@ -26,5 +27,6 @@ public class EssentialsItems{
 		obsidianKit = new ObsidianCuttingKit();
 		itemCandleLilypad = new ItemCandleLily();
 		wrench = new Wrench();
+		animalFeed = new AnimalFeed();
 	}
 }

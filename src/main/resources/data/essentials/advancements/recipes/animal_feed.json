@@ -1,0 +1,36 @@
+{
+	"parent": "minecraft:recipes/root",
+	"rewards": {
+		"recipes": [
+			"essentials:animal_feed",
+			"essentials:animal_feed_smoker"
+		]
+	},
+	"criteria": {
+		"has_fed": {
+			"trigger": "minecraft:bred_animals",
+			"conditions": {
+
+			}
+		},
+		"has_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "essentials:animal_feed"
+			}
+		},
+		"has_recipe_smoker": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "essentials:animal_feed_smoker"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_fed",
+			"has_recipe",
+			"has_recipe_smoker"
+		]
+	]
+}

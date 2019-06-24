@@ -1,0 +1,17 @@
+{
+	"result": "essentials:animal_feed",
+	"count": "1",
+	"experience": 2,
+	"type": "minecraft:smoking",
+	"ingredient": [
+		{
+			"item": "minecraft:beetroot"
+		},
+		{
+			"item": "minecraft:carrot"
+		},
+		{
+			"item": "minecraft:baked_potato"
+		}
+	]
+}
