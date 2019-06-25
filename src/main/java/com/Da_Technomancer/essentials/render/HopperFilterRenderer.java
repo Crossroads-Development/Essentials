@@ -9,8 +9,10 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 
 public class HopperFilterRenderer extends TileEntityRenderer<HopperFilterTileEntity>{
 
+
+
 	@Override
-	public void render(HopperFilterTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
+	public void func_199341_a(HopperFilterTileEntity te, double x, double y, double z, float partialTicks, int destroyStage){
 		if(!te.getWorld().isAreaLoaded(te.getPos(), 0) || te.getFilter().isEmpty()){
 			return;
 		}

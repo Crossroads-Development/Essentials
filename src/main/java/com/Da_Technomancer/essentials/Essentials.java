@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -45,11 +46,12 @@ public final class Essentials{
 
 
 	public Essentials(){
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonInit);
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientInit);
+		final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		bus.addListener(this::commonInit);
+		bus.addListener(this::clientInit);
 
-		EssentialsConfig.init();
 		MinecraftForge.EVENT_BUS.register(this);
+		EssentialsConfig.init();
 
 		EssentialsConfig.load();
 	}

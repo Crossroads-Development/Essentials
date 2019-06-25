@@ -12,9 +12,11 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -27,11 +29,9 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ServerChunkProvider;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -98,10 +98,15 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void onPlayerDestroy(IWorld world, BlockPos pos, BlockState state){
-		BlockState otherState;
+	public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack){
+		InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), getPickBlock(state, null, worldIn, pos, player));
+		super.harvestBlock(worldIn, player, pos, state, te, stack);
+	}
+
+	@Override
+	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){	BlockState otherState;
 		//Sanity check included to make sure the adjacent block is actually an extension- unlike vanilla pistons, multi pistons are supposed to actually work and not break bedrock
-		if(state.get(EssentialsProperties.EXTENDED) && (otherState = world.getBlockState(pos.offset(state.get(EssentialsProperties.FACING)))).getBlock() == this && otherState.get(EssentialsProperties.AXIS) == state.get(EssentialsProperties.FACING).getAxis()){
+		if(state.get(EssentialsProperties.EXTENDED) && (otherState = world.getBlockState(pos.offset(state.get(EssentialsProperties.FACING)))).getBlock() == (sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend) && otherState.get(EssentialsProperties.AXIS) == state.get(EssentialsProperties.FACING).getAxis()){
 			world.destroyBlock(pos.offset(state.get(EssentialsProperties.FACING)), false);
 		}
 	}
@@ -385,8 +390,8 @@ public class MultiPistonBase extends Block{
 
 		for(int iLoop = i; iLoop <= j; iLoop++){
 			for(int kLoop = k; kLoop <= l; kLoop++){
-				if(((ServerChunkProvider) worldIn.getChunkProvider()).chunkExists(iLoop, kLoop)){
-					Chunk chunk = worldIn.getChunk(iLoop, kLoop);
+				if(worldIn.chunkExists(iLoop, kLoop)){
+					Chunk chunk = worldIn.getChunkAt(new BlockPos(iLoop * 16, 100, kLoop * 16));
 					for(int yLoop = yMin; yLoop <= yMax; yLoop++){
 						if(!chunk.getEntityLists()[yLoop].isEmpty()){
 							for(Entity entity : chunk.getEntityLists()[yLoop]){
