@@ -1,5 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import com.Da_Technomancer.essentials.blocks.redstone.AndCircuit;
+import com.Da_Technomancer.essentials.blocks.redstone.ConsCircuit;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.*;
 import net.minecraft.block.BeetrootBlock;
@@ -39,6 +41,9 @@ public class EssentialsBlocks{
 	public static BasicItemSplitter basicItemSplitter;
 	public static ItemSplitter itemSplitter;
 	public static WitherCannon witherCannon;
+
+	public static AndCircuit andCircuit;
+	public static ConsCircuit consCircuit;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -84,5 +89,8 @@ public class EssentialsBlocks{
 		basicItemSplitter = new BasicItemSplitter();
 		itemSplitter = new ItemSplitter();
 		witherCannon = new WitherCannon();
+
+		//andCircuit = new AndCircuit();
+		//consCircuit = new ConsCircuit();
 	}
 }

@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
+import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.ItemShifterScreen;
 import com.Da_Technomancer.essentials.gui.SlottedChestScreen;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
@@ -19,6 +20,8 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -50,8 +53,9 @@ public final class Essentials{
 		bus.addListener(this::commonInit);
 		bus.addListener(this::clientInit);
 
-		MinecraftForge.EVENT_BUS.register(this);
 		EssentialsConfig.init();
+
+		MinecraftForge.EVENT_BUS.register(this);
 
 		EssentialsConfig.load();
 	}
@@ -59,6 +63,7 @@ public final class Essentials{
 	private void commonInit(FMLCommonSetupEvent e){
 		//Pre
 		EssentialsPackets.preInit();
+		RedstoneUtil.registerCap();
 		//Main
 		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerCommon());
 	}
@@ -102,10 +107,11 @@ public final class Essentials{
 		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, EssentialsBlocks.basicItemSplitter);
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, EssentialsBlocks.itemSplitter);
 //		registerTE(FluidShifterTileEntity::new, "fluid_splitter", reg, EssentialsBlocks.fluidShifter);
+		//registerTE(CircuitTileEntity::new, "circuit", reg, EssentialsBlocks.andCircuit, EssentialsBlocks.consCircuit);
 	}
 
-	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block block){
-		TileEntityType teType = TileEntityType.Builder.create(cons, block).build(DSL.nilType());
+	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
+		TileEntityType teType = TileEntityType.Builder.create(cons, blocks).build(DSL.nilType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}
@@ -113,11 +119,13 @@ public final class Essentials{
 
 	@SubscribeEvent
 	@SuppressWarnings("unused")
+	@OnlyIn(Dist.CLIENT)
 	public static void registerContainers(RegistryEvent.Register<ContainerType<?>> e){
 		registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
 		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
 	}
 
+	@OnlyIn(Dist.CLIENT)
 	private static <T extends Container> void registerCon(IContainerFactory<T> cons, ScreenManager.IScreenFactory<T, ContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<ContainerType<?>> reg){
 		ContainerType<T> contType = new ContainerType<>(cons);
 		contType.setRegistryName(new ResourceLocation(MODID, id));

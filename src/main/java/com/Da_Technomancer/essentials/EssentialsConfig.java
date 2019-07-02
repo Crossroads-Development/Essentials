@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -19,6 +20,7 @@ public class EssentialsConfig{
 	public static ForgeConfigSpec.IntValue brazierRange;
 	public static ForgeConfigSpec.IntValue itemChuteRange;
 	public static ForgeConfigSpec.DoubleValue fertileSoilRate;
+	public static ForgeConfigSpec.IntValue maxRedstoneRange;
 
 	private static ForgeConfigSpec clientSpec;
 	private static ForgeConfigSpec serverSpec;
@@ -37,17 +39,18 @@ public class EssentialsConfig{
 		brazierRange = serverBuilder.comment("Set to 0 to disable").translation("brazier_range").defineInRange("brazier_range", 64, 0, 512);
 		itemChuteRange = serverBuilder.translation("chute_limit").defineInRange("chute_limit", 16, 0, 128);
 		fertileSoilRate = serverBuilder.comment("Set to 0 to disable").translation("fertile_rate").defineInRange("fertile_rate", 100D, 0, 100);
+		maxRedstoneRange = serverBuilder.translation("redstone_range").defineInRange("redstone_range", 16, 1, 128);
 
 		serverSpec = serverBuilder.build();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
 	}
 
 	protected static void load(){
-		CommentedFileConfig clientConfig = CommentedFileConfig.of(FMLPaths.CONFIGDIR.get().resolve(Essentials.MODID + "-client.toml"));
+		CommentedFileConfig clientConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(Essentials.MODID + "-client.toml")).sync().autosave().writingMode(WritingMode.REPLACE).build();
 		clientConfig.load();
 		clientSpec.setConfig(clientConfig);
 
-		CommentedFileConfig serverConfig = CommentedFileConfig.of(FMLPaths.CONFIGDIR.get().resolve(Essentials.MODID + "-server.toml"));
+		CommentedFileConfig serverConfig = CommentedFileConfig.builder(FMLPaths.CONFIGDIR.get().resolve(Essentials.MODID + "-server.toml")).sync().autosave().writingMode(WritingMode.REPLACE).build();
 		serverConfig.load();
 		serverSpec.setConfig(serverConfig);
 	}

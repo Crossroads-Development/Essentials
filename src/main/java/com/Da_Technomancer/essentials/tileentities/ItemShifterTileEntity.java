@@ -129,11 +129,19 @@ public class ItemShifterTileEntity extends TileEntity implements ITickableTileEn
 		}
 	}
 
+	@Override
+	public void remove(){
+		super.remove();
+		invOptional.invalidate();
+	}
+
+	private LazyOptional<IItemHandler> invOptional = LazyOptional.of(InventoryHandler::new);
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return LazyOptional.of(() -> (T) new InventoryHandler());
+			return (LazyOptional<T>) invOptional;
 		}
 
 		return super.getCapability(cap, facing);

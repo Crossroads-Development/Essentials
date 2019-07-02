@@ -71,14 +71,14 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	@Override
 	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
-		filter.write(nbt);
+		nbt.put("filter", filter.write(new CompoundNBT()));
 		return nbt;
 	}
 
 	@Override
 	public void read(CompoundNBT nbt){
 		super.read(nbt);
-		filter = ItemStack.read(nbt);
+		filter = ItemStack.read(nbt.getCompound("filter"));
 	}
 
 	@Override

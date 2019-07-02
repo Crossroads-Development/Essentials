@@ -9,6 +9,7 @@ import net.minecraft.util.Direction;
 public class EssentialsProperties{
 
 	public static final DirectionProperty FACING = DirectionProperty.create("facing", Direction.values());
+	public static final DirectionProperty HORIZ_FACING = DirectionProperty.create("horiz_facing", Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH);
 	//0: Empty, 1: water, 2: lava, 3: coal, 4: glowstone, 5: reserved, 6: soul sand, 7: poison potato
 	public static final IntegerProperty BRAZIER_CONTENTS = IntegerProperty.create("br_cont", 0, 7);
 	public static final BooleanProperty REDSTONE_BOOL = BooleanProperty.create("redstone_bool");

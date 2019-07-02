@@ -28,6 +28,9 @@
 	"block.essentials.item_splitter": "Item Splitter",
 	"block.essentials.wither_cannon": "Wither Cannon",
 
+	"block.essentials.and_circuit": "AND Circuit",
+	"block.essentials.cons_circuit": "Constant Circuit",
+
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
 	"item.essentials.wrench": "Wrench",
 	"item.essentials.candle_lilypad": "Candle Lilypad",
