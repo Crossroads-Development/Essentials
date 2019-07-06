@@ -1,43 +1,52 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
-import java.util.function.Consumer;
 
 public interface IRedstoneHandler{
 
 	/**
-	 * Adds a new source to all connected devices, or notifies of a change
-	 * @param src The original redstone source
-	 * @param dist The distance travelled
-	 * @param visited A set of all visited positions, for more efficient routing only
+	 * @return The current redstone output
 	 */
-	public void updateRedstone(LazyOptional<IRedstoneHandler> src, int dist, HashSet<BlockPos> visited);
+	public float getOutput();
 
 	/**
-	 * Queries all connected sources, requesting an updateRedstone call for a new device
-	 * Forgets all previous listeners (listeners should re-register when the new updateRedstone call occurs)
-	 * @param dist Distance travelled
-	 * @param visited A set of all visited positions, for more efficient routing only
+	 * Finds and adds dependent circuitry (circuits that use the signal from this circuit)
+	 * @param src The source
+	 * @param dist The distance in blocks travelled. Must be below RedstoneUtil.getMaxRange()
+	 * @param fromSide The side this is receiving from
+	 * @param nominalSide The output side of the original calling circuit
 	 */
-	public void summonTrigger(int dist, HashSet<BlockPos> visited);
+	public void findDependents(WeakReference<LazyOptional<IRedstoneHandler>> src, int dist, Direction fromSide, Direction nominalSide);
 
 	/**
-	 * Gets the output if this device acts as a source
-	 * @return The output if this is a source, zero otherwise
+	 * Finds and adds source circuity (circuits whose output this circuit uses)
+	 * @param dependency The dependent
+	 * @param dist The distance in blocks travelled. Must be below RedstoneUtil.getMaxRange()
+	 * @param toSide The side this is outputting on
+	 * @param nominalSide The input side of the original calling circuit
 	 */
-	public default float getOutput(){
-		return 0;
-	};
+	public void requestSrc(WeakReference<LazyOptional<IRedstoneHandler>> dependency, int dist, Direction toSide, Direction nominalSide);
 
 	/**
-	 * Registers a listener for when output changes, which will be called when getOutput changes value. Listeners will be forgotten if the capability is invalidated or summonTrigger is called
-	 * @param listener The consumer that will be called with the new output
+	 * Adds an external circuit as a source (a circuit whose output this circuit uses)
+	 * @param src The source
+	 * @param fromSide The side this circuit is receiving from
 	 */
-	public default void listen(WeakReference<Consumer<Float>> listener){
+	public void addSrc(WeakReference<LazyOptional<IRedstoneHandler>> src, Direction fromSide);
 
-	}
+	/**
+	 * Adds an external circuit as a dependent (a circuit that uses this circuit's output)
+	 * @param dependent The dependent
+	 * @param toSide The side this circuit is outputting on
+	 */
+	public void addDependent(WeakReference<LazyOptional<IRedstoneHandler>> dependent, Direction toSide);
+
+	/**
+	 * Notifies of a change in the result of a getPower() call on a source
+	 * @param src A linked source
+	 */
+	public void notifyInputChange(WeakReference<LazyOptional<IRedstoneHandler>> src);
 }

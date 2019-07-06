@@ -1,40 +1,17 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Optional;
+import jdk.internal.jline.internal.Nullable;
+import net.minecraftforge.common.util.LazyOptional;
 
 public class BlockUtil{
 
 	/**
-	 * For finding which bounding box within a block is targetted by raytracing. Used for block with multiple bounding boxes
-	 * @param boxes A list containing bounding boxes. May contain null elements
-	 * @param start The starting position vector. Subtracting the block's position from this in advance is suggested
-	 * @param end The ending position vector. Subtracting the block's position from this in advance is suggested
+	 * Gets the value contained in a LazyOptional
+	 * @param optional The LazyOptional
+	 * @param <T> The type parameter of the LazyOptional
+	 * @return The value contained in the LazyOptional, or null if the LazyOptional is empty
 	 */
-	@Nullable
-	public static AxisAlignedBB selectionRaytrace(ArrayList<AxisAlignedBB> boxes, Vec3d start, Vec3d end){
-		if(boxes == null || boxes.size() == 0){
-			return null;
-		}
-
-		float dist = Integer.MAX_VALUE;
-		AxisAlignedBB closest = null;
-
-		for(AxisAlignedBB box : boxes){
-			if(box == null){
-				continue;
-			}
-			Optional<Vec3d> result = box.rayTrace(start, end);
-			if(result.isPresent() && dist > result.get().subtract(start).lengthSquared()){
-				dist = (float) result.get().subtract(start).lengthSquared();
-				closest = box;
-			}
-		}
-
-		return closest;
+	public static <T> T get(@Nullable LazyOptional<T> optional){
+		return optional != null && optional.isPresent() ? optional.orElseThrow(NullPointerException::new) : null;
 	}
 }

@@ -90,7 +90,7 @@ public class EssentialsBlocks{
 		itemSplitter = new ItemSplitter();
 		witherCannon = new WitherCannon();
 
-		//andCircuit = new AndCircuit();
-		//consCircuit = new ConsCircuit();
+		andCircuit = new AndCircuit();
+		consCircuit = new ConsCircuit();
 	}
 }

@@ -9,7 +9,7 @@ public class ConsCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public boolean useInput(int index){
+	public boolean useInput(CircuitTileEntity.Orient or){
 		return false;
 	}
 

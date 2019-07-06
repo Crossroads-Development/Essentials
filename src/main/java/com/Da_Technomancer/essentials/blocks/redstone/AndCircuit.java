@@ -9,8 +9,8 @@ public class AndCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public boolean useInput(int index){
-		return index == 0 || index == 2;
+	public boolean useInput(CircuitTileEntity.Orient or){
+		return or == CircuitTileEntity.Orient.CCW || or == CircuitTileEntity.Orient.CW;
 	}
 
 	@Override

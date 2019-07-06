@@ -107,7 +107,7 @@ public final class Essentials{
 		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, EssentialsBlocks.basicItemSplitter);
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, EssentialsBlocks.itemSplitter);
 //		registerTE(FluidShifterTileEntity::new, "fluid_splitter", reg, EssentialsBlocks.fluidShifter);
-		//registerTE(CircuitTileEntity::new, "circuit", reg, EssentialsBlocks.andCircuit, EssentialsBlocks.consCircuit);
+		registerTE(CircuitTileEntity::new, "circuit", reg, EssentialsBlocks.andCircuit, EssentialsBlocks.consCircuit);
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){

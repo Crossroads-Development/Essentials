@@ -8,6 +8,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
@@ -24,6 +25,7 @@ import net.minecraft.world.TickPriority;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import javax.sound.midi.SysexMessage;
 import java.util.Random;
 
 public abstract class AbstractCircuit extends ContainerBlock{
@@ -65,18 +67,18 @@ public abstract class AbstractCircuit extends ContainerBlock{
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 		TileEntity te = worldIn.getTileEntity(pos);
-		if(te instanceof CircuitTileEntity){
-			((CircuitTileEntity) te).addBlock();
+		if(te instanceof CircuitTileEntity && !worldIn.isRemote){
+			((CircuitTileEntity) te).buildConnections();
 		}
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean p_220069_6_){
-		BlockPos relPos = fromPos.subtract(pos);
-		Direction dir = Direction.getFacingFromVector(relPos.getX(), relPos.getY(), relPos.getZ());
-		if(relPos.distanceSq(BlockPos.ZERO) != 0 && useInput(CircuitTileEntity.calcOrientIndex(dir, state.get(EssentialsProperties.HORIZ_FACING)))){
-			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
+		TileEntity te = worldIn.getTileEntity(pos);
+		if(te instanceof CircuitTileEntity){
+			((CircuitTileEntity) te).buildConnections();
 		}
+		worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public abstract class AbstractCircuit extends ContainerBlock{
 		if(side.getOpposite() == state.get(EssentialsProperties.HORIZ_FACING)){
 			TileEntity te = blockAccess.getTileEntity(pos);
 			if(te instanceof CircuitTileEntity){
-				return RedstoneUtil.clampToVanilla(((CircuitTileEntity) te).outHandler.getOutput());
+				return RedstoneUtil.clampToVanilla(((CircuitTileEntity) te).getOutput());
 			}
 		}
 		return 0;
@@ -92,7 +94,12 @@ public abstract class AbstractCircuit extends ContainerBlock{
 
 	@Override
 	public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side){
-		return side != null && (side.getOpposite() == state.get(EssentialsProperties.HORIZ_FACING) || useInput((3 + side.getOpposite().getHorizontalIndex() - state.get(EssentialsProperties.HORIZ_FACING).getHorizontalIndex()) & 3));
+		return side != null && (side.getOpposite() == state.get(EssentialsProperties.HORIZ_FACING) || useInput(CircuitTileEntity.Orient.getOrient(side, state.get(EssentialsProperties.HORIZ_FACING))));
+	}
+
+	@Override
+	public boolean canProvidePower(BlockState state){
+		return true;
 	}
 
 	@Override
@@ -115,8 +122,7 @@ public abstract class AbstractCircuit extends ContainerBlock{
 			//TODO TEMP FOR TESTING
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(!worldIn.isRemote && te instanceof CircuitTileEntity){
-				playerIn.sendMessage(new StringTextComponent("OUT: " + ((CircuitTileEntity) te).outHandler.getOutput() + ""));
-				playerIn.sendMessage(new StringTextComponent("IN_0: " + ((CircuitTileEntity) te).inputStr[0] + "; IN_1: " + ((CircuitTileEntity) te).inputStr[1] + "; IN_2: " + ((CircuitTileEntity) te).inputStr[2]));
+				playerIn.sendMessage(new StringTextComponent("OUT: " + ((CircuitTileEntity) te).getOutput() + ""));
 			}
 			return true;
 		}
@@ -125,11 +131,19 @@ public abstract class AbstractCircuit extends ContainerBlock{
 
 	/**
 	 * Whether this device accepts a redstone input from a direction (relative to front)
-	 * @param index 0: Left, 1: Back, 2: Right
+	 * @param or The input orientation
 	 * @return Whether this device accepts an input on that side
 	 */
-	public abstract boolean useInput(int index);
+	public abstract boolean useInput(CircuitTileEntity.Orient or);
 
+	/**
+	 * Calculates the output strength
+	 * @param in0 CW input
+	 * @param in1 Back input
+	 * @param in2 CCW input
+	 * @param te TileEntity
+	 * @return The output strength
+	 */
 	public abstract float getOutput(float in0, float in1, float in2, CircuitTileEntity te);
 
 	@Override
