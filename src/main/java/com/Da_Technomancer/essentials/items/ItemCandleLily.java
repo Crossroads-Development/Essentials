@@ -63,7 +63,7 @@ public class ItemCandleLily extends LilyPadItem{
 			IFluidState ifluidstate = worldIn.getFluidState(blockpos);
 			if((ifluidstate.getFluid() == Fluids.WATER || material == Material.ICE) && worldIn.isAirBlock(blockpos1)){
 
-				// special case for handling block placement with water lilies
+				// special case for handling blocks placement with water lilies
 				BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(worldIn, blockpos1);
 				worldIn.setBlockState(blockpos1, EssentialsBlocks.candleLilyPad.getDefaultState(), 11);
 				if(ForgeEventFactory.onBlockPlace(playerIn, blocksnapshot, Direction.UP)){

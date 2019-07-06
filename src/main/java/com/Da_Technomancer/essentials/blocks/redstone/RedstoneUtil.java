@@ -80,9 +80,9 @@ public class RedstoneUtil extends BlockUtil{
 
 	/**
 	 * @param w The world
-	 * @param pos The position of the block receiving the signal
-	 * @param dir The side of the block the redstone signal is coming in
-	 * @return The strength of the redstone signal a block is receiving on a given side
+	 * @param pos The position of the blocks receiving the signal
+	 * @param dir The side of the blocks the redstone signal is coming in
+	 * @return The strength of the redstone signal a blocks is receiving on a given side
 	 */
 	public static int getRedstoneOnSide(World w, BlockPos pos, Direction dir){
 		BlockPos offsetPos = pos.offset(dir);

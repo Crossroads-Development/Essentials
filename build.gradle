@@ -20,6 +20,8 @@ archivesBaseName = "essentials"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'
+//Exclude python scripts from the build
+sourceSets.main.java.exclude('**/python/**')
 
 tasks.withType(JavaCompile) {
 	options.encoding = 'UTF-8'
@@ -41,7 +43,7 @@ minecraft {
 			property 'forge.logging.console.level', 'debug'
 
 			mods {
-				examplemod {
+				essentials {
 					source sourceSets.main
 				}
 			}
@@ -57,7 +59,7 @@ minecraft {
 			property 'forge.logging.console.level', 'debug'
 
 			mods {
-				examplemod {
+				essentials {
 					source sourceSets.main
 				}
 			}

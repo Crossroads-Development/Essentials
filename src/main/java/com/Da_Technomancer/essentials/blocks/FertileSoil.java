@@ -11,6 +11,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
@@ -32,6 +33,11 @@ public class FertileSoil extends Block{
 		setRegistryName(name);
 		EssentialsBlocks.toRegister.add(this);
 		EssentialsBlocks.blockAddQue(this);
+	}
+
+	@Override
+	public List<ItemStack> getDrops(BlockState p_220076_1_, LootContext.Builder p_220076_2_){
+		return super.getDrops(p_220076_1_, p_220076_2_);
 	}
 
 	@Override

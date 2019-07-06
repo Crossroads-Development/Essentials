@@ -158,7 +158,7 @@ public class Brazier extends ContainerBlock{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new StringTextComponent("Able to hold Water, Lava, Glowstone, Coal Blocks, and Soul Sand"));
-		tooltip.add(new StringTextComponent("Can prevent fall damage with liquid, emit light with Glowstone/Coal/Lava, destroy dropped items with Lava, or block witch spawns with Soul Sand"));
+		tooltip.add(new StringTextComponent("Can prevent fall damage with liquid, emit light with Glowstone/Coal/Lava, destroy dropped items with Lava, or blocks witch spawns with Soul Sand"));
 	}
 
 	@Override

@@ -12,11 +12,9 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -40,11 +38,11 @@ import java.util.List;
 
 /**
  * Notable differences from a normal piston include:
- * DIST_LIMIT block head range, distance controlled by signal strength,
+ * DIST_LIMIT blocks head range, distance controlled by signal strength,
  * No quasi-connectivity,
  * Redstone can be placed on top of the piston,
- * Piston extension and retraction is instant, no 2-tick delay or rendering of block movement.
- * Can move up to PUSH_LIMIT block at a time instead of 12
+ * Piston extension and retraction is instant, no 2-tick delay or rendering of blocks movement.
+ * Can move up to PUSH_LIMIT blocks at a time instead of 12
  */
 public class MultiPistonBase extends Block{
 
@@ -98,14 +96,8 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack){
-		InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), getPickBlock(state, null, worldIn, pos, player));
-		super.harvestBlock(worldIn, player, pos, state, te, stack);
-	}
-
-	@Override
 	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){	BlockState otherState;
-		//Sanity check included to make sure the adjacent block is actually an extension- unlike vanilla pistons, multi pistons are supposed to actually work and not break bedrock
+		//Sanity check included to make sure the adjacent blocks is actually an extension- unlike vanilla pistons, multi pistons are supposed to actually work and not break bedrock
 		if(state.get(EssentialsProperties.EXTENDED) && (otherState = world.getBlockState(pos.offset(state.get(EssentialsProperties.FACING)))).getBlock() == (sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend) && otherState.get(EssentialsProperties.AXIS) == state.get(EssentialsProperties.FACING).getAxis()){
 			world.destroyBlock(pos.offset(state.get(EssentialsProperties.FACING)), false);
 		}
@@ -140,7 +132,7 @@ public class MultiPistonBase extends Block{
 		return state.get(EssentialsProperties.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;
 	}
 
-	//While true, a multipiston is actively changing the world around it and should ignore incoming block updates
+	//While true, a multipiston is actively changing the world around it and should ignore incoming blocks updates
 	protected static boolean changingWorld = false;
 
 	private void activate(World world, BlockPos pos, BlockState state){
@@ -149,13 +141,13 @@ public class MultiPistonBase extends Block{
 		Direction facing = state.get(EssentialsProperties.FACING);
 
 		for(Direction dir : Direction.values()){
-			//Don't measure redstone power from the front, as otherwise we end up in an infinite loop just by placing a redstone block there
+			//Don't measure redstone power from the front, as otherwise we end up in an infinite loop just by placing a redstone blocks there
 			if(dir != facing){
 				target = Math.max(target, world.getRedstonePower(pos.offset(dir), dir));
 			}
 		}
 
-		//A fairly common bug in mods and newly added vanilla block is ways to get redstone signal strengths over 15.
+		//A fairly common bug in mods and newly added vanilla blocks is ways to get redstone signal strengths over 15.
 		target = Math.min(target, DIST_LIMIT);
 
 		if(facing == Direction.UP){
@@ -218,7 +210,7 @@ public class MultiPistonBase extends Block{
 	}
 
 	/**
-	 * Adjusts the extension of the multipiston by one block in a WorldBuffer, and moves entities in the path
+	 * Adjusts the extension of the multipiston by one blocks in a WorldBuffer, and moves entities in the path
 	 * @param world The WorldBuffer to read/write changes from
 	 * @param pos The multipiston position
 	 * @param facing The multipiston facing
@@ -239,7 +231,7 @@ public class MultiPistonBase extends Block{
 		if((out || sticky) && buildMoveset(pos, world, prevHeadPos.offset(facing), moveDir, movedBlocks, !out)){
 			//Something is in the way
 			if(!out){
-				//If retracting, leave attached block behind but finish retracting
+				//If retracting, leave attached blocks behind but finish retracting
 				movedBlocks.clear();
 			}else{
 				//If extending, stop here
@@ -257,10 +249,10 @@ public class MultiPistonBase extends Block{
 
 		for(BlockPos changePos : movedBlocks){
 
-			//Move block forward
+			//Move blocks forward
 			BlockState prevState = world.getBlockState(changePos);
 			if(prevState.getPushReaction() == PushReaction.DESTROY){
-				world.getWorld().destroyBlock(changePos, true);//Destroy the block in the actual world to drop items
+				world.getWorld().destroyBlock(changePos, true);//Destroy the blocks in the actual world to drop items
 			}else{
 				world.addChange(changePos.offset(moveDir), prevState);
 			}
@@ -291,7 +283,7 @@ public class MultiPistonBase extends Block{
 		for(Entity ent : movingEnts){
 			if(ent.getPushReaction() != PushReaction.IGNORE){
 				ent.setPositionAndUpdate(ent.posX + (double) moveDir.getXOffset(), ent.posY + (double) moveDir.getYOffset(), ent.posZ + (double) moveDir.getZOffset());
-				//If the entity is on a "sticky" block, bounce them
+				//If the entity is on a "sticky" blocks, bounce them
 				if(sticky){
 					ent.addVelocity(moveDir.getXOffset(), moveDir.getYOffset(), moveDir.getZOffset());
 					ent.velocityChanged = true;
@@ -307,7 +299,7 @@ public class MultiPistonBase extends Block{
 	 * @param curPos The currently active checking position
 	 * @param moveDir The direction the piston is trying to move
 	 * @param movedBlocks The current (in progress) movement set
-	 * @param dragging Whether this block would be "dragged" instead of pushed
+	 * @param dragging Whether this blocks would be "dragged" instead of pushed
 	 * @return If the movement has to be aborted
 	 *
 	 * This method recursively builds a list of all blocks to be moved by the piston, and returns true if there is an obstacle blocking movement
@@ -321,7 +313,7 @@ public class MultiPistonBase extends Block{
 		if(state.getBlock().isAir(state, world.getWorld(), curPos)){
 			reaction = PushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
 		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock().hasTileEntity(state) || pistonPos.equals(curPos)){
-			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable block. It's special cased. whhhhyyyyyyyyyy?
+			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
 		}else if(state.getBlockHardness(world, curPos) < 0){
 			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
 		}
@@ -344,12 +336,12 @@ public class MultiPistonBase extends Block{
 
 				movedBlocks.add(curPos);
 
-				//Do block behind this if sticky
+				//Do blocks behind this if sticky
 				if(isStickyBlock(state)){
 					blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(moveDir.getOpposite()), moveDir, movedBlocks, true);
 				}
 
-				//Do block son the sides if sticky
+				//Do blocks son the sides if sticky
 				if(isStickyBlock(state)){
 					for(Direction side : Direction.values()){
 						if(side.getAxis() != moveDir.getAxis()){

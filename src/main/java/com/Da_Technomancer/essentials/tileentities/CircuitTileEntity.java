@@ -73,7 +73,7 @@ public class CircuitTileEntity extends TileEntity{
 			Direction facing = getFacing();
 
 			if((output == 0) ^ (newPower == 0)){
-				//Prevent a block update to reduce lag from frequent redstone changes
+				//Prevent a blocks update to reduce lag from frequent redstone changes
 				world.setBlockState(pos, getBlockState().with(EssentialsProperties.REDSTONE_BOOL, newPower != 0), 2);
 			}
 

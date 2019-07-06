@@ -50,9 +50,9 @@ public class EssentialsBlocks{
 	public static final Item.Properties itemBlockProp = new Item.Properties().group(EssentialsItems.TAB_ESSENTIALS);
 
 	/**
-	 * Registers the item form of a block and the item model.
-	 * @param block The block to register
-	 * @return The passed block for convenience.
+	 * Registers the item form of a blocks and the item model.
+	 * @param block The blocks to register
+	 * @return The passed blocks for convenience.
 	 */
 	public static <T extends Block> T blockAddQue(T block){
 		Item item = new BlockItem(block, itemBlockProp).setRegistryName(block.getRegistryName());
@@ -90,7 +90,7 @@ public class EssentialsBlocks{
 		itemSplitter = new ItemSplitter();
 		witherCannon = new WitherCannon();
 
-		andCircuit = new AndCircuit();
-		consCircuit = new ConsCircuit();
+//		andCircuit = new AndCircuit();
+//		consCircuit = new ConsCircuit();
 	}
 }
