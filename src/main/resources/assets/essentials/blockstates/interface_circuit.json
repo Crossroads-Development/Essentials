@@ -1,7 +1,7 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"model": "essentials:circuit/constant",
+		"model": "essentials:circuit/interface",
 		"uvlock": false
 	},
 	"variants": {

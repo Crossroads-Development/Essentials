@@ -28,6 +28,8 @@
 	"block.essentials.item_splitter": "Item Splitter",
 	"block.essentials.wither_cannon": "Wither Cannon",
 
+	"block.essentials.wire_circuit": "Wire Plate",
+	"block.essentials.interface_circuit": "Wire Splice Plate",
 	"block.essentials.and_circuit": "AND Circuit",
 	"block.essentials.cons_circuit": "Constant Circuit",
 

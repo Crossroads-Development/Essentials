@@ -28,7 +28,7 @@ public class CircuitTileEntity extends TileEntity{
 	@ObjectHolder(Essentials.MODID + ":circuit")
 	private static TileEntityType<CircuitTileEntity> TYPE = null;
 
-	private boolean builtConnections = false;
+	public boolean builtConnections = false;
 	private final ArrayList<WeakReference<LazyOptional<IRedstoneHandler>>> dependents = new ArrayList<>(1);
 	private final ArrayList<Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Orient>> sources = new ArrayList<>(4);
 
@@ -72,10 +72,12 @@ public class CircuitTileEntity extends TileEntity{
 		if(RedstoneUtil.didChange(output, newPower)){
 			Direction facing = getFacing();
 
+			/*
 			if((output == 0) ^ (newPower == 0)){
 				//Prevent a blocks update to reduce lag from frequent redstone changes
 				world.setBlockState(pos, getBlockState().with(EssentialsProperties.REDSTONE_BOOL, newPower != 0), 2);
 			}
+			*/
 
 			//If no dependents, assume we're outputting to vanilla redstone
 			if(dependents.isEmpty() && RedstoneUtil.clampToVanilla(output) != RedstoneUtil.clampToVanilla(newPower)){
@@ -239,7 +241,10 @@ public class CircuitTileEntity extends TileEntity{
 			if(getOwner().useInput(or) && srcOption != null && srcOption.isPresent()){
 				IRedstoneHandler srcHandler = BlockUtil.get(srcOption);
 				srcHandler.addDependent(hanReference, nominalSide);
-				sources.add(Pair.of(src, or));
+				Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Orient> toAdd = Pair.of(src, or);
+				if(!sources.contains(toAdd)){
+					sources.add(toAdd);
+				}
 			}
 		}
 
@@ -249,7 +254,9 @@ public class CircuitTileEntity extends TileEntity{
 			if(Orient.getOrient(toSide, getFacing()) == Orient.FRONT && (depenOption = dependency.get()) != null && depenOption.isPresent()){
 				IRedstoneHandler depHandler = BlockUtil.get(depenOption);
 				depHandler.addSrc(hanReference, nominalSide);
-				dependents.add(dependency);
+				if(!dependents.contains(dependency)){
+					dependents.add(dependency);
+				}
 			}
 		}
 
@@ -257,15 +264,18 @@ public class CircuitTileEntity extends TileEntity{
 		public void addSrc(WeakReference<LazyOptional<IRedstoneHandler>> src, Direction fromSide){
 			Orient or = Orient.getOrient(fromSide, getFacing());
 			if(or != null && or != Orient.FRONT && getOwner().useInput(or)){
-				sources.add(Pair.of(src, or));
-				notifyInputChange(src);
+				Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Orient> toAdd = Pair.of(src, or);
+				if(!sources.contains(toAdd)){
+					sources.add(toAdd);
+					notifyInputChange(src);
+				}
 			}
 		}
 
 		@Override
 		public void addDependent(WeakReference<LazyOptional<IRedstoneHandler>> dependent, Direction toSide){
 			Orient or = Orient.getOrient(toSide, getFacing());
-			if(or == Orient.FRONT){
+			if(or == Orient.FRONT && !dependents.contains(dependent)){
 				dependents.add(dependent);
 			}
 		}

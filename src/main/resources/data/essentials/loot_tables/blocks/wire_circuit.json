@@ -6,7 +6,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "essentials:fluid_shifter"
+					"name": "essentials:wire_circuit"
 				}
 			],
 			"conditions": [
