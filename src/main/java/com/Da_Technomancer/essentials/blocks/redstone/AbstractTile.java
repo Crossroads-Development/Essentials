@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -10,7 +11,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
-public abstract class AbstractTile extends ContainerBlock{
+public abstract class AbstractTile extends ContainerBlock implements IWireConnect{
 
 	private static final Properties PROP = Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(0, 0).sound(SoundType.WOOD);
 
@@ -21,7 +22,7 @@ public abstract class AbstractTile extends ContainerBlock{
 		EssentialsBlocks.blockAddQue(this);
 	}
 
-	protected static final VoxelShape BB = makeCuboidShape(0, 0, 0, 16, 2, 16);
+	private static final VoxelShape BB = makeCuboidShape(0, 0, 0, 16, 2, 16);
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
@@ -43,5 +44,10 @@ public abstract class AbstractTile extends ContainerBlock{
 		if(!state.isValidPosition(worldIn, pos)){
 			worldIn.destroyBlock(pos, true);
 		}
+	}
+
+	@Override
+	public boolean canConnect(Direction side, BlockState state){
+		return side.getAxis() != Direction.Axis.Y;
 	}
 }

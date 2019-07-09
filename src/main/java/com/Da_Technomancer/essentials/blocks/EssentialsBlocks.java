@@ -1,9 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.blocks.redstone.AndCircuit;
-import com.Da_Technomancer.essentials.blocks.redstone.ConsCircuit;
-import com.Da_Technomancer.essentials.blocks.redstone.InterfaceCircuit;
-import com.Da_Technomancer.essentials.blocks.redstone.WireCircuit;
+import com.Da_Technomancer.essentials.blocks.redstone.*;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
@@ -44,8 +41,11 @@ public class EssentialsBlocks{
 
 	public static WireCircuit wireCircuit;
 	public static InterfaceCircuit interfaceCircuit;
+	public static WireJunctionCircuit wireJunctionCircuit;
 	public static AndCircuit andCircuit;
 	public static ConsCircuit consCircuit;
+	public static NotCircuit notCircuit;
+	public static XorCircuit xorCircuit;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -94,7 +94,10 @@ public class EssentialsBlocks{
 
 		wireCircuit = new WireCircuit();
 		interfaceCircuit = new InterfaceCircuit();
+		wireJunctionCircuit = new WireJunctionCircuit();
 		andCircuit = new AndCircuit();
 		consCircuit = new ConsCircuit();
+		notCircuit = new NotCircuit();
+		xorCircuit = new XorCircuit();
 	}
 }

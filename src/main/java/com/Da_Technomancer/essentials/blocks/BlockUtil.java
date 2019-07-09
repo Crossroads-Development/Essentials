@@ -1,7 +1,12 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import com.Da_Technomancer.essentials.packets.EssentialsPackets;
+import com.Da_Technomancer.essentials.packets.Packet;
 import jdk.internal.jline.internal.Nullable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 public class BlockUtil{
 
@@ -13,5 +18,9 @@ public class BlockUtil{
 	 */
 	public static <T> T get(@Nullable LazyOptional<T> optional){
 		return optional != null && optional.isPresent() ? optional.orElseThrow(NullPointerException::new) : null;
+	}
+
+	public static void sendClientPacketAround(World world, BlockPos pos, Packet packet){
+		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), packet);
 	}
 }

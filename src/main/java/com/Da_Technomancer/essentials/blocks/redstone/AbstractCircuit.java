@@ -17,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.TickPriority;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -53,14 +52,8 @@ public abstract class AbstractCircuit extends AbstractTile{
 				}
 			}
 			return true;
-		}else{
-			//TODO TEMP FOR TESTING
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(!worldIn.isRemote && te instanceof CircuitTileEntity){
-				playerIn.sendMessage(new StringTextComponent("OUT: " + ((CircuitTileEntity) te).getOutput() + ""));
-			}
-			return true;
 		}
+		return false;
 	}
 
 
@@ -117,6 +110,12 @@ public abstract class AbstractCircuit extends AbstractTile{
 		if(te instanceof CircuitTileEntity){
 			((CircuitTileEntity) te).recalculateOutput();
 		}
+	}
+
+	@Override
+	public boolean canConnect(Direction side, BlockState state){
+		Direction facing = state.get(EssentialsProperties.HORIZ_FACING);
+		return side == facing || useInput(CircuitTileEntity.Orient.getOrient(side, facing));
 	}
 
 	/**

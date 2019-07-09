@@ -1,10 +1,12 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
+import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.tileentities.WireTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -17,10 +19,31 @@ public class WireCircuit extends AbstractTile{
 
 	public WireCircuit(){
 		super("wire_circuit");
+		setDefaultState(getDefaultState().with(EssentialsProperties.CONNECTIONS, 0));
+	}
+
+	@Override
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+		builder.add(EssentialsProperties.CONNECTIONS);
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+		//Adjust blockstate visual
+		int meta = 0;
+		for(int i = 2; i < 6; i++){
+			Direction dir = Direction.byIndex(i);
+			BlockState otherState = worldIn.getBlockState(pos.offset(dir));
+			Block otherBlock = otherState.getBlock();
+			if(otherBlock instanceof IWireConnect && ((IWireConnect) otherBlock).canConnect(dir.getOpposite(), otherState)){
+				meta |= 1 << (i - 2);
+			}
+		}
+
+		if(meta != state.get(EssentialsProperties.CONNECTIONS)){
+			worldIn.setBlockState(pos, state.with(EssentialsProperties.CONNECTIONS, meta), 2);
+		}
+
 		//Wires propogate block updates in all horizontal directions to make sure any attached circuit can update when a new connection is made/broken
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof WireTileEntity){

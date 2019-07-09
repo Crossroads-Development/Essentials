@@ -16,7 +16,7 @@
       "tag": "minecraft:wooden_slabs"
     },
     "$": {
-      "tag": "essentials:wooden_trapdoors"
+      "tag": "minecraft:wooden_trapdoors"
     }
   }
 }

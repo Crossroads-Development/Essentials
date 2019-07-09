@@ -6,6 +6,8 @@ import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.packets.IFloatReceiver;
+import com.Da_Technomancer.essentials.packets.SendFloatToClient;
 import jdk.internal.jline.internal.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -23,7 +25,7 @@ import javax.annotation.Nonnull;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class CircuitTileEntity extends TileEntity{
+public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 	@ObjectHolder(Essentials.MODID + ":circuit")
 	private static TileEntityType<CircuitTileEntity> TYPE = null;
@@ -85,6 +87,7 @@ public class CircuitTileEntity extends TileEntity{
 				world.neighborChanged(pos.offset(facing), getOwner(), pos.offset(facing.getOpposite()));
 			}
 			output = newPower;
+			BlockUtil.sendClientPacketAround(world, pos, new SendFloatToClient(0, output, pos));
 			for(int i = 0; i < dependents.size(); i++){
 				WeakReference<LazyOptional<IRedstoneHandler>> dependent = dependents.get(i);
 				IRedstoneHandler handler;
@@ -179,6 +182,7 @@ public class CircuitTileEntity extends TileEntity{
 
 	public void wipeCache(){
 		output = 0;
+		BlockUtil.sendClientPacketAround(world, pos, new SendFloatToClient(0, output, pos));
 		builtConnections = false;
 		dependents.clear();
 		sources.clear();
@@ -198,6 +202,13 @@ public class CircuitTileEntity extends TileEntity{
 	}
 
 	@Override
+	public void receiveFloat(byte id, float value){
+		if(id == 0 && world.isRemote){
+			output = value;
+		}
+	}
+
+	@Override
 	public void read(CompoundNBT nbt){
 		super.read(nbt);
 		output = nbt.getFloat("pow");
@@ -210,6 +221,10 @@ public class CircuitTileEntity extends TileEntity{
 		return nbt;
 	}
 
+	@Override
+	public CompoundNBT getUpdateTag(){
+		return write(new CompoundNBT());
+	}
 
 	@Nonnull
 	@Override

@@ -17,4 +17,6 @@ public class EssentialsProperties{
 	//0: No head, 1: Head in positive direction, 2: Head in negative direction
 	public static final IntegerProperty HEAD = IntegerProperty.create("head", 0, 2);
 	public static final EnumProperty<Direction.Axis> AXIS = EnumProperty.create("axis", Direction.Axis.class);
+	//Connections for 4 sides. v & 1 -> north; v & 2 -> south; v & 4 -> west; v & 8 -> east
+	public static final IntegerProperty CONNECTIONS = IntegerProperty.create("connections", 0, 15);
 }

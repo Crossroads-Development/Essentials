@@ -1,0 +1,5 @@
+{
+	"variants": {
+		"": { "model": "essentials:block/circuit/wire_junction" }
+	}
+}

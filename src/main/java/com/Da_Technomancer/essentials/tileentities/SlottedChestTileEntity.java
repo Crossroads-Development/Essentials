@@ -1,8 +1,8 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
-import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,7 +19,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ObjectHolder;
@@ -54,7 +53,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 				slotNBT.put("lock" + i, lockedInv[i].write(new CompoundNBT()));
 			}
 		}
-		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(slotNBT, pos));
+		BlockUtil.sendClientPacketAround(world, pos, new SendSlotFilterToClient(slotNBT, pos));
 	}
 
 	@Override

@@ -1,5 +1,20 @@
 {
 	"variants": {
-		"": { "model": "essentials:block/circuit/wire" }
+		"connections=0": { "model": "essentials:block/circuit/wire_0" },
+		"connections=1": { "model": "essentials:block/circuit/wire_n" },
+		"connections=2": { "model": "essentials:block/circuit/wire_s" },
+		"connections=3": { "model": "essentials:block/circuit/wire_ns" },
+		"connections=4": { "model": "essentials:block/circuit/wire_w" },
+		"connections=5": { "model": "essentials:block/circuit/wire_nw" },
+		"connections=6": { "model": "essentials:block/circuit/wire_sw" },
+		"connections=7": { "model": "essentials:block/circuit/wire_nsw" },
+		"connections=8": { "model": "essentials:block/circuit/wire_e" },
+		"connections=9": { "model": "essentials:block/circuit/wire_ne" },
+		"connections=10": { "model": "essentials:block/circuit/wire_se" },
+		"connections=11": { "model": "essentials:block/circuit/wire_nse" },
+		"connections=12": { "model": "essentials:block/circuit/wire_we" },
+		"connections=13": { "model": "essentials:block/circuit/wire_nwe" },
+		"connections=14": { "model": "essentials:block/circuit/wire_swe" },
+		"connections=15": { "model": "essentials:block/circuit/wire_nswe" }
 	}
 }

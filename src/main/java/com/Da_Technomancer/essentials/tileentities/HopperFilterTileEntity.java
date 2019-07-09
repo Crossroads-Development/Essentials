@@ -1,9 +1,9 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
-import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
 import net.minecraft.block.BlockState;
@@ -18,7 +18,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ObjectHolder;
@@ -44,7 +43,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	public void setFilter(ItemStack filter){
 		this.filter = filter;
-		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), new SendSlotFilterToClient(filter.write(new CompoundNBT()), pos));
+		BlockUtil.sendClientPacketAround(world, pos, new SendSlotFilterToClient(filter.write(new CompoundNBT()), pos));
 		markDirty();
 	}
 

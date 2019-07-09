@@ -1,9 +1,9 @@
 {
 	"ambientocclusion": false,
 	"textures": {
-		"particle": "block/smooth_stone",
+		"particle": "essentials:block/circuit/blank",
 		"side": "essentials:block/circuit/circuit_side",
-		"base": "block/smooth_stone",
+		"base": "essentials:block/circuit/blank",
 		"top": "#circ"
 	},
 	"elements": [

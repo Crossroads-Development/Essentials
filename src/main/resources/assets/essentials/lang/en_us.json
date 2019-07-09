@@ -29,14 +29,18 @@
 	"block.essentials.wither_cannon": "Wither Cannon",
 
 	"block.essentials.wire_circuit": "Wire Plate",
+	"block.essentials.wire_junction_circuit": "Wire Junction",
 	"block.essentials.interface_circuit": "Wire Splice Plate",
 	"block.essentials.and_circuit": "AND Circuit",
 	"block.essentials.cons_circuit": "Constant Circuit",
+	"block.essentials.not_circuit": "NOT Circuit",
+	"block.essentials.xor_circuit": "XOR Circuit",
 
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
 	"item.essentials.wrench": "Wrench",
 	"item.essentials.candle_lilypad": "Candle Lilypad",
 	"item.essentials.animal_feed": "Animal Feed",
+	"item.essentials.circuit_wrench": "Circuit Wrench",
 
 	"container.slotted_chest": "Slotted Chest",
 	"container.sorting_hopper": "Sorting Hopper",
@@ -46,6 +50,9 @@
 
 	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
 	"tt.essentials.wither_cannon": "Shoots an exploding wither skull when powered",
+	"tt.essentials.circuit_wrench_setting": "Mode: ",
+	"tt.essentials.circuit_wrench_info": "Turns Wire Plates into circuitry on use, consuming nether quartz",
+	"tt.essentials.circuit_wrench_change_mode": "Change circuit type by sneak-clicking",
 
 	"itemGroup.essentials": "Essentials"
 }

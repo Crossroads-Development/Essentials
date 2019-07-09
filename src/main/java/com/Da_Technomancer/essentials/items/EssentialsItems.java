@@ -20,6 +20,7 @@ public class EssentialsItems{
 	public static ItemCandleLily itemCandleLilypad;
 	public static Wrench wrench;
 	public static AnimalFeed animalFeed;
+	public static CircuitWrench circuitWrench;
 
 	public static final ArrayList<Item> toRegister = new ArrayList<>();
 
@@ -28,5 +29,6 @@ public class EssentialsItems{
 		itemCandleLilypad = new ItemCandleLily();
 		wrench = new Wrench();
 		animalFeed = new AnimalFeed();
+		circuitWrench = new CircuitWrench();
 	}
 }

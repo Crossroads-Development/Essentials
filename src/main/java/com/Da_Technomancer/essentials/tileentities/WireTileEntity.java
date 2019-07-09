@@ -22,9 +22,15 @@ public class WireTileEntity extends TileEntity{
 	private static TileEntityType<WireTileEntity> TYPE = null;
 
 	public long lastUpdateTime;
+	protected LazyOptional<RedsHandler> redsOptional;
+
+	protected WireTileEntity(TileEntityType<? extends WireTileEntity> type){
+		super(type);
+	}
 
 	public WireTileEntity(){
 		super(TYPE);
+		redsOptional = LazyOptional.of(RedsHandler::new);
 	}
 
 	@Override
@@ -32,8 +38,6 @@ public class WireTileEntity extends TileEntity{
 		super.remove();
 		redsOptional.invalidate();
 	}
-
-	private final LazyOptional<RedsHandler> redsOptional = LazyOptional.of(RedsHandler::new);
 
 	@Nonnull
 	@Override
@@ -45,7 +49,7 @@ public class WireTileEntity extends TileEntity{
 		return super.getCapability(cap, side);
 	}
 
-	private class RedsHandler implements IRedstoneHandler{
+	protected class RedsHandler implements IRedstoneHandler{
 
 		@Override
 		public float getOutput(){
@@ -74,7 +78,7 @@ public class WireTileEntity extends TileEntity{
 			}
 		}
 
-		private void routeDependents(WeakReference<LazyOptional<IRedstoneHandler>> src, int dist, Direction fromSide, Direction nominalSide, HashSet<BlockPos> visited){
+		protected void routeDependents(WeakReference<LazyOptional<IRedstoneHandler>> src, int dist, Direction fromSide, Direction nominalSide, HashSet<BlockPos> visited){
 			if(!visited.add(pos) || ++dist >= RedstoneUtil.getMaxRange()){
 				return;
 			}
@@ -115,7 +119,7 @@ public class WireTileEntity extends TileEntity{
 			}
 		}
 
-		private void routeSrc(WeakReference<LazyOptional<IRedstoneHandler>> dependency, int dist, Direction toSide, Direction nominalSide, HashSet<BlockPos> visited){
+		protected void routeSrc(WeakReference<LazyOptional<IRedstoneHandler>> dependency, int dist, Direction toSide, Direction nominalSide, HashSet<BlockPos> visited){
 			if(!visited.add(pos) || ++dist >= RedstoneUtil.getMaxRange()){
 				return;
 			}
