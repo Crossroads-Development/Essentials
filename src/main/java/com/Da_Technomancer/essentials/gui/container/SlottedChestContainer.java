@@ -19,9 +19,8 @@ import java.util.Set;
 @ObjectHolder(Essentials.MODID)
 public class SlottedChestContainer extends Container{
 
-
 	@ObjectHolder("slotted_chest")
-	private static ContainerType<ItemShifterContainer> TYPE = null;
+	private static ContainerType<SlottedChestContainer> TYPE = null;
 
 	private final SlottedChestTileEntity.Inventory inv;
 	/**

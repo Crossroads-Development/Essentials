@@ -60,7 +60,7 @@ public final class Essentials{
 		EssentialsConfig.load();
 	}
 
-	private void commonInit(FMLCommonSetupEvent e){
+	private void commonInit(@SuppressWarnings("unused") FMLCommonSetupEvent e){
 		//Pre
 		EssentialsPackets.preInit();
 		RedstoneUtil.registerCap();
@@ -68,7 +68,7 @@ public final class Essentials{
 		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerCommon());
 	}
 
-	private void clientInit(FMLClientSetupEvent e){
+	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerClient());
 	}
@@ -108,9 +108,9 @@ public final class Essentials{
 		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, basicItemSplitter);
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
 //		registerTE(FluidShifterTileEntity::new, "fluid_splitter", reg, EssentialsBlocks.fluidShifter);
-		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, consCircuit, interfaceCircuit, notCircuit, xorCircuit);
-		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
-		registerTE(WireTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
+//		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, consCircuit, interfaceCircuit, notCircuit, xorCircuit);
+//		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
+//		registerTE(WireTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
@@ -128,11 +128,40 @@ public final class Essentials{
 		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	private static <T extends Container> void registerCon(IContainerFactory<T> cons, ScreenManager.IScreenFactory<T, ContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<ContainerType<?>> reg){
+	@SubscribeEvent
+	@SuppressWarnings("unused")
+	@OnlyIn(Dist.DEDICATED_SERVER)
+	public static void registerContainerTypes(RegistryEvent.Register<ContainerType<?>> e){
+		registerConType(ItemShifterContainer::new, "item_shifter", e);
+		registerConType(SlottedChestContainer::new, "slotted_chest", e);
+	}
+
+	/**
+	 * Creates and registers a container type
+	 * @param cons Container factory
+	 * @param id The ID to use
+	 * @param reg Registery event
+	 * @param <T> Container subclass
+	 * @return The newly created type
+	 */
+	private static <T extends Container> ContainerType<T> registerConType(IContainerFactory<T> cons, String id, RegistryEvent.Register<ContainerType<?>> reg){
 		ContainerType<T> contType = new ContainerType<>(cons);
 		contType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.getRegistry().register(contType);
+		return contType;
+	}
+
+	/**
+	 * Creates and registers both a container type and a screen factory. Not usable on the physical server due to screen factory.
+	 * @param cons Container factory
+	 * @param screenFactory The screen factory to be linked to the type
+	 * @param id The ID to use
+	 * @param reg Registery event
+	 * @param <T> Container subclass
+	 */
+	@OnlyIn(Dist.CLIENT)
+	private static <T extends Container> void registerCon(IContainerFactory<T> cons, ScreenManager.IScreenFactory<T, ContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<ContainerType<?>> reg){
+		ContainerType<T> contType = registerConType(cons, id, reg);
 		ScreenManager.registerFactory(contType, screenFactory);
 	}
 }
