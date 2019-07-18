@@ -47,6 +47,9 @@
 	"container.speed_hopper": "High-Throughput Hopper",
 	"container.item_shifter": "Item Shifter",
 	"container.fluid_shifter": "Fluid Shifter",
+	"container.circuit_wrench": "Circuit Wrench",
+	"container.search_bar": "Filter",
+	"container.cons_circuit": "Circuit Output Strength",
 
 	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
 	"tt.essentials.wither_cannon": "Shoots an exploding wither skull when powered",

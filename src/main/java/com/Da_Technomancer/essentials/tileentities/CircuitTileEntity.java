@@ -40,7 +40,11 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	private float output = 0;
 
 	public CircuitTileEntity(){
-		super(TYPE);
+		this(TYPE);
+	}
+
+	protected CircuitTileEntity(TileEntityType<?> type){
+		super(type);
 	}
 
 	private AbstractCircuit getOwner(){

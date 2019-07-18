@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
+import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.tileentities.WireTileEntity;
 import net.minecraft.block.Block;
@@ -20,6 +21,7 @@ public class WireCircuit extends AbstractTile{
 	public WireCircuit(){
 		super("wire_circuit");
 		setDefaultState(getDefaultState().with(EssentialsProperties.CONNECTIONS, 0));
+		EssentialsBlocks.blockAddQue(this);//Register an item form only for the actual wire circuit
 	}
 
 	@Override

@@ -94,7 +94,7 @@ public class EssentialsConfig{
 				if(absValue == 0){
 					return "0";
 				}
-				if(absValue < 1000 && absValue >= 0.0005){
+				if(absValue < 1000 && absValue >= 0.0005F){
 					return trimTrail(Math.round(value * 1000F) / 1000F);
 				}
 

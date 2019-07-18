@@ -92,12 +92,12 @@ public class EssentialsBlocks{
 		itemSplitter = new ItemSplitter();
 		witherCannon = new WitherCannon();
 
-//		wireCircuit = new WireCircuit();
-//		interfaceCircuit = new InterfaceCircuit();
-//		wireJunctionCircuit = new WireJunctionCircuit();
-//		andCircuit = new AndCircuit();
-//		consCircuit = new ConsCircuit();
-//		notCircuit = new NotCircuit();
-//		xorCircuit = new XorCircuit();
+		wireCircuit = new WireCircuit();
+		interfaceCircuit = new InterfaceCircuit();
+		wireJunctionCircuit = new WireJunctionCircuit();
+		andCircuit = new AndCircuit();
+		consCircuit = new ConsCircuit();
+		notCircuit = new NotCircuit();
+		xorCircuit = new XorCircuit();
 	}
 }

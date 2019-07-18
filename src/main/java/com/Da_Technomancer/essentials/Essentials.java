@@ -1,8 +1,12 @@
 package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.gui.CircuitWrenchScreen;
+import com.Da_Technomancer.essentials.gui.ConstantCircuitScreen;
 import com.Da_Technomancer.essentials.gui.ItemShifterScreen;
 import com.Da_Technomancer.essentials.gui.SlottedChestScreen;
+import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
+import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
@@ -108,9 +112,10 @@ public final class Essentials{
 		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, basicItemSplitter);
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
 //		registerTE(FluidShifterTileEntity::new, "fluid_splitter", reg, EssentialsBlocks.fluidShifter);
-//		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, consCircuit, interfaceCircuit, notCircuit, xorCircuit);
-//		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
-//		registerTE(WireTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
+		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, interfaceCircuit, notCircuit, xorCircuit);
+		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
+		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
+		registerTE(WireTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
@@ -126,6 +131,8 @@ public final class Essentials{
 	public static void registerContainers(RegistryEvent.Register<ContainerType<?>> e){
 		registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
 		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
+		registerCon(CircuitWrenchContainer::new, CircuitWrenchScreen::new, "circuit_wrench", e);
+		registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
 	}
 
 	@SubscribeEvent
@@ -134,6 +141,8 @@ public final class Essentials{
 	public static void registerContainerTypes(RegistryEvent.Register<ContainerType<?>> e){
 		registerConType(ItemShifterContainer::new, "item_shifter", e);
 		registerConType(SlottedChestContainer::new, "slotted_chest", e);
+		registerConType(CircuitWrenchContainer::new, "circuit_wrench", e);
+		registerConType(ConstantCircuitContainer::new, "cons_circuit", e);
 	}
 
 	/**

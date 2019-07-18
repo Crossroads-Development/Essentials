@@ -19,7 +19,7 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 		super(PROP);
 		setRegistryName(name);
 		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		//Don't register an item form
 	}
 
 	private static final VoxelShape BB = makeCuboidShape(0, 0, 0, 16, 2, 16);

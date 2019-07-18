@@ -36,7 +36,7 @@ public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 	}
 
 	@Override
-	protected int getBase(){
+	public int getBase(){
 		return 15;
 	}
 } 

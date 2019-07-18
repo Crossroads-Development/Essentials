@@ -61,7 +61,7 @@ public class BasicItemSplitter extends ContainerBlock{
 					TileEntity te = worldIn.getTileEntity(pos);
 					if(te instanceof BasicItemSplitterTileEntity){
 						int mode = ((BasicItemSplitterTileEntity) te).increaseMode();
-						playerIn.sendMessage(new StringTextComponent("Sending " + BasicItemSplitterTileEntity.MODES[mode] + "/4 of items downwards"));
+						playerIn.sendMessage(new StringTextComponent(String.format("Sending %1$d/%2$d of items downwards", BasicItemSplitterTileEntity.MODES[mode], ((BasicItemSplitterTileEntity) te).getBase())));
 					}
 				}else{
 					BlockState endState = state.cycle(EssentialsProperties.FACING);

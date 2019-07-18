@@ -29,6 +29,6 @@ public class EssentialsItems{
 		itemCandleLilypad = new ItemCandleLily();
 		wrench = new Wrench();
 		animalFeed = new AnimalFeed();
-//		circuitWrench = new CircuitWrench();
+		circuitWrench = new CircuitWrench();
 	}
 }

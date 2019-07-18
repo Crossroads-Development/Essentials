@@ -23,7 +23,7 @@ public class RedstoneUtil extends BlockUtil{
 	@CapabilityInject(IRedstoneHandler.class)
 	public static Capability<IRedstoneHandler> REDSTONE_CAPABILITY = null;
 
-	public static final float MAX_POWER = 1_000_000;
+	public static final float MAX_POWER = 1_000_000_000;
 
 	public static final int DELAY = 2;
 

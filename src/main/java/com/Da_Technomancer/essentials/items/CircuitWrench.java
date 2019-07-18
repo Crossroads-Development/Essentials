@@ -5,13 +5,17 @@ import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractTile;
+import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.item.Items;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ActionResult;
@@ -23,6 +27,7 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,20 +36,26 @@ import java.util.List;
 
 public class CircuitWrench extends Item{
 
-	private static final ArrayList<AbstractTile> MODES = new ArrayList<>(7);
-	private static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(7);
+	/**
+	 * Public for read-only; Modify using registerCircuit()
+	 */
+	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(7);
+	/**
+	 * Public for read-only; Modify using registerCircuit()
+	 */
+	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(7);
 
-	private static final String NBT_KEY = Essentials.MODID + ":mode";
+	public static final String NBT_KEY = Essentials.MODID + ":mode";
 	private static final Tag<Item> COMPONENT_TAG = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "circuit_components"));//new ResourceLocation(Essentials.MODID, "circuit_components");
 
 	static{
-		registerCircuit(EssentialsBlocks.wireCircuit, null);
-		registerCircuit(EssentialsBlocks.wireJunctionCircuit, null);
-		registerCircuit(EssentialsBlocks.interfaceCircuit, null);
-		registerCircuit(EssentialsBlocks.consCircuit, null);
-		registerCircuit(EssentialsBlocks.notCircuit, null);
-		registerCircuit(EssentialsBlocks.andCircuit, null);
-		registerCircuit(EssentialsBlocks.xorCircuit, null);
+		registerCircuit(EssentialsBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
+		registerCircuit(EssentialsBlocks.wireJunctionCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire_junction.png"));
+		registerCircuit(EssentialsBlocks.interfaceCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/interface.png"));
+		registerCircuit(EssentialsBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/constant.png"));
+		registerCircuit(EssentialsBlocks.notCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/not.png"));
+		registerCircuit(EssentialsBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
+		registerCircuit(EssentialsBlocks.xorCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/xor.png"));
 	}
 
 	/**
@@ -73,12 +84,9 @@ public class CircuitWrench extends Item{
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
 		ItemStack stack = playerIn.getHeldItem(handIn);
 		if(playerIn.isSneaking()){
-			int newMode = (stack.getTag().getInt(NBT_KEY) + 1) % MODES.size();
-			stack.getOrCreateTag().putInt(NBT_KEY, newMode);
-			if(worldIn.isRemote){
-				playerIn.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).appendSibling(new TranslationTextComponent(MODES.get(newMode).getTranslationKey())));
+			if(!worldIn.isRemote){
+				NetworkHooks.openGui((ServerPlayerEntity) playerIn, UIProvider.INSTANCE);
 			}
-			//TODO UI
 			return ActionResult.newResult(ActionResultType.SUCCESS, stack);
 		}
 
@@ -87,14 +95,15 @@ public class CircuitWrench extends Item{
 
 	@Override
 	public ActionResultType onItemUse(ItemUseContext context){
-		for(ResourceLocation loc : Items.QUARTZ.getTags()){
-			System.out.println(loc.toString());
-		}
-
 		BlockState state = context.getWorld().getBlockState(context.getPos());
 		BlockState toPlace = MODES.get(context.getItem().getOrCreateTag().getInt(NBT_KEY) % MODES.size()).getDefaultState();
 
-		if(state.getBlock() instanceof AbstractTile){
+		if(!context.getPlayer().isSneaking() && state.getBlock() instanceof AbstractTile){
+			if(state.getBlock() == toPlace.getBlock()){
+				return ActionResultType.SUCCESS;
+			}
+
+
 			boolean allowed = false;
 			if(context.getPlayer().isCreative()){
 				//Creative mode is free
@@ -154,5 +163,21 @@ public class CircuitWrench extends Item{
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).appendSibling(new TranslationTextComponent(MODES.get(mode).getTranslationKey())));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_info"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_change_mode"));
+	}
+
+	private static class UIProvider implements INamedContainerProvider{
+
+		private static final UIProvider INSTANCE = new UIProvider();
+
+		@Nullable
+		@Override
+		public Container createMenu(int menuId, PlayerInventory playerInv, PlayerEntity player){
+			return new CircuitWrenchContainer(menuId, playerInv, null);
+		}
+
+		@Override
+		public ITextComponent getDisplayName(){
+			return new TranslationTextComponent("container.circuit_wrench");
+		}
 	}
 }

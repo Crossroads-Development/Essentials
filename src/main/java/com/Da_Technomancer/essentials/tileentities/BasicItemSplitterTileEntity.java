@@ -23,8 +23,8 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	@ObjectHolder("basic_item_splitter")
 	private static TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
 
-	public static final int[] MODES = {1, 2, 3};
-	private int mode = 1;
+	public static final int[] MODES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+	private int mode = 6;
 	private ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 
 	public Direction facing = null;
@@ -95,6 +95,7 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	@Override
 	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
+		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
 		nbt.putInt("transfered", transfered);
 		for(int i = 0; i < 2; i++){
@@ -110,7 +111,14 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	@Override
 	public void read(CompoundNBT nbt){
 		super.read(nbt);
-		mode = nbt.getInt("mode");
+
+		//The way this block saves to nbt was changed in 2.2.0, and a "type" of 1 means the encoding is the new version, while 0 mean old version
+		if(nbt.getByte("type") == 1){
+			mode = nbt.getInt("mode");
+		}else{
+			mode = 3 + 3 * nbt.getInt("mode");
+		}
+
 		transfered = nbt.getInt("transfered");
 		for(int i = 0; i < 2; i++){
 			inventory[i] = ItemStack.read(nbt.getCompound("inv_" + i));
@@ -121,8 +129,8 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		return MODES[mode];
 	}
 
-	protected int getBase(){
-		return 4;
+	public int getBase(){
+		return 12;
 	}
 
 	private int transfered = 0;

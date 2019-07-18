@@ -1,0 +1,32 @@
+{
+	"parent": "minecraft:recipes/root",
+	"rewards": {
+		"recipes": [
+			"essentials:wire_circuit"
+		]
+	},
+	"criteria": {
+		"has_ingr": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"tag": "forge:dusts/redstone"
+					}
+				]
+			}
+		},
+		"has_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "essentials:wire_circuit"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_ingr",
+			"has_recipe"
+		]
+	]
+}

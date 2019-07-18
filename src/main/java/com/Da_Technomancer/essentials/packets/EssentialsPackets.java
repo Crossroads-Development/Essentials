@@ -16,6 +16,8 @@ public class EssentialsPackets{
 
 		channel.registerMessage(index++, SendSlotFilterToClient.class, PacketManager::encode, (buf) -> PacketManager.decode(buf, SendSlotFilterToClient.class), PacketManager::activate);
 		channel.registerMessage(index++, SendFloatToClient.class, PacketManager::encode, (buf) -> PacketManager.decode(buf, SendFloatToClient.class), PacketManager::activate);
-
+		channel.registerMessage(index++, ConfigureWrenchOnServer.class, PacketManager::encode, (buf) -> PacketManager.decode(buf, ConfigureWrenchOnServer.class), PacketManager::activate);
+		channel.registerMessage(index++, SendFloatToServer.class, PacketManager::encode, (buf) -> PacketManager.decode(buf, SendFloatToServer.class), PacketManager::activate);
+		channel.registerMessage(index++, SendNBTToServer.class, PacketManager::encode, (buf) -> PacketManager.decode(buf, SendNBTToServer.class), PacketManager::activate);
 	}
 }
