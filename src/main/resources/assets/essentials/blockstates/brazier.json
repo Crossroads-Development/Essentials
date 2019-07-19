@@ -6,28 +6,28 @@
 	"variants": {
 		"br_cont": {
 			"0": {
-				"model": "essentials:brazier"
+				"model": "essentials:block/brazier"
 			},
 			"1": {
-				"model": "essentials:brazier_w"
+				"model": "essentials:block/brazier_w"
 			},
 			"2": {
-				"model": "essentials:brazier_l"
+				"model": "essentials:block/brazier_l"
 			},
 			"3": {
-				"model": "essentials:brazier_e"
+				"model": "essentials:block/brazier_e"
 			},
 			"4": {
-				"model": "essentials:brazier_g"
+				"model": "essentials:block/brazier_g"
 			},
 			"5": {
-				"model": "essentials:brazier"
+				"model": "essentials:block/brazier"
 			},
 			"6": {
-				"model": "essentials:brazier_s"
+				"model": "essentials:block/brazier_s"
 			},
 			"7": {
-				"model": "essentials:brazier_p"
+				"model": "essentials:block/brazier_p"
 			}
 		}
 	}

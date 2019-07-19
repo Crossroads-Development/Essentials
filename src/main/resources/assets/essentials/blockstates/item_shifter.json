@@ -1,7 +1,7 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"model": "essentials:item_shifter",
+		"model": "essentials:block/item_shifter",
 		"uvlock": false
 	},
 	"variants": {

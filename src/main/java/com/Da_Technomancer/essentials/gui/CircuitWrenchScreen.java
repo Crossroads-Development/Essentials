@@ -11,7 +11,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
@@ -19,6 +21,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>{
 
@@ -104,7 +107,11 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 		//Tooltip
 		int index = getSelectedMode(mouseX, mouseY);
 		if(index >= 0){
-			renderTooltip(I18n.format(CircuitWrench.MODES.get(index).getTranslationKey()), mouseX, mouseY);
+			ArrayList<ITextComponent> tt = new ArrayList<>();
+			tt.add(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey()));
+			AbstractTile block = CircuitWrench.MODES.get(index);
+			block.addInformation(ItemStack.EMPTY, null, tt, ITooltipFlag.TooltipFlags.NORMAL);
+			renderTooltip(tt.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), mouseX, mouseY);
 		}
 
 		GlStateManager.disableLighting();

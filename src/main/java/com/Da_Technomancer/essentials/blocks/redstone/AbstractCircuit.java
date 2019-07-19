@@ -5,6 +5,8 @@ import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.RedstoneDiodeBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
@@ -16,6 +18,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.TickPriority;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -25,7 +28,6 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	protected AbstractCircuit(String name){
 		super(name);
-//		setDefaultState(getDefaultState().with(EssentialsProperties.REDSTONE_BOOL, false));
 	}
 
 
@@ -66,20 +68,30 @@ public abstract class AbstractCircuit extends AbstractTile{
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof CircuitTileEntity && !worldIn.isRemote){
+			((CircuitTileEntity) te).builtConnections = false;
 			((CircuitTileEntity) te).buildConnections();
+		}else{
+			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.NORMAL);
 		}
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		TileEntity te = worldIn.getTileEntity(pos);
-		if(te instanceof CircuitTileEntity){
-			((CircuitTileEntity) te).builtConnections = false;
-			((CircuitTileEntity) te).buildConnections();
+		if(blockIn == Blocks.REDSTONE_WIRE || blockIn instanceof RedstoneDiodeBlock){
+			//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
+			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
+			TileEntity te = worldIn.getTileEntity(pos);
+			if(te instanceof CircuitTileEntity){
+				((CircuitTileEntity) te).buildConnections();
+			}
+		}else{
+			TileEntity te = worldIn.getTileEntity(pos);
+			if(te instanceof CircuitTileEntity){
+				((CircuitTileEntity) te).builtConnections = false;
+				((CircuitTileEntity) te).buildConnections();
+			}
 		}
-
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-//		worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
 	}
 
 	@Override

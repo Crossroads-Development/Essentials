@@ -112,7 +112,7 @@ public final class Essentials{
 		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, basicItemSplitter);
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
 //		registerTE(FluidShifterTileEntity::new, "fluid_splitter", reg, EssentialsBlocks.fluidShifter);
-		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, interfaceCircuit, notCircuit, xorCircuit);
+		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
 		registerTE(WireTileEntity::new, "wire_junction", reg, wireJunctionCircuit);

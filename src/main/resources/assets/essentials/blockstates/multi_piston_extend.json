@@ -6,13 +6,13 @@
 	"variants": {
 		"head": {
 			"0": {
-				"model": "essentials:multi_piston_extend"
+				"model": "essentials:block/multi_piston_extend"
 			},
 			"1": {
-				"model": "essentials:multi_piston_extend_head"
+				"model": "essentials:block/multi_piston_extend_head"
 			},
 			"2": {
-				"model": "essentials:multi_piston_extend_head_rev"
+				"model": "essentials:block/multi_piston_extend_head_rev"
 			}
 		},
 		"axis": {

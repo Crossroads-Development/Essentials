@@ -77,14 +77,6 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	private void setPower(float newPower){
 		if(RedstoneUtil.didChange(output, newPower)){
 			Direction facing = getFacing();
-
-			/*
-			if((output == 0) ^ (newPower == 0)){
-				//Prevent a blocks update to reduce lag from frequent redstone changes
-				world.setBlockState(pos, getBlockState().with(EssentialsProperties.REDSTONE_BOOL, newPower != 0), 2);
-			}
-			*/
-
 			//If no dependents, assume we're outputting to vanilla redstone
 			if(dependents.isEmpty() && RedstoneUtil.clampToVanilla(output) != RedstoneUtil.clampToVanilla(newPower)){
 				output = newPower;
@@ -180,7 +172,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				otherHandler.findDependents(hanReference, 0, dir.getOpposite(), dir);
 			}
 
-			world.getPendingBlockTicks().scheduleTick(pos, own, RedstoneUtil.DELAY, TickPriority.HIGH);
+			world.getPendingBlockTicks().scheduleTick(pos, own, RedstoneUtil.DELAY, TickPriority.NORMAL);
 		}
 	}
 

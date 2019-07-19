@@ -34,13 +34,30 @@
 	"block.essentials.and_circuit": "AND Circuit",
 	"block.essentials.cons_circuit": "Constant Circuit",
 	"block.essentials.not_circuit": "NOT Circuit",
+	"block.essentials.or_circuit": "OR Circuit",
 	"block.essentials.xor_circuit": "XOR Circuit",
-
+	"block.essentials.max_circuit": "Maximum Circuit",
+	"block.essentials.min_circuit": "Minimum Circuit",
+	"block.essentials.sum_circuit": "Addition Circuit",
+	"block.essentials.dif_circuit": "Subtraction Circuit",
+	"block.essentials.prod_circuit": "Multiplication Circuit",
+	"block.essentials.quot_circuit": "Quotient Circuit",
+	"block.essentials.pow_circuit": "Exponentiation Circuit",
+	"block.essentials.inv_circuit": "Inversion Circuit",
+	"block.essentials.sin_circuit": "Sine Circuit",
+	"block.essentials.cos_circuit": "Cosine Circuit",
+	"block.essentials.tan_circuit": "Tangent Circuit",
+	"block.essentials.asin_circuit": "Arc-Sine Circuit",
+	"block.essentials.acos_circuit": "Arc-Cosine Circuit",
+	"block.essentials.atan_circuit": "Arc-Tangent Circuit",
+	
+	
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
 	"item.essentials.wrench": "Wrench",
 	"item.essentials.candle_lilypad": "Candle Lilypad",
 	"item.essentials.animal_feed": "Animal Feed",
 	"item.essentials.circuit_wrench": "Circuit Wrench",
+
 
 	"container.slotted_chest": "Slotted Chest",
 	"container.sorting_hopper": "Sorting Hopper",
@@ -51,11 +68,36 @@
 	"container.search_bar": "Filter",
 	"container.cons_circuit": "Circuit Output Strength",
 
+
 	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
 	"tt.essentials.wither_cannon": "Shoots an exploding wither skull when powered",
 	"tt.essentials.circuit_wrench_setting": "Mode: ",
 	"tt.essentials.circuit_wrench_info": "Turns Wire Plates into circuitry on use, consuming nether quartz",
 	"tt.essentials.circuit_wrench_change_mode": "Change circuit type by sneak-clicking",
+
+	"tt.essentials.wire_circuit": "A simple wire for connecting circuits",
+	"tt.essentials.wire_junction_circuit": "Allows wires to cross without connecting",
+	"tt.essentials.cons_circuit": "Has a constant output set via a UI which accepts mathematical expressions",
+	"tt.essentials.interface_circuit": "Connects vanilla redstone with Essentials wire plates",
+	"tt.essentials.not_circuit": "NOT gate- outputs 1 iff the back input is off",
+	"tt.essentials.and_circuit": "AND gate- outputs 1 iff both inputs are on",
+	"tt.essentials.or_circuit": "OR gate- outputs 1 iff either input is on",
+	"tt.essentials.xor_circuit": "XOR gate- outputs 1 iff only one input is on",
+	"tt.essentials.max_circuit": "Outputs the largest input",
+	"tt.essentials.min_circuit": "Outputs the smallest input",
+	"tt.essentials.sum_circuit": "Outputs the sum of the inputs",
+	"tt.essentials.dif_circuit": "Outputs the back input minus the side input",
+	"tt.essentials.prod_circuit": "Outputs the product of the inputs",
+	"tt.essentials.quot_circuit": "Outputs the back input divided by the side input",
+	"tt.essentials.pow_circuit": "Outputs the back input raised to the power of the side input",
+	"tt.essentials.inv_circuit": "Outputs 1 divided by the back input",
+	"tt.essentials.sin_circuit": "Outputs sin of the back input, in radians",
+	"tt.essentials.cos_circuit": "Outputs cos of the back input, in radians",
+	"tt.essentials.tan_circuit": "Outputs tan of the back input, in radians",
+	"tt.essentials.asin_circuit": "Outputs arcsin of the back input, in radians",
+	"tt.essentials.acos_circuit": "Outputs arccos of the back input, in radians",
+	"tt.essentials.atan_circuit": "Outputs arctan of the back input, in radians",
+
 
 	"itemGroup.essentials": "Essentials"
 }

@@ -4,15 +4,19 @@ import com.Da_Technomancer.essentials.tileentities.WireJunctionTileEntity;
 import com.Da_Technomancer.essentials.tileentities.WireTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class WireJunctionCircuit extends AbstractTile{
 
@@ -60,5 +64,10 @@ public class WireJunctionCircuit extends AbstractTile{
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 		worldIn.neighborChanged(pos, this, pos);
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+		tooltip.add(new TranslationTextComponent("tt.essentials.wire_junction_circuit"));
 	}
 }

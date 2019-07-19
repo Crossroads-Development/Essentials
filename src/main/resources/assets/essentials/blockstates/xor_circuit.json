@@ -1,7 +1,7 @@
 {
 	"forge_marker": 1,
 	"defaults": {
-		"model": "essentials:circuit/xor",
+		"model": "essentials:block/circuit/xor",
 		"uvlock": false
 	},
 	"variants": {

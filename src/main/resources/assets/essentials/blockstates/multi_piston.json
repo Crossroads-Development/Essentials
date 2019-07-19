@@ -29,10 +29,10 @@
 		},
 		"extended": {
 			"true": {
-				"model": "essentials:multi_piston"
+				"model": "essentials:block/multi_piston"
 			},
 			"false": {
-				"model": "essentials:multi_piston_full"
+				"model": "essentials:block/multi_piston_full"
 			}
 		}
 	}

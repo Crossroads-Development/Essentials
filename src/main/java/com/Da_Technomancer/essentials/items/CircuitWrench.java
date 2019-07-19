@@ -55,7 +55,22 @@ public class CircuitWrench extends Item{
 		registerCircuit(EssentialsBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/constant.png"));
 		registerCircuit(EssentialsBlocks.notCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/not.png"));
 		registerCircuit(EssentialsBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
+		registerCircuit(EssentialsBlocks.orCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/or.png"));
 		registerCircuit(EssentialsBlocks.xorCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/xor.png"));
+		registerCircuit(EssentialsBlocks.maxCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/max.png"));
+		registerCircuit(EssentialsBlocks.minCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/min.png"));
+		registerCircuit(EssentialsBlocks.sumCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sum.png"));
+		registerCircuit(EssentialsBlocks.difCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/dif.png"));
+		registerCircuit(EssentialsBlocks.prodCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/prod.png"));
+		registerCircuit(EssentialsBlocks.quotCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/quot.png"));
+		registerCircuit(EssentialsBlocks.invCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/inv.png"));
+		registerCircuit(EssentialsBlocks.powCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pow.png"));
+		registerCircuit(EssentialsBlocks.sinCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sin.png"));
+		registerCircuit(EssentialsBlocks.cosCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/cos.png"));
+		registerCircuit(EssentialsBlocks.tanCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/tan.png"));
+		registerCircuit(EssentialsBlocks.asinCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/asin.png"));
+		registerCircuit(EssentialsBlocks.acosCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/acos.png"));
+		registerCircuit(EssentialsBlocks.atanCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/atan.png"));
 	}
 
 	/**

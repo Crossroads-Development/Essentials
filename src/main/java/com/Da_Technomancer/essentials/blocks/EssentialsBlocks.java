@@ -40,12 +40,29 @@ public class EssentialsBlocks{
 	public static WitherCannon witherCannon;
 
 	public static WireCircuit wireCircuit;
-	public static InterfaceCircuit interfaceCircuit;
+	public static AbstractCircuit interfaceCircuit;
 	public static WireJunctionCircuit wireJunctionCircuit;
-	public static AndCircuit andCircuit;
+	public static AbstractCircuit andCircuit;
 	public static ConsCircuit consCircuit;
-	public static NotCircuit notCircuit;
-	public static XorCircuit xorCircuit;
+	public static AbstractCircuit notCircuit;
+	public static AbstractCircuit orCircuit;
+	public static AbstractCircuit xorCircuit;
+	public static AbstractCircuit maxCircuit;
+	public static AbstractCircuit minCircuit;
+	public static AbstractCircuit sumCircuit;
+	public static AbstractCircuit difCircuit;
+	public static AbstractCircuit prodCircuit;
+	public static AbstractCircuit quotCircuit;
+	public static AbstractCircuit powCircuit;
+	public static AbstractCircuit invCircuit;
+	public static AbstractCircuit sinCircuit;
+	public static AbstractCircuit cosCircuit;
+	public static AbstractCircuit tanCircuit;
+	public static AbstractCircuit asinCircuit;
+	public static AbstractCircuit acosCircuit;
+	public static AbstractCircuit atanCircuit;
+
+
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -93,11 +110,27 @@ public class EssentialsBlocks{
 		witherCannon = new WitherCannon();
 
 		wireCircuit = new WireCircuit();
-		interfaceCircuit = new InterfaceCircuit();
 		wireJunctionCircuit = new WireJunctionCircuit();
-		andCircuit = new AndCircuit();
 		consCircuit = new ConsCircuit();
-		notCircuit = new NotCircuit();
-		xorCircuit = new XorCircuit();
+		//The function outputs will be sanitized regardless, so no sanity-checks are included in the function
+		interfaceCircuit = new GenericACircuit("interface", (a) -> a);
+		andCircuit = new GenericAACircuit("and", (a0, a1) -> a0 > 0 && a1 > 0 ? 1F : 0F);
+		notCircuit = new GenericACircuit("not", (a) -> a > 0 ? 0F : 1F);
+		orCircuit = new GenericAACircuit("or", (a0, a1) -> a0 > 0 || a1 > 0 ? 1F : 0F);
+		xorCircuit = new GenericAACircuit("xor", (a0, a1) -> a0 > 0 ^ a1 > 0 ? 1F : 0F);
+		maxCircuit = new GenericAACircuit("max", Math::max);
+		minCircuit = new GenericAACircuit("min", Math::min);
+		sumCircuit = new GenericAACircuit("sum", Float::sum);
+		difCircuit = new GenericABCircuit("dif", (a, b) -> Math.max(b - a, 0));
+		prodCircuit = new GenericAACircuit("prod", (a0, a1) -> a0 * a1);
+		quotCircuit = new GenericABCircuit("quot", (a, b) -> b / a);
+		powCircuit = new GenericABCircuit("pow", (a, b) -> (float) Math.pow(b, a));
+		invCircuit = new GenericACircuit("inv", (a) -> 1F / a);
+		sinCircuit = new GenericACircuit("sin", (a) -> (float) Math.sin(a));
+		cosCircuit = new GenericACircuit("cos", (a) -> (float) Math.cos(a));
+		tanCircuit = new GenericACircuit("tan", (a) -> (float) Math.tan(a));
+		asinCircuit = new GenericACircuit("asin", (a) -> (float) Math.asin(a));
+		acosCircuit = new GenericACircuit("acos", (a) -> (float) Math.acos(a));
+		atanCircuit = new GenericACircuit("atan", (a) -> (float) Math.atan(a));
 	}
 }
