@@ -16,7 +16,7 @@
 			"item": "essentials:wrench"
 		},
 		"Q": {
-			"item": "forge:gems/quartz"
+			"tag": "forge:gems/quartz"
 		},
 		"D": {
 			"tag": "forge:dyes/red"
