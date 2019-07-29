@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * This class is for holding a list of changes being made to a world, but that haven't actually happened yet.
@@ -60,16 +61,16 @@ public class WorldBuffer implements IBlockReader{
 		return Fluids.EMPTY.getDefaultState();//TODO fluid support when forge is ready
 	}
 
-	public void applyChanges(){
+	public void applyChanges(int flags){
 		for(Entry<BlockPos, BlockState> ent : memory.entrySet()){
 			if(worldObj.getBlockState(ent.getKey()) != ent.getValue()){
-				worldObj.setBlockState(ent.getKey(), ent.getValue());
+				worldObj.setBlockState(ent.getKey(), ent.getValue(), flags);
 			}
 		}
 		memory.clear();
 	}
-	
-	public boolean hasChanges(){
-		return !memory.isEmpty();
+
+	public Set<BlockPos> changedPositions(){
+		return memory.keySet();
 	}
 }

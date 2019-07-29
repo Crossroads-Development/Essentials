@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials;
 
+import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.CircuitWrenchScreen;
 import com.Da_Technomancer.essentials.gui.ConstantCircuitScreen;
@@ -17,22 +18,28 @@ import com.mojang.datafixers.DSL;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.renderer.entity.WitherSkullRenderer;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.FMLPlayMessages;
 import net.minecraftforge.fml.network.IContainerFactory;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
@@ -75,6 +82,7 @@ public final class Essentials{
 	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerClient());
+		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.CannonSkull.class, WitherSkullRenderer::new);
 	}
 
 	@SuppressWarnings("unused")
@@ -97,6 +105,13 @@ public final class Essentials{
 			registry.register(item);
 		}
 		EssentialsItems.toRegister.clear();
+	}
+
+	@SuppressWarnings("unused")
+	@SubscribeEvent
+	public static void registerEnts(RegistryEvent.Register<EntityType<?>> e){
+		IForgeRegistry<EntityType<?>> registry = e.getRegistry();
+		registry.register(EntityType.Builder.create(WitherCannon.CannonSkull::new, EntityClassification.MISC).setShouldReceiveVelocityUpdates(true).size(0.3125F, 0.3125F).immuneToFire().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, World w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
 	}
 
 	@SuppressWarnings("unused")

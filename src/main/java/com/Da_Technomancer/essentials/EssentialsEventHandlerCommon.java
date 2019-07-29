@@ -9,6 +9,7 @@ import net.minecraft.entity.monster.WitchEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -18,13 +19,14 @@ public class EssentialsEventHandlerCommon{
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public void onEntitySpawn(LivingSpawnEvent e){
+	public void blockWitchSpawns(LivingSpawnEvent e){
+		//Prevents witch spawning if a nearby brazier has soulsand
 		if(e.getEntity() instanceof WitchEntity){
 			int RANGE_SQUARED = (int) Math.pow(EssentialsConfig.brazierRange.get(), 2);
-
 			for(TileEntity te : e.getWorld().getWorld().tickableTileEntities){
-				if(te instanceof BrazierTileEntity && te.getDistanceSq(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED){
-					BlockState state = te.getWorld().getBlockState(te.getPos());
+				World w;
+				if(te instanceof BrazierTileEntity && te.getDistanceSq(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED && (w = te.getWorld()) != null){
+					BlockState state = w.getBlockState(te.getPos());
 					if(state.getBlock() == EssentialsBlocks.brazier && state.get(EssentialsProperties.BRAZIER_CONTENTS) == 6){
 						e.setResult(Event.Result.DENY);
 						return;

@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Notable differences from a normal piston include:
@@ -200,8 +201,13 @@ public class MultiPistonBase extends Block{
 				shiftExtension(wBuf, pos, facing, i, false);
 			}
 		}
-		wBuf.applyChanges();
 
+		//Don't apply block updates until after all changes have been applied to avoid a variety of issues, including rail dupe bugs
+		Set<BlockPos> toUpdate = wBuf.changedPositions();
+		wBuf.applyChanges(2 | 32 | 64);
+		for(BlockPos posToUpdate : toUpdate){
+			world.notifyNeighbors(posToUpdate, this);
+		}
 
 		if(currentExtension == 0 ^ target == 0){
 			world.setBlockState(pos, state.with(EssentialsProperties.EXTENDED, target != 0));

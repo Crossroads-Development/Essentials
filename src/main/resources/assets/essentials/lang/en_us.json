@@ -98,6 +98,7 @@
 	"tt.essentials.acos_circuit": "Outputs arccos of the back input, in radians",
 	"tt.essentials.atan_circuit": "Outputs arctan of the back input, in radians",
 
+	"entity.essentials.cannon_skull": "Wither Skeleton Skull",
 
 	"itemGroup.essentials": "Essentials"
 }
