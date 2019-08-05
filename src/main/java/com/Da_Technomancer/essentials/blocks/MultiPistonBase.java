@@ -338,8 +338,11 @@ public class MultiPistonBase extends Block{
 					break;
 				}
 
+				//The curPos needs to be added BEFORE recursively building a moveset to ensure it's counted in recursive push limit checks
+				movedBlocks.add(curPos);
 				blocked = movedBlocks.size() > PUSH_LIMIT || buildMoveset(pistonPos, world, curPos.offset(moveDir), moveDir, movedBlocks, false);
-
+				//Crazy as it seems, it is necessary to remove and then re-add this position. This moves the curPos to the end of the movedBlocks.
+				movedBlocks.remove(curPos);
 				movedBlocks.add(curPos);
 
 				//Do blocks behind this if sticky
