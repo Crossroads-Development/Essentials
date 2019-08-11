@@ -2,10 +2,7 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.WorldBuffer;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
 import net.minecraft.client.util.ITooltipFlag;
@@ -315,6 +312,8 @@ public class MultiPistonBase extends Block{
 			return false;
 		}
 		BlockState state = world.getBlockState(curPos);
+
+		//While vanilla has this very good and logical system for blocks exposing how they react to pistons, there is for no necessary reason a large number of exceptions
 		PushReaction reaction = state.getPushReaction();
 		if(state.getBlock().isAir(state, world.getWorld(), curPos)){
 			reaction = PushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
@@ -322,6 +321,8 @@ public class MultiPistonBase extends Block{
 			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
 		}else if(state.getBlockHardness(world, curPos) < 0){
 			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
+		}else if(state.getBlock() instanceof PistonBlock && state.has(PistonBlock.EXTENDED)){
+			reaction = state.get(PistonBlock.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;//Vanilla pistons report BLOCK even when retracted and movable
 		}
 
 		boolean blocked = false;
