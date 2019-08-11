@@ -37,13 +37,18 @@ public class SlottedChestContainer extends Container{
 	private static ItemStack[] filtTrans;
 
 	public SlottedChestContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
+		//the new ItemStack[54] is full of null entries, so in the SlottedChestTileEntity.Inventory constructor all null entries are set to ItemStack.EMPTY
 		this(id, playerInventory, new SlottedChestTileEntity.Inventory(new ItemStack[54], filtTrans = decodeBuffer(data), null), filtTrans);
 	}
 
 	private static ItemStack[] decodeBuffer(PacketBuffer buf){
 		if(buf == null){
 			Essentials.logger.warn("Received empty data for SlottedChest! This is a bug!");
-			return new ItemStack[54];
+			ItemStack[] filter = new ItemStack[54];
+			for(int i = 0; i < 54; i++){
+				filter[i] = ItemStack.EMPTY;
+			}
+			return filter;
 		}
 		ItemStack[] filter = new ItemStack[54];
 		for(int i = 0; i < 54; i++){

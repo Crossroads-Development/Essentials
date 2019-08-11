@@ -38,6 +38,7 @@ public class EssentialsBlocks{
 	public static BasicItemSplitter basicItemSplitter;
 	public static ItemSplitter itemSplitter;
 	public static WitherCannon witherCannon;
+	public static AutoCrafter autoCrafter;
 
 	public static WireCircuit wireCircuit;
 	public static AbstractCircuit interfaceCircuit;
@@ -108,6 +109,7 @@ public class EssentialsBlocks{
 		basicItemSplitter = new BasicItemSplitter();
 		itemSplitter = new ItemSplitter();
 		witherCannon = new WitherCannon();
+		autoCrafter = new AutoCrafter();
 
 		wireCircuit = new WireCircuit();
 		wireJunctionCircuit = new WireJunctionCircuit();

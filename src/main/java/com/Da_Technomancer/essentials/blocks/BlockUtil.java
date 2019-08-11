@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.blocks;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.Packet;
 import jdk.internal.jline.internal.Nullable;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
@@ -22,5 +23,17 @@ public class BlockUtil{
 
 	public static void sendClientPacketAround(World world, BlockPos pos, Packet packet){
 		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), packet);
+	}
+
+	/**
+	 * @param a The first itemstack to compare
+	 * @param b The second itemstack to compare
+	 * @return If the two itemstacks should be considered to have the same item and/or stack
+	 */
+	public static boolean sameItem(ItemStack a, ItemStack b){
+		if(a == null || b == null){
+			return false;
+		}
+		return ItemStack.areItemsEqual(a, b) && ItemStack.areItemStackTagsEqual(a, b);
 	}
 }

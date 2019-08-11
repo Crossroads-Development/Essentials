@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "essentials:auto_crafter"
+  },
+  "pattern": [
+    "ILI",
+    "ICI",
+    "ILI"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "C": {
+      "item": "minecraft:crafting_table"
+    },
+    "I": {
+      "tag": "forge:ingots/iron"
+    },
+    "L": {
+      "tag": "forge:gems/lapis"
+    }
+  }
+}

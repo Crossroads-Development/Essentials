@@ -27,6 +27,7 @@
 	"block.essentials.basic_item_splitter": "Basic Item Splitter",
 	"block.essentials.item_splitter": "Item Splitter",
 	"block.essentials.wither_cannon": "Wither Cannon",
+	"block.essentials.auto_crafter": "Auto-Crafter",
 
 	"block.essentials.wire_circuit": "Wire Plate",
 	"block.essentials.wire_junction_circuit": "Wire Junction",
@@ -67,6 +68,7 @@
 	"container.circuit_wrench": "Circuit Wrench",
 	"container.search_bar": "Filter",
 	"container.cons_circuit": "Circuit Output Strength",
+	"container.auto_crafter": "Auto-Crafter",
 
 
 	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
@@ -74,6 +76,8 @@
 	"tt.essentials.circuit_wrench_setting": "Mode: ",
 	"tt.essentials.circuit_wrench_info": "Turns Wire Plates into circuitry on use, consuming nether quartz",
 	"tt.essentials.circuit_wrench_change_mode": "Change circuit type by sneak-clicking",
+	"tt.essentials.auto_crafter_basic": "Automatically crafts when given a redstone pulse",
+	"tt.essentials.auto_crafter_book": "Set a recipe using the vanilla Recipe Book",
 
 	"tt.essentials.wire_circuit": "A simple wire for connecting circuits",
 	"tt.essentials.wire_junction_circuit": "Allows wires to cross without connecting",

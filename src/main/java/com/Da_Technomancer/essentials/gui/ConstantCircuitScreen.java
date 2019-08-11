@@ -256,7 +256,9 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 		CompoundNBT nbt = new CompoundNBT();
 		nbt.putFloat("value", output);
 		nbt.putString("config", newFilter);
-		EssentialsPackets.channel.sendToServer(new SendNBTToServer(nbt, container.pos));
+		if(container.pos != null){
+			EssentialsPackets.channel.sendToServer(new SendNBTToServer(nbt, container.pos));
+		}
 	}
 
 

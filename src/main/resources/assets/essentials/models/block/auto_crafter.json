@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "essentials:block/auto_crafter",
+		"south": "essentials:block/auto_crafter",
+		"east": "essentials:block/auto_crafter",
+		"west": "essentials:block/auto_crafter",
+		"up": "essentials:block/auto_crafter_end",
+		"down": "essentials:block/auto_crafter_end",
+		"particle": "essentials:block/auto_crafter"
+	}
+}

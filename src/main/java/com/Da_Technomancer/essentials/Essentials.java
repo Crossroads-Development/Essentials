@@ -2,14 +2,8 @@ package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
-import com.Da_Technomancer.essentials.gui.CircuitWrenchScreen;
-import com.Da_Technomancer.essentials.gui.ConstantCircuitScreen;
-import com.Da_Technomancer.essentials.gui.ItemShifterScreen;
-import com.Da_Technomancer.essentials.gui.SlottedChestScreen;
-import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
-import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
-import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
-import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
+import com.Da_Technomancer.essentials.gui.*;
+import com.Da_Technomancer.essentials.gui.container.*;
 import com.Da_Technomancer.essentials.items.EssentialsItems;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
@@ -131,6 +125,7 @@ public final class Essentials{
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
 		registerTE(WireTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
+		registerTE(AutoCrafterTileEntity::new, "auto_crafter", reg, autoCrafter);
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
@@ -148,6 +143,7 @@ public final class Essentials{
 		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
 		registerCon(CircuitWrenchContainer::new, CircuitWrenchScreen::new, "circuit_wrench", e);
 		registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
+		registerCon(AutoCrafterContainer::new, AutoCrafterScreen::new, "auto_crafter", e);
 	}
 
 	@SubscribeEvent
@@ -158,6 +154,7 @@ public final class Essentials{
 		registerConType(SlottedChestContainer::new, "slotted_chest", e);
 		registerConType(CircuitWrenchContainer::new, "circuit_wrench", e);
 		registerConType(ConstantCircuitContainer::new, "cons_circuit", e);
+		registerConType(AutoCrafterContainer::new, "auto_crafter", e);
 	}
 
 	/**

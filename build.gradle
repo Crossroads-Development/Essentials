@@ -31,7 +31,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 minecraft {
 	mappings channel: 'snapshot', version: "$mcp_version"
-
+	
 	runs {
 		client {
 			workingDirectory project.file('run')

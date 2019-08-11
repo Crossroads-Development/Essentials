@@ -102,7 +102,6 @@ public class WitherCannon extends Block{
 		}else if(!powered && wasActive){
 			world.setBlockState(pos, state.with(EssentialsProperties.REDSTONE_BOOL, false), 4);
 		}
-
 	}
 
 	@Override

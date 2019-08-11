@@ -20,7 +20,7 @@ public class ConstantCircuitContainer extends Container{
 	private static ContainerType<ConstantCircuitContainer> TYPE = null;
 
 	public ConstantCircuitContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
-		this(id, playerInventory, data.readFloat(), data.readString(), data.readBlockPos());
+		this(id, playerInventory, data == null ? 0 : data.readFloat(), data == null ? null : data.readString(), data == null ? null : data.readBlockPos());
 	}
 
 	public ConstantCircuitContainer(int id, PlayerInventory playerInventory, float output, String settingStr, BlockPos pos){
