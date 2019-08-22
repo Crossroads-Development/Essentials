@@ -12,10 +12,10 @@ import net.minecraft.client.gui.widget.button.ImageButton;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ICraftingRecipe;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
@@ -23,7 +23,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> implements IRecipeShownListener{
 
@@ -78,11 +77,11 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_){
-		if(recipeBook.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)){
+	public boolean mouseClicked(double x, double y, int p_mouseClicked_5_){
+		if(recipeBook.mouseClicked(x, y, p_mouseClicked_5_)){
 			return true;
 		}else{
-			return widthTooNarrow && recipeBook.isVisible() || super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
+			return widthTooNarrow && recipeBook.isVisible() || super.mouseClicked(x, y, p_mouseClicked_5_);
 		}
 	}
 
@@ -132,22 +131,29 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		font.drawString(title.getFormattedText(), 8, 6, 0x404040);
 		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 0x404040);
 
-		ResourceLocation recipeLoc;
-		Optional<? extends IRecipe> recipeOptional;
-		if(container.te != null && (recipeLoc = container.te.recipe) != null && (recipeOptional = Minecraft.getInstance().getConnection().getRecipeManager().getRecipe(recipeLoc)).isPresent()){
-			IRecipe<?> recipe = recipeOptional.get();
-			if(recipe instanceof ICraftingRecipe){
-				ICraftingRecipe cRecipe = (ICraftingRecipe) recipe;
-				boolean shaped = cRecipe instanceof IShapedRecipe;
+		if(container.te == null){
+			return;
+		}
+
+		ItemStack[] inv = new ItemStack[19];
+		for(int i = 10; i < 19; i++){
+			inv[i] = container.getSlot(i).getStack();
+		}
+		IRecipe<CraftingInventory> iRecipe = container.te.findRecipe(inv);
+
+		if(iRecipe != null){
+			GlStateManager.enableRescaleNormal();
+			RenderHelper.enableGUIStandardItemLighting();
+
+			//If the recipe was set via recipe book/JEI, render the ingredients manually (if it was set via input slots, the slots will render the items for us)
+			if(container.te.recipe != null){
+				boolean shaped = iRecipe instanceof IShapedRecipe;
 				int width = 3;
 				if(shaped){
-					width = ((IShapedRecipe) cRecipe).getRecipeWidth();
+					width = ((IShapedRecipe) iRecipe).getRecipeWidth();
 				}
 
-				GlStateManager.enableRescaleNormal();
-				RenderHelper.enableGUIStandardItemLighting();
-
-				List<Ingredient> ingredients = recipe.getIngredients();
+				List<Ingredient> ingredients = iRecipe.getIngredients();
 				for(int i = 0; i < ingredients.size(); i++){
 					ItemStack[] matching = ingredients.get(i).getMatchingStacks();
 					if(matching.length == 0){
@@ -156,12 +162,17 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 					ItemStack s = matching[(int) Math.floor(time / 30F) % matching.length];
 					itemRenderer.renderItemIntoGUI(s, 44 + 18 * (i % width), 15 + 18 * (i / width));
 				}
-
-				itemRenderer.renderItemIntoGUI(cRecipe.getRecipeOutput(), 107, 33);
-
-				GlStateManager.disableRescaleNormal();
-				RenderHelper.disableStandardItemLighting();
 			}
+
+			//Render the output
+			ItemStack output = iRecipe.getRecipeOutput();
+			itemRenderer.renderItemIntoGUI(output, 106, 33);
+			if(output.getCount() > 1){
+				itemRenderer.renderItemOverlayIntoGUI(font, output, 106, 33, null);
+			}
+
+			GlStateManager.disableRescaleNormal();
+			RenderHelper.disableStandardItemLighting();
 		}
 	}
 

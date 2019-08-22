@@ -4,20 +4,22 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
+import com.Da_Technomancer.essentials.packets.SendNBTToClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.*;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -29,6 +31,8 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @ObjectHolder(Essentials.MODID)
@@ -38,64 +42,203 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	private static TileEntityType<AutoCrafterTileEntity> TYPE = null;
 
 	/**
-	 * Inventory. Slots 0-8 are inputs, Slot 9 is output
+	 * Inventory. Slots 0-8 are inputs, Slot 9 is output, slots 10-18 are recipe inputs
+	 * Recipe input slots are not accessible by automation, and contain "ghost" items.
 	 */
-	private final ItemStack[] inv = new ItemStack[10];
+	private final ItemStack[] inv = new ItemStack[19];
+	private final Inventory iInv = new Inventory(inv, this);
 	private boolean redstone = false;
+
+
+	@Nullable
+	private RecipeManager recipeManager = null;
 
 	@Nullable
 	public ResourceLocation recipe;
 
 	public AutoCrafterTileEntity(){
 		super(TYPE);
-		for(int i = 0; i < 10; i++){
+		for(int i = 0; i < 19; i++){
 			inv[i] = ItemStack.EMPTY;
 		}
+	}
+
+	/**
+	 * Cached convenience getter for the RecipeManager instance that is safe on both server and client side
+	 * @return The RecipeManager instance
+	 */
+	public RecipeManager getRecipeManager(){
+		if(recipeManager == null){
+			if(world.isRemote){
+				recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
+			}else{
+				recipeManager = world.getServer().getRecipeManager();
+			}
+		}
+
+		return recipeManager;
+	}
+
+	/**
+	 * Checks if the passed recipe is valid, and if so returns it.
+	 * @param rec The recipe to validate
+	 * @param manager A RecipeManager instance
+	 * @return The recipe if it is valid, or null otherwise
+	 */
+	@Nullable
+	public static IRecipe<CraftingInventory> validateRecipe(ResourceLocation rec, RecipeManager manager){
+		if(rec == null){
+			return null;
+		}
+		return manager.getRecipe(rec).map(AutoCrafterTileEntity::validateRecipe).orElse(null);
+	}
+
+	/**
+	 * Gets the currently selected recipe, or null otherwise
+	 * @return The current recipe if applicable, or null otherwise
+	 */
+	@Nullable
+	private IRecipe<CraftingInventory> findRecipe(){
+		return findRecipe(inv);
+	}
+
+	/**
+	 * Gets the currently selected recipe, or null otherwise
+	 * @param inventory The items to base the recipe off of. Only indices [10, 18] are used
+	 * @return The current recipe if applicable, or null otherwise
+	 */
+	@Nullable
+	public IRecipe<CraftingInventory> findRecipe(ItemStack[] inventory){
+		IRecipe<CraftingInventory> iRecipe;
+
+		if(recipe == null){
+			//No recipe has been directly set via recipe book/JEI. Pick a recipe based on manually configured inputs, if applicable
+
+			//Create a fake inventory with the manually configured inputs for finding a matching recipe
+			CraftingInventory fakeInv = new CraftingInventory(new Container(null, 0){
+				@Override
+				public boolean canInteractWith(PlayerEntity playerIn){
+					return false;
+				}
+			}, 3, 3);
+			for(int i = 0; i < 9; i++){
+				fakeInv.setInventorySlotContents(i, inventory[i + 10]);
+			}
+			iRecipe = findRecipe(fakeInv);
+		}else{
+			//Recipe set via recipe book/JEI
+			iRecipe = validateRecipe(recipe, getRecipeManager());
+		}
+		return iRecipe;
+	}
+
+	/**
+	 * Gets the currently selected recipe, or null otherwise
+	 * @param fakeInv A fake crafting inventory to find a match from
+	 * @return The current recipe if applicable, or null otherwise
+	 */
+	@Nullable
+	private IRecipe<CraftingInventory> findRecipe(CraftingInventory fakeInv){
+		IRecipe<CraftingInventory> iRecipe;
+
+		if(recipe == null){
+			//No recipe has been directly set via recipe book/JEI. Pick a recipe based on manually configured inputs, if applicable
+			//Use the recipe manager to find a recipe matching the inputs
+			Optional<ICraftingRecipe> recipeOptional = getRecipeManager().getRecipe(IRecipeType.CRAFTING, fakeInv, world);
+			iRecipe = validateRecipe(recipeOptional.orElse(null));
+		}else{
+			//Recipe set via recipe book/JEI
+			iRecipe = validateRecipe(recipe, getRecipeManager());
+		}
+		return iRecipe;
+	}
+
+	/**
+	 * Checks if the passed recipe is valid, and if so returns it.
+	 * @param rec The recipe to validate
+	 * @return The recipe if it is valid, or null otherwise
+	 */
+	@Nullable
+	@SuppressWarnings("unchecked")
+	private static IRecipe<CraftingInventory> validateRecipe(IRecipe<?> rec){
+		if(rec == null || rec.getType() != IRecipeType.CRAFTING || !rec.canFit(3, 3)){
+			return null;
+		}
+		return (IRecipe<CraftingInventory>) rec;
 	}
 
 	public void redstoneUpdate(boolean newReds){
 		if(newReds != redstone){
 			redstone = newReds;
 			markDirty();
-			if(redstone && !world.isRemote && recipe != null){
-				Optional<? extends IRecipe> recipeResult = world.getServer().getRecipeManager().getRecipe(recipe);
+			MinecraftServer serv;
+			if(redstone && world != null && !world.isRemote){
+				//Create a fake inventory with the manually configured inputs for finding a matching recipe
+				CraftingInventory fakeInv = new CraftingInventory(new Container(null, 0){
+					@Override
+					public boolean canInteractWith(PlayerEntity playerIn){
+						return false;
+					}
+				}, 3, 3);
 
-				//Confirm the recipe exists
-				if(recipeResult.isPresent()){
-					IRecipe<?> iRecipe = recipeResult.get();
-					//Make sure the configured recipe is for the standard crafting table
-					if(iRecipe.getType() == IRecipeType.CRAFTING && iRecipe.canFit(3, 3)){
-						//Check the output can fit
-						ItemStack output = iRecipe.getRecipeOutput();
-						if(inv[9].isEmpty() || BlockUtil.sameItem(inv[9], output) && output.getCount() + inv[9].getCount() <= inv[9].getMaxStackSize()){
-							NonNullList<Ingredient> ingredients = iRecipe.getIngredients();
-							int[] used = new int[9];
+				for(int i = 0; i < 9; i++){
+					fakeInv.setInventorySlotContents(i, inv[i + 10]);
+				}
 
-							ingredient:
-							for(Ingredient ingr : ingredients){
-								if(ingr.hasNoMatchingItems()){
-									continue;
+				//Re-use the newly created fakeInv to save having to re-create it
+				IRecipe<CraftingInventory> iRecipe = findRecipe(fakeInv);
+
+				if(iRecipe != null){
+					ItemStack output;
+					if(recipe != null){
+						//If the recipe ID is nonnull, then the fake crafting inv was made with the empty manual input slots, and we should use the generic output
+						output = iRecipe.getRecipeOutput();
+					}else{
+						output = iRecipe.getCraftingResult(fakeInv);
+					}
+
+					//Check if the output can fit
+					if(inv[9].isEmpty() || BlockUtil.sameItem(inv[9], output) && output.getCount() + inv[9].getCount() <= inv[9].getMaxStackSize()){
+						List<Ingredient> ingredients;
+
+						if(recipe == null){
+							//Using manual input slots
+							ingredients = new ArrayList<>(9);
+							for(int i = 10; i < 19; i++){
+								if(!inv[i].isEmpty()){
+									ingredients.add(Ingredient.fromStacks(inv[i]));
 								}
-								for(int i = 0; i < 9; i++){
-									if((inv[i].getCount() - used[i] > 0 && ingr.test(inv[i]))){
-										used[i]++;
-										continue ingredient;
-									}
-								}
-								//No matching item
-								return;
 							}
+						}else{
+							ingredients = iRecipe.getIngredients();
+						}
 
-							//Consume ingredients
+						int[] used = new int[9];
+
+						ingredient:
+						for(Ingredient ingr : ingredients){
+							if(ingr.hasNoMatchingItems()){
+								continue;
+							}
 							for(int i = 0; i < 9; i++){
-								inv[i].shrink(used[i]);
+								if((inv[i].getCount() - used[i] > 0 && ingr.test(inv[i]))){
+									used[i]++;
+									continue ingredient;
+								}
 							}
-							//Produce output
-							if(inv[9].isEmpty()){
-								inv[9] = output.copy();
-							}else{
-								inv[9].grow(output.getCount());
-							}
+							//No matching item
+							return;
+						}
+
+						//Consume ingredients
+						for(int i = 0; i < 9; i++){
+							inv[i].shrink(used[i]);
+						}
+						//Produce output
+						if(inv[9].isEmpty()){
+							inv[9] = output.copy();
+						}else{
+							inv[9].grow(output.getCount());
 						}
 					}
 				}
@@ -103,19 +246,29 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		}
 	}
 
+	public void dropItems(){
+		for(int i = 0; i < 10; i++){
+			InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), inv[i]);
+		}
+	}
+
 	@Override
 	public void read(CompoundNBT nbt){
 		super.read(nbt);
 
-		for(int i = 0; i < 10; ++i){
+		String recPath = nbt.getString("recipe");
+		if(recPath.isEmpty()){
+			recipe = null;
+		}else{
+			recipe = new ResourceLocation(recPath);
+		}
+
+		for(int i = 0; i < 19; ++i){
 			if(nbt.contains("slot_" + i)){
 				inv[i] = ItemStack.read(nbt.getCompound("slot_" + i));
 			}
 		}
-		String recPath = nbt.getString("recipe");
-		if(!recPath.isEmpty()){
-			recipe = new ResourceLocation(recPath);
-		}
+
 		redstone = nbt.getBoolean("reds");
 	}
 
@@ -123,7 +276,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 
-		for(int i = 0; i < 10; ++i){
+		for(int i = 0; i < 19; ++i){
 			if(!inv[i].isEmpty()){
 				nbt.put("slot_" + i, inv[i].write(new CompoundNBT()));
 			}
@@ -146,8 +299,6 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		return nbt;
 	}
 
-	private final Inventory iInv = new Inventory(inv, this);
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
@@ -166,7 +317,29 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		}else{
 			recipe = null;
 		}
+
+		if(!world.isRemote){
+			setRecipe(getRecipeManager().getRecipe(recipe).orElse(null));
+		}
 		markDirty();
+	}
+
+	/**
+	 * For server side use only- sets the recipe and updates it on all clients
+	 * @param rec The recipe to set
+	 */
+	public void setRecipe(@Nullable IRecipe<?> rec){
+		recipe = rec == null ? null : rec.getId();
+		//When setting a recipe, overwrite the manually set recipe input slots
+		if(recipe != null){
+			for(int i = 10; i < 19; i++){
+				inv[i] = ItemStack.EMPTY;
+				markDirty();
+			}
+		}
+		CompoundNBT nbt = new CompoundNBT();
+		nbt.putString("recipe", recipe == null ? "" : recipe.toString());
+		BlockUtil.sendClientPacketAround(world, pos, new SendNBTToClient(nbt, pos));
 	}
 
 	@Override
@@ -256,7 +429,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		@Nullable
 		private final AutoCrafterTileEntity te;
 
-		public Inventory(ItemStack[] inv, @Nullable AutoCrafterTileEntity te){
+		private Inventory(ItemStack[] inv, @Nullable AutoCrafterTileEntity te){
 			this.inv = inv;
 			this.te = te;
 		}

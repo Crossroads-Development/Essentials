@@ -98,7 +98,8 @@ public class SlottedChestContainer extends Container{
 	private int dragMode = -1;
 
 	/**
-	 * This abomination of a method is copied from the minecraft source code. It is slightly modified to set filters where necessary (and sometimes even when not, because I can't be bothered to reverse engineer this thing).
+	 * This abomination of a method is copied from the minecraft source code.
+	 * It is slightly modified to set filters where necessary (and sometimes even when not, because I can't be bothered to reverse engineer this thing).
 	 */
 	@Override
 	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
@@ -400,7 +401,8 @@ public class SlottedChestContainer extends Container{
 
 	/** Take a stack from the specified inventory slot.
 	 * Also this version tries to shift click it out if it was in the chest inventory
-	 * for some reason I can't remember. */
+	 * for some reason I can't remember.
+	 */
 	@Override
 	public ItemStack transferStackInSlot(PlayerEntity playerIn, int index){
 		ItemStack outStack = ItemStack.EMPTY;
@@ -425,7 +427,8 @@ public class SlottedChestContainer extends Container{
 	}
 
 	/** Shift click-transfers an item.
-	 * Modified to respect isItemValidForSlot */
+	 * Modified to respect isItemValidForSlot
+	 */
 	@Override
 	protected boolean mergeItemStack(ItemStack toMerge, int startIndex, int endIndex, boolean chestToPlayer){
 		boolean flag = false;

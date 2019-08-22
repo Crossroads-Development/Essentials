@@ -67,6 +67,19 @@ public class AutoCrafter extends ContainerBlock{
 	}
 
 	@Override
+	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (state.getBlock() != newState.getBlock()) {
+			TileEntity te = worldIn.getTileEntity(pos);
+			if (te instanceof AutoCrafterTileEntity) {
+				((AutoCrafterTileEntity) te).dropItems();
+				worldIn.updateComparatorOutputLevel(pos, this);
+			}
+
+			super.onReplaced(state, worldIn, pos, newState, isMoving);
+		}
+	}
+
+	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt." + Essentials.MODID + ".auto_crafter_basic"));

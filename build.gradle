@@ -31,7 +31,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 minecraft {
 	mappings channel: 'snapshot', version: "$mcp_version"
-	
+
 	runs {
 		client {
 			workingDirectory project.file('run')
@@ -67,8 +67,17 @@ minecraft {
 	}
 }
 
+repositories {
+	maven { url "http://dvs1.progwml6.com/files/maven" }
+}
+
 dependencies {
 	minecraft "net.minecraftforge:forge:$mc_version-$fg_version"
+	
+	//Compile against APIs
+	compileOnly fg.deobf("mezz.jei:jei-$mc_version:$jei_version:api")
+	//Run with the full versions
+	runtimeOnly fg.deobf("mezz.jei:jei-$mc_version:$jei_version")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

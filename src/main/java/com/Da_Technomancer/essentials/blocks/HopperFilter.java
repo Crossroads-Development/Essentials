@@ -2,10 +2,12 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
+import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
@@ -72,6 +74,19 @@ public class HopperFilter extends ContainerBlock{
 	@Override
 	public void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(EssentialsProperties.AXIS);
+	}
+
+	@Override
+	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+		if (state.getBlock() != newState.getBlock()) {
+			TileEntity te = worldIn.getTileEntity(pos);
+			if (te instanceof HopperFilterTileEntity) {
+				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), ((HopperFilterTileEntity) te).getFilter());
+				worldIn.updateComparatorOutputLevel(pos, this);
+			}
+
+			super.onReplaced(state, worldIn, pos, newState, isMoving);
+		}
 	}
 
 	@Override

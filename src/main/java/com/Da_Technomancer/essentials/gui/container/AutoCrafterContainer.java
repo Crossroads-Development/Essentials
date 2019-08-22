@@ -3,7 +3,6 @@ package com.Da_Technomancer.essentials.gui.container;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.AutoCrafterScreen;
-import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
 import jdk.internal.jline.internal.Nullable;
 import net.minecraft.client.util.RecipeBookCategories;
@@ -13,16 +12,18 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.RecipeBookContainer;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipeItemHelper;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.registries.ObjectHolder;
 
 import java.util.List;
@@ -36,14 +37,15 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	@Nullable
 	public final AutoCrafterTileEntity te;
 	private final IInventory inv;
+	private final PlayerInventory playerInv;
 
 	public AutoCrafterContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
-		this(id, playerInventory, new Inventory(10), data.readString(), data.readBlockPos());
+		this(id, playerInventory, new Inventory(19), data.readString(), data.readBlockPos());
 	}
 
 	public AutoCrafterContainer(int id, PlayerInventory playerInventory, IInventory inv, String recipeStr, BlockPos pos){
 		super(TYPE, id);
-
+		playerInv = playerInventory;
 		TileEntity getTe = playerInventory.player.world.getTileEntity(pos);
 		if(getTe instanceof AutoCrafterTileEntity){
 			te = (AutoCrafterTileEntity) getTe;
@@ -82,6 +84,10 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 			}
 		});
 
+		//Recipe slots
+		for(int i = 0; i < 9; i++){
+			addSlot(new GhostRecipeSlot(inv, 10 + i, 44 + 18 * (i % 3), 15 + 18 * (i / 3)));
+		}
 
 		//Hotbar
 		for(int i = 0; i < 9; i++){
@@ -132,13 +138,52 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 
 	@Override
 	public void func_217056_a(boolean p_217056_1_, IRecipe<?> rec, ServerPlayerEntity player){
-		//Sets the recipe on the server side
+		//Called on the server side to set recipe on the clients
 		if(te != null){
-			te.recipe = rec.getId();
-			CompoundNBT nbt = new CompoundNBT();
-			nbt.putString("recipe", te.recipe.toString());
-			BlockUtil.sendClientPacketAround(player.getEntityWorld(), te.getPos(), new SendNBTToClient(nbt, te.getPos()));
+			te.setRecipe(rec);
 		}
+	}
+
+	@Override
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
+		if(slotId > 9 && slotId < 19 && player != null && te != null){
+			if(playerInv.getItemStack().isEmpty()){
+				//Click on a recipe slot with an empty cursor
+
+				IRecipe<CraftingInventory> rec = AutoCrafterTileEntity.validateRecipe(te.recipe, te.getRecipeManager());
+				if(rec == null){
+					inv.removeStackFromSlot(slotId);
+				}else{
+					List<Ingredient> ingr = rec.getIngredients();
+					int index = slotId - 10;
+					int width = rec instanceof IShapedRecipe ? ((IShapedRecipe) rec).getRecipeWidth() : 3;
+					if(index % 3 < width && !ingr.get(index - (3 - width) * (index / 3)).hasNoMatchingItems()){
+						//Has an "item" from the recipe in the clicked slot to clear
+						if(player.world.isRemote){
+							te.recipe = null;
+						}else{
+							te.setRecipe(null);
+						}
+						inv.removeStackFromSlot(slotId);
+					}
+				}
+			}else{
+				//Click on a recipe slot with an item in the cursor
+
+				//Clear any configured recipe
+				if(player.world.isRemote){
+					te.recipe = null;
+				}else{
+					te.setRecipe(null);
+				}
+
+				ItemStack s = playerInv.getItemStack().copy();
+				s.setCount(1);
+				inv.setInventorySlotContents(slotId, s);
+			}
+		}
+
+		return super.slotClick(slotId, dragType, clickTypeIn, player);
 	}
 
 	@Override
@@ -179,5 +224,27 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	@Override
 	public int getSize(){
 		return 10;
+	}
+
+	public static class GhostRecipeSlot extends Slot{
+
+		private GhostRecipeSlot(IInventory inventoryIn, int index, int xPosition, int yPosition){
+			super(inventoryIn, index, xPosition, yPosition);
+		}
+
+		@Override
+		public boolean canTakeStack(PlayerEntity playerIn){
+			return false;
+		}
+
+		@Override
+		public int getSlotStackLimit(){
+			return 0;
+		}
+
+		@Override
+		public boolean isItemValid(ItemStack stack){
+			return false;
+		}
 	}
 }
