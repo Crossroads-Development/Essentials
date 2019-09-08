@@ -161,7 +161,7 @@ public class WitherCannon extends Block{
 					}
 				}
 				//Ignore mob griefing- always use Explosion.Mode.DESTROY
-				world.createExplosion(this, this.posX, this.posY, this.posZ, 1F, false, Explosion.Mode.DESTROY);
+				world.createExplosion(this, this.posX, this.posY, this.posZ, 3F, false, Explosion.Mode.DESTROY);
 				remove();
 			}
 		}
