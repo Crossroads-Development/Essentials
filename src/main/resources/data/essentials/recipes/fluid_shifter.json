@@ -1,0 +1,17 @@
+{
+	"result": {
+		"item": "essentials:fluid_shifter"
+	},
+	"ingredients": [
+		{
+			"item": "essentials:item_chute"
+		},
+		{
+			"item": "minecraft:dropper"
+		},
+		{
+			"item": "minecraft:bucket"
+		}
+	],
+	"type": "minecraft:crafting_shapeless"
+}

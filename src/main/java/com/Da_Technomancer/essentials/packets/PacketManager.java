@@ -102,6 +102,8 @@ public class PacketManager{
 	}
 
 	public static <T extends Packet> void activate(T packet, Supplier<NetworkEvent.Context> context){
-		packet.consume(context.get());
+		NetworkEvent.Context cont = context.get();
+		packet.consume(cont);
+		cont.setPacketHandled(true);
 	}
 }

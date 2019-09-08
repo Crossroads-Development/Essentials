@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -49,8 +50,9 @@ public class BasicItemSplitter extends ContainerBlock{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Splits incoming items between the two outputs"));
-		tooltip.add(new StringTextComponent("Configure splitting ratio by shift-right-clicking with a Wrench"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_basic"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.basic_item_splitter_formula"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_chute"));
 	}
 
 	@Override
@@ -68,7 +70,7 @@ public class BasicItemSplitter extends ContainerBlock{
 					worldIn.setBlockState(pos, endState);
 					TileEntity te = worldIn.getTileEntity(pos);
 					if(te instanceof BasicItemSplitterTileEntity){
-						((BasicItemSplitterTileEntity) te).facing = null;
+						((BasicItemSplitterTileEntity) te).rotate();
 					}
 				}
 			}
@@ -78,6 +80,14 @@ public class BasicItemSplitter extends ContainerBlock{
 		return false;
 	}
 
+
+	@Override
+	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
+		TileEntity te = worldIn.getTileEntity(pos);
+		if(te instanceof BasicItemSplitterTileEntity){
+			((BasicItemSplitterTileEntity) te).refreshCache();
+		}
+	}
 
 	@Nullable
 	@Override

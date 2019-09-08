@@ -1,6 +1,8 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
@@ -9,6 +11,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -27,7 +30,8 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	private int mode = 6;
 	private ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 
-	public Direction facing = null;
+	private Direction facing = null;
+	private BlockPos[] endPos = new BlockPos[2];
 
 	public BasicItemSplitterTileEntity(TileEntityType<?> type){
 		super(type);
@@ -48,25 +52,47 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		return facing;
 	}
 
-	@Override
-	public void tick(){
+	public void refreshCache(){
+		facing = null;
 		Direction dir = getFacing();
+		int maxChutes = EssentialsConfig.itemChuteRange.get();
+
 		for(int i = 0; i < 2; i++){
-			Direction side = i == 0 ? dir : dir.getOpposite();
-			TileEntity outputTE = world.getTileEntity(pos.offset(side));
-			LazyOptional<IItemHandler> outHandlerCon;
-			if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side.getOpposite())).isPresent()){
-				IItemHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);
-				for(int j = 0; j < outHandler.getSlots(); j++){
-					ItemStack outStack = outHandler.insertItem(j, inventory[i], false);
-					if(outStack.getCount() != inventory[i].getCount()){
-						inventory[i] = outStack;
-						markDirty();
-						break;
-					}
+			int extension;
+
+			for(extension = 1; extension <= maxChutes; extension++){
+				BlockState target = world.getBlockState(pos.offset(dir, extension));
+				if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
+					break;
 				}
 			}
+
+			endPos[i] = pos.offset(dir, extension);
+			dir = dir.getOpposite();
 		}
+	}
+
+	public void rotate(){
+		facing = null;
+		primaryOpt.invalidate();
+		secondaryOpt.invalidate();
+		inOpt.invalidate();
+		primaryOpt = LazyOptional.of(() -> new OutItemHandler(1));
+		secondaryOpt = LazyOptional.of(() -> new OutItemHandler(0));
+		inOpt = LazyOptional.of(InHandler::new);
+	}
+
+	@Override
+	public void tick(){
+		if(endPos[0] == null || endPos[1] == null){
+			refreshCache();
+		}
+
+		Direction dir = getFacing();
+		for(int i = 0; i < 2; i++){
+			inventory[i] = AbstractShifterTileEntity.ejectItem(world, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i]);
+		}
+		markDirty();
 	}
 
 	public int increaseMode(){
@@ -76,9 +102,17 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		return mode;
 	}
 
-	private final OutItemHandler primaryHandler = new OutItemHandler(1);
-	private final OutItemHandler secondaryHandler = new OutItemHandler(0);
-	private final InHandler inHandler = new InHandler();
+	@Override
+	public void remove(){
+		super.remove();
+		primaryOpt.invalidate();
+		secondaryOpt.invalidate();
+		inOpt.invalidate();
+	}
+
+	private LazyOptional<IItemHandler> primaryOpt = LazyOptional.of(() -> new OutItemHandler(1));
+	private LazyOptional<IItemHandler> secondaryOpt = LazyOptional.of(() -> new OutItemHandler(0));
+	private LazyOptional<IItemHandler> inOpt = LazyOptional.of(InHandler::new);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -86,7 +120,7 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
 			Direction dir = getFacing();
 
-			return side == dir ? LazyOptional.of(() -> (T) new OutItemHandler(1)) : side == dir.getOpposite() ? LazyOptional.of(() -> (T) new OutItemHandler(0)) : LazyOptional.of(() -> (T) new InHandler());
+			return (LazyOptional<T>) (side == dir ? primaryOpt : side == dir.getOpposite() ? secondaryOpt : inOpt);
 		}
 
 		return super.getCapability(cap, side);
@@ -209,7 +243,7 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 
 		private final int index;
 
-		public OutItemHandler(int index){
+		private OutItemHandler(int index){
 			this.index = index;
 		}
 

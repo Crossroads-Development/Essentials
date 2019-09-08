@@ -60,7 +60,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 		searchBar.setMaxStringLength(20);
 		searchBar.func_212954_a(this::filterChanged);
 		children.add(searchBar);
-		func_212928_a(searchBar);
+		setFocusedDefault(searchBar);
 	}
 
 	@Override

@@ -299,11 +299,19 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		return nbt;
 	}
 
+	private final LazyOptional<IItemHandler> hanOptional = LazyOptional.of(InventoryHandler::new);
+
+	@Override
+	public void remove(){
+		super.remove();
+		hanOptional.invalidate();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return LazyOptional.of(() -> (T) new InventoryHandler());
+			return (LazyOptional<T>) hanOptional;
 		}
 
 		return super.getCapability(cap, facing);

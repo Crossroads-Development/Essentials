@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
+import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;

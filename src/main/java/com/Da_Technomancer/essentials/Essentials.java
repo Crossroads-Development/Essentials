@@ -117,10 +117,10 @@ public final class Essentials{
 		registerTE(SortingHopperTileEntity::new, "sorting_hopper", reg, sortingHopper);
 		registerTE(SpeedHopperTileEntity::new, "speed_hopper", reg, speedHopper);
 		registerTE(ItemShifterTileEntity::new, "item_shifter", reg, itemShifter);
+		registerTE(FluidShifterTileEntity::new, "fluid_shifter", reg, fluidShifter);
 		registerTE(HopperFilterTileEntity::new, "hopper_filter", reg, hopperFilter);
 		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, basicItemSplitter);
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
-//		registerTE(FluidShifterTileEntity::new, "fluid_splitter", reg, EssentialsBlocks.fluidShifter);
 		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
@@ -140,6 +140,7 @@ public final class Essentials{
 	@OnlyIn(Dist.CLIENT)
 	public static void registerContainers(RegistryEvent.Register<ContainerType<?>> e){
 		registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
+		registerCon(FluidShifterContainer::new, FluidShifterScreen::new, "fluid_shifter", e);
 		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
 		registerCon(CircuitWrenchContainer::new, CircuitWrenchScreen::new, "circuit_wrench", e);
 		registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
@@ -151,6 +152,7 @@ public final class Essentials{
 	@OnlyIn(Dist.DEDICATED_SERVER)
 	public static void registerContainerTypes(RegistryEvent.Register<ContainerType<?>> e){
 		registerConType(ItemShifterContainer::new, "item_shifter", e);
+		registerConType(FluidShifterContainer::new, "fluid_shifter", e);
 		registerConType(SlottedChestContainer::new, "slotted_chest", e);
 		registerConType(CircuitWrenchContainer::new, "circuit_wrench", e);
 		registerConType(ConstantCircuitContainer::new, "cons_circuit", e);

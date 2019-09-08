@@ -50,7 +50,7 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 			return true;
 		});
 		children.add(searchBar);
-		func_212928_a(searchBar);
+		setFocusedDefault(searchBar);
 
 		searchBar.setText(container.conf);
 	}

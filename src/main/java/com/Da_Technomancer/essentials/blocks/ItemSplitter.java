@@ -16,7 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -43,7 +43,7 @@ public class ItemSplitter extends BasicItemSplitter{
 				worldIn.setBlockState(pos, endState);
 				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof BasicItemSplitterTileEntity){
-					((BasicItemSplitterTileEntity) te).facing = null;
+					((BasicItemSplitterTileEntity) te).rotate();
 				}
 			}
 			return true;
@@ -69,7 +69,8 @@ public class ItemSplitter extends BasicItemSplitter{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Splits incoming items between the two outputs"));
-		tooltip.add(new StringTextComponent("Splitting ratio controlled via redstone signal strength: (signal strength)/15"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_basic"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_formula"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_chute"));
 	}
 }

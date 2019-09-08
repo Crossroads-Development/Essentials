@@ -78,6 +78,12 @@
 	"tt.essentials.circuit_wrench_change_mode": "Change circuit type by sneak-clicking",
 	"tt.essentials.auto_crafter_basic": "Automatically crafts when given a redstone pulse",
 	"tt.essentials.auto_crafter_book": "Set a recipe using the vanilla Recipe Book",
+	"tt.essentials.fluid_shifter_info": "Ejects contained fluid out the faced side into an attached inventory",
+	"tt.essentials.fluid_shifter_range": "Can 'push' fluid through a line of up to %1$d Transport Chutes",
+	"tt.essentials.item_splitter_basic": "Splits incoming items between the two outputs",
+	"tt.essentials.basic_item_splitter_formula": "Configure splitting ratio by shift-right-clicking with a Wrench",
+	"tt.essentials.item_splitter_formula": "Splitting ratio controlled via redstone signal strength: (signal strength)/15",
+	"tt.essentials.item_splitter_chute": "Can output through Transport Chutes",
 
 	"tt.essentials.wire_circuit": "A simple wire for connecting circuits",
 	"tt.essentials.wire_junction_circuit": "Allows wires to cross without connecting",
@@ -101,6 +107,8 @@
 	"tt.essentials.asin_circuit": "Outputs arcsin of the back input, in radians",
 	"tt.essentials.acos_circuit": "Outputs arccos of the back input, in radians",
 	"tt.essentials.atan_circuit": "Outputs arctan of the back input, in radians",
+
+	"tt.essentials.empty_fluid": "Empty",
 
 	"entity.essentials.cannon_skull": "Wither Skeleton Skull",
 

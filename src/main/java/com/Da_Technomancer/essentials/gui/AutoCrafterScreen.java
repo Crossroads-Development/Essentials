@@ -41,12 +41,12 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	protected void init() {
 		super.init();
 		widthTooNarrow = width < 379;
-		recipeBook.func_201520_a(width, height, Minecraft.getInstance(), widthTooNarrow, container);
+		recipeBook.init(width, height, Minecraft.getInstance(), widthTooNarrow, container);
 		guiLeft = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
 		children.add(recipeBook);
-		func_212928_a(recipeBook);
+		setFocusedDefault(recipeBook);
 		addButton(new ImageButton(guiLeft + 5, height / 2 - 49, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
-			recipeBook.func_201518_a(widthTooNarrow);
+			recipeBook.initSearchBar(widthTooNarrow);
 			recipeBook.toggleVisibility();
 			guiLeft = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
 			((ImageButton) p_214076_1_).setPosition(guiLeft + 5, height / 2 - 49);
@@ -112,7 +112,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public RecipeBookGui func_194310_f(){
+	public RecipeBookGui getRecipeGui(){
 		return recipeBook;
 	}
 

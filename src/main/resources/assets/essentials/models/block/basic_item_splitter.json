@@ -5,7 +5,7 @@
 		"south": "essentials:block/item_splitter_side",
 		"east": "essentials:block/item_splitter_side",
 		"west": "essentials:block/item_splitter_side",
-		"up": "essentials:block/item_splitter_out",
+		"up": "essentials:block/item_splitter_out_prim",
 		"down": "essentials:block/item_splitter_out",
 		"particle": "essentials:block/item_splitter_side"
 	}
