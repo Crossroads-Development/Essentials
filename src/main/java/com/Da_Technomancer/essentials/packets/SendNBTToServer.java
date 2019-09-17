@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -8,9 +9,10 @@ import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 
-public class SendNBTToServer extends Packet{
+public class SendNBTToServer extends ServerPacket{
 
 	public SendNBTToServer(){
 
@@ -24,16 +26,7 @@ public class SendNBTToServer extends Packet{
 		this.pos = pos;
 	}
 
-	private static final Field[] FIELDS = new Field[2];
-
-	static{
-		try{
-			FIELDS[0] = SendNBTToServer.class.getDeclaredField("nbt");
-			FIELDS[1] = SendNBTToServer.class.getDeclaredField("pos");
-		}catch(NoSuchFieldException e){
-			Essentials.logger.error("Failure to specify packet: " + SendNBTToServer.class.toString() + "; Report to mod author", e);
-		}
-	}
+	private static final Field[] FIELDS = fetchFields(SendNBTToServer.class, "nbt", "pos");
 
 	@Nonnull
 	@Override
@@ -49,11 +42,18 @@ public class SendNBTToServer extends Packet{
 		}
 
 		context.enqueueWork(() -> {
-			TileEntity te = context.getSender().getEntityWorld().getTileEntity(pos);
+
+		});
+	}
+
+	@Override
+	protected void run(@Nullable ServerPlayerEntity player){
+		if(player != null){
+			TileEntity te = player.getEntityWorld().getTileEntity(pos);
 
 			if(te instanceof INBTReceiver){
-				((INBTReceiver) te).receiveNBT(nbt);
+				((INBTReceiver) te).receiveNBT(nbt, player);
 			}
-		});
+		}
 	}
 }

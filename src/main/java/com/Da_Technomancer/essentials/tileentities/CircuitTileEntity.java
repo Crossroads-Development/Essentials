@@ -8,9 +8,9 @@ import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.packets.IFloatReceiver;
 import com.Da_Technomancer.essentials.packets.SendFloatToClient;
-import jdk.internal.jline.internal.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -22,6 +22,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -198,7 +199,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	}
 
 	@Override
-	public void receiveFloat(byte id, float value){
+	public void receiveFloat(byte id, float value, @Nullable ServerPlayerEntity sender){
 		if(id == 0 && world.isRemote){
 			output = value;
 		}

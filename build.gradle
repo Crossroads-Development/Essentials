@@ -14,7 +14,7 @@ apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
 version = "$mc_version-$mod_version"
-group = "com.Da_Technomancer.essentials"
+group = "mod.technomancer.essentials"
 archivesBaseName = "essentials"
 
 sourceCompatibility = 1.8

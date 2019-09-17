@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials;
 
+import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.*;
@@ -83,7 +84,7 @@ public final class Essentials{
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> e){
 		IForgeRegistry<Block> registry = e.getRegistry();
-		init();
+		EssentialsBlocks.init();
 		for(Block block : toRegister){
 			registry.register(block);
 		}
@@ -133,7 +134,6 @@ public final class Essentials{
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}
-
 
 	@SubscribeEvent
 	@SuppressWarnings("unused")

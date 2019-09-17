@@ -5,9 +5,10 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
 import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
+import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
 public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
@@ -43,7 +45,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	public void setFilter(ItemStack filter){
 		this.filter = filter;
-		BlockUtil.sendClientPacketAround(world, pos, new SendSlotFilterToClient(filter.write(new CompoundNBT()), pos));
+		BlockUtil.sendClientPacketAround(world, pos, new SendNBTToClient(filter.write(new CompoundNBT()), pos));
 		markDirty();
 	}
 
@@ -86,7 +88,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		filter = ItemStack.read(nbt);
 	}
 

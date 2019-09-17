@@ -5,6 +5,7 @@ import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
@@ -55,7 +56,7 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		setting = nbt.getFloat("value");
 		settingStr = nbt.getString("config");
 		markDirty();

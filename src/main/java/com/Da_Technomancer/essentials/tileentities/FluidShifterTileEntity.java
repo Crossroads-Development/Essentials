@@ -8,6 +8,7 @@ import com.Da_Technomancer.essentials.gui.container.IFluidSlotTE;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -130,7 +131,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		getFluidManager().handlePacket(nbt);
 		fluid = getFluidManager().getStack();
 	}

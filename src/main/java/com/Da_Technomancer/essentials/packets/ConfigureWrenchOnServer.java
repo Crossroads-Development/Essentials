@@ -6,15 +6,16 @@ import com.Da_Technomancer.essentials.items.EssentialsItems;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 
-public class ConfigureWrenchOnServer extends Packet{
+public class ConfigureWrenchOnServer extends ServerPacket{
 
 	public int modeIndex;
+
+	private static final Field[] FIELDS = fetchFields(ConfigureWrenchOnServer.class, "modeIndex");
 
 	public ConfigureWrenchOnServer(){
 
@@ -24,16 +25,6 @@ public class ConfigureWrenchOnServer extends Packet{
 		this.modeIndex = newModeIndex;
 	}
 
-	private static final Field[] FIELDS = new Field[1];
-
-	static{
-		try{
-			FIELDS[0] = ConfigureWrenchOnServer.class.getDeclaredField("modeIndex");
-		}catch(NoSuchFieldException e){
-			Essentials.logger.error("Failure to specify packet: " + ConfigureWrenchOnServer.class.toString() + "; Report to mod author", e);
-		}
-	}
-
 	@Nonnull
 	@Override
 	protected Field[] getFields(){
@@ -41,29 +32,21 @@ public class ConfigureWrenchOnServer extends Packet{
 	}
 
 	@Override
-	protected void consume(NetworkEvent.Context context){
-		if(context.getDirection() != NetworkDirection.PLAY_TO_SERVER){
-			Essentials.logger.error("Packet " + toString() + " received on wrong side:" + context.getDirection());
-			return;
-		}
-
-		ServerPlayerEntity player = context.getSender();
+	protected void run(@Nullable ServerPlayerEntity player){
 		if(player == null){
-			Essentials.logger.error("Player was null on packet arrival");
+			Essentials.logger.warn("Player was null on packet arrival");
 			return;
 		}
-		context.enqueueWork(() -> {
-			Hand hand = null;
-			if(player.getHeldItemMainhand().getItem() == EssentialsItems.circuitWrench){
-				hand = Hand.MAIN_HAND;
-			}else if(player.getHeldItemOffhand().getItem() == EssentialsItems.circuitWrench){
-				hand = Hand.OFF_HAND;
-			}
+		Hand hand = null;
+		if(player.getHeldItemMainhand().getItem() == EssentialsItems.circuitWrench){
+			hand = Hand.MAIN_HAND;
+		}else if(player.getHeldItemOffhand().getItem() == EssentialsItems.circuitWrench){
+			hand = Hand.OFF_HAND;
+		}
 
-			if(hand != null){
-				ItemStack held = player.getHeldItem(hand);
-				held.getOrCreateTag().putInt(CircuitWrench.NBT_KEY, modeIndex);
-			}
-		});
+		if(hand != null){
+			ItemStack held = player.getHeldItem(hand);
+			held.getOrCreateTag().putInt(CircuitWrench.NBT_KEY, modeIndex);
+		}
 	}
 }

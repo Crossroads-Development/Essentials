@@ -4,9 +4,10 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import com.Da_Technomancer.essentials.packets.SendSlotFilterToClient;
+import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -53,7 +54,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 				slotNBT.put("lock" + i, lockedInv[i].write(new CompoundNBT()));
 			}
 		}
-		BlockUtil.sendClientPacketAround(world, pos, new SendSlotFilterToClient(slotNBT, pos));
+		BlockUtil.sendClientPacketAround(world, pos, new SendNBTToClient(slotNBT, pos));
 	}
 
 	@Override
@@ -112,7 +113,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		for(int i = 0; i < 54; i++){
 			if(nbt.contains("lock" + i)){
 				lockedInv[i] = ItemStack.read(nbt.getCompound("lock" + i));

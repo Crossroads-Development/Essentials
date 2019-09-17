@@ -8,6 +8,7 @@ import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -318,7 +319,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		String str = nbt.getString("recipe");
 		if(!str.isEmpty()){
 			recipe = new ResourceLocation(str);
