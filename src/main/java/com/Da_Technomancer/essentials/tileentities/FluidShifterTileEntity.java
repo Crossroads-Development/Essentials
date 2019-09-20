@@ -5,10 +5,8 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import com.Da_Technomancer.essentials.gui.container.FluidSlotManager;
 import com.Da_Technomancer.essentials.gui.container.IFluidSlotTE;
-import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -27,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class FluidShifterTileEntity extends AbstractShifterTileEntity implements IFluidSlotTE, INBTReceiver{
+public class FluidShifterTileEntity extends AbstractShifterTileEntity implements IFluidSlotTE{
 
 	@ObjectHolder("fluid_shifter")
 	private static TileEntityType<FluidShifterTileEntity> TYPE = null;
@@ -38,8 +36,8 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 
 	public FluidSlotManager getFluidManager(){
 		if(fluidManager == null){
-			fluidManager = new FluidSlotManager(world, pos, fluid, CAPACITY, 0);
-			fluidManager.markChanged();
+			fluidManager = new FluidSlotManager(fluid, CAPACITY);
+			//fluidManager.markChanged();
 		}
 		return fluidManager;
 	}
@@ -125,16 +123,11 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 		return invOptional.orElseGet(FluidHandler::new);
 	}
 
-	@Override
-	public boolean isRemote(){
-		return world.isRemote;
-	}
-
-	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
-		getFluidManager().handlePacket(nbt);
-		fluid = getFluidManager().getStack();
-	}
+//	@Override
+//	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+//		getFluidManager().handlePacket(nbt);
+//		fluid = getFluidManager().getStack();
+//	}
 
 	private class FluidHandler implements IFluidHandler{
 

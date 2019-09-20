@@ -6,5 +6,4 @@ public interface IFluidSlotTE{
 
 	public IFluidHandler getFluidHandler();
 
-	public boolean isRemote();
 }

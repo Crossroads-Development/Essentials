@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -33,15 +32,18 @@ public class FluidShifterContainer extends Container{
 
 	public FluidShifterContainer(int id, PlayerInventory playerInventory, BlockPos pos){
 		super(TYPE, id);
-		this.inv = new FakeInventory();
+		this.inv = new FluidSlotManager.FakeInventory(this);
 		this.pos = pos;
 		TileEntity t = playerInventory.player.world.getTileEntity(pos);
 		if(t instanceof FluidShifterTileEntity){
 			this.te = (FluidShifterTileEntity) t;
+			//Track fluid fields
+			trackInt(te.getFluidManager().getFluidIdHolder());
+			trackInt(te.getFluidManager().getFluidQtyHolder());
 		}else{
 			this.te = null;
 		}
-		Pair<Slot, Slot> slots = FluidSlotManager.createFluidSlots(this, inv, 0, 100, 19, 100, 54, this.te, new int[] {0});
+		Pair<Slot, Slot> slots = FluidSlotManager.createFluidSlots(inv, 0, 100, 19, 100, 54, this.te, new int[] {0});
 		addSlot(slots.getLeft());
 		addSlot(slots.getRight());
 
@@ -103,73 +105,6 @@ public class FluidShifterContainer extends Container{
 				playerIn.dropItem(inventorySlots.get(0).getStack(), false);
 				playerIn.dropItem(inventorySlots.get(1).getStack(), false);
 			}
-		}
-	}
-
-	private static class FakeInventory implements IInventory{
-
-		private final ItemStack[] stacks = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
-
-		@Override
-		public int getSizeInventory(){
-			return 2;
-		}
-
-		@Override
-		public boolean isEmpty(){
-			return stacks[0].isEmpty() && stacks[1].isEmpty();
-		}
-
-		@Override
-		public ItemStack getStackInSlot(int index){
-			return stacks[index];
-		}
-
-		@Override
-		public ItemStack decrStackSize(int index, int count){
-			markDirty();
-			return stacks[index].split(count);
-		}
-
-		@Override
-		public ItemStack removeStackFromSlot(int index){
-			ItemStack stack = stacks[index];
-			stacks[index] = ItemStack.EMPTY;
-			markDirty();
-			return stack;
-		}
-
-		@Override
-		public void setInventorySlotContents(int index, ItemStack stack){
-			stacks[index] = stack;
-			markDirty();
-		}
-
-		@Override
-		public int getInventoryStackLimit(){
-			return 64;
-		}
-
-		@Override
-		public void markDirty(){
-
-		}
-
-		@Override
-		public boolean isUsableByPlayer(PlayerEntity player){
-			return true;
-		}
-
-		@Override
-		public boolean isItemValidForSlot(int index, ItemStack stack){
-			return index == 0 && stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
-		}
-
-		@Override
-		public void clear(){
-			stacks[0] = ItemStack.EMPTY;
-			stacks[1] = ItemStack.EMPTY;
-			markDirty();
 		}
 	}
 }
