@@ -56,6 +56,8 @@ public class FluidSlotManager{
 	//Per screen
 	private int windowXStart;
 	private int windowYStart;
+	private int xPos;
+	private int yPos;
 
 	private static final int MAX_HEIGHT = 48;
 	private static final ResourceLocation OVERLAY = new ResourceLocation(Essentials.MODID, "textures/gui/rectangle_fluid_overlay.png");
@@ -72,7 +74,7 @@ public class FluidSlotManager{
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void initScreen(int windowXStart, int windowYStart){
+	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos){
 		this.windowXStart = windowXStart;
 		this.windowYStart = windowYStart;
 	}
@@ -100,33 +102,31 @@ public class FluidSlotManager{
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void renderBack(int x, int y, float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer){
+	public void renderBack(float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer){
 		FluidStack clientState = getStack();
 		Minecraft.getInstance().getTextureManager().bindTexture(AtlasTexture.LOCATION_BLOCKS_TEXTURE);
 
-		Screen.fill(x + windowXStart, y + windowYStart - MAX_HEIGHT, x + windowXStart + 16, y + windowYStart, 0xFF959595);
+		Screen.fill(xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
 		//Screen.fill changes the color
 		GlStateManager.color4f(1, 1, 1, 1);
 
 		FluidAttributes attr = clientState.getFluid().getAttributes();
 
 		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureMap().getSprite(attr.getStillTexture());
-		//Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
 		int col = attr.getColor(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
 		GlStateManager.color3f((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F);
-		Screen.blit(x + windowXStart, y + windowYStart - height, 0, 16, height, sprite);
+		Screen.blit(xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
 		GlStateManager.color3f(1, 1, 1);
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void renderFore(int x, int y, int mouseX, int mouseY, FontRenderer fontRenderer, List<String> tooltip){
+	public void renderFore(int mouseX, int mouseY, FontRenderer fontRenderer, List<String> tooltip){
 		FluidStack clientState = getStack();
 		Minecraft.getInstance().getTextureManager().bindTexture(OVERLAY);
-		Screen.blit(x, y - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
+		Screen.blit(xPos, yPos - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
 
-		if(mouseX >= x + windowXStart && mouseX <= x + windowXStart + 16 && mouseY >= y + windowYStart - MAX_HEIGHT && mouseY <= y + windowYStart){
+		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
 			if(clientState.isEmpty()){
 				tooltip.add(new TranslationTextComponent("tt.essentials.empty_fluid").getFormattedText());
 			}else{

@@ -22,7 +22,7 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 	protected void init(){
 		super.init();
 		if(container.te != null){
-			container.te.getFluidManager().initScreen((width - xSize) / 2, (height - ySize) / 2);
+			container.te.getFluidManager().initScreen((width - xSize) / 2, (height - ySize) / 2, 60, 71);
 		}
 	}
 
@@ -42,14 +42,14 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 		minecraft.getTextureManager().bindTexture(TEXTURE);
 		blit((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
 		if(container.te != null){
-			container.te.getFluidManager().renderBack(60, 71, partialTicks, mouseX, mouseY, font);
+			container.te.getFluidManager().renderBack(partialTicks, mouseX, mouseY, font);
 		}
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
 		if(container.te != null){
-			container.te.getFluidManager().renderFore(60, 71, mouseX, mouseY, font, tooltip);
+			container.te.getFluidManager().renderFore(mouseX, mouseY, font, tooltip);
 		}
 		font.drawString(title.getFormattedText(), 8, 6, 0x404040);
 		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 0x404040);
