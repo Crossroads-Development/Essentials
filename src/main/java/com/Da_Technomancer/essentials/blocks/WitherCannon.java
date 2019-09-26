@@ -111,7 +111,7 @@ public class WitherCannon extends Block{
 			BlockPos spawnPos = pos.offset(dir);
 			WitherSkullEntity skull = new CannonSkull(ENT_TYPE, world);
 			skull.setLocationAndAngles(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.getHorizontalAngle() + 180, dir.getYOffset() * -90);
-			skull.setVelocity(dir.getXOffset() / 5F, dir.getYOffset() / 5F, dir.getZOffset() / 5F);
+			skull.setMotion(dir.getXOffset() / 5F, dir.getYOffset() / 5F, dir.getZOffset() / 5F);
 			skull.accelerationX = dir.getXOffset() / 20D;
 			skull.accelerationY = dir.getYOffset() / 20D;
 			skull.accelerationZ = dir.getZOffset() / 20D;
@@ -161,7 +161,7 @@ public class WitherCannon extends Block{
 					}
 				}
 				//Ignore mob griefing- always use Explosion.Mode.DESTROY
-				world.createExplosion(this, this.posX, this.posY, this.posZ, 2F, false, Explosion.Mode.DESTROY);
+				world.createExplosion(this, this.posX, this.posY, this.posZ, 2F, false, Explosion.Mode.BREAK);
 				remove();
 			}
 		}
