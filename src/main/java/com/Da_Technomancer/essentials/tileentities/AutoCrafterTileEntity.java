@@ -96,15 +96,6 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 	/**
 	 * Gets the currently selected recipe, or null otherwise
-	 * @return The current recipe if applicable, or null otherwise
-	 */
-	@Nullable
-	private IRecipe<CraftingInventory> findRecipe(){
-		return findRecipe(inv);
-	}
-
-	/**
-	 * Gets the currently selected recipe, or null otherwise
 	 * @param inventory The items to base the recipe off of. Only indices [10, 18] are used
 	 * @return The current recipe if applicable, or null otherwise
 	 */

@@ -35,18 +35,6 @@ public class SendNBTToServer extends ServerPacket{
 	}
 
 	@Override
-	protected void consume(NetworkEvent.Context context){
-		if(context.getDirection() != NetworkDirection.PLAY_TO_SERVER){
-			Essentials.logger.error("Packet " + toString() + " received on wrong side:" + context.getDirection());
-			return;
-		}
-
-		context.enqueueWork(() -> {
-
-		});
-	}
-
-	@Override
 	protected void run(@Nullable ServerPlayerEntity player){
 		if(player != null){
 			TileEntity te = player.getEntityWorld().getTileEntity(pos);

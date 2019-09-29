@@ -22,8 +22,8 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	@ObjectHolder(Essentials.MODID + ":cons_circuit")
 	private static TileEntityType<ConstantCircuitTileEntity> TYPE = null;
 
-	public float setting = 1;
-	public String settingStr = "1";
+	public float setting = 0;
+	public String settingStr = "0";
 
 	public ConstantCircuitTileEntity(){
 		super(TYPE);

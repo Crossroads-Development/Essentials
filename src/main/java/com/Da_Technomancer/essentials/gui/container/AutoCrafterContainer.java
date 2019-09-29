@@ -4,7 +4,6 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.AutoCrafterScreen;
 import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
-import jdk.internal.jline.internal.Nullable;
 import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -26,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.registries.ObjectHolder;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @ObjectHolder(Essentials.MODID)
