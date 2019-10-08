@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import net.minecraft.item.DyeColor;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.EnumProperty;
@@ -19,4 +20,5 @@ public class EssentialsProperties{
 	public static final EnumProperty<Direction.Axis> AXIS = EnumProperty.create("axis", Direction.Axis.class);
 	//Connections for 4 sides. v & 1 -> north; v & 2 -> south; v & 4 -> west; v & 8 -> east
 	public static final IntegerProperty CONNECTIONS = IntegerProperty.create("connections", 0, 15);
+	public static final EnumProperty<DyeColor> COLOR = EnumProperty.create("color", DyeColor.class);
 }

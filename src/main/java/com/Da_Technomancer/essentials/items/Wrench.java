@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.items;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.util.ITooltipFlag;
@@ -10,7 +9,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
@@ -42,6 +41,6 @@ public class Wrench extends Item{
 
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new StringTextComponent("Rotates & configures blocks from " + Essentials.MODNAME));
+		tooltip.add(new TranslationTextComponent("tt.essentials.wrench"));
 	}
 }

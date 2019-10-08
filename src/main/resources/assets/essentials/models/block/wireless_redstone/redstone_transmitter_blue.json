@@ -1,0 +1,6 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"all": "essentials:block/redstone_transmitter_blue"
+	}
+}

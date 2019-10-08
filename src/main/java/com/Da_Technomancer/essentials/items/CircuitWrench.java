@@ -57,6 +57,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(EssentialsBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
 		registerCircuit(EssentialsBlocks.orCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/or.png"));
 		registerCircuit(EssentialsBlocks.xorCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/xor.png"));
+		registerCircuit(EssentialsBlocks.readerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/reader.png"));
 		registerCircuit(EssentialsBlocks.maxCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/max.png"));
 		registerCircuit(EssentialsBlocks.minCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/min.png"));
 		registerCircuit(EssentialsBlocks.sumCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sum.png"));

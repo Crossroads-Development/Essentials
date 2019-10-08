@@ -42,12 +42,13 @@ public class RedstoneUtil extends BlockUtil{
 	 */
 	public static float sanitize(float input){
 		if(input != input){
+			//NaN check
 			return 0;
 		}
-		if(input > MAX_POWER){
+		if(input >= MAX_POWER){
 			return MAX_POWER;
 		}
-		if(input < 0){
+		if(input <= 0){
 			return 0;
 		}
 		return input;

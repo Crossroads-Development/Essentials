@@ -44,6 +44,19 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	private ItemStack[] inv = new ItemStack[54];
 	public ItemStack[] lockedInv = new ItemStack[54];
 
+	public float calcComparator(){
+		float f = 0.0F;
+
+		for(ItemStack itemstack : inv){
+			if(!itemstack.isEmpty()){
+				f += (float) itemstack.getCount() / (float) Math.min(64, itemstack.getMaxStackSize());
+			}
+		}
+
+		f = f / (float) inv.length;
+		return f;
+	}
+
 	private void filterChanged(){
 		if(world.isRemote){
 			return;
@@ -194,6 +207,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 			return slot < 54 && ItemStack.areItemsEqual(stack, lockedInv[slot]) && ItemStack.areItemStackTagsEqual(stack, lockedInv[slot]);
 		}
 	}
+
 	public static class Inventory implements IInventory{
 
 		private final ItemStack[] inv;

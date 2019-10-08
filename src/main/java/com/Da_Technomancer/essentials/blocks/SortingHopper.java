@@ -1,11 +1,13 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
 import com.Da_Technomancer.essentials.tileentities.SortingHopperTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.BlockItemUseContext;
@@ -32,7 +34,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SortingHopper extends ContainerBlock{
+public class SortingHopper extends ContainerBlock implements IReadable{
 
 	public static final DirectionProperty FACING = HopperBlock.FACING;
 	public static final BooleanProperty ENABLED = HopperBlock.ENABLED;
@@ -174,6 +176,27 @@ public class SortingHopper extends ContainerBlock{
 	@Override
 	public int getComparatorInputOverride(BlockState blockState, World worldIn, BlockPos pos){
 		return Container.calcRedstone(worldIn.getTileEntity(pos));
+	}
+
+	@Override
+	public float read(World world, BlockPos pos, BlockState state){
+		TileEntity te = world.getTileEntity(pos);
+		if(te instanceof IInventory){
+			IInventory inv = (IInventory) te;
+			float f = 0.0F;
+
+			for(int i = 0; i < inv.getSizeInventory(); i++){
+				ItemStack stack = inv.getStackInSlot(i);
+				if(!stack.isEmpty()){
+					f += (float) stack.getCount() / (float) Math.min(64, stack.getMaxStackSize());
+				}
+			}
+
+			f = f / (float) inv.getSizeInventory();
+			f *= 15F;
+			return f;
+		}
+		return 0;
 	}
 
 	@Override

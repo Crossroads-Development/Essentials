@@ -1,0 +1,25 @@
+{
+	"result": {
+		"item": "essentials:linking_tool"
+	},
+	"pattern": [
+		" RQ",
+		" YR",
+		"D  "
+	],
+	"type": "minecraft:crafting_shaped",
+	"key": {
+		"R": {
+			"tag": "forge:dusts/redstone"
+		},
+		"Y": {
+			"item": "essentials:wrench"
+		},
+		"Q": {
+			"tag": "forge:ingots/gold"
+		},
+		"D": {
+			"tag": "forge:dyes/red"
+		}
+	}
+}

@@ -21,6 +21,7 @@ public class EssentialsItems{
 	public static Wrench wrench;
 	public static AnimalFeed animalFeed;
 	public static CircuitWrench circuitWrench;
+	public static LinkingTool linkingTool;
 
 	public static final ArrayList<Item> toRegister = new ArrayList<>();
 
@@ -30,5 +31,6 @@ public class EssentialsItems{
 		wrench = new Wrench();
 		animalFeed = new AnimalFeed();
 		circuitWrench = new CircuitWrench();
+		linkingTool = new LinkingTool();
 	}
 }

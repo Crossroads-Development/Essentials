@@ -1,6 +1,6 @@
 # Generates a model file using the normal template for circuits for each name in the list below
 
-toGen = ["or", "min", "max", "sum", "dif", "prod", "quot", "pow", "inv", "sin", "cos", "tan", "asin", "acos", "atan"]
+toGen = ["or", "min", "max", "sum", "dif", "prod", "quot", "pow", "inv", "sin", "cos", "tan", "asin", "acos", "atan", "reader"]
 
 modelPath = "../../../../../resources/assets/essentials/models/block/circuit/"
 

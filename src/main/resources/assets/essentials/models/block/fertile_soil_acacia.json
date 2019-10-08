@@ -4,3 +4,6 @@
 		"all": "essentials:block/fertile_soil_acacia"
 	}
 }
+
+
+{\n\t\"parent\": \"block/cube_all\",\n\t\"textures\": {\n\t\t\"all\": \"essentials:block/redstone_transmitter_\"\n\t}\n}

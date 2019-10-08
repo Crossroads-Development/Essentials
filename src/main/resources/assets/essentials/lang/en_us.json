@@ -28,6 +28,8 @@
 	"block.essentials.item_splitter": "Item Splitter",
 	"block.essentials.wither_cannon": "Wither Cannon",
 	"block.essentials.auto_crafter": "Auto-Crafter",
+	"block.essentials.redstone_transmitter": "Redstone Transmitter",
+	"block.essentials.redstone_receiver": "Redstone Receiver",
 
 	"block.essentials.wire_circuit": "Wire Plate",
 	"block.essentials.wire_junction_circuit": "Wire Junction",
@@ -51,6 +53,7 @@
 	"block.essentials.asin_circuit": "Arc-Sine Circuit",
 	"block.essentials.acos_circuit": "Arc-Cosine Circuit",
 	"block.essentials.atan_circuit": "Arc-Tangent Circuit",
+	"block.essentials.reader_circuit": "Reader Circuit",
 	
 	
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
@@ -58,6 +61,7 @@
 	"item.essentials.candle_lilypad": "Candle Lilypad",
 	"item.essentials.animal_feed": "Animal Feed",
 	"item.essentials.circuit_wrench": "Circuit Wrench",
+	"item.essentials.linking_tool": "Linking Tool",
 
 
 	"container.slotted_chest": "Slotted Chest",
@@ -84,10 +88,27 @@
 	"tt.essentials.basic_item_splitter_formula": "Configure splitting ratio by shift-right-clicking with a Wrench",
 	"tt.essentials.item_splitter_formula": "Splitting ratio controlled via redstone signal strength: (signal strength)/15",
 	"tt.essentials.item_splitter_chute": "Can output through Transport Chutes",
+	"tt.essentials.linking.start": "Beginning Linking",
+	"tt.essentials.linking.invalid": "Invalid pair; Cancelling linking",
+	"tt.essentials.linking.range": "Out of range; Canceling linking",
+	"tt.essentials.linking.clear": "Clearing links",
+	"tt.essentials.linking.full": "All $1%d links already occupied; Cancelling linking",
+	"tt.essentials.linking.success": "Linked device at %1$s to send to %2$s",
+	"tt.essentials.linking.taken": "Device already linked; Canceling linking",
+	"tt.essentials.linking.none": "Not linking",
+	"tt.essentials.linking.desc": "Links machines with a right click, in order from->to. Clear links with a shift-right click",
+	"tt.essentials.linking.info": "Linking from (%1$d, %2$d, %3$d); Dim: %4$s",
+	"tt.essentials.wrench": "Rotates and configures blocks from Essentials",
+	"tt.essentials.reds_trans.desc": "Transmits redstone signals wirelessly to nearby linked Redstone Receivers",
+	"tt.essentials.reds_trans.linking": "Link to Receivers with a Linking Tool. Use it on a Transmitter first then a Receiver",
+	"tt.essentials.reds_trans.dyes": "Can be color coded with dyes",
+	"tt.essentials.reds_rec.desc": "Receives redstone signals wirelessly from a nearby linked Redstone Transmitter",
+	"tt.essentials.reds_rec.linking": "Link to a Transmitter with a Linking Tool. Use it on a Transmitter first then a Receiver",
+	"tt.essentials.reds_rec.dyes": "Can be color coded with dyes",
 
 	"tt.essentials.wire_circuit": "A simple wire for connecting circuits",
 	"tt.essentials.wire_junction_circuit": "Allows wires to cross without connecting",
-	"tt.essentials.cons_circuit": "Has a constant output set via a UI which accepts mathematical expressions",
+	"tt.essentials.cons_circuit": "Has a constant output set via a UI that accepts mathematical expressions",
 	"tt.essentials.interface_circuit": "Connects vanilla redstone with Essentials wire plates",
 	"tt.essentials.not_circuit": "NOT gate- outputs 1 iff the back input is off",
 	"tt.essentials.and_circuit": "AND gate- outputs 1 iff both inputs are on",
@@ -107,6 +128,7 @@
 	"tt.essentials.asin_circuit": "Outputs arcsin of the back input, in radians",
 	"tt.essentials.acos_circuit": "Outputs arccos of the back input, in radians",
 	"tt.essentials.atan_circuit": "Outputs arctan of the back input, in radians",
+	"tt.essentials.reader_circuit": "Reads the block behind it like a Comparator. Has a wider range of values",
 
 	"tt.essentials.empty_fluid": "Empty",
 

@@ -62,8 +62,9 @@ public class EssentialsBlocks{
 	public static AbstractCircuit asinCircuit;
 	public static AbstractCircuit acosCircuit;
 	public static AbstractCircuit atanCircuit;
-
-
+	public static ReaderCircuit readerCircuit;
+	public static RedstoneTransmitter redstoneTransmitter;
+	public static RedstoneReceiver redstoneReceiver;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -134,5 +135,8 @@ public class EssentialsBlocks{
 		asinCircuit = new GenericACircuit("asin", (a) -> (float) Math.asin(a));
 		acosCircuit = new GenericACircuit("acos", (a) -> (float) Math.acos(a));
 		atanCircuit = new GenericACircuit("atan", (a) -> (float) Math.atan(a));
+		readerCircuit = new ReaderCircuit();
+		redstoneTransmitter = new RedstoneTransmitter();
+		redstoneReceiver = new RedstoneReceiver();
 	}
 }

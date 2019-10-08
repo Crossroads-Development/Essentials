@@ -2,26 +2,27 @@ package com.Da_Technomancer.essentials;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class EssentialsConfig{
 
 	public static ForgeConfigSpec.BooleanValue addWrench;
 
-	private static ForgeConfigSpec.ConfigValue<List<? extends String>> wrenchTypes;
+//	private static ForgeConfigSpec.ConfigValue<List<? extends String>> wrenchTypes;
 	public static ForgeConfigSpec.IntValue brazierRange;
 	public static ForgeConfigSpec.IntValue itemChuteRange;
 	public static ForgeConfigSpec.DoubleValue fertileSoilRate;
 	public static ForgeConfigSpec.IntValue maxRedstoneRange;
 	public static ForgeConfigSpec.EnumValue numberDisplay;
+	public static ForgeConfigSpec.IntValue wirelessRange;
 
 	private static ForgeConfigSpec clientSpec;
 	private static ForgeConfigSpec serverSpec;
@@ -37,11 +38,12 @@ public class EssentialsConfig{
 
 		//Server config
 		ForgeConfigSpec.Builder serverBuilder = new ForgeConfigSpec.Builder();
-		wrenchTypes = serverBuilder.comment("Item ids for wrench items. Should be in format 'modid:itemregistryname', ex. minecraft:apple or essentials:wrench").defineList("wrench_types", (List<String>) Arrays.asList(Essentials.MODID + ":wrench", "crossroads:liech_wrench", "actuallyadditions:itemlaserwrench", "appliedenergistics2:certus_quartz_wrench", "appliedenergistics2:nether_quartz_wrench", "base:wrench", "enderio:itemyetawrench", "extrautils2:wrench", "bigreactors:wrench", "forestry:wrench", "progressiveautomation:wrench", "thermalfoundation:wrench", "redstonearsenal:tool.wrench_flux", "rftools:smartwrench", "immersiveengineering:tool"), (Object s) -> s instanceof String && ((String) s).contains(":"));
+//		wrenchTypes = serverBuilder.comment("Item ids for wrench.json items. Should be in format 'modid:itemregistryname', ex. minecraft:apple or essentials:wrench.json").defineList("wrench_types", (List<String>) Arrays.asList(Essentials.MODID + ":wrench.json", "crossroads:liech_wrench", "actuallyadditions:itemlaserwrench", "appliedenergistics2:certus_quartz_wrench", "appliedenergistics2:nether_quartz_wrench", "base:wrench.json", "enderio:itemyetawrench", "extrautils2:wrench.json", "bigreactors:wrench.json", "forestry:wrench.json", "progressiveautomation:wrench.json", "thermalfoundation:wrench.json", "redstonearsenal:tool.wrench_flux", "rftools:smartwrench", "immersiveengineering:tool"), (Object s) -> s instanceof String && ((String) s).contains(":"));
 		brazierRange = serverBuilder.comment("Range of the Brazier anti-witch effect", "Set to 0 to disable").defineInRange("brazier_range", 64, 0, 512);
 		itemChuteRange = serverBuilder.comment("Maximum Transport Chutes in a line").defineInRange("chute_limit", 16, 0, 128);
 		fertileSoilRate = serverBuilder.comment("Percent of normal speed Fertile Soil should work at", "Set to 0 to disable").defineInRange("fertile_rate", 100D, 0, 100);
 		maxRedstoneRange = serverBuilder.comment("Range of signals through Circuit Wire").defineInRange("redstone_range", 16, 1, 128);
+		wirelessRange = serverBuilder.comment("Range of signals through Redstone Receivers/Transmitters").defineInRange("wireless_range", 16, 0, 128);
 
 		serverSpec = serverBuilder.build();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
@@ -57,25 +59,14 @@ public class EssentialsConfig{
 		serverSpec.setConfig(serverConfig);
 	}
 
+	private static final Tag<Item> WRENCH = new ItemTags.Wrapper(new ResourceLocation("forge", "wrench"));
+
 	/**
 	 * @param stack The stack to test
-	 * @return Whether this item is considered a wrench
+	 * @return Whether this item is considered a wrench.json
 	 */
 	public static boolean isWrench(ItemStack stack){
-		if(stack.isEmpty()){
-			return false;
-		}
-		ResourceLocation loc = stack.getItem().getRegistryName();
-		if(loc == null){
-			return false;
-		}
-		String name = loc.toString();
-		for(String s : wrenchTypes.get()){
-			if(name.equals(s)){
-				return true;
-			}
-		}
-		return false;
+		return WRENCH.contains(stack.getItem());
 	}
 
 	/**

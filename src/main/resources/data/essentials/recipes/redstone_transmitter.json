@@ -1,0 +1,22 @@
+{
+	"result": {
+		"item": "essentials:redstone_transmitter"
+	},
+	"pattern": [
+		"#Q#",
+		"QSQ",
+		"#Q#"
+	],
+	"type": "minecraft:crafting_shaped",
+	"key": {
+		"S": {
+			"item": "minecraft:smooth_stone"
+		},
+		"Q": {
+			"tag": "forge:gems/quartz"
+		},
+		"#": {
+			"item": "minecraft:redstone_torch"
+		}
+	}
+}

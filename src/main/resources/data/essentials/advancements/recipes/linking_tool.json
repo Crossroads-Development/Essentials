@@ -1,0 +1,32 @@
+{
+	"parent": "minecraft:recipes/root",
+	"rewards": {
+		"recipes": [
+			"essentials:linking_tool"
+		]
+	},
+	"criteria": {
+		"has_ingr": {
+			"trigger": "minecraft:inventory_changed",
+			"conditions": {
+				"items": [
+					{
+						"item": "essentials:circuit_wrench"
+					}
+				]
+			}
+		},
+		"has_recipe": {
+			"trigger": "minecraft:recipe_unlocked",
+			"conditions": {
+				"recipe": "essentials:linking_tool"
+			}
+		}
+	},
+	"requirements": [
+		[
+			"has_ingr",
+			"has_recipe"
+		]
+	]
+}

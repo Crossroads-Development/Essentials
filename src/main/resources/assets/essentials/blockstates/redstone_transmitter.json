@@ -1,0 +1,58 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "essentials:block/redstone_transmitter"
+	},
+	"variants": {
+		"color": {
+			"white": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_white"
+			},
+			"orange": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_orange"
+			},
+			"magenta": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_magenta"
+			},
+			"light_blue": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_light_blue"
+			},
+			"yellow": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_yellow"
+			},
+			"lime": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_lime"
+			},
+			"pink": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_pink"
+			},
+			"gray": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_gray"
+			},
+			"light_gray": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_silver"
+			},
+			"cyan": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_cyan"
+			},
+			"purple": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_purple"
+			},
+			"blue": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_blue"
+			},
+			"brown": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_brown"
+			},
+			"green": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_green"
+			},
+			"red": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_red"
+			},
+			"black": {
+				"model": "essentials:block/wireless_redstone/redstone_transmitter_black"
+			}
+		}
+	}
+}

@@ -1,0 +1,57 @@
+package com.Da_Technomancer.essentials.blocks.redstone;
+
+import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
+
+public class ReaderCircuit extends AbstractCircuit{
+
+	public ReaderCircuit(){
+		super("reader_circuit");
+	}
+
+	@Override
+	public boolean useInput(CircuitTileEntity.Orient or){
+		return false;
+	}
+
+	@Override
+	public boolean getWeakChanges(BlockState state, IWorldReader world, BlockPos pos){
+		return true;
+	}
+
+	@Override
+	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
+		World world = te.getWorld();
+		BlockPos pos = te.getPos();
+		Direction back = CircuitTileEntity.Orient.BACK.getFacing(world.getBlockState(pos).get(EssentialsProperties.HORIZ_FACING));
+		float output;
+		pos = pos.offset(back);
+		BlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
+		if(block instanceof IReadable){
+			output = ((IReadable) block).read(world, pos, state);
+		}else if(state.hasComparatorInputOverride()){
+			output = state.getComparatorInputOverride(world, pos);
+		}else if(state.isNormalCube(world, pos)){
+			pos = pos.offset(back);
+			state = world.getBlockState(pos);
+			block = state.getBlock();
+			if(block instanceof IReadable){
+				output = ((IReadable) block).read(world, pos, state);
+			}else if(state.hasComparatorInputOverride()){
+				output = state.getComparatorInputOverride(world, pos);
+			}else{
+				output = 0;
+			}
+		}else{
+			output = 0;
+		}
+		return output;
+	}
+}

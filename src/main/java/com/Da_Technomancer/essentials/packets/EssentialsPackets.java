@@ -18,6 +18,7 @@ public class EssentialsPackets{
 		registerPacket(SendFloatToServer.class);
 		registerPacket(SendNBTToClient.class);
 		registerPacket(SendNBTToServer.class);
+		registerPacket(SendLongToClient.class);
 	}
 
 	private static <T extends Packet> void registerPacket(Class<T> clazz){

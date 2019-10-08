@@ -30,7 +30,6 @@ public abstract class AbstractCircuit extends AbstractTile{
 		super(name);
 	}
 
-
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
