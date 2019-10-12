@@ -2,30 +2,41 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.SortingHopper;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ChestBlock;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventoryProvider;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.HopperContainer;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ChestTileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ObjectHolder;
+
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -238,20 +249,18 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 	protected boolean transferItemsOut(){
 		Direction facing = getDir();
-		TileEntity te = world.getTileEntity(pos.offset(facing));
-
+		final IItemHandler otherHandler = getHandlerAtPositon(world, pos.offset(facing),  facing.getOpposite());
+		
 		//Insertion via IItemHandler
-		LazyOptional<IItemHandler> outCap;
-		if(te != null && (outCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
-			IItemHandler handler = outCap.orElseThrow(NullPointerException::new);
+		if(otherHandler != null) {
 			for(int i = 0; i < getSizeInventory(); i++){
 				ItemStack stackInSlot = getStackInSlot(i);
 				if(!stackInSlot.isEmpty()){
 					ItemStack insert = stackInSlot.copy();
 					insert.setCount(Math.min(insert.getCount(), transferQuantity()));
-					ItemStack newStack = ItemHandlerHelper.insertItem(handler, insert, true);
+					ItemStack newStack = ItemHandlerHelper.insertItem(otherHandler, insert, true);
 					if(newStack.getCount() < insert.getCount()){
-						ItemHandlerHelper.insertItem(handler, decrStackSize(i, insert.getCount() - newStack.getCount()), false);
+						ItemHandlerHelper.insertItem(otherHandler, decrStackSize(i, insert.getCount() - newStack.getCount()), false);
 						markDirty();
 						return true;
 					}
@@ -261,15 +270,12 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 		return false;
 	}
-
+	
 	protected boolean transferItemsIn(){
-		TileEntity fromTE = world.getTileEntity(pos.offset(Direction.UP));
-
+		final IItemHandler otherHandler = getHandlerAtPositon(world, pos.offset(Direction.UP), Direction.DOWN);
+		
 		//Transfer from IItemHandler
-		LazyOptional<IItemHandler> inCap;
-		if(fromTE != null && (inCap = fromTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN)).isPresent()){
-			IItemHandler otherHandler = inCap.orElseThrow(NullPointerException::new);
-
+		if(otherHandler != null){
 			for (int i = 0; i < otherHandler.getSlots(); i++){
 				ItemStack extractItem = otherHandler.extractItem(i, transferQuantity(), true);
 				if (!extractItem.isEmpty()){
@@ -314,7 +320,27 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 			return changed;
 		}
 	}
-
+	
+	public static IItemHandler getHandlerAtPositon(World world, BlockPos otherPos, Direction direction) {
+		IItemHandler otherHandler = null;
+		final TileEntity tileEntity = world.getTileEntity(otherPos);
+		
+		if(tileEntity != null) {
+			final LazyOptional<IItemHandler> capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
+			if(capability.isPresent()) {
+				otherHandler = capability.orElseThrow(NullPointerException::new);
+			}
+		}
+		
+		if (otherHandler == null) {
+			List<Entity> list = world.getEntitiesInAABBexcluding((Entity) null,	new AxisAlignedBB(otherPos), EntityPredicates.HAS_INVENTORY);
+			if (!list.isEmpty()) {
+				otherHandler = new InvWrapper((IInventory) list.get(world.rand.nextInt(list.size())));
+			}
+		}
+		return otherHandler;
+	}
+	
 	protected static boolean canCombine(ItemStack stack1, ItemStack stack2){
 		return stack1.getItem() == stack2.getItem() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2);
 	}
