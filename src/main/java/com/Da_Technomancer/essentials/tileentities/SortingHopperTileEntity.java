@@ -2,7 +2,6 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.SortingHopper;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
@@ -32,10 +31,9 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ObjectHolder;
 
-import java.util.List;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 @ObjectHolder(Essentials.MODID)
 public class SortingHopperTileEntity extends TileEntity implements ITickableTileEntity, IInventory, INamedContainerProvider{
@@ -245,10 +243,10 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 	protected boolean transferItemsOut(){
 		Direction facing = getDir();
-		final IItemHandler otherHandler = getHandlerAtPositon(world, pos.offset(facing),  facing.getOpposite());
-		
+		final IItemHandler otherHandler = getHandlerAtPositon(world, pos.offset(facing), facing.getOpposite());
+
 		//Insertion via IItemHandler
-		if(otherHandler != null) {
+		if(otherHandler != null){
 			for(int i = 0; i < getSizeInventory(); i++){
 				ItemStack stackInSlot = getStackInSlot(i);
 				if(!stackInSlot.isEmpty()){
@@ -266,16 +264,16 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 		return false;
 	}
-	
+
 	protected boolean transferItemsIn(){
 		final IItemHandler otherHandler = getHandlerAtPositon(world, pos.offset(Direction.UP), Direction.DOWN);
-		
+
 		//Transfer from IItemHandler
 		if(otherHandler != null){
-			for (int i = 0; i < otherHandler.getSlots(); i++){
+			for(int i = 0; i < otherHandler.getSlots(); i++){
 				ItemStack extractItem = otherHandler.extractItem(i, transferQuantity(), true);
-				if (!extractItem.isEmpty()){
-					for (int j = 0; j < getSizeInventory(); j++){
+				if(!extractItem.isEmpty()){
+					for(int j = 0; j < getSizeInventory(); j++){
 						ItemStack uninserted = handler.insertItem(j, extractItem, false);
 						if(uninserted.getCount() < extractItem.getCount()){
 							otherHandler.extractItem(i, extractItem.getCount() - uninserted.getCount(), false);
@@ -316,27 +314,27 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 			return changed;
 		}
 	}
-	
-	public static IItemHandler getHandlerAtPositon(World world, BlockPos otherPos, Direction direction) {
+
+	protected static IItemHandler getHandlerAtPositon(World world, BlockPos otherPos, Direction direction){
 		IItemHandler otherHandler = null;
 		final TileEntity tileEntity = world.getTileEntity(otherPos);
-		
-		if(tileEntity != null) {
+
+		if(tileEntity != null){
 			final LazyOptional<IItemHandler> capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
-			if(capability.isPresent()) {
+			if(capability.isPresent()){
 				otherHandler = capability.orElseThrow(NullPointerException::new);
 			}
 		}
-		
-		if (otherHandler == null) {
-			List<Entity> list = world.getEntitiesInAABBexcluding((Entity) null,	new AxisAlignedBB(otherPos), EntityPredicates.HAS_INVENTORY);
-			if (!list.isEmpty()) {
+
+		if(otherHandler == null){
+			List<Entity> list = world.getEntitiesInAABBexcluding(null, new AxisAlignedBB(otherPos), EntityPredicates.HAS_INVENTORY);
+			if(!list.isEmpty()){
 				otherHandler = new InvWrapper((IInventory) list.get(world.rand.nextInt(list.size())));
 			}
 		}
 		return otherHandler;
 	}
-	
+
 	protected static boolean canCombine(ItemStack stack1, ItemStack stack2){
 		return stack1.getItem() == stack2.getItem() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2);
 	}
