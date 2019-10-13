@@ -38,7 +38,6 @@ public class Brazier extends ContainerBlock{
 		SHAPE = VoxelShapes.or(Block.makeCuboidShape(4, 0, 4, 12, 10, 12), Block.makeCuboidShape(1, 10, 1, 15, 14, 15));
 	}
 
-
 	protected Brazier(){
 		super(Block.Properties.create(Material.ROCK).hardnessAndResistance(2));
 		String name = "brazier";

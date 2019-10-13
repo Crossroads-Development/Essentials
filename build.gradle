@@ -95,6 +95,11 @@ jar {
 	}
 }
 
+task jarSources(type:Jar){
+	from sourceSets.main.allSource
+	classifier = 'source'
+}
+
 // Example configuration to allow publishing using the maven-publish task
 // we define a custom artifact that is sourced from the reobfJar output task
 // and then declare that to be published
