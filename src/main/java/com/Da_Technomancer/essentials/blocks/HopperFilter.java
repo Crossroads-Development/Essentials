@@ -53,9 +53,9 @@ public class HopperFilter extends ContainerBlock{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Allows items to be moved through it only if they match the filter"));
-		tooltip.add(new StringTextComponent("Doesn't move items on its own"));
-		tooltip.add(new StringTextComponent("Setting a Shulker Box as a filter matches everything in the Shulker Box"));
+		tooltip.add(new StringTextComponent("tt.essentials.hopper_filter.desc"));
+		tooltip.add(new StringTextComponent("tt.essentials.hopper_filter.move"));
+		tooltip.add(new StringTextComponent("tt.essentials.hopper_filter.shulker"));
 	}
 
 	private static final VoxelShape[] BB = new VoxelShape[3];

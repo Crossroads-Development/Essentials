@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -33,7 +34,7 @@ public class SpeedHopper extends SortingHopper{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Has the same sorting properties as a Sorting Hopper"));
-		tooltip.add(new StringTextComponent("Inserts or extracts entire stacks at a time"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.speed_hopper.sort"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.speed_hopper.desc"));
 	}
 }

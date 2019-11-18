@@ -7,12 +7,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.Style;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 public class EssentialsConfig{
+
+	/**
+	 * A common style applied to "quip" lines in tooltips
+	 */
+	public static final Style TT_QUIP = new Style().setColor(TextFormatting.AQUA).setItalic(true);
 
 	public static ForgeConfigSpec.BooleanValue addWrench;
 

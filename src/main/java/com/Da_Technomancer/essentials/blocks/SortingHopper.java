@@ -26,6 +26,7 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -223,6 +224,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Doesn't allow items to be drawn from it by other hoppers if this hopper can output them"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.desc"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.quip").setStyle(EssentialsConfig.TT_QUIP));
 	}
 }

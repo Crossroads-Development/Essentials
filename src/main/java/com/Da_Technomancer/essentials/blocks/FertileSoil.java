@@ -1,21 +1,24 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.EssentialsConfig;
-import net.minecraft.block.*;
+import com.Da_Technomancer.essentials.ReflectionUtil;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.PlantType;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
@@ -48,24 +51,27 @@ public class FertileSoil extends Block{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Slowly creates the seed plant/sapling on top of it, for free"));
-		tooltip.add(new StringTextComponent("Doesn't need a water source, and can't be trampled"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.desc"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.benefits"));
 		if(plant.getBlock() == Blocks.NETHER_WART){
-			tooltip.add(new StringTextComponent("Made with farmer souls"));
+			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").setStyle(EssentialsConfig.TT_QUIP));
 		}
 	}
 
 	@Override
 	public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction direction, IPlantable plantable){
-		PlantType tar = plantable.getPlantType(world, pos.offset(direction));
-
-		if(plant.getBlock() == Blocks.NETHER_WART){
-			return tar == PlantType.Nether;
-		}else if(plant.getBlock() instanceof SaplingBlock || plant.getBlock() instanceof SweetBerryBushBlock){
-			return tar == PlantType.Plains;
-		}else{
-			return tar == PlantType.Crop;
+		//As it turns out, the same method determines whether a block is a valid soil for a plant type, and whether it should be turned into podzol by large spruce trees
+		//We do want to act as a soil, we don't want to become podzol
+		//So, in the special case of spruce trees, we read the stacktrace and see if this method is being called for podzol-ification, and if so, return false
+		if(plant.getBlock() == Blocks.SPRUCE_SAPLING){
+			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+			String name;
+			if(stack.length > 6 && ((name = stack[6].getMethodName()).equals(ReflectionUtil.EsReflection.PODZOL_GEN.mcp) || name.equals(ReflectionUtil.EsReflection.PODZOL_GEN.obf))){
+				return false;
+			}
 		}
+
+		return plant.getBlock() == plantable;
 	}
 
 	@Override

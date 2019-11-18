@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import com.Da_Technomancer.essentials.EssentialsConfig;
 import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import net.minecraft.block.BlockRenderType;
@@ -18,7 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -80,8 +81,8 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Slots can be locked in the UI to only accept one item type"));
-		tooltip.add(new StringTextComponent("The partitions make it bigger somehow"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.desc"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.quip").setStyle(EssentialsConfig.TT_QUIP));
 	}
 
 	@Override
