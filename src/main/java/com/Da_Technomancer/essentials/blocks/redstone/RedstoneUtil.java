@@ -81,7 +81,7 @@ public class RedstoneUtil extends BlockUtil{
 
 	/**
 	 * @param w The world
-	 * @param pos The position of the blocks receiving the signal
+	 * @param pos The position of the block receiving the signal
 	 * @param dir The side of the blocks the redstone signal is coming in
 	 * @return The strength of the redstone signal a blocks is receiving on a given side
 	 */
@@ -89,6 +89,20 @@ public class RedstoneUtil extends BlockUtil{
 		BlockPos offsetPos = pos.offset(dir);
 		BlockState state = w.getBlockState(offsetPos);
 		return state.getBlock() == Blocks.REDSTONE_WIRE ? state.get(RedstoneWireBlock.POWER) : w.getRedstonePower(offsetPos, dir);
+	}
+
+	/**
+	 * Return the highest redstone strength at a block position
+	 * @param w The world
+	 * @param pos The position to test
+	 * @return The redstone strength at the passed position
+	 */
+	public static int getRedstoneAtPos(World w, BlockPos pos){
+		int val = 0;
+		for(Direction dir : Direction.values()){
+			val = Math.max(val, getRedstoneOnSide(w, pos, dir));
+		}
+		return val;
 	}
 
 	//Capability registration, not for general use
