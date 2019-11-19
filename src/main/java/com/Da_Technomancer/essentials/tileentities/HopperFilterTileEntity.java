@@ -121,9 +121,9 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		}
 
 		CompoundNBT nbt;
-		if(filt.getItem() instanceof BlockItem && ((BlockItem) filt.getItem()).getBlock() instanceof ShulkerBoxBlock && (nbt = filt.getTag()) != null && (nbt = nbt.getCompound("BlockEntityTag")).contains("Items", 9)){
+		if(filt.getItem() instanceof BlockItem && ((BlockItem) filt.getItem()).getBlock() instanceof ShulkerBoxBlock && (nbt = filt.getTag()) != null){
 			NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
-			ItemStackHelper.loadAllItems(nbt, nonnulllist);
+			ItemStackHelper.loadAllItems(nbt.getCompound("BlockEntityTag"), nonnulllist);
 
 			for(ItemStack singleFilt : nonnulllist){
 				if(!singleFilt.isEmpty() && matchFilter(query, singleFilt)){
@@ -136,6 +136,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	private static class BlankHandler implements IItemHandler{
+
 		@Override
 		public int getSlots(){
 			return 0;

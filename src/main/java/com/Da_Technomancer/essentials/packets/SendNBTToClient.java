@@ -22,7 +22,7 @@ public class SendNBTToClient extends ClientPacket{
 		this.pos = pos;
 	}
 
-	private static final Field[] FIELDS = fetchFields(SendFloatToClient.class, "pos", "nbt");
+	private static final Field[] FIELDS = fetchFields(SendNBTToClient.class, "pos", "nbt");
 
 	@Nonnull
 	@Override
