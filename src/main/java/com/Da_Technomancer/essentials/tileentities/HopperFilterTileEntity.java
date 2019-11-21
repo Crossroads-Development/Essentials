@@ -117,7 +117,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	private static boolean matchFilter(ItemStack query, ItemStack filt){
 		if(filt.isEmpty()){
-			return true;
+			return false;
 		}
 
 		CompoundNBT nbt;
@@ -126,7 +126,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 			ItemStackHelper.loadAllItems(nbt.getCompound("BlockEntityTag"), nonnulllist);
 
 			for(ItemStack singleFilt : nonnulllist){
-				if(!singleFilt.isEmpty() && matchFilter(query, singleFilt)){
+				if(matchFilter(query, singleFilt)){
 					return true;
 				}
 			}

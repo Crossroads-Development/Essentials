@@ -66,7 +66,10 @@ public class FertileSoil extends Block{
 		if(plant.getBlock() == Blocks.SPRUCE_SAPLING){
 			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
 			String name;
-			if(stack.length > 6 && ((name = stack[6].getMethodName()).equals(ReflectionUtil.EsReflection.PODZOL_GEN.mcp) || name.equals(ReflectionUtil.EsReflection.PODZOL_GEN.obf))){
+//			for(int i = 0; i < Math.min(stack.length, 8); i++)
+//			Minecraft.getInstance().player.sendMessage(new StringTextComponent(i + ": " + stack[i].getMethodName()));//
+			//Because there's a lambda function in the stacktrace, different compilers disagree on the stacktrace below the lambda. In practice, placePodzolAt can be either at index 6 or 7, so we check both
+			if(stack.length > 7 && ((name = stack[6].getMethodName()).equals(ReflectionUtil.EsReflection.PODZOL_GEN.mcp) || name.equals(ReflectionUtil.EsReflection.PODZOL_GEN.obf) || (name = stack[7].getMethodName()).equals(ReflectionUtil.EsReflection.PODZOL_GEN.mcp) || name.equals(ReflectionUtil.EsReflection.PODZOL_GEN.obf))){
 				return false;
 			}
 		}

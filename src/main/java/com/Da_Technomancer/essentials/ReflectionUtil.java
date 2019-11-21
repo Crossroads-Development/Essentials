@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials;
 
+import net.minecraft.world.gen.feature.MegaPineTree;
 import net.minecraftforge.fml.loading.LogMarkers;
 
 import javax.annotation.Nullable;
@@ -48,7 +49,7 @@ public final class ReflectionUtil{
 
 	public enum EsReflection implements IReflectionKey{
 		//All reflection keys are stored in one enum so that when MC updates, there is a central location to correct method signature changes
-		PODZOL_GEN(null, "func_175934_c", "placePodzolAt", "Prevent fertile soil from turning to podzol");
+		PODZOL_GEN(MegaPineTree.class, "func_175934_c", "placePodzolAt", "Prevent fertile soil from turning to podzol");
 
 		private final Class<?> clazz;
 		public final String obf;//Obfuscated name
