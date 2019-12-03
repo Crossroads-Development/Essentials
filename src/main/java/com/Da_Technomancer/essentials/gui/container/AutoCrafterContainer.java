@@ -61,17 +61,11 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 			addSlot(new Slot(inv, i, 8 + i * 18, 73){
 				@Override
 				public boolean isItemValid(ItemStack stack){
-					if(BlockUtil.sameItem(getStack(), stack)){
-						return true;
+					if(te == null){
+						return false;
 					}
-
-					for(int i = 0; i < 9; i++){
-						if(BlockUtil.sameItem(inventory.getStackInSlot(i), stack)){
-							return false;
-						}
-					}
-
-					return true;
+					int freeSlots = te.getLegalSlots(stack.getItem()) - te.getUsedSlots(stack.getItem(), inv);
+					return freeSlots > 0 || freeSlots == 0 && BlockUtil.sameItem(getStack(), stack);
 				}
 			});
 		}

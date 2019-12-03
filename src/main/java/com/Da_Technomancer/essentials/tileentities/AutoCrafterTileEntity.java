@@ -14,10 +14,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -33,6 +33,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,9 +60,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 	public AutoCrafterTileEntity(){
 		super(TYPE);
-		for(int i = 0; i < 19; i++){
-			inv[i] = ItemStack.EMPTY;
-		}
+		Arrays.fill(inv, ItemStack.EMPTY);
 	}
 
 	/**
@@ -163,7 +162,6 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		if(newReds != redstone){
 			redstone = newReds;
 			markDirty();
-			MinecraftServer serv;
 			if(redstone && world != null && !world.isRemote){
 				//Create a fake inventory with the manually configured inputs for finding a matching recipe
 				CraftingInventory fakeInv = new CraftingInventory(new Container(null, 0){
@@ -212,18 +210,25 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 							if(ingr.hasNoMatchingItems()){
 								continue;
 							}
-							for(int i = 0; i < 9; i++){
+							//Count index down instead of up to use the last slots first
+							for(int i = 8; i >= 0; i--){
 								if((inv[i].getCount() - used[i] > 0 && ingr.test(inv[i]))){
 									used[i]++;
 									continue ingredient;
 								}
 							}
-							//No matching item
+							//No matching item- abort the craft
 							return;
 						}
 
+						List<ItemStack> containers = new ArrayList<>(0);
 						//Consume ingredients
 						for(int i = 0; i < 9; i++){
+							if(used[i] != 0 && inv[i].hasContainerItem()){
+								ItemStack cont = inv[i].getContainerItem().copy();
+								cont.setCount(used[i]);
+								containers.add(cont);
+							}
 							inv[i].shrink(used[i]);
 						}
 						//Produce output
@@ -231,6 +236,27 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 							inv[9] = output.copy();
 						}else{
 							inv[9].grow(output.getCount());
+						}
+						for(ItemStack s : containers){
+							int slot = -1;
+							for(int i = 0; i < 9; i++){
+								if(BlockUtil.sameItem(s, inv[i])){
+									slot = i;
+									break;
+								}
+								if(inv[i].isEmpty()){
+									slot = i;
+									break;
+								}
+							}
+							if(slot == -1){
+								//Item can't fit in the input slots- eject
+								InventoryHelper.spawnItemStack(world, pos.getX() + Math.random(), pos.getY() + Math.random(), pos.getZ() + Math.random(), s);
+							}else if(inv[slot].isEmpty()){
+								inv[slot] = s;
+							}else{
+								inv[slot].grow(s.getCount());
+							}
 						}
 					}
 				}
@@ -353,6 +379,41 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		return new AutoCrafterContainer(id, playerInventory, iInv, recipe == null ? "" : recipe.toString(), pos);
 	}
 
+	public int getLegalSlots(Item item){
+		//The maximum number of slots an item type can use is equal to the number of items in the recipe input
+		int count = 0;
+		if(recipe == null){
+			//If recipe was set via ghost items, use the manual config
+			for(int i = 10; i < 19; i++){//10-18 are the ghost recipe input
+				if(inv[i].getItem() == item){
+					count++;
+				}
+			}
+		}else{
+			IRecipe<CraftingInventory> rec = validateRecipe(recipe, getRecipeManager());
+			if(rec != null){
+				ItemStack testStack = new ItemStack(item, 1);
+				for(Ingredient ingr : rec.getIngredients()){
+					if(ingr.test(testStack)){
+						count++;
+					}
+				}
+			}
+		}
+		return count;
+	}
+
+	public int getUsedSlots(Item item, IInventory inv){
+		int count = 0;
+		for(int i = 0; i < 9; i++){
+			if(inv.getStackInSlot(i).getItem() == item){
+				count++;
+			}
+		}
+		return count;
+	}
+
+	//TODO manipulate UI rules
 	private class InventoryHandler implements IItemHandler{
 
 		@Override
@@ -397,6 +458,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate){
+			//Allow extraction from the output AND input slots with items that aren't in the recipe
 			if(slot == 9 && !inv[slot].isEmpty()){
 				int change = Math.min(inv[9].getCount(), amount);
 				ItemStack out = inv[9].copy();
@@ -407,6 +469,22 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 				}
 
 				return change == 0 ? ItemStack.EMPTY : out;
+			}
+
+			//Only allow removing from an input slot if it contains an item above the limit for that type
+			if(slot < 9 && slot >= 0 && !inv[slot].isEmpty()){
+				Item item = inv[slot].getItem();
+				if(getUsedSlots(item, iInv) > getLegalSlots(item)){
+					int change = Math.min(inv[slot].getCount(), amount);
+					ItemStack out = inv[slot].copy();
+					out.setCount(change);
+
+					if(!simulate){
+						inv[slot].shrink(change);
+					}
+
+					return change == 0 ? ItemStack.EMPTY : out;
+				}
 			}
 			return ItemStack.EMPTY;
 		}
@@ -495,9 +573,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 		@Override
 		public void clear(){
-			for(int i = 0; i < inv.length; i++){
-				inv[i] = ItemStack.EMPTY;
-			}
+			Arrays.fill(inv, ItemStack.EMPTY);
 		}
 
 		@Override
