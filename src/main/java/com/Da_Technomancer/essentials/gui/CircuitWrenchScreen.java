@@ -58,7 +58,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 		searchBar.setDisabledTextColour(-1);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setMaxStringLength(20);
-		searchBar.func_212954_a(this::filterChanged);
+		searchBar.setResponder(this::filterChanged);
 		children.add(searchBar);
 		setFocusedDefault(searchBar);
 	}

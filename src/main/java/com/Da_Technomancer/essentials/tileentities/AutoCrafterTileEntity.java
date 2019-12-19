@@ -379,13 +379,13 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		return new AutoCrafterContainer(id, playerInventory, iInv, recipe == null ? "" : recipe.toString(), pos);
 	}
 
-	public int getLegalSlots(Item item){
+	public int getLegalSlots(Item item, IInventory inv){
 		//The maximum number of slots an item type can use is equal to the number of items in the recipe input
 		int count = 0;
 		if(recipe == null){
 			//If recipe was set via ghost items, use the manual config
 			for(int i = 10; i < 19; i++){//10-18 are the ghost recipe input
-				if(inv[i].getItem() == item){
+				if(inv.getStackInSlot(i).getItem() == item){
 					count++;
 				}
 			}
@@ -413,7 +413,6 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		return count;
 	}
 
-	//TODO manipulate UI rules
 	private class InventoryHandler implements IItemHandler{
 
 		@Override
@@ -433,12 +432,12 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			}
 
 			//Only allow inserting items into a slot if there is no other slot with the same item or that item type is already in the slot
-			if(!BlockUtil.sameItem(stack, inv[slot])){
-				for(int i = 0; i < 9; i++){
-					if(BlockUtil.sameItem(inv[i], stack)){
-						return stack;
-					}
-				}
+			Item item = stack.getItem();
+			if(inv[slot].isEmpty() && getLegalSlots(item, iInv) <= getUsedSlots(item, iInv)){
+				return stack;
+			}
+			if(!BlockUtil.sameItem(stack, inv[slot]) && !inv[slot].isEmpty()){
+				return stack;
 			}
 
 			int change = Math.min(stack.getMaxStackSize() - inv[slot].getCount(), stack.getCount());
@@ -474,7 +473,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			//Only allow removing from an input slot if it contains an item above the limit for that type
 			if(slot < 9 && slot >= 0 && !inv[slot].isEmpty()){
 				Item item = inv[slot].getItem();
-				if(getUsedSlots(item, iInv) > getLegalSlots(item)){
+				if(getUsedSlots(item, iInv) > getLegalSlots(item, iInv)){
 					int change = Math.min(inv[slot].getCount(), amount);
 					ItemStack out = inv[slot].copy();
 					out.setCount(change);

@@ -38,7 +38,7 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 		searchBar.setDisabledTextColour(-1);
 		searchBar.setEnableBackgroundDrawing(false);
 		searchBar.setMaxStringLength(20);
-		searchBar.func_212954_a(this::entryChanged);
+		searchBar.setResponder(this::entryChanged);
 		searchBar.setValidator(s -> {
 			final String whitelist = "0123456789 xX*/+-^piPIeE().";
 			for(int i = 0; i < s.length(); i++){

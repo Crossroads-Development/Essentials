@@ -64,7 +64,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 					if(te == null){
 						return false;
 					}
-					int freeSlots = te.getLegalSlots(stack.getItem()) - te.getUsedSlots(stack.getItem(), inv);
+					int freeSlots = te.getLegalSlots(stack.getItem(), inv) - te.getUsedSlots(stack.getItem(), inv);
 					return freeSlots > 0 || freeSlots == 0 && BlockUtil.sameItem(getStack(), stack);
 				}
 			});
@@ -175,6 +175,9 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 				s.setCount(1);
 				inv.setInventorySlotContents(slotId, s);
 			}
+		}else if(slotId >= 0 && slotId < 9 && player != null && te != null){
+			//Input slots
+			//TODO
 		}
 
 		return super.slotClick(slotId, dragType, clickTypeIn, player);
