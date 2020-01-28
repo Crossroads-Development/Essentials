@@ -30,8 +30,8 @@ public class MultiPistonExtend extends Block{
 		this.sticky = sticky;
 		String name = "multi_piston_extend" + (sticky ? "_sticky" : "");
 		setRegistryName(name);
-		setDefaultState(getDefaultState().with(EssentialsProperties.AXIS, Direction.Axis.Y).with(EssentialsProperties.HEAD, 0));
-		EssentialsBlocks.toRegister.add(this);
+		setDefaultState(getDefaultState().with(ESProperties.AXIS, Direction.Axis.Y).with(ESProperties.HEAD, 0));
+		ESBlocks.toRegister.add(this);
 	}
 
 	@Nullable
@@ -45,10 +45,10 @@ public class MultiPistonExtend extends Block{
 	@Override
 	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){
 		if(!MultiPistonBase.changingWorld){
-			Direction.Axis axis = state.get(EssentialsProperties.AXIS);
-			Direction.AxisDirection dir = getDirFromHead(state.get(EssentialsProperties.HEAD));
+			Direction.Axis axis = state.get(ESProperties.AXIS);
+			Direction.AxisDirection dir = getDirFromHead(state.get(ESProperties.HEAD));
 
-			Block piston = sticky ? EssentialsBlocks.multiPistonSticky : EssentialsBlocks.multiPiston;
+			Block piston = sticky ? ESBlocks.multiPistonSticky : ESBlocks.multiPiston;
 
 			for(Direction.AxisDirection actDir : Direction.AxisDirection.values()){
 				//Don't try to interact in the side with the piston head
@@ -56,7 +56,7 @@ public class MultiPistonExtend extends Block{
 					BlockPos adjPos = pos.offset(Direction.getFacingFromAxis(actDir, axis));
 					BlockState adjState = world.getBlockState(adjPos);
 					//Even though under normal usage this if statement should be a guaranteed true, we check anyway in case we ended up in a glitched state, either through a bug or a player using the setblock command
-					if((adjState.getBlock() == piston && adjState.get(EssentialsProperties.FACING).getAxis() == axis) || (adjState.getBlock() == this && adjState.get(EssentialsProperties.AXIS) == axis)){
+					if((adjState.getBlock() == piston && adjState.get(ESProperties.FACING).getAxis() == axis) || (adjState.getBlock() == this && adjState.get(ESProperties.AXIS) == axis)){
 						world.destroyBlock(adjPos, false);
 					}
 				}
@@ -74,7 +74,7 @@ public class MultiPistonExtend extends Block{
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.AXIS, EssentialsProperties.HEAD);
+		builder.add(ESProperties.AXIS, ESProperties.HEAD);
 	}
 
 	private static final VoxelShape[] ROD_BB = new VoxelShape[] {makeCuboidShape(0.001D, 6, 6, 15.999D, 10, 10), makeCuboidShape(6, 0.001D, 6, 10, 15.999D, 10), makeCuboidShape(6, 6, 0.001D, 10, 10, 15.999D)};
@@ -82,8 +82,8 @@ public class MultiPistonExtend extends Block{
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
-		Direction.Axis axis = state.get(EssentialsProperties.AXIS);
-		Direction.AxisDirection dir = getDirFromHead(state.get(EssentialsProperties.HEAD));
+		Direction.Axis axis = state.get(ESProperties.AXIS);
+		Direction.AxisDirection dir = getDirFromHead(state.get(ESProperties.HEAD));
 		if(dir == null){
 			return ROD_BB[axis.ordinal()];
 		}else{
@@ -98,6 +98,6 @@ public class MultiPistonExtend extends Block{
 
 	@Override
 	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player){
-		return sticky ? new ItemStack(EssentialsBlocks.multiPistonSticky, 1) : new ItemStack(EssentialsBlocks.multiPiston, 1);
+		return sticky ? new ItemStack(ESBlocks.multiPistonSticky, 1) : new ItemStack(ESBlocks.multiPiston, 1);
 	}
 }

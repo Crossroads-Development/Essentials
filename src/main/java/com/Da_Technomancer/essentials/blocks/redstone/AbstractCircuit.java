@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -33,19 +33,19 @@ public abstract class AbstractCircuit extends AbstractTile{
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.HORIZ_FACING, context.getPlacementHorizontalFacing());
+		return getDefaultState().with(ESProperties.HORIZ_FACING, context.getPlacementHorizontalFacing());
 	}
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.HORIZ_FACING);//.add(EssentialsProperties.REDSTONE_BOOL);
+		builder.add(ESProperties.HORIZ_FACING);//.add(EssentialsProperties.REDSTONE_BOOL);
 	}
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.HORIZ_FACING));
+				worldIn.setBlockState(pos, state.cycle(ESProperties.HORIZ_FACING));
 				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof CircuitTileEntity){
 					((CircuitTileEntity) te).wipeCache();
@@ -95,7 +95,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Override
 	public int getWeakPower(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction side){
-		if(side.getOpposite() == state.get(EssentialsProperties.HORIZ_FACING)){
+		if(side.getOpposite() == state.get(ESProperties.HORIZ_FACING)){
 			TileEntity te = blockAccess.getTileEntity(pos);
 			if(te instanceof CircuitTileEntity){
 				return RedstoneUtil.clampToVanilla(((CircuitTileEntity) te).getOutput());
@@ -106,7 +106,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Override
 	public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side){
-		return side != null && (side.getOpposite() == state.get(EssentialsProperties.HORIZ_FACING) || useInput(CircuitTileEntity.Orient.getOrient(side.getOpposite(), state.get(EssentialsProperties.HORIZ_FACING))));
+		return side != null && (side.getOpposite() == state.get(ESProperties.HORIZ_FACING) || useInput(CircuitTileEntity.Orient.getOrient(side.getOpposite(), state.get(ESProperties.HORIZ_FACING))));
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Override
 	public boolean canConnect(Direction side, BlockState state){
-		Direction facing = state.get(EssentialsProperties.HORIZ_FACING);
+		Direction facing = state.get(ESProperties.HORIZ_FACING);
 		return side == facing || useInput(CircuitTileEntity.Orient.getOrient(side, facing));
 	}
 

@@ -53,6 +53,13 @@
 	"block.essentials.asin_circuit": "Arc-Sine Circuit",
 	"block.essentials.acos_circuit": "Arc-Cosine Circuit",
 	"block.essentials.atan_circuit": "Arc-Tangent Circuit",
+	"block.essentials.equals_circuit": "Equals Circuit",
+	"block.essentials.less_circuit": "Less Than Circuit",
+	"block.essentials.more_circuit": "Greater Than Circuit",
+	"block.essentials.round_circuit": "Rounding Circuit",
+	"block.essentials.floor_circuit": "Flooring Circuit",
+	"block.essentials.ceil_circuit": "Ceiling Circuit",
+	"block.essentials.log_circuit": "Logarithm Circuit",
 	"block.essentials.reader_circuit": "Reader Circuit",
 	
 	
@@ -142,6 +149,13 @@
 	"tt.essentials.asin_circuit": "Outputs arcsin of the back input, in radians",
 	"tt.essentials.acos_circuit": "Outputs arccos of the back input, in radians",
 	"tt.essentials.atan_circuit": "Outputs arctan of the back input, in radians",
+	"tt.essentials.equals_circuit": "Outputs 1 iff the two inputs are equal (within 1%)",
+	"tt.essentials.less_circuit": "Outputs 1 iff the back input is less than the side input",
+	"tt.essentials.more_circuit": "Outputs 1 iff the back input is greater than the side input",
+	"tt.essentials.round_circuit": "Outputs the input rounded to an integer",
+	"tt.essentials.floor_circuit": "Outputs the input rounded down",
+	"tt.essentials.ceil_circuit": "Outputs the input rounded up",
+	"tt.essentials.log_circuit": "Outputs the base 10 logarithm of the input",
 	"tt.essentials.reader_circuit": "Reads the block behind it like a Comparator. Has a wider range of values",
 
 	"tt.essentials.empty_fluid": "Empty",

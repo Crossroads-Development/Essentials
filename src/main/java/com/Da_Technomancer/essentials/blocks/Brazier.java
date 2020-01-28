@@ -9,7 +9,6 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -42,9 +41,9 @@ public class Brazier extends ContainerBlock{
 		super(Block.Properties.create(Material.ROCK).hardnessAndResistance(2));
 		String name = "brazier";
 		setRegistryName(name);
-		setDefaultState(getDefaultState().with(EssentialsProperties.BRAZIER_CONTENTS, 0));
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		setDefaultState(getDefaultState().with(ESProperties.BRAZIER_CONTENTS, 0));
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
@@ -68,7 +67,7 @@ public class Brazier extends ContainerBlock{
 		if(other.getBlock() != this){
 			return other.getLightValue(world, pos);
 		}
-		switch(state.get(EssentialsProperties.BRAZIER_CONTENTS)){
+		switch(state.get(ESProperties.BRAZIER_CONTENTS)){
 			case 2:
 			case 4:
 				return 15;
@@ -83,7 +82,7 @@ public class Brazier extends ContainerBlock{
 
 	@Override
 	public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn){
-		int type = worldIn.getBlockState(pos).get(EssentialsProperties.BRAZIER_CONTENTS);
+		int type = worldIn.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS);
 		if(type == 1){
 			entityIn.extinguish();
 		}else if(type == 2){
@@ -95,7 +94,7 @@ public class Brazier extends ContainerBlock{
 
 	@Override
 	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance){
-		int type = worldIn.getBlockState(pos).get(EssentialsProperties.BRAZIER_CONTENTS);
+		int type = worldIn.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS);
 		if(type != 1 && type != 2){
 			super.onFallenUpon(worldIn, pos, entityIn, fallDistance);
 		}
@@ -122,7 +121,7 @@ public class Brazier extends ContainerBlock{
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.BRAZIER_CONTENTS);
+		builder.add(ESProperties.BRAZIER_CONTENTS);
 	}
 
 	@Override
@@ -131,7 +130,7 @@ public class Brazier extends ContainerBlock{
 			TileEntity te = worldIn.getTileEntity(pos);
 			if (te instanceof BrazierTileEntity) {
 				ItemStack made = ItemStack.EMPTY;
-				switch(state.get(EssentialsProperties.BRAZIER_CONTENTS)){
+				switch(state.get(ESProperties.BRAZIER_CONTENTS)){
 					case 3:
 						made = new ItemStack(Blocks.COAL_BLOCK);
 						break;
@@ -140,9 +139,6 @@ public class Brazier extends ContainerBlock{
 						break;
 					case 6:
 						made = new ItemStack(Blocks.SOUL_SAND);
-						break;
-					case 7:
-						made = new ItemStack(Items.POISONOUS_POTATO);
 						break;
 				}
 				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), made);

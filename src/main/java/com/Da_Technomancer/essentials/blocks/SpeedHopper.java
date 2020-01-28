@@ -7,7 +7,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -22,8 +21,8 @@ public class SpeedHopper extends SortingHopper{
 		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2));
 		String name = "speed_hopper";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override

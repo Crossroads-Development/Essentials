@@ -1,0 +1,6 @@
+{
+	"parent": "essentials:block/circuit/circuit",
+	"textures": {
+		"top": "essentials:block/circuit/more"
+	}
+}

@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
@@ -21,7 +21,7 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 	protected AbstractTile(String name){
 		super(PROP);
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
+		ESBlocks.toRegister.add(this);
 		//Don't register an item form
 	}
 
@@ -29,7 +29,7 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 
 	@Override
 	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player){
-		return new ItemStack(EssentialsBlocks.wireCircuit, 1);
+		return new ItemStack(ESBlocks.wireCircuit, 1);
 	}
 
 	@Override

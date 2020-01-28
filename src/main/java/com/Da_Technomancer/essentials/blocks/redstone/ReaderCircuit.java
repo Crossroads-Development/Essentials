@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -29,7 +29,7 @@ public class ReaderCircuit extends AbstractCircuit{
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
 		World world = te.getWorld();
 		BlockPos pos = te.getPos();
-		Direction back = CircuitTileEntity.Orient.BACK.getFacing(world.getBlockState(pos).get(EssentialsProperties.HORIZ_FACING));
+		Direction back = CircuitTileEntity.Orient.BACK.getFacing(world.getBlockState(pos).get(ESProperties.HORIZ_FACING));
 		float output;
 		pos = pos.offset(back);
 		BlockState state = world.getBlockState(pos);

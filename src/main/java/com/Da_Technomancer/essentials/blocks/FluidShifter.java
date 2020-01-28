@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -29,6 +29,6 @@ public class FluidShifter extends AbstractShifter{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_shifter_info"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_shifter_range", EssentialsConfig.itemChuteRange.get()));
+		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_shifter_range", ESConfig.itemChuteRange.get()));
 	}
 }

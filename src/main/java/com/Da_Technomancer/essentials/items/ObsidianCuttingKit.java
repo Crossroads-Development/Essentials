@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,10 +18,10 @@ import java.util.List;
 public class ObsidianCuttingKit extends Item{
 
 	protected ObsidianCuttingKit(){
-		super(new Properties().group(EssentialsItems.TAB_ESSENTIALS));
+		super(new Properties().group(ESItems.TAB_ESSENTIALS));
 		String name = "obsidian_cutting_kit";
 		setRegistryName(name);
-		EssentialsItems.toRegister.add(this);
+		ESItems.toRegister.add(this);
 	}
 
 	@Override

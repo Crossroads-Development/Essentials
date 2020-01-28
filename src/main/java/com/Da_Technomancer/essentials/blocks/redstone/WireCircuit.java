@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.WireTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -24,13 +24,13 @@ public class WireCircuit extends AbstractTile{
 
 	public WireCircuit(){
 		super("wire_circuit");
-		setDefaultState(getDefaultState().with(EssentialsProperties.CONNECTIONS, 0));
-		EssentialsBlocks.blockAddQue(this);//Register an item form only for the actual wire circuit
+		setDefaultState(getDefaultState().with(ESProperties.CONNECTIONS, 0));
+		ESBlocks.blockAddQue(this);//Register an item form only for the actual wire circuit
 	}
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.CONNECTIONS);
+		builder.add(ESProperties.CONNECTIONS);
 	}
 
 	@Override
@@ -46,8 +46,8 @@ public class WireCircuit extends AbstractTile{
 			}
 		}
 
-		if(meta != state.get(EssentialsProperties.CONNECTIONS)){
-			worldIn.setBlockState(pos, state.with(EssentialsProperties.CONNECTIONS, meta), 2);
+		if(meta != state.get(ESProperties.CONNECTIONS)){
+			worldIn.setBlockState(pos, state.with(ESProperties.CONNECTIONS, meta), 2);
 		}
 
 		//Wires propogate block updates in all horizontal directions to make sure any attached circuit can update when a new connection is made/broken

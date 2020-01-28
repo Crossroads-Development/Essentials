@@ -1,8 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
-import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
@@ -21,7 +20,6 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -37,8 +35,8 @@ public class HopperFilter extends ContainerBlock{
 		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2));
 		String name = "hopper_filter";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
@@ -69,12 +67,12 @@ public class HopperFilter extends ContainerBlock{
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
-		return BB[state.get(EssentialsProperties.AXIS).ordinal()];
+		return BB[state.get(ESProperties.AXIS).ordinal()];
 	}
 
 	@Override
 	public void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.AXIS);
+		builder.add(ESProperties.AXIS);
 	}
 
 	@Override
@@ -92,9 +90,9 @@ public class HopperFilter extends ContainerBlock{
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.AXIS));
+				worldIn.setBlockState(pos, state.cycle(ESProperties.AXIS));
 				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof HopperFilterTileEntity){
 					((HopperFilterTileEntity) te).clearCache();
@@ -123,7 +121,7 @@ public class HopperFilter extends ContainerBlock{
 
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.AXIS, context.getFace().getAxis());
+		return getDefaultState().with(ESProperties.AXIS, context.getFace().getAxis());
 	}
 
 	@Override

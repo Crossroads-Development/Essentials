@@ -18,10 +18,10 @@ import java.util.List;
 public class LinkingTool extends Item{
 
 	public LinkingTool(){
-		super(new Item.Properties().maxStackSize(1).group(EssentialsItems.TAB_ESSENTIALS));
+		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS));
 		String name = "linking_tool";
 		setRegistryName(name);
-		EssentialsItems.toRegister.add(this);
+		ESItems.toRegister.add(this);
 	}
 
 

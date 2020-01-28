@@ -1,0 +1,23 @@
+{
+	"forge_marker": 1,
+	"defaults": {
+		"model": "essentials:block/circuit/more",
+		"uvlock": false
+	},
+	"variants": {
+		"horiz_facing": {
+			"north": {
+
+			},
+			"south": {
+				"y": 180
+			},
+			"east": {
+				"y": 90
+			},
+			"west": {
+				"y": 270
+			}
+		}
+	}
+}

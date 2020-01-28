@@ -14,7 +14,11 @@ import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 
-public class EssentialsConfig{
+import javax.annotation.Nullable;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+public class ESConfig{
 
 	/**
 	 * A common style applied to "quip" lines in tooltips
@@ -28,7 +32,7 @@ public class EssentialsConfig{
 	public static ForgeConfigSpec.IntValue itemChuteRange;
 	public static ForgeConfigSpec.DoubleValue fertileSoilRate;
 	public static ForgeConfigSpec.IntValue maxRedstoneRange;
-	public static ForgeConfigSpec.EnumValue numberDisplay;
+	public static ForgeConfigSpec.EnumValue<NumberTypes> numberDisplay;
 	public static ForgeConfigSpec.IntValue wirelessRange;
 
 	private static ForgeConfigSpec clientSpec;
@@ -38,7 +42,7 @@ public class EssentialsConfig{
 		//Client config
 		ForgeConfigSpec.Builder clientBuilder = new ForgeConfigSpec.Builder();
 		addWrench = clientBuilder.worldRestart().comment("Should the Wrench show up in the creative menu?").define("creative_wrench", true);
-		numberDisplay = clientBuilder.comment("How should very large and small numbers be displayed?", "Options are: NORMAL, SCIENTIFIC, ENGINEERING, and RAW").defineEnum("num_display", NumberTypes.SCIENTIFIC);
+		numberDisplay = clientBuilder.comment("How should very large and small numbers be displayed?", "Options are: NORMAL, SCIENTIFIC, ENGINEERING, and HEX").defineEnum("num_display", NumberTypes.SCIENTIFIC);
 
 		clientSpec = clientBuilder.build();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpec);
@@ -82,9 +86,9 @@ public class EssentialsConfig{
 	 * @param format The format to conform the value to. Uses the value in the config if null.
 	 * @return The formatted string version, for display
 	 */
-	public static String formatFloat(float value, NumberTypes format){
+	public static String formatFloat(float value, @Nullable NumberTypes format){
 		if(format == null){
-			format = (NumberTypes) numberDisplay.get();
+			format = numberDisplay.get();
 		}
 		switch(format){
 			case SCIENTIFIC:
@@ -96,57 +100,20 @@ public class EssentialsConfig{
 					return trimTrail(Math.round(value * 1000F) / 1000F);
 				}
 
-				int expon = (int) Math.floor(Math.log10(absValue));
-				return trimTrail(Math.round(value * 1000F * Math.pow(10, -expon)) / 1000F) + "\u00D710^" + expon;
+				return scientific.format(value);
 			case ENGINEERING:
 				float absoValue = Math.abs(value);
 				if(absoValue == 0){
 					return "0";
 				}
-				if(absoValue < 1000 && absoValue >= 0.0005){
+				if(absoValue < 1000 && absoValue >= 0.0005F){
 					return trimTrail(Math.round(value * 1000F) / 1000F);
 				}
 
-				int exponent = (int) Math.floor(Math.log10(absoValue));
-				if(exponent > 0){
-					exponent -= exponent % 3;
-				}else if(exponent % 3 != 0){
-					exponent -= 3 + exponent % 3;
-				}
-				return trimTrail(Math.round(value * 1000F * Math.pow(10, -exponent)) / 1000F) + "\u00D710^" + exponent;
-			case RAW:
-				//This option exists mainly for debugging. It shows the entire value in normal decimal notation as it is actually saved.
-				if(value == 0 || value == -0){
-					return "0";
-				}
-				StringBuilder output = new StringBuilder(".");
-				int buildVal = (int) Math.abs(value);
-
-				//Add portion before the decimal point, one digit at a time
-				while(buildVal != 0){
-					output.insert(0, buildVal % 10);
-					buildVal /= 10;
-				}
-
-				if((int) value == value){
-					output.deleteCharAt(output.length() - 1);//Remove the decimal point
-				}else{
-					//Add portion after the decimal point, one digit at a time
-					float decValue = Math.abs(value) % 1;
-					decValue *= 10F;
-					while(decValue > 0){
-						int digit = (int) decValue;
-						output.append(digit);
-						decValue *= 10F;
-						decValue %= 10;
-					}
-				}
-
-				if(value < 0){
-					output.insert(0, "-");
-				}
-
-				return output.toString();
+				return engineering.format(value);
+			case HEX:
+				//This option exists mainly for debugging. It shows the entire hex definition of the float value
+				return Float.toHexString(value);
 			case NORMAL:
 			default:
 				return Float.toString(value);
@@ -154,18 +121,22 @@ public class EssentialsConfig{
 	}
 
 	private static String trimTrail(float valFloat){
-		String val = "" + valFloat;
+		String val = Float.toString(valFloat);
+		//Removes the .0 java appends to string representations of integer-valued floats
 		while(val.contains(".") && (val.endsWith("0") || val.endsWith("."))){
 			val = val.substring(0, val.length() - 2);
 		}
 		return val;
 	}
 
+	private static final NumberFormat scientific = new DecimalFormat("0.###E0");
+	private static final NumberFormat engineering = new DecimalFormat("##0.###E0");
+
 	public enum NumberTypes{
 
 		NORMAL(),//Java default
 		SCIENTIFIC(),//Scientific notation when magnitude outside of 0.001-1000
 		ENGINEERING(),//Engineering notation when magnitude outside of 0.001-1000
-		RAW();//Every single decimal point. You want this? WHAT IS WRONG WITH YOU?
+		HEX()//Display the raw float hexadecimal. This exists mainly for debugging. You want this? WHAT IS WRONG WITH YOU?
 	}
 }

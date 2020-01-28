@@ -29,8 +29,8 @@ public class AutoCrafter extends ContainerBlock{
 		super(Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL));
 		String name = "auto_crafter";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Nullable

@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -53,27 +53,27 @@ public class WitherCannon extends Block{
 		super(Properties.create(Material.ROCK, MaterialColor.BLACK).hardnessAndResistance(50F, 1200F).sound(SoundType.STONE));
 		String name = "wither_cannon";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
-		setDefaultState(getDefaultState().with(EssentialsProperties.REDSTONE_BOOL, false));
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
+		setDefaultState(getDefaultState().with(ESProperties.REDSTONE_BOOL, false));
 	}
 
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection());
+		return getDefaultState().with(ESProperties.FACING, context.getNearestLookingDirection());
 	}
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.FACING).add(EssentialsProperties.REDSTONE_BOOL);
+		builder.add(ESProperties.FACING).add(ESProperties.REDSTONE_BOOL);
 	}
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				BlockState endState = state.cycle(EssentialsProperties.FACING);
+				BlockState endState = state.cycle(ESProperties.FACING);
 				worldIn.setBlockState(pos, endState);
 			}
 			return true;
@@ -95,19 +95,19 @@ public class WitherCannon extends Block{
 	@Override
 	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
 		boolean powered = world.isBlockPowered(pos) || world.isBlockPowered(pos.up());
-		boolean wasActive = state.get(EssentialsProperties.REDSTONE_BOOL);
+		boolean wasActive = state.get(ESProperties.REDSTONE_BOOL);
 		if(powered && !wasActive){
 			world.getPendingBlockTicks().scheduleTick(pos, this, tickRate(world));
-			world.setBlockState(pos, state.with(EssentialsProperties.REDSTONE_BOOL, true), 4);
+			world.setBlockState(pos, state.with(ESProperties.REDSTONE_BOOL, true), 4);
 		}else if(!powered && wasActive){
-			world.setBlockState(pos, state.with(EssentialsProperties.REDSTONE_BOOL, false), 4);
+			world.setBlockState(pos, state.with(ESProperties.REDSTONE_BOOL, false), 4);
 		}
 	}
 
 	@Override
 	public void tick(BlockState state, World world, BlockPos pos, Random rand){
 		if(!world.isRemote){
-			Direction dir = state.get(EssentialsProperties.FACING);
+			Direction dir = state.get(ESProperties.FACING);
 			BlockPos spawnPos = pos.offset(dir);
 			WitherSkullEntity skull = new CannonSkull(ENT_TYPE, world);
 			skull.setLocationAndAngles(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.getHorizontalAngle() + 180, dir.getYOffset() * -90);

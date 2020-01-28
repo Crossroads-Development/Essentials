@@ -1,14 +1,14 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.blocks.redstone.*;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
+import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 
 import java.util.ArrayList;
 
-public class EssentialsBlocks{
+public class ESBlocks{
 
 	public static Brazier brazier;
 	public static SlottedChest slottedChest;
@@ -62,13 +62,20 @@ public class EssentialsBlocks{
 	public static AbstractCircuit asinCircuit;
 	public static AbstractCircuit acosCircuit;
 	public static AbstractCircuit atanCircuit;
+	public static AbstractCircuit equalsCircuit;
+	public static AbstractCircuit lessCircuit;
+	public static AbstractCircuit moreCircuit;
+	public static AbstractCircuit roundCircuit;
+	public static AbstractCircuit floorCircuit;
+	public static AbstractCircuit ceilCircuit;
+	public static AbstractCircuit logCircuit;
 	public static ReaderCircuit readerCircuit;
 	public static RedstoneTransmitter redstoneTransmitter;
 	public static RedstoneReceiver redstoneReceiver;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
-	public static final Item.Properties itemBlockProp = new Item.Properties().group(EssentialsItems.TAB_ESSENTIALS);
+	public static final Item.Properties itemBlockProp = new Item.Properties().group(ESItems.TAB_ESSENTIALS);
 
 	/**
 	 * Registers the item form of a blocks and the item model.
@@ -77,7 +84,7 @@ public class EssentialsBlocks{
 	 */
 	public static <T extends Block> T blockAddQue(T block){
 		Item item = new BlockItem(block, itemBlockProp).setRegistryName(block.getRegistryName());
-		EssentialsItems.toRegister.add(item);
+		ESItems.toRegister.add(item);
 		return block;
 	}
 
@@ -124,7 +131,7 @@ public class EssentialsBlocks{
 		maxCircuit = new GenericAACircuit("max", Math::max);
 		minCircuit = new GenericAACircuit("min", Math::min);
 		sumCircuit = new GenericAACircuit("sum", Float::sum);
-		difCircuit = new GenericABCircuit("dif", (a, b) -> Math.max(b - a, 0));
+		difCircuit = new GenericABCircuit("dif", (a, b) -> b - a);
 		prodCircuit = new GenericAACircuit("prod", (a0, a1) -> a0 * a1);
 		quotCircuit = new GenericABCircuit("quot", (a, b) -> b / a);
 		powCircuit = new GenericABCircuit("pow", (a, b) -> (float) Math.pow(b, a));
@@ -135,6 +142,13 @@ public class EssentialsBlocks{
 		asinCircuit = new GenericACircuit("asin", (a) -> (float) Math.asin(a));
 		acosCircuit = new GenericACircuit("acos", (a) -> (float) Math.acos(a));
 		atanCircuit = new GenericACircuit("atan", (a) -> (float) Math.atan(a));
+		equalsCircuit = new GenericAACircuit("equals", (a0, a1) -> a0.equals(a1) || Math.abs(a0 - a1) / Math.max(a0, a1) <= 0.01F ? 1F : 0);//Checks if the smaller input is within 1% of the larger
+		lessCircuit = new GenericABCircuit("less", (a, b) -> b < a ? 1F : 0);
+		moreCircuit = new GenericABCircuit("more", (a, b) -> b > a ? 1F : 0);
+		roundCircuit = new GenericACircuit("round", a1 -> (float) Math.round(a1));
+		floorCircuit = new GenericACircuit("floor", (a) -> (float) Math.floor(a));
+		ceilCircuit = new GenericACircuit("ceil", (a) -> (float) Math.ceil(a));
+		logCircuit = new GenericACircuit("log", (a) -> (float) Math.log10(a));
 		readerCircuit = new ReaderCircuit();
 		redstoneTransmitter = new RedstoneTransmitter();
 		redstoneReceiver = new RedstoneReceiver();

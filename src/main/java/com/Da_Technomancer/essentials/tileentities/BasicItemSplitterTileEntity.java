@@ -1,9 +1,9 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -44,10 +44,10 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	private Direction getFacing(){
 		if(facing == null){
 			BlockState state = world.getBlockState(pos);
-			if(!state.has(EssentialsProperties.FACING)){
+			if(!state.has(ESProperties.FACING)){
 				return Direction.DOWN;
 			}
-			facing = state.get(EssentialsProperties.FACING);
+			facing = state.get(ESProperties.FACING);
 		}
 		return facing;
 	}
@@ -55,14 +55,14 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 	public void refreshCache(){
 		facing = null;
 		Direction dir = getFacing();
-		int maxChutes = EssentialsConfig.itemChuteRange.get();
+		int maxChutes = ESConfig.itemChuteRange.get();
 
 		for(int i = 0; i < 2; i++){
 			int extension;
 
 			for(extension = 1; extension <= maxChutes; extension++){
 				BlockState target = world.getBlockState(pos.offset(dir, extension));
-				if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
+				if(target.getBlock() != ESBlocks.itemChute || target.get(ESProperties.AXIS) != dir.getAxis()){
 					break;
 				}
 			}

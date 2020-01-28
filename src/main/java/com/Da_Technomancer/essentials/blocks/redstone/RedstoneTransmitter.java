@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import com.Da_Technomancer.essentials.tileentities.RedstoneTransmitterTileEntity;
 import net.minecraft.block.*;
@@ -37,9 +37,9 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 		super(Block.Properties.create(Material.ROCK).hardnessAndResistance(0.5F).sound(SoundType.STONE));
 		String name = "redstone_transmitter";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
-		setDefaultState(getDefaultState().with(EssentialsProperties.COLOR, DyeColor.WHITE));
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
+		setDefaultState(getDefaultState().with(ESProperties.COLOR, DyeColor.WHITE));
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> container){
-		container.add(EssentialsProperties.COLOR);
+		container.add(ESProperties.COLOR);
 	}
 
 	@Override

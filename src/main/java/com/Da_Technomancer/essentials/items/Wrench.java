@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.items;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,15 +20,15 @@ import java.util.List;
 public class Wrench extends Item{
 
 	protected Wrench(){
-		super(new Item.Properties().maxStackSize(1).group(EssentialsItems.TAB_ESSENTIALS));
+		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS));
 		String name = "wrench";
 		setRegistryName(name);
-		EssentialsItems.toRegister.add(this);
+		ESItems.toRegister.add(this);
 	}
 
 	@Override
 	public Collection<ItemGroup> getCreativeTabs(){
-		if(EssentialsConfig.addWrench.get()){
+		if(ESConfig.addWrench.get()){
 			return super.getCreativeTabs();
 		}
 		return ImmutableList.of();

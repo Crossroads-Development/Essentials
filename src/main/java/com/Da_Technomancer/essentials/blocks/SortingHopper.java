@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
 import com.Da_Technomancer.essentials.tileentities.SortingHopperTileEntity;
 import net.minecraft.block.*;
@@ -25,7 +25,6 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -66,8 +65,8 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 		this(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2));
 		String name = "sorting_hopper";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
@@ -126,7 +125,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(!worldIn.isRemote){
 			TileEntity te = worldIn.getTileEntity(pos);
-			if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+			if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 				worldIn.setBlockState(pos, state.cycle(FACING));
 				if(te instanceof SortingHopperTileEntity){
 					((SortingHopperTileEntity) te).resetCache();
@@ -225,6 +224,6 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.quip").setStyle(EssentialsConfig.TT_QUIP));
+		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.quip").setStyle(ESConfig.TT_QUIP));
 	}
 }

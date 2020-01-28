@@ -1,9 +1,9 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 @ObjectHolder(Essentials.MODID)
 public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
@@ -52,8 +53,8 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 	}
 
 	public void dye(DyeColor color){
-		if(world.getBlockState(pos).get(EssentialsProperties.COLOR) != color){
-			world.setBlockState(pos, world.getBlockState(pos).with(EssentialsProperties.COLOR, color));
+		if(world.getBlockState(pos).get(ESProperties.COLOR) != color){
+			world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.COLOR, color));
 			if(src != null){
 				BlockPos worldSrc = pos.add(src);
 				TileEntity srcTE = world.getTileEntity(worldSrc);
@@ -66,7 +67,7 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 
 	protected void notifyOutputChange(){
 		//Notify dependents and/or neighbors that getPower output has changed
-		world.notifyNeighborsOfStateChange(pos, EssentialsBlocks.redstoneReceiver);
+		world.notifyNeighborsOfStateChange(pos, ESBlocks.redstoneReceiver);
 		for(int i = 0; i < dependents.size(); i++){
 			WeakReference<LazyOptional<IRedstoneHandler>> depend = dependents.get(i);
 			LazyOptional<IRedstoneHandler> optional;
@@ -135,8 +136,8 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 	}
 
 	@Override
-	public ArrayList<BlockPos> getLinks(){
-		return new ArrayList<>(1);
+	public HashSet<BlockPos> getLinks(){
+		return new HashSet<>(1);
 	}
 
 	@Override
@@ -146,7 +147,7 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 
 	@Override
 	public int getRange(){
-		return EssentialsConfig.wirelessRange.get();
+		return ESConfig.wirelessRange.get();
 	}
 
 	@Override

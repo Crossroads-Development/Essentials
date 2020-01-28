@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 
-public class EssentialsItems{
+public class ESItems{
 
 	public static final ItemGroup TAB_ESSENTIALS = new ItemGroup(Essentials.MODID){
 		@Override

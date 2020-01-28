@@ -23,10 +23,10 @@ import java.util.List;
 public class AnimalFeed extends Item{
 
 	protected AnimalFeed(){
-		super(new Properties().group(EssentialsItems.TAB_ESSENTIALS));
+		super(new Properties().group(ESItems.TAB_ESSENTIALS));
 		String name = "animal_feed";
 		setRegistryName(name);
-		EssentialsItems.toRegister.add(this);
+		ESItems.toRegister.add(this);
 		DispenserBlock.registerDispenseBehavior(this, new Dispense());
 	}
 

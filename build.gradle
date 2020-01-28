@@ -95,6 +95,7 @@ jar {
 	}
 }
 
+//Compile the sources into a jar- useful for addon development
 task jarSources(type:Jar){
 	from sourceSets.main.allSource
 	classifier = 'source'

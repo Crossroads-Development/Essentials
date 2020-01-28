@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import net.minecraft.block.BlockRenderType;
@@ -35,8 +35,8 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 		super(Properties.create(Material.WOOD).hardnessAndResistance(2).sound(SoundType.WOOD));
 		String name = "slotted_chest";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.quip").setStyle(EssentialsConfig.TT_QUIP));
+		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.quip").setStyle(ESConfig.TT_QUIP));
 	}
 
 	@Override

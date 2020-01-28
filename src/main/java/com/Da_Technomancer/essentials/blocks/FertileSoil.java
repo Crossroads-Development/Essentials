@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.ReflectionUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -34,8 +34,8 @@ public class FertileSoil extends Block{
 		this.plant = plant;
 		String name = "fertile_soil_" + plantName;
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class FertileSoil extends Block{
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.benefits"));
 		if(plant.getBlock() == Blocks.NETHER_WART){
-			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").setStyle(EssentialsConfig.TT_QUIP));
+			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").setStyle(ESConfig.TT_QUIP));
 		}
 	}
 
@@ -88,7 +88,7 @@ public class FertileSoil extends Block{
 			return;
 		}
 
-		if(EssentialsConfig.fertileSoilRate.get() < 100D * Math.random()){
+		if(ESConfig.fertileSoilRate.get() < 100D * Math.random()){
 			return;
 		}
 

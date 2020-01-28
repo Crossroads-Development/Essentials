@@ -1,8 +1,8 @@
 package com.Da_Technomancer.essentials.tileentities;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -30,10 +30,10 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 	protected Direction getFacing(){
 		if(facing == null){
 			BlockState state = world.getBlockState(pos);
-			if(!state.has(EssentialsProperties.FACING)){
+			if(!state.has(ESProperties.FACING)){
 				return Direction.DOWN;
 			}
-			facing = state.get(EssentialsProperties.FACING);
+			facing = state.get(ESProperties.FACING);
 		}
 		return facing;
 	}
@@ -42,11 +42,11 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		facing = null;
 		Direction dir = getFacing();
 		int extension;
-		int maxChutes = EssentialsConfig.itemChuteRange.get();
+		int maxChutes = ESConfig.itemChuteRange.get();
 
 		for(extension = 1; extension <= maxChutes; extension++){
 			BlockState target = world.getBlockState(pos.offset(dir, extension));
-			if(target.getBlock() != EssentialsBlocks.itemChute || target.get(EssentialsProperties.AXIS) != dir.getAxis()){
+			if(target.getBlock() != ESBlocks.itemChute || target.get(ESProperties.AXIS) != dir.getAxis()){
 				break;
 			}
 		}

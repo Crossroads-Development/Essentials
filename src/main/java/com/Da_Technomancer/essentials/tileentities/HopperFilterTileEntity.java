@@ -2,8 +2,8 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.block.BlockState;
@@ -52,8 +52,8 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	private Direction.Axis getAxis(){
 		if(axisCache == null){
 			BlockState state = world.getBlockState(pos);
-			if(state.getBlock() == EssentialsBlocks.hopperFilter){
-				axisCache = state.get(EssentialsProperties.AXIS);
+			if(state.getBlock() == ESBlocks.hopperFilter){
+				axisCache = state.get(ESProperties.AXIS);
 			}else{
 				return Direction.Axis.Y;
 			}

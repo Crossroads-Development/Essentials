@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
@@ -34,21 +34,21 @@ public class ItemChute extends Block{
 		super(Properties.create(Material.IRON).hardnessAndResistance(1.5F).sound(SoundType.METAL));
 		String name = "item_chute";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.AXIS, context.getFace().getAxis());
+		return getDefaultState().with(ESProperties.AXIS, context.getFace().getAxis());
 	}
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.cycle(EssentialsProperties.AXIS));
+				worldIn.setBlockState(pos, state.cycle(ESProperties.AXIS));
 			}
 			return true;
 		}
@@ -57,7 +57,7 @@ public class ItemChute extends Block{
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
-		return BB[state.get(EssentialsProperties.AXIS).ordinal()];
+		return BB[state.get(ESProperties.AXIS).ordinal()];
 	}
 	
 	@Override
@@ -69,14 +69,14 @@ public class ItemChute extends Block{
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.AXIS);
+		builder.add(ESProperties.AXIS);
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
 		//Block updates are propogated down lines of Item Chutes, allowing caching of target positions for Item Shifters
 		if(fromPos != null){
-			Direction.Axis axis = state.get(EssentialsProperties.AXIS);
+			Direction.Axis axis = state.get(ESProperties.AXIS);
 			Direction dir = Direction.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
 			if(dir.getAxis() == axis){
 				fromPos = pos;

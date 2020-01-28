@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
+import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -38,9 +38,9 @@ public class ConfigureWrenchOnServer extends ServerPacket{
 			return;
 		}
 		Hand hand = null;
-		if(player.getHeldItemMainhand().getItem() == EssentialsItems.circuitWrench){
+		if(player.getHeldItemMainhand().getItem() == ESItems.circuitWrench){
 			hand = Hand.MAIN_HAND;
-		}else if(player.getHeldItemOffhand().getItem() == EssentialsItems.circuitWrench){
+		}else if(player.getHeldItemOffhand().getItem() == ESItems.circuitWrench){
 			hand = Hand.OFF_HAND;
 		}
 

@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
+import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
 import com.Da_Technomancer.essentials.tileentities.ConstantCircuitTileEntity;
 import net.minecraft.block.BlockState;
@@ -45,9 +45,9 @@ public class ConsCircuit extends AbstractCircuit{
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		TileEntity te;
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			super.onBlockActivated(state, worldIn, pos, playerIn, hand, hit);
-		}else if(playerIn.getHeldItem(hand).getItem() == EssentialsItems.circuitWrench){
+		}else if(playerIn.getHeldItem(hand).getItem() == ESItems.circuitWrench){
 			return false;
 		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof ConstantCircuitTileEntity){
 			NetworkHooks.openGui((ServerPlayerEntity) playerIn, (ConstantCircuitTileEntity) te, buf -> {buf.writeFloat(((ConstantCircuitTileEntity) te).setting); buf.writeString(((ConstantCircuitTileEntity) te).settingStr); buf.writeBlockPos(pos);});

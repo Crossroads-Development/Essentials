@@ -1,11 +1,11 @@
 package com.Da_Technomancer.essentials;
 
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.*;
 import com.Da_Technomancer.essentials.gui.container.*;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
+import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.Da_Technomancer.essentials.tileentities.*;
@@ -43,7 +43,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Supplier;
 
 import static com.Da_Technomancer.essentials.Essentials.MODID;
-import static com.Da_Technomancer.essentials.blocks.EssentialsBlocks.*;
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.*;
 
 @Mod(MODID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -59,11 +59,11 @@ public final class Essentials{
 		bus.addListener(this::commonInit);
 		bus.addListener(this::clientInit);
 
-		EssentialsConfig.init();
+		ESConfig.init();
 
 		MinecraftForge.EVENT_BUS.register(this);
 
-		EssentialsConfig.load();
+		ESConfig.load();
 	}
 
 	private void commonInit(@SuppressWarnings("unused") FMLCommonSetupEvent e){
@@ -71,12 +71,12 @@ public final class Essentials{
 		EssentialsPackets.preInit();
 		RedstoneUtil.registerCap();
 		//Main
-		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerCommon());
+		MinecraftForge.EVENT_BUS.register(new ESEventHandlerCommon());
 	}
 
 	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
 		TESRRegistry.init();
-		MinecraftForge.EVENT_BUS.register(new EssentialsEventHandlerClient());
+		MinecraftForge.EVENT_BUS.register(new ESEventHandlerClient());
 		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.CannonSkull.class, WitherSkullRenderer::new);
 	}
 
@@ -84,7 +84,7 @@ public final class Essentials{
 	@SubscribeEvent
 	public static void registerBlocks(RegistryEvent.Register<Block> e){
 		IForgeRegistry<Block> registry = e.getRegistry();
-		EssentialsBlocks.init();
+		ESBlocks.init();
 		for(Block block : toRegister){
 			registry.register(block);
 		}
@@ -95,11 +95,11 @@ public final class Essentials{
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> e){
 		IForgeRegistry<Item> registry = e.getRegistry();
-		EssentialsItems.init();
-		for(Item item : EssentialsItems.toRegister){
+		ESItems.init();
+		for(Item item : ESItems.toRegister){
 			registry.register(item);
 		}
-		EssentialsItems.toRegister.clear();
+		ESItems.toRegister.clear();
 	}
 
 	@SuppressWarnings("unused")

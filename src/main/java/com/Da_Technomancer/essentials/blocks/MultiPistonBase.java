@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.WorldBuffer;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -53,22 +53,22 @@ public class MultiPistonBase extends Block{
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
 		setRegistryName(name);
 		this.sticky = sticky;
-		setDefaultState(getDefaultState().with(EssentialsProperties.FACING, Direction.NORTH).with(EssentialsProperties.EXTENDED, false));
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		setDefaultState(getDefaultState().with(ESProperties.FACING, Direction.NORTH).with(ESProperties.EXTENDED, false));
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.FACING, context.getNearestLookingDirection().getOpposite());
+		return getDefaultState().with(ESProperties.FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand)) && !state.get(EssentialsProperties.EXTENDED)){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand)) && !state.get(ESProperties.EXTENDED)){
 			if(!worldIn.isRemote){
-				BlockState endState = state.cycle(EssentialsProperties.FACING);
+				BlockState endState = state.cycle(ESProperties.FACING);
 				worldIn.setBlockState(pos, endState);
 			}
 			return true;
@@ -86,8 +86,8 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
-		if(state.get(EssentialsProperties.EXTENDED)){
-			return BB[state.get(EssentialsProperties.FACING).getIndex()];
+		if(state.get(ESProperties.EXTENDED)){
+			return BB[state.get(ESProperties.FACING).getIndex()];
 		}else{
 			return VoxelShapes.fullCube();
 		}
@@ -96,8 +96,8 @@ public class MultiPistonBase extends Block{
 	@Override
 	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){	BlockState otherState;
 		//Sanity check included to make sure the adjacent blocks is actually an extension- unlike vanilla pistons, multi pistons are supposed to actually work and not break bedrock
-		if(state.get(EssentialsProperties.EXTENDED) && (otherState = world.getBlockState(pos.offset(state.get(EssentialsProperties.FACING)))).getBlock() == (sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend) && otherState.get(EssentialsProperties.AXIS) == state.get(EssentialsProperties.FACING).getAxis()){
-			world.destroyBlock(pos.offset(state.get(EssentialsProperties.FACING)), false);
+		if(state.get(ESProperties.EXTENDED) && (otherState = world.getBlockState(pos.offset(state.get(ESProperties.FACING)))).getBlock() == (sticky ? ESBlocks.multiPistonExtendSticky : ESBlocks.multiPistonExtend) && otherState.get(ESProperties.AXIS) == state.get(ESProperties.FACING).getAxis()){
+			world.destroyBlock(pos.offset(state.get(ESProperties.FACING)), false);
 		}
 	}
 
@@ -121,13 +121,13 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.FACING, EssentialsProperties.EXTENDED);
+		builder.add(ESProperties.FACING, ESProperties.EXTENDED);
 	}
 
 	@Override
 	public PushReaction getPushReaction(BlockState state){
 		//If extended, this can not be moved. Otherwise it can be moved
-		return state.get(EssentialsProperties.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;
+		return state.get(ESProperties.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;
 	}
 
 	//While true, a multipiston is actively changing the world around it and should ignore incoming blocks updates
@@ -136,7 +136,7 @@ public class MultiPistonBase extends Block{
 	private void activate(World world, BlockPos pos, BlockState state){
 		int target = 0;
 
-		Direction facing = state.get(EssentialsProperties.FACING);
+		Direction facing = state.get(ESProperties.FACING);
 
 		for(Direction dir : Direction.values()){
 			//Don't measure redstone power from the front, as otherwise we end up in an infinite loop just by placing a redstone blocks there
@@ -158,15 +158,15 @@ public class MultiPistonBase extends Block{
 
 		int currentExtension = 0;
 
-		if(state.get(EssentialsProperties.EXTENDED)){
+		if(state.get(ESProperties.EXTENDED)){
 			BlockPos checkPos = pos.offset(facing);
 			BlockState curState = world.getBlockState(checkPos);
-			Block tarBlock = sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend;
+			Block tarBlock = sticky ? ESBlocks.multiPistonExtendSticky : ESBlocks.multiPistonExtend;
 
 			//Find the current extension
 			//The distance limit check is in case people mess around with setblock commands
 			Direction.AxisDirection dir;
-			while(curState.getBlock() == tarBlock && curState.get(EssentialsProperties.AXIS) == facing.getAxis() && (dir = MultiPistonExtend.getDirFromHead(curState.get(EssentialsProperties.HEAD))) != facing.getOpposite().getAxisDirection() && currentExtension != DIST_LIMIT){
+			while(curState.getBlock() == tarBlock && curState.get(ESProperties.AXIS) == facing.getAxis() && (dir = MultiPistonExtend.getDirFromHead(curState.get(ESProperties.HEAD))) != facing.getOpposite().getAxisDirection() && currentExtension != DIST_LIMIT){
 				currentExtension++;
 				checkPos = checkPos.offset(facing);
 				curState = world.getBlockState(checkPos);
@@ -207,7 +207,7 @@ public class MultiPistonBase extends Block{
 		}
 
 		if(currentExtension == 0 ^ target == 0){
-			world.setBlockState(pos, state.with(EssentialsProperties.EXTENDED, target != 0));
+			world.setBlockState(pos, state.with(ESProperties.EXTENDED, target != 0));
 		}
 		changingWorld = false;
 	}
@@ -225,7 +225,7 @@ public class MultiPistonBase extends Block{
 		Direction moveDir = out ? facing : facing.getOpposite();
 		LinkedHashSet<BlockPos> movedBlocks = new LinkedHashSet<>(PUSH_LIMIT + 1);
 		BlockPos prevHeadPos = pos.offset(facing, currentExtension);
-		Block extendBlock = sticky ? EssentialsBlocks.multiPistonExtendSticky : EssentialsBlocks.multiPistonExtend;
+		Block extendBlock = sticky ? ESBlocks.multiPistonExtendSticky : ESBlocks.multiPistonExtend;
 		if(!out){
 			//Temporarily add the piston head to prevent it blocking movement paths
 			movedBlocks.add(prevHeadPos);
@@ -247,7 +247,7 @@ public class MultiPistonBase extends Block{
 
 		//Change the current head
 		if(currentExtension != 0){
-			world.addChange(prevHeadPos, out ? extendBlock.getDefaultState().with(EssentialsProperties.AXIS, facing.getAxis()) : Blocks.AIR.getDefaultState());
+			world.addChange(prevHeadPos, out ? extendBlock.getDefaultState().with(ESProperties.AXIS, facing.getAxis()) : Blocks.AIR.getDefaultState());
 		}
 
 		for(BlockPos changePos : movedBlocks){
@@ -270,10 +270,10 @@ public class MultiPistonBase extends Block{
 
 		if(out){
 			//Add the extended head
-			world.addChange(pos.offset(facing, currentExtension + 1), extendBlock.getDefaultState().with(EssentialsProperties.AXIS, facing.getAxis()).with(EssentialsProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
+			world.addChange(pos.offset(facing, currentExtension + 1), extendBlock.getDefaultState().with(ESProperties.AXIS, facing.getAxis()).with(ESProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
 		}else if(currentExtension != 1){
 			//Add the retracted head
-			world.addChange(pos.offset(facing, currentExtension - 1), extendBlock.getDefaultState().with(EssentialsProperties.AXIS, facing.getAxis()).with(EssentialsProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
+			world.addChange(pos.offset(facing, currentExtension - 1), extendBlock.getDefaultState().with(ESProperties.AXIS, facing.getAxis()).with(ESProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
 		}
 
 		return false;

@@ -1,22 +1,28 @@
 package com.Da_Technomancer.essentials.tileentities;
 
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import com.Da_Technomancer.essentials.items.EssentialsItems;
 import com.Da_Technomancer.essentials.packets.ILongReceiver;
 import com.Da_Technomancer.essentials.packets.SendLongToClient;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 
-import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * A helper class to be placed on TileEntities to enable basic linking behaviour
  */
 public interface ILinkTE extends ILongReceiver{
+
+	public static final Tag<Item> LINKING_TOOLS = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "linking_tool"));
 
 	public static final String POS_NBT = "c_link";
 	public static final String DIM_NBT = "c_link_dim";
@@ -24,7 +30,7 @@ public interface ILinkTE extends ILongReceiver{
 	public static final byte CLEAR_PACKET_ID = 9;
 
 	public static boolean isLinkTool(ItemStack stack){
-		return stack.getItem() == EssentialsItems.linkingTool;
+		return LINKING_TOOLS.contains(stack.getItem());
 	}
 
 	/**
@@ -54,7 +60,7 @@ public interface ILinkTE extends ILongReceiver{
 	 * A mutable list of linked relative block positions.
 	 * @return The list of links
 	 */
-	public ArrayList<BlockPos> getLinks();
+	public Set<BlockPos> getLinks();
 
 	/**
 	 * @return The maximum number of linked devices. The source controls this
@@ -70,7 +76,7 @@ public interface ILinkTE extends ILongReceiver{
 	 * @return Whether the operation succeeded
 	 */
 	public default boolean link(ILinkTE endpoint, PlayerEntity player){
-		ArrayList<BlockPos> links = getLinks();
+		Set<BlockPos> links = getLinks();
 		BlockPos linkPos = endpoint.getTE().getPos().subtract(getTE().getPos());
 		if(links.contains(linkPos)){
 			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.taken"));

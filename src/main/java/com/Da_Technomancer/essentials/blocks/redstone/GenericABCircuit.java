@@ -17,6 +17,11 @@ public class GenericABCircuit extends AbstractCircuit{
 	private final String ttName;
 	private final BiFunction<Float, Float, Float> function;
 
+	/**
+	 * Creates a circuit to perform a pure state-based operation, with 2 distinct inputs and 1 output
+	 * @param name The name of this circuit
+	 * @param function The operation function- Float 1 is side input, Float 2 is back input. Output is sanitized
+	 */
 	public GenericABCircuit(String name, BiFunction<Float, Float, Float> function){
 		super(name +"_circuit");
 		this.ttName = "tt." + Essentials.MODID + "." + name + "_circuit";

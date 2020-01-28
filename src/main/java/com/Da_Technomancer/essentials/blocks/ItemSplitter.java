@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.tileentities.BasicItemSplitterTileEntity;
 import com.Da_Technomancer.essentials.tileentities.ItemSplitterTileEntity;
 import net.minecraft.block.Block;
@@ -31,15 +31,15 @@ public class ItemSplitter extends BasicItemSplitter{
 		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(3));
 		String name = "item_splitter";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				BlockState endState = state.cycle(EssentialsProperties.FACING);
+				BlockState endState = state.cycle(ESProperties.FACING);
 				worldIn.setBlockState(pos, endState);
 				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof BasicItemSplitterTileEntity){

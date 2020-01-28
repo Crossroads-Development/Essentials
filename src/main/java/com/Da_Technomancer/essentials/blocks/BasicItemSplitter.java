@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.EssentialsConfig;
+import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.tileentities.BasicItemSplitterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -38,8 +38,8 @@ public class BasicItemSplitter extends ContainerBlock{
 		super(Block.Properties.create(Material.IRON).hardnessAndResistance(3));
 		String name = "basic_item_splitter";
 		setRegistryName(name);
-		EssentialsBlocks.toRegister.add(this);
-		EssentialsBlocks.blockAddQue(this);
+		ESBlocks.toRegister.add(this);
+		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class BasicItemSplitter extends ContainerBlock{
 
 	@Override
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
-		if(EssentialsConfig.isWrench(playerIn.getHeldItem(hand))){
+		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				if(playerIn.isSneaking()){
 					TileEntity te = worldIn.getTileEntity(pos);
@@ -66,7 +66,7 @@ public class BasicItemSplitter extends ContainerBlock{
 						playerIn.sendMessage(new StringTextComponent(String.format("Sending %1$d/%2$d of items downwards", BasicItemSplitterTileEntity.MODES[mode], ((BasicItemSplitterTileEntity) te).getBase())));
 					}
 				}else{
-					BlockState endState = state.cycle(EssentialsProperties.FACING);
+					BlockState endState = state.cycle(ESProperties.FACING);
 					worldIn.setBlockState(pos, endState);
 					TileEntity te = worldIn.getTileEntity(pos);
 					if(te instanceof BasicItemSplitterTileEntity){
@@ -92,12 +92,12 @@ public class BasicItemSplitter extends ContainerBlock{
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(EssentialsProperties.FACING, (context.getPlayer() == null) ? Direction.NORTH : context.getNearestLookingDirection());
+		return getDefaultState().with(ESProperties.FACING, (context.getPlayer() == null) ? Direction.NORTH : context.getNearestLookingDirection());
 	}
 
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
-		builder.add(EssentialsProperties.FACING);
+		builder.add(ESProperties.FACING);
 	}
 
 	@Override

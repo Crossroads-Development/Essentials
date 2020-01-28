@@ -1,8 +1,8 @@
 package com.Da_Technomancer.essentials.items;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.blocks.EssentialsBlocks;
-import com.Da_Technomancer.essentials.blocks.EssentialsProperties;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractTile;
 import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
@@ -39,39 +39,46 @@ public class CircuitWrench extends Item{
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(7);
+	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(30);
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(7);
+	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(30);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
 	private static final Tag<Item> COMPONENT_TAG = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "circuit_components"));//new ResourceLocation(Essentials.MODID, "circuit_components");
 
 	static{
-		registerCircuit(EssentialsBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
-		registerCircuit(EssentialsBlocks.wireJunctionCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire_junction.png"));
-		registerCircuit(EssentialsBlocks.interfaceCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/interface.png"));
-		registerCircuit(EssentialsBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/constant.png"));
-		registerCircuit(EssentialsBlocks.notCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/not.png"));
-		registerCircuit(EssentialsBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
-		registerCircuit(EssentialsBlocks.orCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/or.png"));
-		registerCircuit(EssentialsBlocks.xorCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/xor.png"));
-		registerCircuit(EssentialsBlocks.readerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/reader.png"));
-		registerCircuit(EssentialsBlocks.maxCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/max.png"));
-		registerCircuit(EssentialsBlocks.minCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/min.png"));
-		registerCircuit(EssentialsBlocks.sumCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sum.png"));
-		registerCircuit(EssentialsBlocks.difCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/dif.png"));
-		registerCircuit(EssentialsBlocks.prodCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/prod.png"));
-		registerCircuit(EssentialsBlocks.quotCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/quot.png"));
-		registerCircuit(EssentialsBlocks.invCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/inv.png"));
-		registerCircuit(EssentialsBlocks.powCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pow.png"));
-		registerCircuit(EssentialsBlocks.sinCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sin.png"));
-		registerCircuit(EssentialsBlocks.cosCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/cos.png"));
-		registerCircuit(EssentialsBlocks.tanCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/tan.png"));
-		registerCircuit(EssentialsBlocks.asinCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/asin.png"));
-		registerCircuit(EssentialsBlocks.acosCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/acos.png"));
-		registerCircuit(EssentialsBlocks.atanCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/atan.png"));
+		registerCircuit(ESBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
+		registerCircuit(ESBlocks.wireJunctionCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire_junction.png"));
+		registerCircuit(ESBlocks.interfaceCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/interface.png"));
+		registerCircuit(ESBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/constant.png"));
+		registerCircuit(ESBlocks.notCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/not.png"));
+		registerCircuit(ESBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
+		registerCircuit(ESBlocks.orCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/or.png"));
+		registerCircuit(ESBlocks.xorCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/xor.png"));
+		registerCircuit(ESBlocks.readerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/reader.png"));
+		registerCircuit(ESBlocks.sumCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sum.png"));
+		registerCircuit(ESBlocks.difCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/dif.png"));
+		registerCircuit(ESBlocks.prodCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/prod.png"));
+		registerCircuit(ESBlocks.quotCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/quot.png"));
+		registerCircuit(ESBlocks.invCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/inv.png"));
+		registerCircuit(ESBlocks.powCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pow.png"));
+		registerCircuit(ESBlocks.logCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/log.png"));
+		registerCircuit(ESBlocks.sinCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sin.png"));
+		registerCircuit(ESBlocks.cosCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/cos.png"));
+		registerCircuit(ESBlocks.tanCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/tan.png"));
+		registerCircuit(ESBlocks.asinCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/asin.png"));
+		registerCircuit(ESBlocks.acosCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/acos.png"));
+		registerCircuit(ESBlocks.atanCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/atan.png"));
+		registerCircuit(ESBlocks.maxCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/max.png"));
+		registerCircuit(ESBlocks.minCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/min.png"));
+		registerCircuit(ESBlocks.roundCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/round.png"));
+		registerCircuit(ESBlocks.floorCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/floor.png"));
+		registerCircuit(ESBlocks.ceilCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/ceil.png"));
+		registerCircuit(ESBlocks.equalsCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/equals.png"));
+		registerCircuit(ESBlocks.lessCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/less.png"));
+		registerCircuit(ESBlocks.moreCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/more.png"));
 	}
 
 	/**
@@ -79,7 +86,6 @@ public class CircuitWrench extends Item{
 	 * @param toRegister The circuit to be registered
 	 * @param icon A path to a valid square icon to represent the circuit. If null, uses the generic missing texture
 	 */
-	@SuppressWarnings("all")//It doesn't like the narrowly used public method
 	public static void registerCircuit(@Nonnull AbstractTile toRegister, @Nullable ResourceLocation icon){
 		if(!MODES.contains(toRegister)){
 			MODES.add(toRegister);
@@ -90,10 +96,10 @@ public class CircuitWrench extends Item{
 	}
 
 	protected CircuitWrench(){
-		super(new Item.Properties().maxStackSize(1).group(EssentialsItems.TAB_ESSENTIALS));
+		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS));
 		String name = "circuit_wrench";
 		setRegistryName(name);
-		EssentialsItems.toRegister.add(this);
+		ESItems.toRegister.add(this);
 	}
 
 	@Override
@@ -155,11 +161,11 @@ public class CircuitWrench extends Item{
 			}
 
 			if(allowed){
-				if(toPlace.has(EssentialsProperties.HORIZ_FACING)){
-					if(state.has(EssentialsProperties.HORIZ_FACING)){
-						toPlace = toPlace.with(EssentialsProperties.HORIZ_FACING, state.get(EssentialsProperties.HORIZ_FACING));
+				if(toPlace.has(ESProperties.HORIZ_FACING)){
+					if(state.has(ESProperties.HORIZ_FACING)){
+						toPlace = toPlace.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING));
 					}else{
-						toPlace = toPlace.with(EssentialsProperties.HORIZ_FACING, context.getPlayer().getAdjustedHorizontalFacing());
+						toPlace = toPlace.with(ESProperties.HORIZ_FACING, context.getPlayer().getAdjustedHorizontalFacing());
 					}
 				}
 				context.getWorld().setBlockState(context.getPos(), toPlace);

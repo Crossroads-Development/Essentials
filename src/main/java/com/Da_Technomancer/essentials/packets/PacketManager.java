@@ -7,6 +7,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -36,6 +37,7 @@ public class PacketManager{
 		writeMap.put(Double.class, (val, buf) -> buf.writeDouble((Double) val));
 		writeMap.put(BlockPos.class, (val, buf) -> buf.writeBlockPos((BlockPos) val));
 		writeMap.put(CompoundNBT.class, (val, buf) -> buf.writeCompoundTag((CompoundNBT) val));
+		writeMap.put(byte[].class, (val, buf) -> buf.writeByteArray((byte[]) val));
 
 		readMap.put(boolean.class, PacketBuffer::readBoolean);
 		readMap.put(Boolean.class, PacketBuffer::readBoolean);
@@ -51,6 +53,7 @@ public class PacketManager{
 		readMap.put(Double.class, PacketBuffer::readDouble);
 		readMap.put(BlockPos.class, PacketBuffer::readBlockPos);
 		readMap.put(CompoundNBT.class, PacketBuffer::readCompoundTag);
+		readMap.put(byte[].class, PacketBuffer::readByteArray);
 	}
 
 	public static <T extends Packet> void encode(T packet, PacketBuffer buf){
@@ -75,8 +78,8 @@ public class PacketManager{
 	public static <T extends Packet> T decode(PacketBuffer buf, Class<T> clazz){
 		T packet;
 		try{
-			packet = clazz.newInstance();
-		}catch(InstantiationException | IllegalAccessException e){
+			packet = clazz.getConstructor().newInstance();
+		}catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e){
 			Essentials.logger.error("Unable to instantiate packet. Report to mod author: " + clazz.toString(), e);
 			return null;
 		}
