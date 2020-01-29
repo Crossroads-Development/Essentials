@@ -11,7 +11,7 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -21,7 +21,6 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -62,7 +61,7 @@ public class Brazier extends ContainerBlock{
 	}
 
 	@Override
-	public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos){
+	public int getLightValue(BlockState state, IBlockReader world, BlockPos pos){
 		BlockState other = world.getBlockState(pos);
 		if(other.getBlock() != this){
 			return other.getLightValue(world, pos);
@@ -104,7 +103,7 @@ public class Brazier extends ContainerBlock{
 	}
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof BrazierTileEntity){
 			ItemStack out = ((BrazierTileEntity) te).useItem(playerIn.getHeldItem(hand));
@@ -112,11 +111,11 @@ public class Brazier extends ContainerBlock{
 				if(!worldIn.isRemote){
 					playerIn.setHeldItem(hand, out);
 				}
-				return true;
+				return ActionResultType.CONSUME;
 			}
 		}
 
-		return false;
+		return ActionResultType.FAIL;
 	}
 
 	@Override
@@ -156,8 +155,8 @@ public class Brazier extends ContainerBlock{
 		tooltip.add(new StringTextComponent("Can prevent fall damage with liquid, emit light with Glowstone/Coal/Lava, destroy dropped items with Lava, or blocks witch spawns with Soul Sand"));
 	}
 
-	@Override
-	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.CUTOUT;
-	}
+//	@Override
+//	public BlockRenderLayer getRenderLayer(){
+//		return BlockRenderLayer.CUTOUT;
+//	}
 }

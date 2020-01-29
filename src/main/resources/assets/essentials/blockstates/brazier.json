@@ -1,31 +1,11 @@
 {
-	"forge_marker": 1,
-	"defaults": {
-		"uvlock": false
-	},
 	"variants": {
-		"br_cont": {
-			"0": {
-				"model": "essentials:block/brazier"
-			},
-			"1": {
-				"model": "essentials:block/brazier_w"
-			},
-			"2": {
-				"model": "essentials:block/brazier_l"
-			},
-			"3": {
-				"model": "essentials:block/brazier_e"
-			},
-			"4": {
-				"model": "essentials:block/brazier_g"
-			},
-			"5": {
-				"model": "essentials:block/brazier"
-			},
-			"6": {
-				"model": "essentials:block/brazier_s"
-			}
-		}
+		"br_cont=0": { "model": "essentials:block/brazier" },
+		"br_cont=1": { "model": "essentials:block/brazier_w" },
+		"br_cont=2": { "model": "essentials:block/brazier_l" },
+		"br_cont=3": { "model": "essentials:block/brazier_e" },
+		"br_cont=4": { "model": "essentials:block/brazier_g" },
+		"br_cont=5": { "model": "essentials:block/brazier" },
+		"br_cont=6": { "model": "essentials:block/brazier_s" }
 	}
 }

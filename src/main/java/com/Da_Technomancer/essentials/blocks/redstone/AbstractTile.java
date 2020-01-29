@@ -44,7 +44,7 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 
 	@Override
 	public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos){
-		return func_220064_c(worldIn, pos.down());
+		return hasEnoughSolidSide(worldIn, pos.down(), Direction.UP);
 	}
 
 	@Override

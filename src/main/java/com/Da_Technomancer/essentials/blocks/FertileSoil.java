@@ -14,7 +14,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -83,11 +83,7 @@ public class FertileSoil extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, World worldIn, BlockPos pos, Random random){
-		if(worldIn.isRemote){
-			return;
-		}
-
+	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random){
 		if(ESConfig.fertileSoilRate.get() < 100D * Math.random()){
 			return;
 		}

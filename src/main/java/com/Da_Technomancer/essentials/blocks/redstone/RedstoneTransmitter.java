@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -24,6 +25,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.TickPriority;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -73,7 +75,7 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 	}
 
 	@Override
-	public void tick(BlockState state, World worldIn, BlockPos pos, Random rand){
+	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand){
 		TileEntity rawTE = worldIn.getTileEntity(pos);
 		if(rawTE instanceof RedstoneTransmitterTileEntity){
 			((RedstoneTransmitterTileEntity) rawTE).refreshOutput();
@@ -81,7 +83,7 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 	}
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		//Handle linking and dyeing
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 		TileEntity te = worldIn.getTileEntity(pos);
@@ -90,14 +92,14 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 			if(!worldIn.isRemote){
 				((RedstoneTransmitterTileEntity) te).wrench(heldItem, playerIn);
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}else if((item = heldItem.getItem()) instanceof DyeItem && te instanceof RedstoneTransmitterTileEntity){
 			if(!worldIn.isRemote){
 				((RedstoneTransmitterTileEntity) te).dye(((DyeItem) item).getDyeColor());
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}
-		return false;
+		return ActionResultType.PASS;
 	}
 
 	@Override

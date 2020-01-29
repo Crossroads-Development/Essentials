@@ -52,7 +52,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
 		registerCircuit(ESBlocks.wireJunctionCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire_junction.png"));
 		registerCircuit(ESBlocks.interfaceCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/interface.png"));
-		registerCircuit(ESBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/constant.png"));
+		registerCircuit(ESBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/cons.png"));
 		registerCircuit(ESBlocks.notCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/not.png"));
 		registerCircuit(ESBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
 		registerCircuit(ESBlocks.orCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/or.png"));
@@ -105,14 +105,14 @@ public class CircuitWrench extends Item{
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
 		ItemStack stack = playerIn.getHeldItem(handIn);
-		if(playerIn.isSneaking()){
+		if(playerIn.isCrouching()){
 			if(!worldIn.isRemote){
 				NetworkHooks.openGui((ServerPlayerEntity) playerIn, UIProvider.INSTANCE);
 			}
-			return ActionResult.newResult(ActionResultType.SUCCESS, stack);
+			return new ActionResult<>(ActionResultType.SUCCESS, stack);
 		}
 
-		return ActionResult.newResult(ActionResultType.SUCCESS, stack);
+		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}
 
 	@Override
@@ -120,11 +120,10 @@ public class CircuitWrench extends Item{
 		BlockState state = context.getWorld().getBlockState(context.getPos());
 		BlockState toPlace = MODES.get(context.getItem().getOrCreateTag().getInt(NBT_KEY) % MODES.size()).getDefaultState();
 
-		if(!context.getPlayer().isSneaking() && state.getBlock() instanceof AbstractTile){
+		if(!context.getPlayer().isCrouching() && state.getBlock() instanceof AbstractTile){
 			if(state.getBlock() == toPlace.getBlock()){
 				return ActionResultType.SUCCESS;
 			}
-
 
 			boolean allowed = false;
 			if(context.getPlayer().isCreative()){
