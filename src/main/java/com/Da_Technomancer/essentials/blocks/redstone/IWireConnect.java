@@ -8,5 +8,5 @@ import net.minecraft.util.Direction;
  */
 public interface IWireConnect{
 
-	public boolean canConnect(Direction side, BlockState state);
+	boolean canConnect(Direction side, BlockState state);
 }

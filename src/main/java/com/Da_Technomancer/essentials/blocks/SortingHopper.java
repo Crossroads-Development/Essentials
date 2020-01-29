@@ -122,7 +122,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(!worldIn.isRemote){
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
@@ -130,7 +130,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 				if(te instanceof SortingHopperTileEntity){
 					((SortingHopperTileEntity) te).resetCache();
 				}
-				return true;
+				return ActionResultType.SUCCESS;
 			}
 
 			if(te instanceof SortingHopperTileEntity){
@@ -138,7 +138,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 //				playerIn.addStat(Stats.INSPECT_HOPPER);
 			}
 		}
-		return true;
+		return ActionResultType.SUCCESS;
 	}
 
 	@Override
@@ -199,11 +199,11 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 		return 0;
 	}
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.CUTOUT_MIPPED;
-	}
+//	@Override
+//	@OnlyIn(Dist.CLIENT)
+//	public BlockRenderLayer getRenderLayer(){
+//		return BlockRenderLayer.CUTOUT_MIPPED;
+//	}
 
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot){

@@ -150,7 +150,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 				}else{
 					List<Ingredient> ingr = rec.getIngredients();
 					int index = slotId - 10;
-					int width = rec instanceof IShapedRecipe ? ((IShapedRecipe) rec).getRecipeWidth() : 3;
+					int width = rec instanceof IShapedRecipe ? ((IShapedRecipe<CraftingInventory>) rec).getRecipeWidth() : 3;
 					if(index % 3 < width && !ingr.get(index - (3 - width) * (index / 3)).hasNoMatchingItems()){
 						//Has an "item" from the recipe in the clicked slot to clear
 						if(player.world.isRemote){
@@ -189,7 +189,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	@Override
-	public void func_201771_a(RecipeItemHelper recipeHelper){
+	public void fillStackedContents(RecipeItemHelper recipeHelper){
 		//Insert a recipe
 	}
 

@@ -13,6 +13,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -56,10 +57,10 @@ public class BasicItemSplitter extends ContainerBlock{
 	}
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				if(playerIn.isSneaking()){
+				if(playerIn.isCrouching()){
 					TileEntity te = worldIn.getTileEntity(pos);
 					if(te instanceof BasicItemSplitterTileEntity){
 						int mode = ((BasicItemSplitterTileEntity) te).increaseMode();
@@ -74,10 +75,10 @@ public class BasicItemSplitter extends ContainerBlock{
 					}
 				}
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}
 
-		return false;
+		return ActionResultType.PASS;
 	}
 
 

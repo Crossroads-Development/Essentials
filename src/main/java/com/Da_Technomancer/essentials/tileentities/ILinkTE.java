@@ -22,50 +22,49 @@ import java.util.Set;
  */
 public interface ILinkTE extends ILongReceiver{
 
-	public static final Tag<Item> LINKING_TOOLS = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "linking_tool"));
+	Tag<Item> LINKING_TOOLS = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "linking_tool"));
+	String POS_NBT = "c_link";
+	String DIM_NBT = "c_link_dim";
+	byte LINK_PACKET_ID = 8;
+	byte CLEAR_PACKET_ID = 9;
 
-	public static final String POS_NBT = "c_link";
-	public static final String DIM_NBT = "c_link_dim";
-	public static final byte LINK_PACKET_ID = 8;
-	public static final byte CLEAR_PACKET_ID = 9;
-
-	public static boolean isLinkTool(ItemStack stack){
+	static boolean isLinkTool(ItemStack stack){
 		return LINKING_TOOLS.contains(stack.getItem());
 	}
 
 	/**
 	 * @return This TE
 	 */
-	public default TileEntity getTE(){
+	default TileEntity getTE(){
 		return (TileEntity) this;
 	}
 
-	public default int getRange(){
+	default int getRange(){
 		return 16;
 	}
 
 	/**
 	 * @return Whether this device can ever be the start of a link
 	 */
-	public boolean canBeginLinking();
+	boolean canBeginLinking();
 
 	/**
 	 *
 	 * @param otherTE The ILinkTE to attempt linking to
 	 * @return Whether this TE is allowed to link to the otherTE. The source TE controls whether the link is allowed, the target is not checked. Do not check range
 	 */
-	public boolean canLink(ILinkTE otherTE);
+	boolean canLink(ILinkTE otherTE);
 
 	/**
 	 * A mutable list of linked relative block positions.
 	 * @return The list of links
 	 */
-	public Set<BlockPos> getLinks();
+	Set<BlockPos> getLinks();
 
 	/**
 	 * @return The maximum number of linked devices. The source controls this
 	 */
-	public default int getMaxLinks(){
+	default int getMaxLinks(){
 		return 3;
 	}
 
@@ -75,7 +74,7 @@ public interface ILinkTE extends ILongReceiver{
 	 * @param player The calling player, for sending chat messages
 	 * @return Whether the operation succeeded
 	 */
-	public default boolean link(ILinkTE endpoint, PlayerEntity player){
+	default boolean link(ILinkTE endpoint, PlayerEntity player){
 		Set<BlockPos> links = getLinks();
 		BlockPos linkPos = endpoint.getTE().getPos().subtract(getTE().getPos());
 		if(links.contains(linkPos)){
@@ -99,8 +98,8 @@ public interface ILinkTE extends ILongReceiver{
 	 * @param player The current player   
 	 * @return The possibly modified wrench
 	 */
-	public default ItemStack wrench(ItemStack wrench, PlayerEntity player){
-		if(player.isSneaking()){
+	default ItemStack wrench(ItemStack wrench, PlayerEntity player){
+		if(player.isCrouching()){
 			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.clear"));
 			clearLinks();
 		}else if(wrench.hasTag() && wrench.getTag().contains(POS_NBT) && wrench.getTag().getString(DIM_NBT).equals(player.world.getDimension().getType().getRegistryName().toString())){
@@ -134,7 +133,7 @@ public interface ILinkTE extends ILongReceiver{
 		return wrench;
 	}
 
-	public default void clearLinks(){
+	default void clearLinks(){
 		getLinks().clear();
 		BlockPos tePos = getTE().getPos();
 		BlockUtil.sendClientPacketAround(getTE().getWorld(), tePos, new SendLongToClient(CLEAR_PACKET_ID, 0, tePos));

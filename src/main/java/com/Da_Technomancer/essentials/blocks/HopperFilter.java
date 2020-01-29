@@ -11,7 +11,7 @@ import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -44,10 +44,10 @@ public class HopperFilter extends ContainerBlock{
 		return new HopperFilterTileEntity();
 	}
 
-	@Override
-	public BlockRenderLayer getRenderLayer(){
-		return BlockRenderLayer.CUTOUT;
-	}
+//	@Override
+//	public BlockRenderLayer getRenderLayer(){
+//		return BlockRenderLayer.CUTOUT;
+//	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
@@ -89,7 +89,7 @@ public class HopperFilter extends ContainerBlock{
 	}
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				worldIn.setBlockState(pos, state.cycle(ESProperties.AXIS));
@@ -98,7 +98,7 @@ public class HopperFilter extends ContainerBlock{
 					((HopperFilterTileEntity) te).clearCache();
 				}
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}else{
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(te instanceof HopperFilterTileEntity){
@@ -113,10 +113,10 @@ public class HopperFilter extends ContainerBlock{
 						fte.setFilter(ItemStack.EMPTY);
 					}
 				}
-				return true;
+				return ActionResultType.SUCCESS;
 			}
 		}
-		return false;
+		return ActionResultType.FAIL;
 	}
 
 	@Override

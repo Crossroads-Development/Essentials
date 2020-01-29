@@ -15,5 +15,5 @@ public interface IReadable{
 	 * @param state The current state of this block in the world
 	 * @return The value to be read by a Reader Circuit. Return value will be rejected if negative
 	 */
-	public float read(World world, BlockPos pos, BlockState state);
+	float read(World world, BlockPos pos, BlockState state);
 }

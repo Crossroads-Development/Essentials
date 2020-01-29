@@ -12,6 +12,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -65,15 +66,15 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand)) && !state.get(ESProperties.EXTENDED)){
 			if(!worldIn.isRemote){
 				BlockState endState = state.cycle(ESProperties.FACING);
 				worldIn.setBlockState(pos, endState);
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}
-		return false;
+		return ActionResultType.PASS;
 	}
 
 	@Override
@@ -285,7 +286,7 @@ public class MultiPistonBase extends Block{
 		getEntitiesMultiChunk(BB, world, movingEnts);
 		for(Entity ent : movingEnts){
 			if(ent.getPushReaction() != PushReaction.IGNORE){
-				ent.setPositionAndUpdate(ent.posX + (double) moveDir.getXOffset(), ent.posY + (double) moveDir.getYOffset(), ent.posZ + (double) moveDir.getZOffset());
+				ent.setPositionAndUpdate(ent.getPosX() + (double) moveDir.getXOffset(), ent.getPosY() + (double) moveDir.getYOffset(), ent.getPosZ() + (double) moveDir.getZOffset());
 				//If the entity is on a "sticky" blocks, bounce them
 				if(sticky){
 					ent.addVelocity(moveDir.getXOffset(), moveDir.getYOffset(), moveDir.getZOffset());

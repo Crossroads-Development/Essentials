@@ -3,7 +3,7 @@ package com.Da_Technomancer.essentials.gui.container;
 import com.Da_Technomancer.essentials.Essentials;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
@@ -77,6 +77,8 @@ public class FluidSlotManager{
 	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos){
 		this.windowXStart = windowXStart;
 		this.windowYStart = windowYStart;
+		this.xPos = xPos;
+		this.yPos = yPos;
 	}
 
 	public IntReferenceHolder getFluidIdHolder(){
@@ -108,16 +110,16 @@ public class FluidSlotManager{
 
 		Screen.fill(xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
 		//Screen.fill changes the color
-		GlStateManager.color4f(1, 1, 1, 1);
+		RenderSystem.color4f(1, 1, 1, 1);
 
 		FluidAttributes attr = clientState.getFluid().getAttributes();
 
-		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureMap().getSprite(attr.getStillTexture());
+		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureGetter(AtlasTexture.LOCATION_BLOCKS_TEXTURE).apply(attr.getStillTexture());
 		int col = attr.getColor(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
-		GlStateManager.color3f((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F);
+		RenderSystem.color3f((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F);
 		Screen.blit(xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
-		GlStateManager.color3f(1, 1, 1);
+		RenderSystem.color3f(1, 1, 1);
 	}
 
 	@OnlyIn(Dist.CLIENT)
