@@ -1,7 +1,6 @@
 package com.Da_Technomancer.essentials;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -58,7 +57,7 @@ public class WorldBuffer implements IBlockReader{
 
 	@Override
 	public IFluidState getFluidState(BlockPos pos){
-		return Fluids.EMPTY.getDefaultState();//TODO fluid support when forge is ready
+		return getBlockState(pos).getFluidState();
 	}
 
 	public void applyChanges(int flags){

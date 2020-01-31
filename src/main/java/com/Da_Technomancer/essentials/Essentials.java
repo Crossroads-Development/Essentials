@@ -13,6 +13,8 @@ import com.mojang.datafixers.DSL;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.WitherSkullRenderer;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -25,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -53,7 +56,6 @@ public final class Essentials{
 	public static final String MODNAME = "Essentials";
 	public static final Logger logger = LogManager.getLogger(MODNAME);
 
-
 	public Essentials(){
 		final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::commonInit);
@@ -78,6 +80,8 @@ public final class Essentials{
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new ESEventHandlerClient());
 		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, WitherSkullRenderer::new);
+		RenderTypeLookup.setRenderLayer(hopperFilter, RenderType.cutout());
+		RenderTypeLookup.setRenderLayer(candleLilyPad, RenderType.cutout());
 	}
 
 	@SuppressWarnings("unused")
@@ -159,6 +163,13 @@ public final class Essentials{
 		registerConType(CircuitWrenchContainer::new, "circuit_wrench", e);
 		registerConType(ConstantCircuitContainer::new, "cons_circuit", e);
 		registerConType(AutoCrafterContainer::new, "auto_crafter", e);
+	}
+
+	@SubscribeEvent
+	@SuppressWarnings("unused")
+	public static void onTextureStitch(TextureStitchEvent.Pre event){
+		//Add textures used in TESRs
+		//Currently none used
 	}
 
 	/**

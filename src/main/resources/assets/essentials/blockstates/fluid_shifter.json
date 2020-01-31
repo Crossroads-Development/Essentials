@@ -1,10 +1,10 @@
 {
 	"variants": {
-		"facing=north": { "model": "essentials:block/fluid_splitter", "x": 90},
-		"facing=south": { "model": "essentials:block/fluid_splitter", "x": 270 },
-		"facing=east": { "model": "essentials:block/fluid_splitter", "x": 90, "y": 90 },
-		"facing=west": { "model": "essentials:block/fluid_splitter", "x": 270, "y": 90 },
-		"facing=up": { "model": "essentials:block/fluid_splitter"},
-		"facing=down": { "model": "essentials:block/fluid_splitter", "x": 180 }
+		"facing=north": { "model": "essentials:block/fluid_shifter", "x": 90},
+		"facing=south": { "model": "essentials:block/fluid_shifter", "x": 270 },
+		"facing=east": { "model": "essentials:block/fluid_shifter", "x": 90, "y": 90 },
+		"facing=west": { "model": "essentials:block/fluid_shifter", "x": 270, "y": 90 },
+		"facing=up": { "model": "essentials:block/fluid_shifter"},
+		"facing=down": { "model": "essentials:block/fluid_shifter", "x": 180 }
 	}
 }

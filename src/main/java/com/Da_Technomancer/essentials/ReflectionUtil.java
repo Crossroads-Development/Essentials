@@ -49,17 +49,16 @@ public final class ReflectionUtil{
 
 	public enum EsReflection implements IReflectionKey{
 		//All reflection keys are stored in one enum so that when MC updates, there is a central location to correct method signature changes
-		PODZOL_GEN(MegaPineTree.class, "func_175934_c", "placePodzolAt", "Prevent fertile soil from turning to podzol");
-		//TODO check keys
+		PODZOL_GEN(MegaPineTree.class, "func_227253_a_", null, "Prevent fertile soil from turning to podzol");//Note: add MCP mapping if added
 		private final Class<?> clazz;
 		public final String obf;//Obfuscated name
 		public final String mcp;//Human readable MCP name
 		private final String purpose;
 
-		EsReflection(@Nullable Class<?> clazz, String obf, String mcp, String purpose){
+		EsReflection(@Nullable Class<?> clazz, String obf, @Nullable String mcp, String purpose){
 			this.clazz = clazz;
 			this.obf = obf;
-			this.mcp = mcp;
+			this.mcp = mcp == null ? "NOT-MAPPED" : mcp;
 			this.purpose = purpose;
 		}
 

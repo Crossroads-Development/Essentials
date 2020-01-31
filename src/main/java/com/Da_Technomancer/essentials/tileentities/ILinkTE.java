@@ -12,6 +12,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -30,6 +31,27 @@ public interface ILinkTE extends ILongReceiver{
 
 	static boolean isLinkTool(ItemStack stack){
 		return LINKING_TOOLS.contains(stack.getItem());
+	}
+
+	/**
+	 * Helper method to build a rendering frustrum box with all links
+	 * @param te The link source
+	 * @return A BB for returning to TileEntity::getRenderBoundingBox
+	 */
+	static AxisAlignedBB frustrum(ILinkTE te){
+		//Expands the frustrum box to include linked positions
+		BlockPos pos = te.getTE().getPos();
+		int[] min = new int[3];
+		int[] max = new int[3];
+		for(BlockPos link : te.getLinks()){
+			min[0] = Math.min(min[0], link.getX());
+			min[1] = Math.min(min[1], link.getY());
+			min[2] = Math.min(min[2], link.getZ());
+			max[0] = Math.max(max[0], link.getX());
+			max[1] = Math.max(max[1], link.getY());
+			max[2] = Math.max(max[2], link.getZ());
+		}
+		return new AxisAlignedBB(min[0] + pos.getX(), min[1] + pos.getY(), min[2] + pos.getZ(), max[0] + pos.getX() + 1, max[1] + pos.getY() + 1, max[2] + pos.getZ() + 1);
 	}
 
 	/**

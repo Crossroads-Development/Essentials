@@ -175,9 +175,6 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 				s.setCount(1);
 				inv.setInventorySlotContents(slotId, s);
 			}
-		}else if(slotId >= 0 && slotId < 9 && player != null && te != null){
-			//Input slots
-			//TODO
 		}
 
 		return super.slotClick(slotId, dragType, clickTypeIn, player);

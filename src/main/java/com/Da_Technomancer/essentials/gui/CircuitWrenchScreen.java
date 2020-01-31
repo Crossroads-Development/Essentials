@@ -7,6 +7,7 @@ import com.Da_Technomancer.essentials.items.CircuitWrench;
 import com.Da_Technomancer.essentials.packets.ConfigureWrenchOnServer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -114,8 +115,8 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 			renderTooltip(tt.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), mouseX, mouseY);
 		}
 
-		GlStateManager.disableLighting();
-		GlStateManager.disableBlend();
+		RenderSystem.disableLighting();
+		RenderSystem.disableBlend();
 		searchBar.render(mouseX, mouseY, partialTicks);
 	}
 

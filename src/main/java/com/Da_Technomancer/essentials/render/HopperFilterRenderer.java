@@ -16,11 +16,10 @@ public class HopperFilterRenderer extends TileEntityRenderer<HopperFilterTileEnt
 
 	@Override
 	public void render(HopperFilterTileEntity te, float v, MatrixStack matrix, IRenderTypeBuffer renderBuf, int combinedLight, int combinedOverlay){
-		if(!te.getWorld().isAreaLoaded(te.getPos(), 0) || te.getFilter().isEmpty()){
+		if(te.getFilter().isEmpty()){
 			return;
 		}
 
-		//TODO test this
 		matrix.push();
 		matrix.translate(0.5D, 0.5D, 0.5D);
 		matrix.scale(0.5F, 0.5F, 0.5F);

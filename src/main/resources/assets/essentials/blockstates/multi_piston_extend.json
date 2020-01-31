@@ -2,13 +2,13 @@
 	"variants": {
 		"head=0,axis=x": { "model": "essentials:block/multi_piston_extend", "x": 90, "y": 90 },
 		"head=0,axis=y": { "model": "essentials:block/multi_piston_extend" },
-		"head=0,axis=z": { "model": "essentials:block/multi_piston_extend", "x": 20 },
+		"head=0,axis=z": { "model": "essentials:block/multi_piston_extend", "x": 90 },
 		"head=1,axis=x": { "model": "essentials:block/multi_piston_extend_head", "x": 90, "y": 90 },
 		"head=1,axis=y": { "model": "essentials:block/multi_piston_extend_head" },
-		"head=1,axis=z": { "model": "essentials:block/multi_piston_extend_head", "x": 20 },
+		"head=1,axis=z": { "model": "essentials:block/multi_piston_extend_head", "x": 90 },
 		"head=2,axis=x": { "model": "essentials:block/multi_piston_extend_head_rev", "x": 90, "y": 90 },
 		"head=2,axis=y": { "model": "essentials:block/multi_piston_extend_head_rev" },
-		"head=2,axis=z": { "model": "essentials:block/multi_piston_extend_head_rev", "x": 20 }
+		"head=2,axis=z": { "model": "essentials:block/multi_piston_extend_head_rev", "x": 90 }
 
 	}
 }

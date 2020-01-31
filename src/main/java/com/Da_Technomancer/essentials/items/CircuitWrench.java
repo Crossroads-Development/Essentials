@@ -52,7 +52,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
 		registerCircuit(ESBlocks.wireJunctionCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire_junction.png"));
 		registerCircuit(ESBlocks.interfaceCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/interface.png"));
-		registerCircuit(ESBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/cons.png"));
+		registerCircuit(ESBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/constant.png"));
 		registerCircuit(ESBlocks.notCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/not.png"));
 		registerCircuit(ESBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
 		registerCircuit(ESBlocks.orCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/or.png"));

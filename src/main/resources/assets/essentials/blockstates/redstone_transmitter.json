@@ -8,7 +8,7 @@
 		"color=lime": { "model": "essentials:block/wireless_redstone/redstone_transmitter_lime" },
 		"color=pink": { "model": "essentials:block/wireless_redstone/redstone_transmitter_pink" },
 		"color=gray": { "model": "essentials:block/wireless_redstone/redstone_transmitter_gray" },
-		"color=light_gray": { "model": "essentials:block/wireless_redstone/redstone_transmitter_light_gray" },
+		"color=light_gray": { "model": "essentials:block/wireless_redstone/redstone_transmitter_silver" },
 		"color=cyan": { "model": "essentials:block/wireless_redstone/redstone_transmitter_cyan" },
 		"color=purple": { "model": "essentials:block/wireless_redstone/redstone_transmitter_purple" },
 		"color=blue": { "model": "essentials:block/wireless_redstone/redstone_transmitter_blue" },

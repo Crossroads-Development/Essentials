@@ -35,9 +35,9 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
 		font.drawString(title.getFormattedText(), 8, 6, 4210752);
 		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 4210752);
-		GlStateManager.pushLightingAttributes();
+		RenderSystem.pushLightingAttributes();
 		RenderHelper.enableStandardItemLighting();
-		GlStateManager.disableLighting();
+		RenderSystem.disableLighting();
 		for(int i = 0; i < 54; i++){
 			ItemStack filter = container.filter[i];
 			Slot renderSlot = container.inventorySlots.get(i);
@@ -46,9 +46,9 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 	            itemRenderer.renderItemOverlayIntoGUI(font, filter, renderSlot.xPos, renderSlot.yPos, "0");
 			}
 		}
-		GlStateManager.enableLighting();
+		RenderSystem.enableLighting();
 		RenderHelper.disableStandardItemLighting();
-		GlStateManager.popAttributes();
+		RenderSystem.popAttributes();
 	}
 
 	/**

@@ -32,7 +32,7 @@ import java.util.List;
 public class HopperFilter extends ContainerBlock{
 
 	protected HopperFilter(){
-		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2));
+		super(Properties.create(Material.GLASS).sound(SoundType.STONE).hardnessAndResistance(2));
 		String name = "hopper_filter";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
