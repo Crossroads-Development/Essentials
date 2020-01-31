@@ -1,8 +1,23 @@
 {
+	"forge_marker": 1,
+	"defaults": {
+		"model": "essentials:block/circuit/atan",
+		"uvlock": false
+	},
 	"variants": {
-		"horiz_facing=north": { "model": "essentials:block/circuit/atan" },
-		"horiz_facing=south": { "model": "essentials:block/circuit/atan", "y": 180 },
-		"horiz_facing=east": { "model": "essentials:block/circuit/atan", "y": 90 },
-		"horiz_facing=west": { "model": "essentials:block/circuit/atan", "y": 270 }
+		"horiz_facing": {
+			"north": {
+
+			},
+			"south": {
+				"y": 180
+			},
+			"east": {
+				"y": 90
+			},
+			"west": {
+				"y": 270
+			}
+		}
 	}
 }

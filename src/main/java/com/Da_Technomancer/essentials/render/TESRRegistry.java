@@ -7,7 +7,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 public class TESRRegistry{
 
 	public static void init(){
-		ClientRegistry.bindTileEntityRenderer(HopperFilterTileEntity.TYPE, HopperFilterRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(RedstoneTransmitterTileEntity.TYPE, LinkLineRenderer::new);
+		ClientRegistry.bindTileEntitySpecialRenderer(HopperFilterTileEntity.class, new HopperFilterRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(RedstoneTransmitterTileEntity.class, new LinkLineRenderer<>());
 	}
 }

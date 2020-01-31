@@ -15,7 +15,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -42,7 +41,7 @@ public class RedstoneReceiver extends ContainerBlock implements IWireConnect{
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 		TileEntity te = worldIn.getTileEntity(pos);
 		Item dye;
@@ -50,14 +49,14 @@ public class RedstoneReceiver extends ContainerBlock implements IWireConnect{
 			if(!worldIn.isRemote){
 				((RedstoneReceiverTileEntity) te).wrench(heldItem, playerIn);
 			}
-			return ActionResultType.SUCCESS;
+			return true;
 		}else if((dye = heldItem.getItem()) instanceof DyeItem && te instanceof RedstoneReceiverTileEntity){
 			if(!worldIn.isRemote){
 				((RedstoneReceiverTileEntity) te).dye(((DyeItem) dye).getDyeColor());
 			}
-			return ActionResultType.SUCCESS;
+			return true;
 		}
-		return ActionResultType.PASS;
+		return false;
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.PlayerInventory;
@@ -36,7 +35,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 		font.drawString(title.getFormattedText(), 8, 6, 4210752);
 		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 4210752);
 		GlStateManager.pushLightingAttributes();
-		RenderHelper.enableStandardItemLighting();
+		RenderHelper.enableGUIStandardItemLighting();
 		GlStateManager.disableLighting();
 		for(int i = 0; i < 54; i++){
 			ItemStack filter = container.filter[i];
@@ -56,7 +55,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 	 */
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-		RenderSystem.color3f(1, 1, 1);
+		GlStateManager.color3f(1, 1, 1);
 		minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
 		int i = (width - xSize) / 2;
 		int j = (height - ySize) / 2;

@@ -77,7 +77,7 @@ public final class Essentials{
 	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new ESEventHandlerClient());
-		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, WitherSkullRenderer::new);
+		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.CannonSkull.class, WitherSkullRenderer::new);
 	}
 
 	@SuppressWarnings("unused")
@@ -132,7 +132,7 @@ public final class Essentials{
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
-		TileEntityType<?> teType = TileEntityType.Builder.create(cons, blocks).build(DSL.nilType());
+		TileEntityType teType = TileEntityType.Builder.create(cons, blocks).build(DSL.nilType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}

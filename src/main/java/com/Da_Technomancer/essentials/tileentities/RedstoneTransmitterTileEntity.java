@@ -34,7 +34,7 @@ import java.util.Set;
 public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE{
 
 	@ObjectHolder("redstone_transmitter")
-	public static TileEntityType<RedstoneTransmitterTileEntity> TYPE = null;
+	private static TileEntityType<RedstoneTransmitterTileEntity> type = null;
 
 	private Set<BlockPos> linked = new HashSet<>();
 
@@ -44,7 +44,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	private float output;
 
 	public RedstoneTransmitterTileEntity(){
-		super(TYPE);
+		super(type);
 	}
 
 	@Override

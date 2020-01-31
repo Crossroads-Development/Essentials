@@ -21,7 +21,9 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.state.StateContainer;
-import net.minecraft.util.*;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -32,7 +34,6 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -69,15 +70,15 @@ public class WitherCannon extends Block{
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				BlockState endState = state.cycle(ESProperties.FACING);
 				worldIn.setBlockState(pos, endState);
 			}
-			return ActionResultType.SUCCESS;
+			return true;
 		}
-		return ActionResultType.PASS;
+		return false;
 	}
 
 	@Override
@@ -104,16 +105,18 @@ public class WitherCannon extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand){
-		Direction dir = state.get(ESProperties.FACING);
-		BlockPos spawnPos = pos.offset(dir);
-		WitherSkullEntity skull = new CannonSkull(ENT_TYPE, world);
-		skull.setLocationAndAngles(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.getHorizontalAngle() + 180, dir.getYOffset() * -90);
-		skull.setMotion(dir.getXOffset() / 5F, dir.getYOffset() / 5F, dir.getZOffset() / 5F);
-		skull.accelerationX = dir.getXOffset() / 20D;
-		skull.accelerationY = dir.getYOffset() / 20D;
-		skull.accelerationZ = dir.getZOffset() / 20D;
-		world.addEntity(skull);
+	public void tick(BlockState state, World world, BlockPos pos, Random rand){
+		if(!world.isRemote){
+			Direction dir = state.get(ESProperties.FACING);
+			BlockPos spawnPos = pos.offset(dir);
+			WitherSkullEntity skull = new CannonSkull(ENT_TYPE, world);
+			skull.setLocationAndAngles(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.getHorizontalAngle() + 180, dir.getYOffset() * -90);
+			skull.setMotion(dir.getXOffset() / 5F, dir.getYOffset() / 5F, dir.getZOffset() / 5F);
+			skull.accelerationX = dir.getXOffset() / 20D;
+			skull.accelerationY = dir.getYOffset() / 20D;
+			skull.accelerationZ = dir.getZOffset() / 20D;
+			world.addEntity(skull);
+		}
 	}
 
 	public static class CannonSkull extends WitherSkullEntity{
@@ -128,7 +131,7 @@ public class WitherCannon extends Block{
 		public void tick(){
 			super.tick();
 			if(!world.isRemote && lifespan-- <= 0){
-				world.addOptionalParticle(ParticleTypes.SMOKE, getPosX(), getPosY(), getPosZ(), 0, 0, 0);
+				world.addOptionalParticle(ParticleTypes.SMOKE, posX, posY, posZ, 0, 0, 0);
 				remove();
 			}
 		}
@@ -158,7 +161,7 @@ public class WitherCannon extends Block{
 					}
 				}
 				//Ignore mob griefing- always use Explosion.Mode.DESTROY
-				world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 2F, false, Explosion.Mode.BREAK);
+				world.createExplosion(this, this.posX, this.posY, this.posZ, 2F, false, Explosion.Mode.BREAK);
 				remove();
 			}
 		}

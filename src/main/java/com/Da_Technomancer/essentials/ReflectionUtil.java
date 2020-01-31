@@ -50,7 +50,7 @@ public final class ReflectionUtil{
 	public enum EsReflection implements IReflectionKey{
 		//All reflection keys are stored in one enum so that when MC updates, there is a central location to correct method signature changes
 		PODZOL_GEN(MegaPineTree.class, "func_175934_c", "placePodzolAt", "Prevent fertile soil from turning to podzol");
-		//TODO check keys
+
 		private final Class<?> clazz;
 		public final String obf;//Obfuscated name
 		public final String mcp;//Human readable MCP name

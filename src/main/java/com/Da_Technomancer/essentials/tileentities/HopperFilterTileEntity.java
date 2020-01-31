@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	@ObjectHolder("hopper_filter")
-	public static TileEntityType<HopperFilterTileEntity> TYPE = null;
+	private static TileEntityType<HopperFilterTileEntity> TYPE = null;
 
 	public HopperFilterTileEntity(){
 		super(TYPE);

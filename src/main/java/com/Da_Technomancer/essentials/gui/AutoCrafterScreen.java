@@ -3,7 +3,7 @@ package com.Da_Technomancer.essentials.gui;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
@@ -142,16 +142,15 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		IRecipe<CraftingInventory> iRecipe = container.te.findRecipe(inv);
 
 		if(iRecipe != null){
-			RenderSystem.enableRescaleNormal();
-
-			RenderHelper.enableStandardItemLighting();
+			GlStateManager.enableRescaleNormal();
+			RenderHelper.enableGUIStandardItemLighting();
 
 			//If the recipe was set via recipe book/JEI, render the ingredients manually (if it was set via input slots, the slots will render the items for us)
 			if(container.te.recipe != null){
 				boolean shaped = iRecipe instanceof IShapedRecipe;
 				int width = 3;
 				if(shaped){
-					width = ((IShapedRecipe<CraftingInventory>) iRecipe).getRecipeWidth();
+					width = ((IShapedRecipe) iRecipe).getRecipeWidth();
 				}
 
 				List<Ingredient> ingredients = iRecipe.getIngredients();
@@ -172,7 +171,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 				itemRenderer.renderItemOverlayIntoGUI(font, output, 106, 33, null);
 			}
 
-			RenderSystem.disableRescaleNormal();
+			GlStateManager.disableRescaleNormal();
 			RenderHelper.disableStandardItemLighting();
 		}
 	}

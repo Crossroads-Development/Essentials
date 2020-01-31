@@ -6,6 +6,7 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.nbt.EndNBT;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -294,7 +295,7 @@ public class RedstoneUtil extends BlockUtil{
 		@Nullable
 		@Override
 		public INBT writeNBT(Capability<IRedstoneHandler> capability, IRedstoneHandler instance, Direction side){
-			return null;
+			return new EndNBT();
 		}
 
 		@Override

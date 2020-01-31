@@ -10,7 +10,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -44,17 +43,17 @@ public class ConsCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		TileEntity te;
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			super.onBlockActivated(state, worldIn, pos, playerIn, hand, hit);
 		}else if(playerIn.getHeldItem(hand).getItem() == ESItems.circuitWrench){
-			return ActionResultType.PASS;
+			return false;
 		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof ConstantCircuitTileEntity){
 			NetworkHooks.openGui((ServerPlayerEntity) playerIn, (ConstantCircuitTileEntity) te, buf -> {buf.writeFloat(((ConstantCircuitTileEntity) te).setting); buf.writeString(((ConstantCircuitTileEntity) te).settingStr); buf.writeBlockPos(pos);});
 		}
 
-		return ActionResultType.SUCCESS;
+		return true;
 	}
 
 	@Nullable

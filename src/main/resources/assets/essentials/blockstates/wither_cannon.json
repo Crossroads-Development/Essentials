@@ -1,16 +1,40 @@
 {
+	"forge_marker": 1,
+	"defaults": {
+		"model": "essentials:block/wither_cannon",
+		"uvlock": false
+	},
 	"variants": {
-		"redstone_bool=true,facing=north": { "model": "essentials:block/wither_cannon", "x": 90},
-		"redstone_bool=true,facing=south": { "model": "essentials:block/wither_cannon", "x": 270 },
-		"redstone_bool=true,facing=east": { "model": "essentials:block/wither_cannon", "x": 90, "y": 90 },
-		"redstone_bool=true,facing=west": { "model": "essentials:block/wither_cannon", "x": 270, "y": 90 },
-		"redstone_bool=true,facing=up": { "model": "essentials:block/wither_cannon"},
-		"redstone_bool=true,facing=down": { "model": "essentials:block/wither_cannon", "x": 180 },
-		"redstone_bool=false,facing=north": { "model": "essentials:block/wither_cannon", "x": 90},
-		"redstone_bool=false,facing=south": { "model": "essentials:block/wither_cannon", "x": 270 },
-		"redstone_bool=false,facing=east": { "model": "essentials:block/wither_cannon", "x": 90, "y": 90 },
-		"redstone_bool=false,facing=west": { "model": "essentials:block/wither_cannon", "x": 270, "y": 90 },
-		"redstone_bool=false,facing=up": { "model": "essentials:block/wither_cannon"},
-		"redstone_bool=false,facing=down": { "model": "essentials:block/wither_cannon", "x": 180 }
+		"facing": {
+			"north": {
+				"x": 90
+			},
+			"south": {
+				"x": 90,
+				"y": 180
+			},
+			"east": {
+				"x": 90,
+				"y": 90
+			},
+			"west": {
+				"x": 90,
+				"y": 270
+			},
+			"up": {
+
+			},
+			"down": {
+				"x": 180
+			}
+		},
+		"redstone_bool": {
+			"true": {
+
+			},
+			"false": {
+
+			}
+		}
 	}
 }

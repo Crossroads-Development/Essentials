@@ -1,16 +1,39 @@
 {
+	"forge_marker": 1,
+	"defaults": {
+		"uvlock": false
+	},
 	"variants": {
-		"facing=north,extended=false": { "model": "essentials:block/multi_piston_full", "x": 90},
-		"facing=south,extended=false": { "model": "essentials:block/multi_piston_full", "x": 270 },
-		"facing=east,extended=false": { "model": "essentials:block/multi_piston_full", "x": 90, "y": 90 },
-		"facing=west,extended=false": { "model": "essentials:block/multi_piston_full", "x": 270, "y": 90 },
-		"facing=up,extended=false": { "model": "essentials:block/multi_piston_full"},
-		"facing=down,extended=false": { "model": "essentials:block/multi_piston_full", "x": 180 },
-		"facing=north,extended=true": { "model": "essentials:block/multi_piston", "x": 90},
-		"facing=south,extended=true": { "model": "essentials:block/multi_piston", "x": 270 },
-		"facing=east,extended=true": { "model": "essentials:block/multi_piston", "x": 90, "y": 90 },
-		"facing=west,extended=true": { "model": "essentials:block/multi_piston", "x": 270, "y": 90 },
-		"facing=up,extended=true": { "model": "essentials:block/multi_piston"},
-		"facing=down,extended=true": { "model": "essentials:block/multi_piston", "x": 180 }
+		"facing": {
+			"north": {
+				"x": 90
+			},
+			"south": {
+				"x": 90,
+				"y": 180
+			},
+			"east": {
+				"x": 90,
+				"y": 90
+			},
+			"west": {
+				"x": 90,
+				"y": 270
+			},
+			"up": {
+
+			},
+			"down": {
+				"x": 180
+			}
+		},
+		"extended": {
+			"true": {
+				"model": "essentials:block/multi_piston"
+			},
+			"false": {
+				"model": "essentials:block/multi_piston_full"
+			}
+		}
 	}
 }
