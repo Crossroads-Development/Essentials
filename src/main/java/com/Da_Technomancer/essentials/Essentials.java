@@ -167,6 +167,7 @@ public final class Essentials{
 
 	@SubscribeEvent
 	@SuppressWarnings("unused")
+	@OnlyIn(Dist.CLIENT)
 	public static void onTextureStitch(TextureStitchEvent.Pre event){
 		//Add textures used in TESRs
 		//Currently none used
