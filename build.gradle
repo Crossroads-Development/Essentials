@@ -30,7 +30,7 @@ tasks.withType(JavaCompile) {
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-	mappings channel: 'snapshot', version: "$mcp_version"
+	mappings channel: 'stable', version: "$mcp_version"
 
 	runs {
 		client {
@@ -96,10 +96,16 @@ jar {
 }
 
 //Compile the sources into a jar- useful for addon development
-task jarSources(type:Jar){
+task jarSources(type: Jar){
 	from sourceSets.main.allSource
 	classifier = 'source'
 }
+
+task jarDev(type: Jar) {
+	from sourceSets.main.output
+	classifier = 'dev'
+}
+
 
 // Example configuration to allow publishing using the maven-publish task
 // we define a custom artifact that is sourced from the reobfJar output task
