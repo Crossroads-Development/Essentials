@@ -73,7 +73,7 @@ repositories {
 
 dependencies {
 	minecraft "net.minecraftforge:forge:$mc_version-$fg_version"
-
+	
 	//Compile against APIs
 	compileOnly fg.deobf("mezz.jei:jei-$mc_version:$jei_version:api")
 	//Run with the full versions
@@ -96,10 +96,16 @@ jar {
 }
 
 //Compile the sources into a jar- useful for addon development
-task jarSources(type:Jar){
+task jarSources(type: Jar){
 	from sourceSets.main.allSource
 	classifier = 'source'
 }
+
+task jarDev(type: Jar) {
+	from sourceSets.main.output
+	classifier = 'dev'
+}
+
 
 // Example configuration to allow publishing using the maven-publish task
 // we define a custom artifact that is sourced from the reobfJar output task
