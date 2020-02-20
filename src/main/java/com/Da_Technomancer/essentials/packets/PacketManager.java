@@ -38,6 +38,7 @@ public class PacketManager{
 		writeMap.put(BlockPos.class, (val, buf) -> buf.writeBlockPos((BlockPos) val));
 		writeMap.put(CompoundNBT.class, (val, buf) -> buf.writeCompoundTag((CompoundNBT) val));
 		writeMap.put(byte[].class, (val, buf) -> buf.writeByteArray((byte[]) val));
+		writeMap.put(String.class, (val, buf) -> buf.writeString((String) val));
 
 		readMap.put(boolean.class, PacketBuffer::readBoolean);
 		readMap.put(Boolean.class, PacketBuffer::readBoolean);
@@ -54,6 +55,7 @@ public class PacketManager{
 		readMap.put(BlockPos.class, PacketBuffer::readBlockPos);
 		readMap.put(CompoundNBT.class, PacketBuffer::readCompoundTag);
 		readMap.put(byte[].class, PacketBuffer::readByteArray);
+		readMap.put(String.class, PacketBuffer::readString);
 	}
 
 	public static <T extends Packet> void encode(T packet, PacketBuffer buf){
