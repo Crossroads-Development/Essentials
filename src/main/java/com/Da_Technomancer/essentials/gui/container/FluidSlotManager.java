@@ -77,6 +77,8 @@ public class FluidSlotManager{
 	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos){
 		this.windowXStart = windowXStart;
 		this.windowYStart = windowYStart;
+		this.xPos = xPos;
+		this.yPos = yPos;
 	}
 
 	public IntReferenceHolder getFluidIdHolder(){
