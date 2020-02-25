@@ -43,6 +43,7 @@ public class FluidSlotManager{
 	private static BiMap<ResourceLocation, Short> getFluidMap(){
 		if(fluidIDs == null){
 			fluidIDs = HashBiMap.create();
+			//As execution order is important, this cannot work as a parallel stream
 			ForgeRegistries.FLUIDS.getKeys().stream().sorted(ResourceLocation::compareTo).forEach(key -> fluidIDs.put(key, (short) fluidIDs.size()));
 		}
 		return fluidIDs;
@@ -51,7 +52,7 @@ public class FluidSlotManager{
 	//General
 	private final int capacity;
 	private final IntReferenceHolder fluidIdHolder = IntReferenceHolder.single();
-	private final IntReferenceHolder fluidQtyHolder = IntReferenceHolder.single();
+	private final IntReferenceHolder fluidQtyHolder = IntReferenceHolder.single();//Offset by Short.MAX_VALUE to pack more info in
 
 	//Per screen
 	private int windowXStart;
@@ -90,7 +91,7 @@ public class FluidSlotManager{
 	}
 
 	public void updateState(FluidStack newFluid){
-		fluidIdHolder.set(getFluidMap().get(newFluid.getFluid().getRegistryName()));
+		fluidIdHolder.set(getFluidMap().getOrDefault(newFluid.getFluid().getRegistryName(), (short) 0));
 		fluidQtyHolder.set(newFluid.getAmount() - Short.MAX_VALUE);
 	}
 
