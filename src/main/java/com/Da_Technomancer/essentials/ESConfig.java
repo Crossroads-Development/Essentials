@@ -10,6 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -74,10 +75,11 @@ public class ESConfig{
 
 	/**
 	 * @param stack The stack to test
-	 * @return Whether this item is considered a wrench.json
+	 * @return Whether this item is considered a wrench
 	 */
 	public static boolean isWrench(ItemStack stack){
-		return WRENCH.contains(stack.getItem());
+		//Essentials prefers wrenches defined via the forge:item/wrench.json, but will also check tooltypes- which some mods use to define their wrench
+		return WRENCH.contains(stack.getItem()) || stack.getToolTypes().contains(ToolType.get("wrench"));
 	}
 
 	/**

@@ -12,6 +12,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -20,7 +21,8 @@ import java.util.List;
 public class Wrench extends Item{
 
 	protected Wrench(){
-		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS));
+		//Wrench tooltype added as some other mods check tooltypes for wrenches
+		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS).addToolType(ToolType.get("wrench"), 0));
 		String name = "wrench";
 		setRegistryName(name);
 		ESItems.toRegister.add(this);
