@@ -22,7 +22,7 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 	protected void init(){
 		super.init();
 		if(container.te != null){
-			container.te.getFluidManager().initScreen((width - xSize) / 2, (height - ySize) / 2, 60, 71);
+			container.te.getFluidManager().initScreen((width - xSize) / 2, (height - ySize) / 2, 60, 71, container.fluidIdRef, container.fluidQtyRef);
 		}
 	}
 

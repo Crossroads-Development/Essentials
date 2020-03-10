@@ -45,7 +45,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.cycle(ESProperties.HORIZ_FACING));
+				worldIn.setBlockState(pos, state.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING).rotateY()));
 				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof CircuitTileEntity){
 					((CircuitTileEntity) te).wipeCache();

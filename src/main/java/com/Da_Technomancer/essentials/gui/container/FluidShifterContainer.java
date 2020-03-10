@@ -26,6 +26,9 @@ public class FluidShifterContainer extends Container{
 	private final BlockPos pos;
 	public final FluidShifterTileEntity te;
 
+	public final IntDeferredRef fluidIdRef;
+	public final IntDeferredRef fluidQtyRef;
+
 	public FluidShifterContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
 		this(id, playerInventory, data.readBlockPos());
 	}
@@ -38,10 +41,14 @@ public class FluidShifterContainer extends Container{
 		if(t instanceof FluidShifterTileEntity){
 			this.te = (FluidShifterTileEntity) t;
 			//Track fluid fields
-			trackInt(te.getFluidManager().getFluidIdHolder());
-			trackInt(te.getFluidManager().getFluidQtyHolder());
+			fluidIdRef = new IntDeferredRef(te.getFluidManager()::getFluidId);
+			fluidQtyRef = new IntDeferredRef(te.getFluidManager()::getFluidQty);
+			trackInt(fluidIdRef);
+			trackInt(fluidQtyRef);
 		}else{
 			this.te = null;
+			fluidIdRef = null;
+			fluidQtyRef = null;
 		}
 		Pair<Slot, Slot> slots = FluidSlotManager.createFluidSlots(inv, 0, 100, 19, 100, 54, this.te, new int[] {0});
 		addSlot(slots.getLeft());
