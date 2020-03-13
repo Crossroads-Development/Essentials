@@ -12,10 +12,12 @@ public class IntDeferredRef extends IntReferenceHolder{
 
 	private int setVal;
 	private final Supplier<Integer> src;
+	private final boolean isRemote;
 
-	public IntDeferredRef(Supplier<Integer> source){
+	public IntDeferredRef(Supplier<Integer> source, boolean isRemote){
 //		setVal = source.get();
 		src = source;
+		this.isRemote = isRemote;
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public class IntDeferredRef extends IntReferenceHolder{
 	@Override
 	public boolean isDirty(){
 		int prev = setVal;
-		int curr = src.get();
+		int curr = isRemote ? prev : src.get();//On the server side, take the supplier as the 'true' value
 		boolean dirty = prev != curr;
 		setVal = curr;
 		return dirty;

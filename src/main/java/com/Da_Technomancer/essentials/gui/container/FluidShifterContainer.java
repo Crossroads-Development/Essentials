@@ -41,8 +41,9 @@ public class FluidShifterContainer extends Container{
 		if(t instanceof FluidShifterTileEntity){
 			this.te = (FluidShifterTileEntity) t;
 			//Track fluid fields
-			fluidIdRef = new IntDeferredRef(te.getFluidManager()::getFluidId);
-			fluidQtyRef = new IntDeferredRef(te.getFluidManager()::getFluidQty);
+			boolean remote = te.getWorld().isRemote;
+			fluidIdRef = new IntDeferredRef(te.getFluidManager()::getFluidId, remote);
+			fluidQtyRef = new IntDeferredRef(te.getFluidManager()::getFluidQty, remote);
 			trackInt(fluidIdRef);
 			trackInt(fluidQtyRef);
 		}else{
