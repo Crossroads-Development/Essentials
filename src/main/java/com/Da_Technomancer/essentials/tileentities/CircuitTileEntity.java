@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
@@ -54,7 +55,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 			return (AbstractCircuit) b;
 		}
 		remove();
-		return null;
+		return ESBlocks.consCircuit;
 	}
 
 	private Direction getFacing(){

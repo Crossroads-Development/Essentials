@@ -26,10 +26,17 @@ public class ReaderCircuit extends AbstractCircuit{
 	}
 
 	@Override
+	public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor){
+		if(world instanceof World){
+			neighborChanged(state, (World) world, pos, this, neighbor, false);
+		}
+	}
+
+	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
 		World world = te.getWorld();
 		BlockPos pos = te.getPos();
-		Direction back = CircuitTileEntity.Orient.BACK.getFacing(world.getBlockState(pos).get(ESProperties.HORIZ_FACING));
+		Direction back = CircuitTileEntity.Orient.BACK.getFacing(te.getBlockState().get(ESProperties.HORIZ_FACING));
 		float output;
 		pos = pos.offset(back);
 		BlockState state = world.getBlockState(pos);
