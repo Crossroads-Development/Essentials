@@ -55,7 +55,7 @@ public class PacketManager{
 		readMap.put(BlockPos.class, PacketBuffer::readBlockPos);
 		readMap.put(CompoundNBT.class, PacketBuffer::readCompoundTag);
 		readMap.put(byte[].class, PacketBuffer::readByteArray);
-		readMap.put(String.class, PacketBuffer::readString);
+		readMap.put(String.class, PacketManager::readString);
 	}
 
 	public static <T extends Packet> void encode(T packet, PacketBuffer buf){
@@ -110,5 +110,9 @@ public class PacketManager{
 		NetworkEvent.Context cont = context.get();
 		packet.consume(cont);
 		cont.setPacketHandled(true);
+	}
+
+	private static String readString(PacketBuffer buf){
+		return buf.readString(Short.MAX_VALUE);
 	}
 }

@@ -18,7 +18,7 @@ for name in regNames:
 		# Multipiston extensions drop nothing
 		if name.startswith("multi_piston_extend"):
 			f.write("{\n\t\"type\": \"minecraft:block\",\n\t\"pools\": [\n\n\t]\n}")
-		elif name == "wire_junction_circuit":
+		elif "wire_junction_circuit" in name:
 			f.write("{\n\t\"type\": \"minecraft:block\",\n\t\"pools\": [\n\t\t{\n\t\t\t\"rolls\": 1,\n\t\t\t\"entries\": [\n\t\t\t\t{\n\t\t\t\t\t\"type\": \"minecraft:item\",\n\t\t\t\t\t\"name\": \"essentials:wire_circuit\"\n\t\t\t\t}\n\t\t\t],\n\t\t\t\"conditions\": [\n\t\t\t\t{\n\t\t\t\t\t\"condition\": \"minecraft:survives_explosion\"\n\t\t\t\t}\n\t\t\t]\n\t\t}\n\t]\n}")
 		elif name.find("circuit") != -1 & name.find("wire_circuit") == -1:
 			# Circuits drops the wire block and a nether quartz

@@ -18,7 +18,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.TickPriority;
 import net.minecraft.world.World;
 
@@ -47,10 +46,6 @@ public abstract class AbstractCircuit extends AbstractTile{
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				worldIn.setBlockState(pos, state.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING).rotateY()));
-				TileEntity te = worldIn.getTileEntity(pos);
-				if(te instanceof CircuitTileEntity){
-					((CircuitTileEntity) te).wipeCache();
-				}
 			}
 			return true;
 		}

@@ -14,21 +14,6 @@
 					"condition": "minecraft:survives_explosion"
 				}
 			]
-		},
-		{
-			"rolls": 1,
-			"entries": [
-				{
-					"type": "minecraft:tag",
-					"name": "essentials:circuit_components",
-					"expand": "true"
-				}
-			],
-			"conditions": [
-				{
-					"condition": "minecraft:survives_explosion"
-				}
-			]
 		}
 	]
 }
