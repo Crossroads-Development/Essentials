@@ -1,17 +1,11 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.blocks.ESBlocks;
-import com.Da_Technomancer.essentials.blocks.ESProperties;
-import net.minecraft.block.BlockState;
+import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -21,19 +15,15 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 
 @ObjectHolder(Essentials.MODID)
-public class BasicItemSplitterTileEntity extends TileEntity implements ITickableTileEntity{
+public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 	@ObjectHolder("basic_item_splitter")
 	private static TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
 
 	public static final int[] MODES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-	private int mode = 6;
 	private ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 
-	private Direction facing = null;
-	private BlockPos[] endPos = new BlockPos[2];
-
-	public BasicItemSplitterTileEntity(TileEntityType<?> type){
+	public BasicItemSplitterTileEntity(TileEntityType<? extends AbstractSplitterTE> type){
 		super(type);
 	}
 
@@ -41,39 +31,14 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		this(TYPE);
 	}
 
-	private Direction getFacing(){
-		if(facing == null){
-			BlockState state = world.getBlockState(pos);
-			if(!state.has(ESProperties.FACING)){
-				return Direction.DOWN;
-			}
-			facing = state.get(ESProperties.FACING);
-		}
-		return facing;
+	@Override
+	protected int[] getModes(){
+		return MODES;
 	}
 
-	public void refreshCache(){
-		facing = null;
-		Direction dir = getFacing();
-		int maxChutes = ESConfig.itemChuteRange.get();
-
-		for(int i = 0; i < 2; i++){
-			int extension;
-
-			for(extension = 1; extension <= maxChutes; extension++){
-				BlockState target = world.getBlockState(pos.offset(dir, extension));
-				if(target.getBlock() != ESBlocks.itemChute || target.get(ESProperties.AXIS) != dir.getAxis()){
-					break;
-				}
-			}
-
-			endPos[i] = pos.offset(dir, extension);
-			dir = dir.getOpposite();
-		}
-	}
-
-	public void rotate(){
-		facing = null;
+	@Override
+	public void updateContainingBlockInfo(){
+		super.updateContainingBlockInfo();
 		primaryOpt.invalidate();
 		secondaryOpt.invalidate();
 		inOpt.invalidate();
@@ -93,13 +58,6 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 			inventory[i] = AbstractShifterTileEntity.ejectItem(world, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i]);
 		}
 		markDirty();
-	}
-
-	public int increaseMode(){
-		mode++;
-		mode %= MODES.length;
-		markDirty();
-		return mode;
 	}
 
 	@Override
@@ -159,10 +117,7 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 		}
 	}
 
-	protected int getPortion(){
-		return MODES[mode];
-	}
-
+	@Override
 	public int getBase(){
 		return 12;
 	}
@@ -177,11 +132,33 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 				return stack;
 			}
 
-			int portion = getPortion();
-			int base = getBase();
+			//Ensure we are allowed to accept
+			if(!inventory[0].isEmpty() && !BlockUtil.sameItem(stack, inventory[0]) || !inventory[1].isEmpty() && !BlockUtil.sameItem(stack, inventory[1])){
+				return stack;
+			}
 
-			int accepted = Math.max(0, Math.min(stack.getCount(), portion == 0 ? !inventory[1].isEmpty() && (!ItemStack.areItemsEqual(stack, inventory[1]) || !ItemStack.areItemStackTagsEqual(stack, inventory[1])) ? 0 : stack.getMaxStackSize() - inventory[1].getCount() : portion == base ? !inventory[0].isEmpty() && (!ItemStack.areItemsEqual(stack, inventory[0]) || !ItemStack.areItemStackTagsEqual(stack, inventory[0])) ? 0 : stack.getMaxStackSize() - inventory[0].getCount() : Math.min(!inventory[0].isEmpty() && (!ItemStack.areItemsEqual(stack, inventory[0]) || !ItemStack.areItemStackTagsEqual(stack, inventory[0])) ? 0 : ((base * (stack.getMaxStackSize() - inventory[0].getCount())) / portion), !inventory[1].isEmpty() && (!ItemStack.areItemsEqual(stack, inventory[1]) || !ItemStack.areItemStackTagsEqual(stack, inventory[1])) ? 0 : ((base * (stack.getMaxStackSize() - inventory[1].getCount())) / (base - portion)))));
-			int goDown = (portion * (accepted / base)) + (transfered >= portion ? 0 : Math.min(portion - transfered, accepted % base)) + Math.max(0, Math.min(portion, (accepted % base) + transfered - base));
+			int numerator = getActualMode();
+			int denominator = getBase();
+
+			int accepted;//How many total qty we can accept
+			if(numerator == 0){
+				accepted = stack.getMaxStackSize() - inventory[1].getCount();
+			}else if(numerator == denominator){
+				accepted = stack.getMaxStackSize() - inventory[0].getCount();
+			}else{
+				accepted = denominator * (stack.getMaxStackSize() - inventory[0].getCount()) / numerator;
+				accepted = Math.min(accepted, denominator * (stack.getMaxStackSize() - inventory[1].getCount()) / (denominator - numerator));
+			}
+			accepted = Math.max(0, Math.min(stack.getCount(), accepted));//Sanity checks/bounding
+
+			int goDown = numerator * (accepted / denominator);//Basic portion, with no need to interact with transferred
+
+			//Tracking of individual remainder with regards to history
+			int remainder = accepted % denominator;
+			if(transfered < numerator){
+				goDown += Math.min(numerator - transfered + Math.min((remainder + transfered) % denominator, numerator), remainder);
+			}
+
 			int goUp = accepted - goDown;
 
 			if(!simulate && accepted != 0){
@@ -198,8 +175,8 @@ public class BasicItemSplitterTileEntity extends TileEntity implements ITickable
 				}else{
 					inventory[1].grow(goUp);
 				}
-				transfered += accepted % base;
-				transfered %= base;
+				transfered += accepted;
+				transfered %= denominator;
 			}
 
 			if(accepted > 0){

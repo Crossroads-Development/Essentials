@@ -6,14 +6,14 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
-public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
+public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 
-	@ObjectHolder("item_splitter")
-	private static TileEntityType<ItemSplitterTileEntity> TYPE = null;
+	@ObjectHolder("fluid_splitter")
+	private static TileEntityType<FluidSplitterTileEntity> TYPE = null;
 
 	public int redstone;
 
-	public ItemSplitterTileEntity(){
+	public FluidSplitterTileEntity(){
 		super(TYPE);
 	}
 

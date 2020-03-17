@@ -9,7 +9,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
@@ -48,7 +47,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 
 	@Override
 	public void tick(){
-		if(world.isRemote || fluid == null){
+		if(world.isRemote){
 			return;
 		}
 
@@ -56,18 +55,11 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 			refreshCache();
 		}
 
-		TileEntity outputTE = world.getTileEntity(endPos);
-		Direction dir = getFacing();
-		LazyOptional<IFluidHandler> outHandlerCon;
-		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, dir.getOpposite())).isPresent()){
-			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);
-			int filled = outHandler.fill(fluid, IFluidHandler.FluidAction.EXECUTE);
-			if(filled != 0){
-				FluidSlotManager manager = getFluidManager();
-				fluid.shrink(filled);
-				manager.updateState(fluid);
-				markDirty();
-			}
+		FluidStack remaining = AbstractShifterTileEntity.ejectFluid(world, endPos, getFacing(), fluid);
+		if(remaining.getAmount() != fluid.getAmount()){
+			fluid = remaining;
+			getFluidManager().updateState(fluid);
+			markDirty();
 		}
 	}
 

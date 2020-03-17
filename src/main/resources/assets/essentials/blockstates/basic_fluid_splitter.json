@@ -1,0 +1,10 @@
+{
+	"variants": {
+		"facing=north": { "model": "essentials:block/basic_fluid_splitter", "x": 90},
+		"facing=south": { "model": "essentials:block/basic_fluid_splitter", "x": 270 },
+		"facing=east": { "model": "essentials:block/basic_fluid_splitter", "x": 90, "y": 90 },
+		"facing=west": { "model": "essentials:block/basic_fluid_splitter", "x": 270, "y": 90 },
+		"facing=up": { "model": "essentials:block/basic_fluid_splitter"},
+		"facing=down": { "model": "essentials:block/basic_fluid_splitter", "x": 180 }
+	}
+}

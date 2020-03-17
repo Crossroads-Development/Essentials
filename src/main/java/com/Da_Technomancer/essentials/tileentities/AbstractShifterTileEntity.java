@@ -15,6 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -54,7 +57,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		endPos = pos.offset(dir, extension);
 	}
 	
-	public static ItemStack ejectItem(World world,BlockPos pos, Direction fromSide, ItemStack stack){
+	public static ItemStack ejectItem(World world, BlockPos pos, Direction fromSide, ItemStack stack){
 		if(stack.isEmpty()){
 			return ItemStack.EMPTY;
 		}
@@ -76,5 +79,23 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		ent.setMotion(Vec3d.ZERO);
 		world.addEntity(ent);
 		return ItemStack.EMPTY;
+	}
+
+	public static FluidStack ejectFluid(World world, BlockPos pos, Direction fromSide, FluidStack stack){
+		if(stack.isEmpty()){
+			return FluidStack.EMPTY;
+		}
+
+		TileEntity outputTE = world.getTileEntity(pos);
+		LazyOptional<IFluidHandler> outHandlerCon;
+		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
+			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);
+			int filled = outHandler.fill(stack, IFluidHandler.FluidAction.EXECUTE);
+			FluidStack out = stack.copy();
+			out.shrink(filled);
+			return out;
+		}
+
+		return stack;
 	}
 }

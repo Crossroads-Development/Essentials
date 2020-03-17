@@ -37,6 +37,8 @@ public class ESBlocks{
 	public static MultiPistonBase multiPistonSticky;
 	public static BasicItemSplitter basicItemSplitter;
 	public static ItemSplitter itemSplitter;
+	public static BasicFluidSplitter basicFluidSplitter;
+	public static FluidSplitter fluidSplitter;
 	public static WitherCannon witherCannon;
 	public static AutoCrafter autoCrafter;
 
@@ -116,6 +118,8 @@ public class ESBlocks{
 		multiPistonSticky = new MultiPistonBase(true);
 		basicItemSplitter = new BasicItemSplitter();
 		itemSplitter = new ItemSplitter();
+		basicFluidSplitter = new BasicFluidSplitter();
+		fluidSplitter = new FluidSplitter();
 		witherCannon = new WitherCannon();
 		autoCrafter = new AutoCrafter();
 

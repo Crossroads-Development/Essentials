@@ -122,6 +122,8 @@ public final class Essentials{
 		registerTE(HopperFilterTileEntity::new, "hopper_filter", reg, hopperFilter);
 		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, basicItemSplitter);
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
+		registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", reg, basicFluidSplitter);
+		registerTE(BasicItemSplitterTileEntity::new, "fluid_splitter", reg, fluidSplitter);
 		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
@@ -132,7 +134,7 @@ public final class Essentials{
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
-		TileEntityType teType = TileEntityType.Builder.create(cons, blocks).build(DSL.nilType());
+		TileEntityType<?> teType = TileEntityType.Builder.create(cons, blocks).build(DSL.nilType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}

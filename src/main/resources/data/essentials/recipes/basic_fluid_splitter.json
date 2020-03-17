@@ -1,0 +1,22 @@
+{
+  "result": {
+    "item": "essentials:basic_fluid_splitter"
+  },
+  "pattern": [
+    "*^*",
+    "GGG",
+    "*^*"
+  ],
+  "type": "minecraft:crafting_shaped",
+  "key": {
+    "G": {
+      "tag": "forge:ingots/gold"
+    },
+    "*": {
+      "tag": "forge:nuggets/iron"
+    },
+    "^": {
+      "item": "minecraft:bucket"
+    }
+  }
+}

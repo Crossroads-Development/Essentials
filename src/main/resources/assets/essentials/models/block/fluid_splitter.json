@@ -1,0 +1,12 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"north": "essentials:block/fluid_splitter_side_redstone",
+		"south": "essentials:block/fluid_splitter_side_redstone",
+		"east": "essentials:block/fluid_splitter_side_redstone",
+		"west": "essentials:block/fluid_splitter_side_redstone",
+		"up": "essentials:block/fluid_splitter_out_prim",
+		"down": "essentials:block/fluid_splitter_out",
+		"particle": "essentials:block/fluid_splitter_side_redstone"
+	}
+}
