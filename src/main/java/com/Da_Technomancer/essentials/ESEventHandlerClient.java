@@ -24,7 +24,7 @@ public class ESEventHandlerClient{
 			for(TileEntity te : Minecraft.getInstance().world.loadedTileEntityList){
 				if(te instanceof CircuitTileEntity){
 					float output = ((CircuitTileEntity) te).getOutput();
-					Vec3d eyePos = player.getEyePosition(e.getPartialTicks());
+					Vec3d eyePos = Minecraft.getInstance().getRenderManager().info.getProjectedView();
 					float[] relPos = {te.getPos().getX() + 0.5F - (float) eyePos.x, te.getPos().getY() + 0.5F - (float) eyePos.y, te.getPos().getZ() + 0.5F - (float) eyePos.z};
 					if(player.isInRangeToRenderDist(relPos[0] * relPos[0] + relPos[1] * relPos[1] + relPos[2] * relPos[2])){
 						GameRenderer.drawNameplate(Minecraft.getInstance().fontRenderer, ESConfig.formatFloat(output, null), relPos[0], relPos[1], relPos[2], 0, player.getYaw(e.getPartialTicks()), player.getPitch(e.getPartialTicks()), false);
