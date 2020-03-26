@@ -148,7 +148,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 		public int fill(FluidStack resource, FluidAction action){
 			if((fluid.isEmpty() || BlockUtil.sameFluid(fluid, resource)) && !resource.isEmpty()){
 				int filled = Math.min(CAPACITY - fluid.getAmount(), resource.getAmount());
-				if(action.execute()){
+				if(filled > 0 && action.execute()){
 					if(fluid.isEmpty()){
 						fluid = resource.copy();
 						fluid.setAmount(filled);
@@ -174,7 +174,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 					drainFluid.setAmount(drained);
 				}
 
-				if(action.execute()){
+				if(drained > 0 && action.execute()){
 					fluid.shrink(drained);
 					markDirty();
 					getFluidManager().updateState(fluid);
@@ -194,7 +194,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 				drainFluid.setAmount(drained);
 			}
 
-			if(action.execute()){
+			if(drained > 0 && action.execute()){
 				fluid.shrink(drained);
 				getFluidManager().updateState(fluid);
 				markDirty();
