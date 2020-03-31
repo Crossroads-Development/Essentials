@@ -16,9 +16,7 @@ import java.util.Set;
 /**
  * This class is for holding a list of changes being made to a world, but that haven't actually happened yet.
  * It is able to return the blockstate for a given position as if these changes actually happened. Finally it can do all the saved changes. 
- * This is for making large changes to the world step by step without a huge number of unnecessary blocks updates.
- * 
- * Note that the changes are saved in a LinkedHashMap, so the last change set will be performed last when doChanges() is called
+ * This is for making large changes to the world step by step without a huge number of unnecessary intermediate blocks updates.
  */
 public class WorldBuffer implements IBlockReader{
 	
