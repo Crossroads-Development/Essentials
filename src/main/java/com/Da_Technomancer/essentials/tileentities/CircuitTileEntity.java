@@ -189,7 +189,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		hanOptional.invalidate();
 		hanOptional = LazyOptional.of(RedsHandler::new);
 		hanReference = new WeakReference<>(hanOptional);
-		if(world != null){
+		if(world != null && !world.isRemote){
 			BlockUtil.sendClientPacketAround(world, pos, new SendFloatToClient(0, output, pos));
 			buildConnections();
 			markDirty();
