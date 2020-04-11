@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.tileentities;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
@@ -22,6 +22,7 @@ import net.minecraft.world.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ObjectHolder;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -91,7 +92,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 
 		if(!world.isRemote){
 			builtConnections = true;
-			ArrayList<WeakReference<LazyOptional<IRedstoneHandler>>> preSrc = new ArrayList<>(sources.size());
+			ArrayList<Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Direction>> preSrc = new ArrayList<>(sources.size());
 			preSrc.addAll(sources);
 			//Wipe old sources
 			sources.clear();
@@ -118,29 +119,33 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 		}
 
 		float input = 0;
+		Direction[] sidesToCheck = Direction.values();//Don't check sides for vanilla redstone w/ a circuit
 
 		for(int i = 0; i < sources.size(); i++){
-			WeakReference<LazyOptional<IRedstoneHandler>> ref = sources.get(i);
+			Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Direction> ref = sources.get(i);
 			IRedstoneHandler handl;
 			//Remove invalid entries to speed up future checks
-			if(ref == null || (handl = BlockUtil.get(ref.get())) == null){
+			if(ref == null || (handl = BlockUtil.get(ref.getLeft().get())) == null){
 				sources.remove(i);
 				i--;
 				continue;
 			}
 
+			sidesToCheck[ref.getRight().getIndex()] = null;
 			input = Math.max(input, RedstoneUtil.sanitize(handl.getOutput()));
 		}
 
 		//Any input without a circuit input uses vanilla redstone instead
-		//Normally circuits don't check vanilla redstone if we find a circuit source on that side as an optimization, but with 6 input sides its faster to just check redstone as well
-		for(Direction dir : Direction.values()){
-			input = Math.max(RedstoneUtil.getRedstoneOnSide(world, pos, dir), input);
+		//Don't check any side with a circuit
+		for(Direction dir : sidesToCheck){
+			if(dir != null){
+				input = Math.max(RedstoneUtil.getRedstoneOnSide(world, pos, dir), input);
+			}
 		}
 
 		input = RedstoneUtil.sanitize(input);
 
-		if(output != input){
+		if(RedstoneUtil.didChange(output, input)){
 			output = input;
 			for(BlockPos link : linked){
 				TileEntity te = world.getTileEntity(pos.add(link));
@@ -249,7 +254,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	private final LazyOptional<IRedstoneHandler> circOpt = LazyOptional.of(CircuitHandler::new);
 	private WeakReference<LazyOptional<IRedstoneHandler>> circRef = new WeakReference<>(circOpt);
 
-	private ArrayList<WeakReference<LazyOptional<IRedstoneHandler>>> sources = new ArrayList<>(1);
+	private ArrayList<Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Direction>> sources = new ArrayList<>(1);
 
 	@Nonnull
 	@Override
@@ -274,8 +279,9 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 			if(srcOption != null && srcOption.isPresent()){
 				IRedstoneHandler srcHandler = BlockUtil.get(srcOption);
 				srcHandler.addDependent(circRef, nominalSide);
-				if(!sources.contains(src)){
-					sources.add(src);
+				Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Direction> srcPair = Pair.of(src, fromSide);
+				if(!sources.contains(srcPair)){
+					sources.add(srcPair);
 				}
 			}
 		}
@@ -287,8 +293,9 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 
 		@Override
 		public void addSrc(WeakReference<LazyOptional<IRedstoneHandler>> src, Direction fromSide){
-			if(!sources.contains(src)){
-				sources.add(src);
+			Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Direction> srcPair = Pair.of(src, fromSide);
+			if(!sources.contains(srcPair)){
+				sources.add(srcPair);
 				notifyInputChange(src);
 			}
 		}

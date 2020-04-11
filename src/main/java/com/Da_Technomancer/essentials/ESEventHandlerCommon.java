@@ -50,7 +50,7 @@ public class ESEventHandlerCommon{
 				if(te instanceof BrazierTileEntity && te.getDistanceSq(entPos.x, entPos.y, entPos.z) <= RANGE_SQUARED && (w = te.getWorld()) != null){
 					BlockState state = te.getBlockState();
 					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
-						e.setResult(Event.Result.DENY);
+						e.setCanceled(true);
 						return;
 					}
 				}
