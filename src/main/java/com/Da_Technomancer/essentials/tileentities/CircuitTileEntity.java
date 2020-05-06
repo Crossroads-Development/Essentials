@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
@@ -54,7 +55,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 			return (AbstractCircuit) b;
 		}
 		remove();
-		return null;
+		return ESBlocks.consCircuit;
 	}
 
 	private Direction getFacing(){
@@ -177,19 +178,22 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		}
 	}
 
-	public void wipeCache(){
+	@Override
+	public void updateContainingBlockInfo(){
+		super.updateContainingBlockInfo();
+
 		output = 0;
-		BlockUtil.sendClientPacketAround(world, pos, new SendFloatToClient(0, output, pos));
 		builtConnections = false;
 		dependents.clear();
 		sources.clear();
 		hanOptional.invalidate();
 		hanOptional = LazyOptional.of(RedsHandler::new);
 		hanReference = new WeakReference<>(hanOptional);
-		updateContainingBlockInfo();
-		buildConnections();
-
-		markDirty();
+		if(world != null && !world.isRemote){
+			BlockUtil.sendClientPacketAround(world, pos, new SendFloatToClient(0, output, pos));
+			buildConnections();
+			markDirty();
+		}
 	}
 
 	@Override
@@ -229,10 +233,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side){
 		if(cap == RedstoneUtil.REDSTONE_CAPABILITY){
 			Direction dir = getFacing();
-			if(side == null || dir == null || side.getAxis() == Direction.Axis.Y){
-				return super.getCapability(cap, side);
-			}
-			if(dir == side || getOwner().useInput(Orient.getOrient(side, dir))){
+			if(side == null || side.getAxis() != Direction.Axis.Y && (dir == side || getOwner().useInput(Orient.getOrient(side, dir)))){
 				return (LazyOptional<T>) hanOptional;
 			}
 		}

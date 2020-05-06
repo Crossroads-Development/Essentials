@@ -1,0 +1,20 @@
+{
+  "result": {
+    "item": "essentials:fluid_splitter"
+  },
+  "ingredients": [
+    {
+      "item": "essentials:basic_fluid_splitter"
+    },
+    {
+      "tag": "forge:dusts/redstone"
+    },
+    {
+      "tag": "forge:dusts/redstone"
+    },
+    {
+      "tag": "forge:dusts/redstone"
+    }
+  ],
+  "type": "minecraft:crafting_shapeless"
+}

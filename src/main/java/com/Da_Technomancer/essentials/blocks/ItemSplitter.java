@@ -1,21 +1,16 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.tileentities.BasicItemSplitterTileEntity;
 import com.Da_Technomancer.essentials.tileentities.ItemSplitterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -29,27 +24,12 @@ import java.util.List;
 public class ItemSplitter extends BasicItemSplitter{
 
 	public ItemSplitter(){
-		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(3));
-		String name = "item_splitter";
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		super("item_splitter", Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(3));
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-			if(!worldIn.isRemote){
-				BlockState endState = state.cycle(ESProperties.FACING);
-				worldIn.setBlockState(pos, endState);
-				TileEntity te = worldIn.getTileEntity(pos);
-				if(te instanceof BasicItemSplitterTileEntity){
-					((BasicItemSplitterTileEntity) te).rotate();
-				}
-			}
-			return ActionResultType.SUCCESS;
-		}
-		return ActionResultType.PASS;
+	protected boolean isBasic(){
+		return false;
 	}
 
 	@Override

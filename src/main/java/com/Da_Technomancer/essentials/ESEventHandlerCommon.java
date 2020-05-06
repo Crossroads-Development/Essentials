@@ -5,11 +5,14 @@ import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.tileentities.BrazierTileEntity;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.monster.EndermanEntity;
 import net.minecraft.entity.monster.WitchEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -29,6 +32,25 @@ public class ESEventHandlerCommon{
 					BlockState state = w.getBlockState(te.getPos());
 					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setResult(Event.Result.DENY);
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("unused")
+	@SubscribeEvent
+	public void preventTeleport(EnderTeleportEvent e){
+		if(e.getEntity() instanceof EndermanEntity){
+			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
+			for(TileEntity te : e.getEntity().getEntityWorld().tickableTileEntities){
+				World w;
+				Vec3d entPos = e.getEntity().getPositionVec();
+				if(te instanceof BrazierTileEntity && te.getDistanceSq(entPos.x, entPos.y, entPos.z) <= RANGE_SQUARED && (w = te.getWorld()) != null){
+					BlockState state = te.getBlockState();
+					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
+						e.setCanceled(true);
 						return;
 					}
 				}

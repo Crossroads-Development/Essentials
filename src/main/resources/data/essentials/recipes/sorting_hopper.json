@@ -4,7 +4,7 @@
   },
   "pattern": [
     "# #",
-    "#\u0026#",
+    "#C#",
     " * "
   ],
   "type": "minecraft:crafting_shaped",
@@ -12,7 +12,7 @@
     "#": {
       "tag": "forge:ingots/iron"
     },
-    "\u0026": {
+    "C": {
       "tag": "forge:chests"
     },
     "*": {

@@ -48,10 +48,6 @@ public abstract class AbstractCircuit extends AbstractTile{
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				worldIn.setBlockState(pos, state.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING).rotateY()));
-				TileEntity te = worldIn.getTileEntity(pos);
-				if(te instanceof CircuitTileEntity){
-					((CircuitTileEntity) te).wipeCache();
-				}
 			}
 			return ActionResultType.SUCCESS;
 		}
@@ -72,7 +68,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 			((CircuitTileEntity) te).builtConnections = false;
 			((CircuitTileEntity) te).buildConnections();
 		}else{
-			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.NORMAL);
+			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.VERY_HIGH);
 		}
 	}
 

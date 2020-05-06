@@ -6,7 +6,7 @@
 			"entries": [
 				{
 					"type": "minecraft:item",
-					"name": "essentials:wire_circuit"
+					"name": "essentials:fluid_splitter"
 				}
 			],
 			"conditions": [

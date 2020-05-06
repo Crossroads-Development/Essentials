@@ -42,22 +42,27 @@ public class FluidSlotManager{
 
 	private static BiMap<ResourceLocation, Short> getFluidMap(){
 		if(fluidIDs == null){
-			fluidIDs = HashBiMap.create();
-			ForgeRegistries.FLUIDS.getKeys().stream().sorted(ResourceLocation::compareTo).forEach(key -> fluidIDs.put(key, (short) fluidIDs.size()));
+			fluidIDs = HashBiMap.create(ForgeRegistries.FLUIDS.getKeys().size());
+			//As execution order is important, this cannot work as a parallel stream
+			//This must have the exact same result on the server and client sides
+			final short[] value = {0};
+			ForgeRegistries.FLUIDS.getKeys().stream().sorted(ResourceLocation::compareTo).forEach(key -> fluidIDs.put(key, value[0]++));
 		}
 		return fluidIDs;
 	}
 
 	//General
 	private final int capacity;
-	private final IntReferenceHolder fluidIdHolder = IntReferenceHolder.single();
-	private final IntReferenceHolder fluidQtyHolder = IntReferenceHolder.single();
+	private int fluidId;
+	private int fluidQty;//Offset by Short.MAX_VALUE to pack more info in
 
 	//Per screen
 	private int windowXStart;
 	private int windowYStart;
 	private int xPos;
 	private int yPos;
+	private IntReferenceHolder idRef;
+	private IntReferenceHolder qtyRef;
 
 	private static final int MAX_HEIGHT = 48;
 	private static final ResourceLocation OVERLAY = new ResourceLocation(Essentials.MODID, "textures/gui/rectangle_fluid_overlay.png");
@@ -69,38 +74,40 @@ public class FluidSlotManager{
 	 */
 	public FluidSlotManager(FluidStack init, int capacity){
 		this.capacity = capacity;
-		fluidIdHolder.set(getFluidMap().getOrDefault(init.getFluid().getRegistryName(), (short) 0));
-		fluidQtyHolder.set(init.getAmount() - Short.MAX_VALUE);
+		fluidId = getFluidMap().getOrDefault(init.getFluid().getRegistryName(), (short) 0);
+		fluidQty = init.getAmount() - Short.MAX_VALUE;
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos){
+	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos, IntReferenceHolder idRef, IntReferenceHolder qtyRef){
 		this.windowXStart = windowXStart;
 		this.windowYStart = windowYStart;
 		this.xPos = xPos;
 		this.yPos = yPos;
+		this.idRef = idRef;
+		this.qtyRef = qtyRef;
 	}
 
-	public IntReferenceHolder getFluidIdHolder(){
-		return fluidIdHolder;
+	public int getFluidId(){
+		return fluidId;
 	}
 
-	public IntReferenceHolder getFluidQtyHolder(){
-		return fluidQtyHolder;
+	public int getFluidQty(){
+		return fluidQty;
 	}
 
 	public void updateState(FluidStack newFluid){
-		fluidIdHolder.set(getFluidMap().get(newFluid.getFluid().getRegistryName()));
-		fluidQtyHolder.set(newFluid.getAmount() - Short.MAX_VALUE);
+		fluidId = getFluidMap().getOrDefault(newFluid.getFluid().getRegistryName(), (short) 0);
+		fluidQty = newFluid.getAmount() - Short.MAX_VALUE;
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	public FluidStack getStack(){
-		Fluid f = ForgeRegistries.FLUIDS.getValue(getFluidMap().inverse().getOrDefault((short) fluidIdHolder.get(), Fluids.WATER.getRegistryName()));
+		Fluid f = ForgeRegistries.FLUIDS.getValue(getFluidMap().inverse().getOrDefault((short) idRef.get(), Fluids.WATER.getRegistryName()));
 		if(f == null){
 			f = Fluids.WATER;
 		}
-		return new FluidStack(f, fluidQtyHolder.get() + Short.MAX_VALUE);
+		return new FluidStack(f, qtyRef.get() + Short.MAX_VALUE);
 	}
 
 	@OnlyIn(Dist.CLIENT)

@@ -202,10 +202,10 @@ public class MultiPistonBase extends Block{
 
 		//Don't apply block updates until after all changes have been applied to avoid a variety of issues, including rail dupe bugs
 		Set<BlockPos> toUpdate = wBuf.changedPositions();
-		wBuf.applyChanges(2 | 32 | 64);
-		for(BlockPos posToUpdate : toUpdate){
-			world.notifyNeighbors(posToUpdate, this);
-		}
+		wBuf.applyChanges(1 | 2 | 64);//Flags used: 1: block update; 2: Send change to client; 64: isMoving
+//		for(BlockPos posToUpdate : toUpdate){
+//			world.notifyNeighbors(posToUpdate, this);
+//		}
 
 		if(currentExtension == 0 ^ target == 0){
 			world.setBlockState(pos, state.with(ESProperties.EXTENDED, target != 0));

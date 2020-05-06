@@ -16,10 +16,10 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 
-
+@ObjectHolder(Essentials.MODID)
 public class ConstantCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver{
 
-	@ObjectHolder(Essentials.MODID + ":cons_circuit")
+	@ObjectHolder("cons_circuit")
 	private static TileEntityType<ConstantCircuitTileEntity> TYPE = null;
 
 	public float setting = 0;
