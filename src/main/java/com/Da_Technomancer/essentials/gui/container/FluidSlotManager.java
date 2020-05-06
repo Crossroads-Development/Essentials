@@ -42,9 +42,11 @@ public class FluidSlotManager{
 
 	private static BiMap<ResourceLocation, Short> getFluidMap(){
 		if(fluidIDs == null){
-			fluidIDs = HashBiMap.create();
+			fluidIDs = HashBiMap.create(ForgeRegistries.FLUIDS.getKeys().size());
 			//As execution order is important, this cannot work as a parallel stream
-			ForgeRegistries.FLUIDS.getKeys().stream().sorted(ResourceLocation::compareTo).forEach(key -> fluidIDs.put(key, (short) fluidIDs.size()));
+			//This must have the exact same result on the server and client sides
+			final short[] value = {0};
+			ForgeRegistries.FLUIDS.getKeys().stream().sorted(ResourceLocation::compareTo).forEach(key -> fluidIDs.put(key, value[0]++));
 		}
 		return fluidIDs;
 	}

@@ -16,6 +16,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.TickPriority;
@@ -65,6 +66,12 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 				}
 			}
 		}
+	}
+
+	@Override
+	public AxisAlignedBB getRenderBoundingBox(){
+		//Expand to include link lines
+		return new AxisAlignedBB(pos).grow(getRange());
 	}
 
 	public float getOutput(){
