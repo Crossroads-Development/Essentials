@@ -80,8 +80,8 @@ public final class Essentials{
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new ESEventHandlerClient());
 		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, WitherSkullRenderer::new);
-		RenderTypeLookup.setRenderLayer(hopperFilter, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(candleLilyPad, RenderType.cutout());
+		RenderTypeLookup.setRenderLayer(hopperFilter, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(candleLilyPad, RenderType.getCutout());
 	}
 
 	@SuppressWarnings("unused")

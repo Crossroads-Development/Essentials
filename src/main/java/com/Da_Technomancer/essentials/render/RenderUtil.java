@@ -37,9 +37,9 @@ public class RenderUtil{
 	@OnlyIn(Dist.CLIENT)
 	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, Vec3d pos, float u, float v, Vec3d normal, float alpha, boolean light){
 		if(light){
-			builder.pos(matrix.getLast().getPositionMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(0, 240).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
+			builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(0, 240).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
 		}else{
-			builder.pos(matrix.getLast().getPositionMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(240, 240).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
+			builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(240, 240).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
 		}
 	}
 

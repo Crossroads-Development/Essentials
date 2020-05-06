@@ -45,7 +45,7 @@ public class ESEventHandlerClient{
 		matrix.translate(relPos[0], relPos[1], relPos[2]);
 		matrix.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
 		matrix.scale(-0.025F, -0.025F, 0.025F);
-		Matrix4f matrix4f = matrix.getLast().getPositionMatrix();
+		Matrix4f matrix4f = matrix.getLast().getMatrix();
 		FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
 		float xSt = -fontrenderer.getStringWidth(nameplate) / 2F;
 		fontrenderer.renderString(nameplate, xSt, 0, -1, false, matrix4f, buffer, false, 0, 0xf000f0);

@@ -67,7 +67,7 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 		}
 
 		private static RenderType initType(){
-			return RenderType.get("link_line", DefaultVertexFormats.BLOCK, 7, 256, false, true, RenderType.State.builder().texture(new RenderState.TextureState(TEXTURE, false, false)).transparency(RenderState.TRANSLUCENT_TRANSPARENCY).build(false));
+			return RenderType.makeType("link_line", DefaultVertexFormats.BLOCK, 7, 256, false, true, RenderType.State.getBuilder().texture(new RenderState.TextureState(TEXTURE, false, false)).transparency(RenderState.TRANSLUCENT_TRANSPARENCY).build(false));
 		}
 	}
 }

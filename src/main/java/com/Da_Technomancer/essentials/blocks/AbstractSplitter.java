@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -41,7 +42,7 @@ public abstract class AbstractSplitter extends ContainerBlock{
 	protected abstract ITextComponent getModeComponent(AbstractSplitterTE te, int newMode);
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
+	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
 				if(isBasic() && playerIn.isSneaking()){
@@ -54,10 +55,10 @@ public abstract class AbstractSplitter extends ContainerBlock{
 					worldIn.setBlockState(pos, state.cycle(ESProperties.FACING));
 				}
 			}
-			return true;
+			return ActionResultType.SUCCESS;
 		}
 
-		return false;
+		return ActionResultType.PASS;
 	}
 
 	@Nullable

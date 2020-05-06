@@ -73,12 +73,6 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 		}
 	}
 
-	@Override
-	public AxisAlignedBB getRenderBoundingBox(){
-		//Expand to include link lines
-		return new AxisAlignedBB(pos).grow(getRange());
-	}
-
 	public float getOutput(){
 		if(!builtConnections){
 			buildConnections();
