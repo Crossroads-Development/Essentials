@@ -38,6 +38,14 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	}
 
 	@Override
+	public CompoundNBT getUpdateTag(){
+		CompoundNBT nbt = super.getUpdateTag();
+		nbt.putFloat("setting", setting);
+		nbt.putString("setting_s", settingStr);
+		return nbt;
+	}
+
+	@Override
 	public void read(CompoundNBT nbt){
 		super.read(nbt);
 		setting = nbt.getFloat("setting");

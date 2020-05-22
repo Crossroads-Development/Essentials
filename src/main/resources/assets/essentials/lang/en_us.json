@@ -62,6 +62,7 @@
 	"block.essentials.floor_circuit": "Flooring Circuit",
 	"block.essentials.ceil_circuit": "Ceiling Circuit",
 	"block.essentials.log_circuit": "Logarithm Circuit",
+	"block.essentials.modulo_circuit": "Modulo Circuit",
 	"block.essentials.reader_circuit": "Reader Circuit",
 	
 	
@@ -163,6 +164,7 @@
 	"tt.essentials.floor_circuit": "Outputs the input rounded down",
 	"tt.essentials.ceil_circuit": "Outputs the input rounded up",
 	"tt.essentials.log_circuit": "Outputs the base 10 logarithm of the input",
+	"tt.essentials.modulo_circuit": "Outputs the remainder of dividing the back input by the side input",
 	"tt.essentials.reader_circuit": "Reads the block behind it like a Comparator. Has a wider range of values",
 
 	"tt.essentials.empty_fluid": "Empty",

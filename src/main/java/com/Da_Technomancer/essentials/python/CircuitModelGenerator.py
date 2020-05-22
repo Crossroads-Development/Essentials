@@ -1,6 +1,6 @@
 # Generates a model and blockstate file using the normal templates for circuits for each name in the list below
 
-toGen = ["or", "min", "max", "sum", "dif", "prod", "quot", "pow", "inv", "sin", "cos", "tan", "asin", "acos", "atan", "equals", "less", "more", "round", "ceil", "floor", "log", "reader"]
+toGen = ["or", "min", "max", "sum", "dif", "prod", "quot", "pow", "inv", "sin", "cos", "tan", "asin", "acos", "atan", "equals", "less", "more", "round", "ceil", "floor", "log", "reader", "modulo"]
 
 modelPath = "../../../../../resources/assets/essentials/models/block/circuit/"
 statePath = "../../../../../resources/assets/essentials/blockstates/"

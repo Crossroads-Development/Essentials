@@ -146,7 +146,12 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 			}
 		}
 
-		float newOutput = owner.getOutput(inputs[0], inputs[1], inputs[2], this);
+		float newOutput;
+		try{
+			newOutput = owner.getOutput(inputs[0], inputs[1], inputs[2], this);
+		}catch(ArithmeticException e){
+			newOutput = 0;
+		}
 		setPower(RedstoneUtil.sanitize(newOutput));
 	}
 
