@@ -22,15 +22,18 @@ public class WireTileEntity extends TileEntity{
 	private static TileEntityType<WireTileEntity> TYPE = null;
 
 	public long lastUpdateTime;
-	protected LazyOptional<RedsHandler> redsOptional;
+	protected LazyOptional<RedsHandler> redsOptional = LazyOptional.of(this::createRedsHandler);
 
 	protected WireTileEntity(TileEntityType<? extends WireTileEntity> type){
 		super(type);
 	}
 
 	public WireTileEntity(){
-		super(TYPE);
-		redsOptional = LazyOptional.of(RedsHandler::new);
+		this(TYPE);
+	}
+
+	protected RedsHandler createRedsHandler(){
+		return new RedsHandler();
 	}
 
 	@Override
@@ -78,6 +81,7 @@ public class WireTileEntity extends TileEntity{
 			}
 		}
 
+		//A more efficient routing algorithm that is used in place of the stricter API when going between wires, which can be expected to be well behaved
 		protected void routeDependents(WeakReference<LazyOptional<IRedstoneHandler>> src, int dist, Direction fromSide, Direction nominalSide, HashSet<BlockPos> visited){
 			if(!visited.add(pos) || ++dist >= RedstoneUtil.getMaxRange()){
 				return;
@@ -119,6 +123,7 @@ public class WireTileEntity extends TileEntity{
 			}
 		}
 
+		//A more efficient routing algorithm that is used in place of the stricter API when going between wires, which can be expected to be well behaved
 		protected void routeSrc(WeakReference<LazyOptional<IRedstoneHandler>> dependency, int dist, Direction toSide, Direction nominalSide, HashSet<BlockPos> visited){
 			if(!visited.add(pos) || ++dist >= RedstoneUtil.getMaxRange()){
 				return;

@@ -127,7 +127,7 @@ public final class Essentials{
 		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
-		registerTE(WireTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
+		registerTE(WireJunctionTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
 		registerTE(AutoCrafterTileEntity::new, "auto_crafter", reg, autoCrafter);
 		registerTE(RedstoneTransmitterTileEntity::new, "redstone_transmitter", reg, redstoneTransmitter);
 		registerTE(RedstoneReceiverTileEntity::new, "redstone_receiver", reg, redstoneReceiver);

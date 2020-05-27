@@ -64,7 +64,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 			return s.get(ESProperties.HORIZ_FACING);
 		}
 		remove();
-		return null;
+		return Direction.NORTH;
 	}
 
 	public float getOutput(){
@@ -244,7 +244,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		}
 		return super.getCapability(cap, side);
 	}
-	
+
 	private class RedsHandler implements IRedstoneHandler{
 
 		@Override
@@ -314,17 +314,18 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		public static final Orient[] INPUTS = {CCW, BACK, CW};
 
 		public static Orient getOrient(Direction dir, Direction front){
-			if(dir == front){
-				return FRONT;
-			}else if(dir.getOpposite() == front){
-				return BACK;
-			}else if(front.rotateY() == dir){
-				return CW;
-			}else if(front.rotateYCCW() == dir){
-				return CCW;
-			}else{
-				throw new IllegalArgumentException("front &/or dir are vertical/null. Front: " + front + "; Dir: " + dir);
+			if(front != null){
+				if(front == dir){
+					return FRONT;
+				}else if(front.getOpposite() == dir){
+					return BACK;
+				}else if(front.rotateY() == dir){
+					return CW;
+				}else if(front.rotateYCCW() == dir){
+					return CCW;
+				}
 			}
+			throw new IllegalArgumentException(String.format("front &/or dir are vertical/null. Front: %s; Dir: %s", front == null ? "NULL" : front.toString(), dir == null ? "NULL" : dir.toString()));
 		}
 
 		public Direction getFacing(Direction front){
