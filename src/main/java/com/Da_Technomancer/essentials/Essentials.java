@@ -124,7 +124,7 @@ public final class Essentials{
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
 		registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", reg, basicFluidSplitter);
 		registerTE(BasicItemSplitterTileEntity::new, "fluid_splitter", reg, fluidSplitter);
-		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit);
+		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
 		registerTE(WireJunctionTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
