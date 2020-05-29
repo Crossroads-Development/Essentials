@@ -71,6 +71,7 @@ public class ESBlocks{
 	public static AbstractCircuit floorCircuit;
 	public static AbstractCircuit ceilCircuit;
 	public static AbstractCircuit logCircuit;
+	public static AbstractCircuit moduloCircuit;
 	public static ReaderCircuit readerCircuit;
 	public static RedstoneTransmitter redstoneTransmitter;
 	public static RedstoneReceiver redstoneReceiver;
@@ -153,6 +154,7 @@ public class ESBlocks{
 		floorCircuit = new GenericACircuit("floor", (a) -> (float) Math.floor(a));
 		ceilCircuit = new GenericACircuit("ceil", (a) -> (float) Math.ceil(a));
 		logCircuit = new GenericACircuit("log", (a) -> (float) Math.log10(a));
+		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> b % a);
 		readerCircuit = new ReaderCircuit();
 		redstoneTransmitter = new RedstoneTransmitter();
 		redstoneReceiver = new RedstoneReceiver();

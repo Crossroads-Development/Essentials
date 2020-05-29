@@ -47,16 +47,10 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		if(blockIn == Blocks.REDSTONE_WIRE || blockIn instanceof RedstoneDiodeBlock){
+		worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
+
+		if(blockIn != Blocks.REDSTONE_WIRE && !(blockIn instanceof RedstoneDiodeBlock)){
 			//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
-			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
-			/*
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(te instanceof RedstoneTransmitterTileEntity){
-				((RedstoneTransmitterTileEntity) te).buildConnections();
-			}
-			 */
-		}else{
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(te instanceof RedstoneTransmitterTileEntity){
 				((RedstoneTransmitterTileEntity) te).buildConnections();

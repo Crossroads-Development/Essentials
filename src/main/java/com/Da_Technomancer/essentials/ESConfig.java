@@ -55,7 +55,7 @@ public class ESConfig{
 		itemChuteRange = serverBuilder.comment("Maximum Transport Chutes in a line").defineInRange("chute_limit", 16, 0, 128);
 		fertileSoilRate = serverBuilder.comment("Percent of normal speed Fertile Soil should work at", "Set to 0 to disable").defineInRange("fertile_rate", 100D, 0, 100);
 		maxRedstoneRange = serverBuilder.comment("Range of signals through Circuit Wire").defineInRange("redstone_range", 16, 1, 128);
-		wirelessRange = serverBuilder.comment("Range of signals through Redstone Receivers/Transmitters").defineInRange("wireless_range", 16, 0, 128);
+		wirelessRange = serverBuilder.comment("Range of signals through Redstone Receivers/Transmitters").defineInRange("wireless_range", 32, 0, 128);
 
 		serverSpec = serverBuilder.build();
 		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);

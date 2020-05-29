@@ -26,7 +26,7 @@ public class WireJunctionCircuit extends AbstractTile{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		//Wire junctions propogate block updates in horizontally to make sure any attached circuit can update when a new connection is made/broken
+		//Wire junctions propagate block updates horizontally to make sure any attached circuit can update when a new connection is made/broken
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof WireTileEntity){
 			WireTileEntity wte = (WireTileEntity) te;
@@ -44,7 +44,7 @@ public class WireJunctionCircuit extends AbstractTile{
 					worldIn.neighborChanged(pos.offset(dir), this, pos);
 				}
 			}else{
-				//If possible, only propogate the block update along the direction it came from- as this is a junction
+				//If possible, only propagate the block update along the direction it came from- as this is a junction
 				Direction dir = Direction.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
 				if(dir.getAxis() != Direction.Axis.Y){
 					worldIn.neighborChanged(pos.offset(dir), this, pos);

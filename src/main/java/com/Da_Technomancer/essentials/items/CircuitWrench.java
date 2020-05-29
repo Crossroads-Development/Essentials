@@ -39,11 +39,11 @@ public class CircuitWrench extends Item{
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(30);
+	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(32);
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(30);
+	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(32);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
 	private static final Tag<Item> COMPONENT_TAG = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "circuit_components"));//new ResourceLocation(Essentials.MODID, "circuit_components");
@@ -63,6 +63,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.prodCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/prod.png"));
 		registerCircuit(ESBlocks.quotCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/quot.png"));
 		registerCircuit(ESBlocks.invCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/inv.png"));
+		registerCircuit(ESBlocks.moduloCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/modulo.png"));
 		registerCircuit(ESBlocks.powCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pow.png"));
 		registerCircuit(ESBlocks.logCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/log.png"));
 		registerCircuit(ESBlocks.sinCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sin.png"));
