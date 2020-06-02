@@ -47,10 +47,10 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 
 			float length = (float) line.length();
 
-			RenderUtil.addVertexBlock(builder, matrix, widthVec.scale(-1), 0, 0, normal, 0.7F, false);//min-min
-			RenderUtil.addVertexBlock(builder, matrix, widthVec, 1, 0, normal, 0.7F, false);//max-min
-			RenderUtil.addVertexBlock(builder, matrix, line.add(widthVec), 1, length, normal, 0.7F, false);//max-max
-			RenderUtil.addVertexBlock(builder, matrix, line.subtract(widthVec), 0, length, normal, 0.7F, false);//min-max
+			RenderUtil.addVertexBlock(builder, matrix, widthVec.scale(-1), 0, 0, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//min-min
+			RenderUtil.addVertexBlock(builder, matrix, widthVec, 1, 0, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//max-min
+			RenderUtil.addVertexBlock(builder, matrix, line.add(widthVec), 1, length, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//max-max
+			RenderUtil.addVertexBlock(builder, matrix, line.subtract(widthVec), 0, length, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//min-max
 		}
 		matrix.pop();
 	}

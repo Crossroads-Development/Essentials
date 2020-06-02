@@ -9,18 +9,25 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class RenderUtil{
 
+	public static final int BRIGHT_LIGHT = 240 | (240 << 16);//Lightmap combined coordinate for fixed full brightness
+
 	/**
 	 * Adds a vertex to the builder using the BLOCK vertex format
 	 * @param builder The active builder
 	 * @param matrix The reference matrix
-	 * @param pos The position of this vertex
+	 * @param x The x position of this vertex
+	 * @param y The y position of this vertex
+	 * @param z The z position of this vertex
 	 * @param u The u coord of this vertex texture mapping
 	 * @param v The v coord of this vertex texture mapping
-	 * @param normal The normal vector to this vertex
+	 * @param normalX The normal x component to this vertex
+	 * @param normalY The normal y component to this vertex
+	 * @param normalZ The normal z component to this vertex
+	 * @param light The light value
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, Vec3d pos, float u, float v, Vec3d normal){
-		addVertexBlock(builder, matrix, pos, u, v, normal, 1, true);
+	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, int light){
+		builder.pos(matrix.getLast().getMatrix(), x, y, z).color(1F, 1F, 1F, 1F).tex(u, v).lightmap(light).normal(normalX, normalY, normalZ).endVertex();
 	}
 
 	/**
@@ -32,29 +39,11 @@ public class RenderUtil{
 	 * @param v The v coord of this vertex texture mapping
 	 * @param normal The normal vector to this vertex
 	 * @param alpha The alpha value [0-1]
-	 * @param light Whether to use light (if false, this glows in the dark)
+	 * @param light The combined light coordinate
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, Vec3d pos, float u, float v, Vec3d normal, float alpha, boolean light){
-		if(light){
-			builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(0, 240).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
-		}else{
-			builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(240, 240).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
-		}
-	}
-
-	/**
-	 * Finds the normal vector for a vertex
-	 * If all vertices in a polygon are in the same plane, this result will apply to all
-	 * @param point0 The position of the vertex this normal is for
-	 * @param point1 The position of an adjacent vertex
-	 * @param point2 The position of the other adjacent vertex
-	 * @return The normal vector
-	 */
-	public static Vec3d findNormal(Vec3d point0, Vec3d point1, Vec3d point2){
-		point1 = point1.subtract(point0);
-		point2 = point2.subtract(point0);
-		return point1.crossProduct(point2);
+	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, Vec3d pos, float u, float v, Vec3d normal, float alpha, int light){
+		builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(light).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
 	}
 
 	/**
