@@ -27,7 +27,7 @@ public class RenderUtil{
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, int light){
-		builder.pos(matrix.getLast().getMatrix(), x, y, z).color(1F, 1F, 1F, 1F).tex(u, v).lightmap(light).normal(normalX, normalY, normalZ).endVertex();
+		builder.pos(matrix.getLast().getMatrix(), x, y, z).color(1F, 1F, 1F, 1F).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), normalX, normalY, normalZ).endVertex();
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class RenderUtil{
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, Vec3d pos, float u, float v, Vec3d normal, float alpha, int light){
-		builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(light).normal((float) normal.x, (float) normal.y, (float) normal.z).endVertex();
+		builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), (float) normal.x, (float) normal.y, (float) normal.z).endVertex();
 	}
 
 	/**
