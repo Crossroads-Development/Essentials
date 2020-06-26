@@ -26,6 +26,7 @@ public class ESEventHandlerClient{
 		if(player != null && (player.getHeldItemMainhand().getItem() instanceof CircuitWrench || player.getHeldItemOffhand().getItem() instanceof CircuitWrench)){
 			Vec3d eyePos = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
 			MatrixStack matrix = e.getMatrixStack();
+			matrix.push();
 			IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
 			matrix.translate(-eyePos.x, -eyePos.y, -eyePos.z);
 			for(TileEntity te : player.world.loadedTileEntityList){
@@ -37,6 +38,7 @@ public class ESEventHandlerClient{
 					}
 				}
 			}
+			matrix.pop();
 		}
 	}
 
