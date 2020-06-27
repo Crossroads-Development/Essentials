@@ -72,7 +72,7 @@ public class WitherCannon extends Block{
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				BlockState endState = state.cycle(ESProperties.FACING);
+				BlockState endState = state.func_235896_a_(ESProperties.FACING);
 				worldIn.setBlockState(pos, endState);
 			}
 			return ActionResultType.SUCCESS;

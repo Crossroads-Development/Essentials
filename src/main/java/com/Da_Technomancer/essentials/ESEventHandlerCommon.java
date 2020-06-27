@@ -10,7 +10,7 @@ import net.minecraft.entity.monster.WitchEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -25,10 +25,11 @@ public class ESEventHandlerCommon{
 	public void blockWitchSpawns(LivingSpawnEvent e){
 		//Prevents witch spawning if a nearby brazier has soulsand
 		if(e.getEntity() instanceof WitchEntity){
-			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
+			int RANGE = ESConfig.brazierRange.get();
 			for(TileEntity te : e.getWorld().getWorld().tickableTileEntities){
 				World w;
-				if(te instanceof BrazierTileEntity && te.getDistanceSq(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED && (w = te.getWorld()) != null){
+				//Mapping note: method with 0.5 offset, followed by method for comparing distances
+				if(te instanceof BrazierTileEntity && Vector3d.func_237489_a_(te.getPos()).func_237488_a_(e.getEntity().getPositionVec(), RANGE) && (w = te.getWorld()) != null){
 					BlockState state = w.getBlockState(te.getPos());
 					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setResult(Event.Result.DENY);
@@ -43,11 +44,10 @@ public class ESEventHandlerCommon{
 	@SubscribeEvent
 	public void preventTeleport(EnderTeleportEvent e){
 		if(e.getEntity() instanceof EndermanEntity){
-			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
+			int RANGE = ESConfig.brazierRange.get();
 			for(TileEntity te : e.getEntity().getEntityWorld().tickableTileEntities){
-				World w;
-				Vec3d entPos = e.getEntity().getPositionVec();
-				if(te instanceof BrazierTileEntity && te.getDistanceSq(entPos.x, entPos.y, entPos.z) <= RANGE_SQUARED && (w = te.getWorld()) != null){
+				//Mapping note: method with 0.5 offset, followed by method for comparing distances
+				if(te instanceof BrazierTileEntity && Vector3d.func_237489_a_(te.getPos()).func_237488_a_(e.getEntity().getPositionVec(), RANGE) && te.getWorld() != null){
 					BlockState state = te.getBlockState();
 					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setCanceled(true);

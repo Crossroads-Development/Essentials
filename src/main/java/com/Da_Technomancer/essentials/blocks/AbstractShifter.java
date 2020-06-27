@@ -60,7 +60,7 @@ public abstract class AbstractShifter extends ContainerBlock{
 		if(!worldIn.isRemote){
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-				worldIn.setBlockState(pos, state.cycle(ESProperties.FACING));
+				worldIn.setBlockState(pos, state.func_235896_a_().func_235896_a_(ESProperties.FACING));
 				if(te instanceof AbstractShifterTileEntity){
 					((AbstractShifterTileEntity) te).refreshCache();
 				}

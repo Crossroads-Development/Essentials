@@ -24,7 +24,7 @@ public class BlockUtil{
 	}
 
 	public static void sendClientPacketAround(World world, BlockPos pos, Packet packet){
-		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension.getType())), packet);
+		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.func_234923_W_())), packet);//Mapping note: get registry key of world
 	}
 
 	/**

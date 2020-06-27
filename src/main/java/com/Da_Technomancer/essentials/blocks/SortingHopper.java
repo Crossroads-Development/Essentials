@@ -126,7 +126,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 		if(!worldIn.isRemote){
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-				worldIn.setBlockState(pos, state.cycle(FACING));
+				worldIn.setBlockState(pos, state.func_235896_a_(FACING));
 				if(te instanceof SortingHopperTileEntity){
 					((SortingHopperTileEntity) te).resetCache();
 				}

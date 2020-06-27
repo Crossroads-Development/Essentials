@@ -8,8 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public interface ILinkTE extends ILongReceiver{
 
-	Tag<Item> LINKING_TOOLS = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "linking_tool"));
+	ITag<Item> LINKING_TOOLS = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "linking_tool"));
 	String POS_NBT = "c_link";
 	String DIM_NBT = "c_link_dim";
 	byte LINK_PACKET_ID = 8;
