@@ -83,7 +83,7 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.quip").func_230530_a_(ESConfig.TT_QUIP));//Mapping note: set style
+		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.quip").setStyle(ESConfig.TT_QUIP));
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -54,7 +54,7 @@ public class WorldBuffer implements IBlockReader{
 	}
 
 	@Override
-	public FluidState getFluidState(BlockPos pos){
+	public IFluidState getFluidState(BlockPos pos){
 		return getBlockState(pos).getFluidState();
 	}
 

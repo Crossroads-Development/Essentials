@@ -5,7 +5,7 @@ import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.ITag;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -24,7 +24,7 @@ public class ESConfig{
 	/**
 	 * A common style applied to "quip" lines in tooltips
 	 */
-	public static final Style TT_QUIP = Style.field_240709_b_.func_240712_a_(TextFormatting.AQUA).func_240722_b_(true);//Mapping note: Empty style, set text formatting, set italic
+	public static final Style TT_QUIP = new Style().setColor(TextFormatting.AQUA).setItalic(true);
 
 	public static ForgeConfigSpec.BooleanValue addWrench;
 
@@ -71,7 +71,7 @@ public class ESConfig{
 		serverSpec.setConfig(serverConfig);
 	}
 
-	private static final ITag<Item> WRENCH = new ItemTags.Wrapper(new ResourceLocation("forge", "wrench"));
+	private static final Tag<Item> WRENCH = new ItemTags.Wrapper(new ResourceLocation("forge", "wrench"));
 
 	/**
 	 * @param stack The stack to test
@@ -79,7 +79,7 @@ public class ESConfig{
 	 */
 	public static boolean isWrench(ItemStack stack){
 		//Essentials prefers wrenches defined via the forge:item/wrench.json, but will also check tooltypes- which some mods use to define their wrench
-		return WRENCH.func_230235_a_(stack.getItem()) || stack.getToolTypes().contains(ToolType.get("wrench"));//Mapping note: tag contains item
+		return WRENCH.contains(stack.getItem()) || stack.getToolTypes().contains(ToolType.get("wrench"));
 	}
 
 	/**

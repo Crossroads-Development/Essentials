@@ -16,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 
 public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntityRenderer<T>{
 
@@ -34,18 +34,16 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 			return;
 		}
 
-		//Mapping note: This is the version with the .5 offset
-		Vector3d tePos = Vector3d.func_237489_a_(te.getPos());
+		Vec3d tePos = new Vec3d(te.getPos().getX() + 0.5, te.getPos().getY() + 0.5, te.getPos().getZ() + 0.5);
 
 		matrix.push();
 		matrix.translate(0.5, 0.5, 0.5);
 		IVertexBuilder builder = buffer.getBuffer(LINK_TYPE);
 
 		for(BlockPos link : te.getLinks()){
-			//Mapping note: This is the version without the .5 offset
-			Vector3d line = Vector3d.func_237491_b_(link);//A ray pointing from this TE to the link
-			Vector3d widthVec = RenderUtil.findRayWidth(tePos, line, 0.3F);
-			Vector3d normal = line.crossProduct(widthVec);
+			Vec3d line = new Vec3d(link);//A ray pointing from this TE to the link
+			Vec3d widthVec = RenderUtil.findRayWidth(tePos, line, 0.3F);
+			Vec3d normal = line.crossProduct(widthVec);
 
 			float length = (float) line.length();
 

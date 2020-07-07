@@ -12,7 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -76,7 +76,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		}
 
 		ItemEntity ent = new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
-		ent.setMotion(Vector3d.ZERO);
+		ent.setMotion(Vec3d.ZERO);
 		world.addEntity(ent);
 		return ItemStack.EMPTY;
 	}

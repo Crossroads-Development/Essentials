@@ -29,7 +29,7 @@ public abstract class AbstractSplitterTE extends TileEntity implements ITickable
 
 	protected Direction getFacing(){
 		BlockState state = getBlockState();
-		if(!state.func_235901_b_(ESProperties.FACING)){//Mapping note: has
+		if(!state.has(ESProperties.FACING)){
 			return Direction.DOWN;
 		}
 		return state.get(ESProperties.FACING);

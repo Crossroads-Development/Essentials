@@ -15,6 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
@@ -38,6 +39,11 @@ public class FertileSoil extends Block{
 	}
 
 	@Override
+	public List<ItemStack> getDrops(BlockState p_220076_1_, LootContext.Builder p_220076_2_){
+		return super.getDrops(p_220076_1_, p_220076_2_);
+	}
+
+	@Override
 	public boolean isToolEffective(BlockState state, ToolType tool){
 		return tool == ToolType.SHOVEL;
 	}
@@ -48,7 +54,7 @@ public class FertileSoil extends Block{
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.benefits"));
 		if(plant.getBlock() == Blocks.NETHER_WART){
-			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").func_230530_a_(ESConfig.TT_QUIP));
+			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").setStyle(ESConfig.TT_QUIP));
 		}
 	}
 
@@ -57,8 +63,7 @@ public class FertileSoil extends Block{
 		//As it turns out, the same method determines whether a block is a valid soil for a plant type, and whether it should be turned into podzol by large spruce trees
 		//We do want to act as a soil, we don't want to become podzol
 		//So, in the special case of spruce trees, we read the stacktrace and see if this method is being called for podzol-ification, and if so, return false
-		//TODO
-		if(false && plant.getBlock() == Blocks.SPRUCE_SAPLING){
+		if(plant.getBlock() == Blocks.SPRUCE_SAPLING){
 			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
 			String name;
 //			for(int i = 0; i < Math.min(stack.length, 8); i++)
