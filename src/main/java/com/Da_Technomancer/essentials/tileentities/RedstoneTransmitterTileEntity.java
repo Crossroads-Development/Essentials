@@ -18,7 +18,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -174,8 +174,8 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		output = nbt.getFloat("out");
 		int i = 0;
 		while(nbt.contains("link_" + i)){
@@ -224,7 +224,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	public boolean link(ILinkTE endpoint, PlayerEntity player){
 		BlockPos linkPos = endpoint.getTE().getPos().subtract(pos);
 		if(linked.contains(linkPos)){
-			player.sendMessage(new StringTextComponent("Device already linked; Canceling linking"));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.taken"), player.getUniqueID());
 		}else if(linked.size() < getMaxLinks()){
 			linked.add(linkPos);
 			BlockUtil.sendClientPacketAround(world, pos, new SendLongToClient(LINK_PACKET_ID, linkPos.toLong(), pos));
@@ -234,10 +234,10 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 			recTe.dye(world.getBlockState(pos).get(ESProperties.COLOR));
 
 			world.neighborChanged(linkPos, ESBlocks.redstoneTransmitter, linkPos);
-			player.sendMessage(new StringTextComponent("Linked device at " + getTE().getPos() + " to send to " + endpoint.getTE().getPos()));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.success", getTE().getPos(), endpoint.getTE().getPos()), player.getUniqueID());
 			return true;
 		}else{
-			player.sendMessage(new StringTextComponent("All " + getMaxLinks() + " links already occupied; Canceling linking"));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.full", getMaxLinks()), player.getUniqueID());
 		}
 		return false;
 	}

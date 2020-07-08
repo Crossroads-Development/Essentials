@@ -6,7 +6,7 @@ import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
 import com.Da_Technomancer.essentials.packets.ConfigureWrenchOnServer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -22,7 +22,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>{
 
@@ -52,9 +51,8 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	@Override
 	protected void init(){
 		super.init();
-		searchBar = new TextFieldWidget(font, (width - xSize) / 2 + 4, (height - ySize) / 2 + 8, COLUMNS * 18 - 4, 18, I18n.format("container.search_bar"));
+		searchBar = new TextFieldWidget(font, guiLeft + 4, guiTop + 8, COLUMNS * 18 - 4, 18, new TranslationTextComponent("container.search_bar"));
 		searchBar.setCanLoseFocus(false);
-		searchBar.changeFocus(true);
 		searchBar.setTextColor(-1);
 		searchBar.setDisabledTextColour(-1);
 		searchBar.setEnableBackgroundDrawing(false);
@@ -87,11 +85,11 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	 */
 	private int getSelectedMode(float xPos, float yPos){
 		//Made relative to the start of the modes window
-		xPos -= (width - xSize) / 2;
-		yPos -= (height - ySize) / 2 + 18;
+		xPos -= guiLeft;
+		yPos -= guiTop + 18;
 
-		int xInd = (int) (xPos / 18);
-		int yInd = (int) (yPos / 18);
+		int xInd = (int) Math.floor(xPos / 18F);
+		int yInd = (int) Math.floor(yPos / 18F);
 		int index = xInd + yInd * COLUMNS;
 		if(xInd < 0 || yInd < 0 || xInd >= COLUMNS || yInd >= ROWS || index >= options.size() || index < 0){
 			return -1;
@@ -101,9 +99,9 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks){
-		renderBackground();
-		super.render(mouseX, mouseY, partialTicks);
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+		renderBackground(matrix);
+		super.render(matrix, mouseX, mouseY, partialTicks);
 
 		//Tooltip
 		int index = getSelectedMode(mouseX, mouseY);
@@ -112,12 +110,12 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 			tt.add(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey()));
 			AbstractTile block = CircuitWrench.MODES.get(index);
 			block.addInformation(ItemStack.EMPTY, null, tt, ITooltipFlag.TooltipFlags.NORMAL);
-			renderTooltip(tt.stream().map(ITextComponent::getFormattedText).collect(Collectors.toList()), mouseX, mouseY);
+			renderTooltip(matrix, tt, mouseX, mouseY);
 		}
 
 		RenderSystem.disableLighting();
 		RenderSystem.disableBlend();
-		searchBar.render(mouseX, mouseY, partialTicks);
+		searchBar.render(matrix, mouseX, mouseY, partialTicks);
 	}
 
 	private void filterChanged(String newFilter){
@@ -132,7 +130,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 		}
 	}
 
-	private static final Style style = new Style().setColor(TextFormatting.DARK_RED);
+	private static final Style style = Style.EMPTY.applyFormatting(TextFormatting.DARK_RED);
 
 	@Override
 	public boolean mouseClicked(double xPos, double yPos, int button){
@@ -150,28 +148,26 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 
 		EssentialsPackets.channel.sendToServer(new ConfigureWrenchOnServer(index));
 		minecraft.player.closeScreen();
-		playerInventory.player.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).appendSibling(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey())));
+		playerInventory.player.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").func_230530_a_(style).func_230529_a_(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey())), playerInventory.player.getUniqueID());//MCP note: setStyle, appendSibling
 
 		return true;
 	}
 
+	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-		//drawTexturedModelRectangle
-
+	protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+		//Background
 		//Search bar
 		minecraft.getTextureManager().bindTexture(SEARCH_BAR_TEXTURE);
-		blit((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, 18, xSize, 18);
+		blit(matrix, guiLeft, guiTop, 0, 0, xSize, 18, xSize, 18);
 
 		//Rows
 		minecraft.getTextureManager().bindTexture(ROW_TEXTURE);
 		for(int i = 1; i <= ROWS; i++){
-			blit((width - xSize) / 2, (height - ySize) / 2 + i * 18, 0, 0, xSize, 18, xSize, 18);
+			blit(matrix, guiLeft, guiTop + i * 18, 0, 0, xSize, 18, xSize, 18);
 		}
-	}
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
+		//Foreground
 		//Modes
 		for(int i = 0; i < options.size(); i++){
 			Integer ind = options.get(i);
@@ -180,7 +176,13 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 				sprite = MISSING_TEXTURE;
 			}
 			minecraft.getTextureManager().bindTexture(sprite);
-			blit((i % COLUMNS) * 18 + 1, (i / COLUMNS) * 18 + 19, 0, 0, 16, 16, 16, 16);
+			blit(matrix, (i % COLUMNS) * 18 + 1 + guiLeft, (i / COLUMNS) * 18 + 19 + guiTop, 0, 0, 16, 16, 16, 16);
 		}
+	}
+
+	//MCP note: draw tooltip/foreground
+	@Override
+	protected void func_230451_b_(MatrixStack matrix, int p_230451_2_, int p_230451_3_){
+		//Don't render text overlays
 	}
 }

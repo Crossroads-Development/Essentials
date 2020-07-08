@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
@@ -25,8 +26,8 @@ public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		redstone = nbt.getInt("reds");
 	}
 

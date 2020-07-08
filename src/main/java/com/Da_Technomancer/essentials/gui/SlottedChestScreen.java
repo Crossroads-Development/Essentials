@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.RenderHelper;
@@ -18,23 +18,30 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 	public SlottedChestScreen(SlottedChestContainer cont, PlayerInventory playerInventory, ITextComponent text){
 		super(cont, playerInventory, text);
 		ySize = 222;
+		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
+		field_238745_s_ = ySize - 94;//MCP note: player inventory text overlay y position
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks){
-		renderBackground();
-		super.render(mouseX, mouseY, partialTicks);
-		renderHoveredToolTip(mouseX, mouseY);
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+		renderBackground(matrix);
+		super.render(matrix, mouseX, mouseY, partialTicks);
+		func_230459_a_(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
 	}
-	
-	/**
-	 * Draw the foreground layer for the GuiContainer
-	 * (everything in front of the items)
-	 */
+
+	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
-		font.drawString(title.getFormattedText(), 8, 6, 4210752);
-		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 4210752);
+	protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+		//Background
+		RenderSystem.color3f(1, 1, 1);
+		minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
+		int xOffset = guiLeft;
+		int yOffset = guiTop;
+		//drawTexturedModelRectangle
+		blit(matrix, xOffset, yOffset, 0, 0, xSize, 125);
+		blit(matrix, xOffset, yOffset + 125, 0, 126, xSize, 96);
+
+		//Foreground
 		RenderSystem.pushLightingAttributes();
 		RenderHelper.enableStandardItemLighting();
 		RenderSystem.disableLighting();
@@ -42,26 +49,12 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 			ItemStack filter = container.filter[i];
 			Slot renderSlot = container.inventorySlots.get(i);
 			if(!filter.isEmpty() && !renderSlot.getHasStack()){
-				itemRenderer.renderItemAndEffectIntoGUI(minecraft.player, filter, renderSlot.xPos, renderSlot.yPos);
-	            itemRenderer.renderItemOverlayIntoGUI(font, filter, renderSlot.xPos, renderSlot.yPos, "0");
+				itemRenderer.renderItemAndEffectIntoGUI(minecraft.player, filter, guiLeft + renderSlot.xPos, guiTop + renderSlot.yPos);
+				itemRenderer.renderItemOverlayIntoGUI(font, filter, guiLeft + renderSlot.xPos, guiTop + renderSlot.yPos, "0");
 			}
 		}
 		RenderSystem.enableLighting();
 		RenderHelper.disableStandardItemLighting();
 		RenderSystem.popAttributes();
-	}
-
-	/**
-	 * Draws the background layer of this container (behind the items).
-	 */
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-		RenderSystem.color3f(1, 1, 1);
-		minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
-		int i = (width - xSize) / 2;
-		int j = (height - ySize) / 2;
-		//drawTexturedModelRectangle
-		blit(i, j, 0, 0, xSize, 125);
-		blit(i, j + 125, 0, 126, xSize, 96);
 	}
 }

@@ -52,7 +52,7 @@ public abstract class AbstractSplitter extends ContainerBlock{
 						playerIn.sendMessage(getModeComponent((AbstractSplitterTE) te, mode), playerIn.getUniqueID());
 					}
 				}else{
-					worldIn.setBlockState(pos, state.cycle(ESProperties.FACING));
+					worldIn.setBlockState(pos, state.func_235896_a_(ESProperties.FACING));//MCP note: cycle
 				}
 			}
 			return ActionResultType.SUCCESS;

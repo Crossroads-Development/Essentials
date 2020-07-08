@@ -60,7 +60,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 	private Direction getFacing(){
 		BlockState s = getBlockState();
-		if(s.has(ESProperties.HORIZ_FACING)){
+		if(s.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
 			return s.get(ESProperties.HORIZ_FACING);
 		}
 		remove();

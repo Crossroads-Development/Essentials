@@ -96,8 +96,8 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		transferCooldown = nbt.getInt("trans_cooldown");
 
 		for(int i = 0; i < 5; i++){

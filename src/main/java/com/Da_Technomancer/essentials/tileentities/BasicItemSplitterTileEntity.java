@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
@@ -21,7 +22,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	private static TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
 
 	public static final int[] MODES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-	private ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
+	private final ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 
 	public BasicItemSplitterTileEntity(TileEntityType<? extends AbstractSplitterTE> type){
 		super(type);
@@ -101,8 +102,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 
 		//The way this block saves to nbt was changed in 2.2.0, and a "type" of 1 means the encoding is the new version, while 0 mean old version
 		if(nbt.getByte("type") == 1){

@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -46,8 +47,8 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		setting = nbt.getFloat("setting");
 		settingStr = nbt.getString("setting_s");
 	}

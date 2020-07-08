@@ -161,8 +161,8 @@ public class CircuitWrench extends Item{
 			}
 
 			if(allowed){
-				if(toPlace.has(ESProperties.HORIZ_FACING)){
-					if(state.has(ESProperties.HORIZ_FACING)){
+				if(toPlace.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
+					if(state.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
 						toPlace = toPlace.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING));
 					}else{
 						toPlace = toPlace.with(ESProperties.HORIZ_FACING, context.getPlayer().getAdjustedHorizontalFacing());

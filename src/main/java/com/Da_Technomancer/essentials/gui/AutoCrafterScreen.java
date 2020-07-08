@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.gui;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.google.common.collect.Lists;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.recipebook.IRecipeShownListener;
@@ -36,6 +37,8 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	public AutoCrafterScreen(AutoCrafterContainer cont, PlayerInventory playerInventory, ITextComponent text){
 		super(cont, playerInventory, text);
 		ySize = 186;
+		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
+		field_238745_s_ = ySize - 94;//MCP note: player inventory text overlay y position
 	}
 
 	protected void init() {
@@ -54,20 +57,20 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public void render(int p_render_1_, int p_render_2_, float p_render_3_){
+	public void render(MatrixStack matrix, int p_render_1_, int p_render_2_, float p_render_3_){
 		time += p_render_3_;
-		renderBackground();
+		renderBackground(matrix);
 		if(recipeBook.isVisible() && widthTooNarrow){
-			drawGuiContainerBackgroundLayer(p_render_3_, p_render_1_, p_render_2_);
-			recipeBook.render(p_render_1_, p_render_2_, p_render_3_);
+			func_230450_a_(matrix, p_render_3_, p_render_1_, p_render_2_);//MCP note: render screen
+			recipeBook.render(matrix, p_render_1_, p_render_2_, p_render_3_);
 		}else{
-			recipeBook.render(p_render_1_, p_render_2_, p_render_3_);
-			super.render(p_render_1_, p_render_2_, p_render_3_);
-			recipeBook.renderGhostRecipe(guiLeft, guiTop, true, p_render_3_);
+			recipeBook.render(matrix, p_render_1_, p_render_2_, p_render_3_);
+			super.render(matrix, p_render_1_, p_render_2_, p_render_3_);
+			recipeBook.func_230477_a_(matrix, guiLeft, guiTop, true, p_render_3_);//MCP note: renderGhostRecipe
 		}
 
-		renderHoveredToolTip(p_render_1_, p_render_2_);
-		recipeBook.renderTooltip(guiLeft, guiTop, p_render_1_, p_render_2_);
+		func_230459_a_(matrix, p_render_1_, p_render_2_);//MCP note: renderHoveredToolTip
+		recipeBook.func_238924_c_(matrix, guiLeft, guiTop, p_render_1_, p_render_2_);//MCP note: renderToolTip
 		func_212932_b(recipeBook);
 	}
 
@@ -122,15 +125,15 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		recipeBook.tick();
 	}
 
-	/**
-	 * Draw the foreground layer for the GuiContainer (everything in front of
-	 * the items)
-	 */
+	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
-		font.drawString(title.getFormattedText(), 8, 6, 0x404040);
-		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 0x404040);
+	protected void func_230450_a_(MatrixStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
+		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
+		//draw background
+		blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
 
+		//foreground
 		if(container.te == null){
 			return;
 		}
@@ -161,15 +164,15 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 						continue;
 					}
 					ItemStack s = matching[(int) Math.floor(time / 30F) % matching.length];
-					itemRenderer.renderItemIntoGUI(s, 44 + 18 * (i % width), 15 + 18 * (i / width));
+					itemRenderer.renderItemIntoGUI(s, 44 + 18 * (i % width) + guiLeft, 15 + 18 * (i / width) + guiTop);
 				}
 			}
 
 			//Render the output
 			ItemStack output = iRecipe.getRecipeOutput();
-			itemRenderer.renderItemIntoGUI(output, 106, 33);
+			itemRenderer.renderItemIntoGUI(output, 106 + guiLeft, 33 + guiTop);
 			if(output.getCount() > 1){
-				itemRenderer.renderItemOverlayIntoGUI(font, output, 106, 33, null);
+				itemRenderer.renderItemOverlayIntoGUI(font, output, guiLeft + 106, guiTop + 33, null);
 			}
 
 			RenderSystem.disableRescaleNormal();
@@ -177,18 +180,8 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		}
 	}
 
-	/**
-	 * Draws the background layer of this container (behind the items).
-	 */
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-		minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
-		//drawTexturedModelRectangle
-		blit(guiLeft, (height - ySize) / 2, 0, 0, xSize, ySize);
-	}
-
 	public static List<RecipeBookCategories> getRecipeCategories(){
 		//Same categories as vanilla crafting table. Remember to change this if new crafting table categories are ever added
-		return Lists.newArrayList(RecipeBookCategories.SEARCH, RecipeBookCategories.EQUIPMENT, RecipeBookCategories.BUILDING_BLOCKS, RecipeBookCategories.MISC, RecipeBookCategories.REDSTONE);
+		return Lists.newArrayList(RecipeBookCategories.SEARCH, RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE);
 	}
 }

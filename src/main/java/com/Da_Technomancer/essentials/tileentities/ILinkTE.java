@@ -8,8 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -23,7 +23,7 @@ import java.util.Set;
  */
 public interface ILinkTE extends ILongReceiver{
 
-	Tag<Item> LINKING_TOOLS = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "linking_tool"));
+	ITag<Item> LINKING_TOOLS = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "linking_tool").toString());
 	String POS_NBT = "c_link";
 	String DIM_NBT = "c_link_dim";
 	byte LINK_PACKET_ID = 8;
@@ -100,16 +100,16 @@ public interface ILinkTE extends ILongReceiver{
 		Set<BlockPos> links = getLinks();
 		BlockPos linkPos = endpoint.getTE().getPos().subtract(getTE().getPos());
 		if(links.contains(linkPos)){
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.taken"));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.taken"), player.getUniqueID());
 		}else if(links.size() < getMaxLinks()){
 			links.add(linkPos);
 			BlockPos tePos = getTE().getPos();
 			BlockUtil.sendClientPacketAround(getTE().getWorld(), tePos, new SendLongToClient(LINK_PACKET_ID, linkPos.toLong(), tePos));
 			getTE().markDirty();
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.success", getTE().getPos(), endpoint.getTE().getPos()));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.success", getTE().getPos(), endpoint.getTE().getPos()), player.getUniqueID());
 			return true;
 		}else{
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.full", getMaxLinks()));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.full", getMaxLinks()), player.getUniqueID());
 		}
 		return false;
 	}
@@ -122,9 +122,9 @@ public interface ILinkTE extends ILongReceiver{
 	 */
 	default ItemStack wrench(ItemStack wrench, PlayerEntity player){
 		if(player.isCrouching()){
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.clear"));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.clear"), player.getUniqueID());
 			clearLinks();
-		}else if(wrench.hasTag() && wrench.getTag().contains(POS_NBT) && wrench.getTag().getString(DIM_NBT).equals(player.world.getDimension().getType().getRegistryName().toString())){
+		}else if(wrench.hasTag() && wrench.getTag().contains(POS_NBT) && wrench.getTag().getString(DIM_NBT).equals(player.world.func_234922_V_().func_240901_a_().toString())){//MCP note: get dimension type registry key, get resourcelocation path
 			BlockPos prev = BlockPos.fromLong(wrench.getTag().getLong(POS_NBT));
 
 			TileEntity te = player.world.getTileEntity(prev);
@@ -132,10 +132,10 @@ public interface ILinkTE extends ILongReceiver{
 				if(prev.distanceSq(getTE().getPos()) <= ((ILinkTE) te).getRange() * ((ILinkTE) te).getRange()){
 					((ILinkTE) te).link(this, player);
 				}else{
-					player.sendMessage(new TranslationTextComponent("tt.essentials.linking.range"));
+					player.sendMessage(new TranslationTextComponent("tt.essentials.linking.range"), player.getUniqueID());
 				}
 			}else{
-				player.sendMessage(new TranslationTextComponent("tt.essentials.linking.invalid"));
+				player.sendMessage(new TranslationTextComponent("tt.essentials.linking.invalid"), player.getUniqueID());
 			}
 		}else if(canBeginLinking()){
 			if(!wrench.hasTag()){
@@ -143,8 +143,8 @@ public interface ILinkTE extends ILongReceiver{
 			}
 
 			wrench.getTag().putLong(POS_NBT, getTE().getPos().toLong());
-			wrench.getTag().putString(DIM_NBT, getTE().getWorld().getDimension().getType().getRegistryName().toString());
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.start"));
+			wrench.getTag().putString(DIM_NBT, getTE().getWorld().func_234922_V_().func_240901_a_().toString());//MCP note: get dimension type registry key, get resourcelocation path
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.start"), player.getUniqueID());
 			return wrench;
 		}
 

@@ -92,7 +92,7 @@ public class HopperFilter extends ContainerBlock{
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.cycle(ESProperties.AXIS));
+				worldIn.setBlockState(pos, state.func_235896_a_(ESProperties.AXIS));//MCP note: cycle
 				TileEntity te = worldIn.getTileEntity(pos);
 				if(te instanceof HopperFilterTileEntity){
 					((HopperFilterTileEntity) te).clearCache();

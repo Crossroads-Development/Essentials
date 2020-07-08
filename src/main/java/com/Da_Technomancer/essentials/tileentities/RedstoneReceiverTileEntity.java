@@ -1,11 +1,12 @@
 package com.Da_Technomancer.essentials.tileentities;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
@@ -108,8 +109,8 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 	}
 	
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		if(nbt.contains("src")){
 			src = BlockPos.fromLong(nbt.getLong("src"));
 		}

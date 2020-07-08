@@ -69,7 +69,7 @@ public class MultiPistonBase extends Block{
 	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getHeldItem(hand)) && !state.get(ESProperties.EXTENDED)){
 			if(!worldIn.isRemote){
-				BlockState endState = state.cycle(ESProperties.FACING);
+				BlockState endState = state.func_235896_a_(ESProperties.FACING);//MCP note: cycle
 				worldIn.setBlockState(pos, endState);
 			}
 			return ActionResultType.SUCCESS;
@@ -322,7 +322,7 @@ public class MultiPistonBase extends Block{
 			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
 		}else if(state.getBlockHardness(world, curPos) < 0){
 			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
-		}else if(state.getBlock() instanceof PistonBlock && state.has(PistonBlock.EXTENDED)){
+		}else if(state.getBlock() instanceof PistonBlock && state.func_235901_b_(PistonBlock.EXTENDED)){//MCP note: has
 			reaction = state.get(PistonBlock.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;//Vanilla pistons report BLOCK even when retracted and movable
 		}
 

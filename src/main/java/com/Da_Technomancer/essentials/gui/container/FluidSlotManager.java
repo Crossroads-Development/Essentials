@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.gui.container;
 import com.Da_Technomancer.essentials.Essentials;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -18,6 +19,8 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -111,11 +114,12 @@ public class FluidSlotManager{
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void renderBack(float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer){
+	public void render(MatrixStack matrix, float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer, List<ITextProperties> tooltip){
+		//Background
 		FluidStack clientState = getStack();
 		Minecraft.getInstance().getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
 
-		Screen.fill(xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
+		Screen.fill(matrix, xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
 		//Screen.fill changes the color
 		RenderSystem.color4f(1, 1, 1, 1);
 
@@ -125,22 +129,19 @@ public class FluidSlotManager{
 		int col = attr.getColor(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
 		RenderSystem.color3f((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F);
-		Screen.blit(xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
+		Screen.blit(matrix, xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
 		RenderSystem.color3f(1, 1, 1);
-	}
 
-	@OnlyIn(Dist.CLIENT)
-	public void renderFore(int mouseX, int mouseY, FontRenderer fontRenderer, List<String> tooltip){
-		FluidStack clientState = getStack();
+		//Foreground
 		Minecraft.getInstance().getTextureManager().bindTexture(OVERLAY);
-		Screen.blit(xPos, yPos - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
+		Screen.blit(matrix, windowXStart + xPos, windowYStart + yPos - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
 
 		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
 			if(clientState.isEmpty()){
-				tooltip.add(new TranslationTextComponent("tt.essentials.empty_fluid").getFormattedText());
+				tooltip.add(new TranslationTextComponent("tt.essentials.empty_fluid"));
 			}else{
-				tooltip.add(clientState.getDisplayName().getFormattedText());
-				tooltip.add(clientState.getAmount() + "/" + capacity);
+				tooltip.add(clientState.getDisplayName());
+				tooltip.add(new StringTextComponent(clientState.getAmount() + "/" + capacity));
 			}
 		}
 	}

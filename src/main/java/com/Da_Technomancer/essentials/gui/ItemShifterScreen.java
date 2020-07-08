@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
@@ -16,29 +17,18 @@ public class ItemShifterScreen extends ContainerScreen<ItemShifterContainer>{
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks){
-		renderBackground();
-		super.render(mouseX, mouseY, partialTicks);
-		renderHoveredToolTip(mouseX, mouseY);
-	}
-	
-	/**
-	 * Draw the foreground layer for the GuiContainer (everything in front of
-	 * the items)
-	 */
-	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY){
-		font.drawString(title.getFormattedText(), 8, 6, 0x404040);
-		font.drawString(playerInventory.getDisplayName().getFormattedText(), 8, ySize - 94, 0x404040);
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+		renderBackground(matrix);
+		super.render(matrix, mouseX, mouseY, partialTicks);
+		func_230459_a_(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
 	}
 
-	/**
-	 * Draws the background layer of this container (behind the items).
-	 */
+	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
+	protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+		//Background
 		minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
 		//drawTexturedModelRectangle
-		blit((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
+		blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
 	}
 }

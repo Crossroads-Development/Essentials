@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -61,8 +62,8 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 
 		if(nbt.contains("inv")){
 			inventory = ItemStack.read(nbt.getCompound("inv"));
@@ -208,7 +209,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 	@Override
 	public boolean isUsableByPlayer(PlayerEntity player){
-		return player.getPosition().distanceSq(pos) < 64;
+		return pos.distanceSq(player.getPositionVec(), true) < 64;
 	}
 
 	@Override

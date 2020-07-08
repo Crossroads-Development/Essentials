@@ -77,8 +77,8 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		filter = ItemStack.read(nbt.getCompound("filter"));
 	}
 

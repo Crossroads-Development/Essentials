@@ -5,15 +5,16 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.SendNBTToServer;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContainer>{
 
@@ -30,9 +31,9 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 	@Override
 	protected void init(){
 		super.init();
-		searchBar = new TextFieldWidget(font, (width - xSize) / 2 + 4, (height - ySize) / 2 + 8, 144 - 4, 18, I18n.format("container.search_bar"));
+		searchBar = new TextFieldWidget(font, guiLeft + 4, guiTop + 8, 144 - 4, 18, new TranslationTextComponent("container.search_bar"));
+
 		searchBar.setCanLoseFocus(false);
-		searchBar.changeFocus(true);
 		searchBar.setTextColor(-1);
 		searchBar.setDisabledTextColour(-1);
 		searchBar.setEnableBackgroundDrawing(false);
@@ -55,9 +56,9 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 	}
 
 	@Override
-	public void resize(Minecraft p_resize_1_, int p_resize_2_, int p_resize_3_){
+	public void resize(Minecraft minecraft, int p_resize_2_, int p_resize_3_){
 		String s = searchBar.getText();
-		init(p_resize_1_, p_resize_2_, p_resize_3_);
+		init(minecraft, p_resize_2_, p_resize_3_);
 		searchBar.setText(s);
 	}
 
@@ -71,20 +72,26 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 	}
 
 	@Override
-	public void render(int mouseX, int mouseY, float partialTicks){
-		renderBackground();
-		super.render(mouseX, mouseY, partialTicks);
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+		renderBackground(matrix);
+		super.render(matrix, mouseX, mouseY, partialTicks);
 		GlStateManager.disableLighting();
 		GlStateManager.disableBlend();
-		searchBar.render(mouseX, mouseY, partialTicks);
+		searchBar.render(matrix, mouseX, mouseY, partialTicks);
 	}
 
+	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY){
-		//drawTexturedModelRectangle
-
+	protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+		//background
 		minecraft.getTextureManager().bindTexture(SEARCH_BAR_TEXTURE);
-		blit((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, 18, xSize, 18);
+		blit(matrix, guiLeft, guiTop, 0, 0, xSize, 18, xSize, 18);
+	}
+
+	//MCP note: draw tooltip/foreground
+	@Override
+	protected void func_230451_b_(MatrixStack matrix, int p_230451_2_, int p_230451_3_){
+		//Don't render text overlays
 	}
 
 	private void entryChanged(String newFilter){
