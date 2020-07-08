@@ -138,7 +138,7 @@ public final class Essentials{
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
-		TileEntityType<?> teType = TileEntityType.Builder.create(cons, blocks).build(DSL.nilType());
+		TileEntityType<?> teType = TileEntityType.Builder.create(cons, blocks).build(DSL.emptyPartType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}

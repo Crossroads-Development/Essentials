@@ -3,7 +3,7 @@
 
 colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "silver", "cyan", "purple", "blue", "brown", "green", "red", "black"]
 
-modelPath = "../../../../../resources/assets/essentials/models/block/wireless_redstone/"
+modelPath = "../../assets/essentials/models/block/wireless_redstone/"
 
 for color in colors:
 	filepath = modelPath + "redstone_receiver_" + color + ".json"

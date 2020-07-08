@@ -36,14 +36,14 @@ public class AnimalFeed extends Item{
 		protected ItemStack dispenseStack(IBlockSource source, ItemStack stack){
 			World world = source.getWorld();
 			if(!world.isRemote()){
-				this.successful = false;
+				func_239796_a_(false);//MCP note: setSuccessful
 				BlockPos blockpos = source.getBlockPos().offset(source.getBlockState().get(DispenserBlock.FACING));
 
 				for(AnimalEntity e : world.getEntitiesWithinAABB(AnimalEntity.class, new AxisAlignedBB(blockpos))){
 					if(!stack.isEmpty() && e.getGrowingAge() == 0 && e.canBreed() && (!(e instanceof TameableEntity) || ((TameableEntity) e).isTamed())){
 						e.setInLove(null);
 						stack.shrink(1);
-						successful = true;
+						func_239796_a_(true);//MCP note: setSuccessful
 					}
 				}
 			}

@@ -3,7 +3,8 @@ package com.Da_Technomancer.essentials.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.dispenser.IPosition;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -42,8 +43,8 @@ public class RenderUtil{
 	 * @param light The combined light coordinate
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, Vec3d pos, float u, float v, Vec3d normal, float alpha, int light){
-		builder.pos(matrix.getLast().getMatrix(), (float) pos.x, (float) pos.y, (float) pos.z).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), (float) normal.x, (float) normal.y, (float) normal.z).endVertex();
+	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, IPosition pos, float u, float v, IPosition normal, float alpha, int light){
+		builder.pos(matrix.getLast().getMatrix(), (float) pos.getX(), (float) pos.getY(), (float) pos.getZ()).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), (float) normal.getX(), (float) normal.getY(), (float) normal.getZ()).endVertex();
 	}
 
 	/**
@@ -60,11 +61,11 @@ public class RenderUtil{
 	 * @return A vector of magnitude width/2 orthogonal to ray oriented to maximize viewable area by the player
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static Vec3d findRayWidth(Vec3d rayStPos, Vec3d ray, float width){
-		Vec3d cameraPos = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
-		Vec3d relStPos = rayStPos.subtract(cameraPos);//Where the ray starts, relative to the camera
+	public static Vector3d findRayWidth(Vector3d rayStPos, Vector3d ray, float width){
+		Vector3d cameraPos = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+		Vector3d relStPos = rayStPos.subtract(cameraPos);//Where the ray starts, relative to the camera
 		ray = ray.normalize();
-		Vec3d widthVec = relStPos.subtract(ray.scale(ray.dotProduct(relStPos)));//Vector from the camera to the closest point on the ray (were it extended infinitely)
+		Vector3d widthVec = relStPos.subtract(ray.scale(ray.dotProduct(relStPos)));//Vector from the camera to the closest point on the ray (were it extended infinitely)
 		widthVec = widthVec.crossProduct(ray);//Cross the ray direction with the vector from camera to ray, resulting in a vector orthogonal to the field of vision and the ray
 		return widthVec.scale(width / 2 / widthVec.length());
 	}

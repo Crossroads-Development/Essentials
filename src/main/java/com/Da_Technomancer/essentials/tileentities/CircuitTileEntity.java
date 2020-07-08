@@ -122,7 +122,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 			int ind = src.getRight().ordinal();
 			if(ind > 2){
-				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + pos.toString() + "; Dim: " + world.dimension + "Type: " + getOwner().getRegistryName().toString());
+				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + pos.toString() + "; Dim: " + world.func_234922_V_().toString() + "Type: " + getOwner().getRegistryName().toString());//MCP note: get RegistryKey<DimensionType>
 				Essentials.logger.catching(e);
 				//Invalid state- remove this input and skip
 				sources.remove(i);
@@ -215,8 +215,8 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		output = nbt.getFloat("pow");
 	}
 

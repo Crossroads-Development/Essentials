@@ -49,7 +49,7 @@ public abstract class AbstractSplitter extends ContainerBlock{
 					TileEntity te = worldIn.getTileEntity(pos);
 					if(te instanceof AbstractSplitterTE){
 						int mode = ((AbstractSplitterTE) te).increaseMode();
-						playerIn.sendMessage(getModeComponent((AbstractSplitterTE) te, mode));
+						playerIn.sendMessage(getModeComponent((AbstractSplitterTE) te, mode), playerIn.getUniqueID());
 					}
 				}else{
 					worldIn.setBlockState(pos, state.cycle(ESProperties.FACING));

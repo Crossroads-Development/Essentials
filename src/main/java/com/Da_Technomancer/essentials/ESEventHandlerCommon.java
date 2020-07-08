@@ -10,7 +10,7 @@ import net.minecraft.entity.monster.WitchEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -28,7 +28,7 @@ public class ESEventHandlerCommon{
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
 			for(TileEntity te : e.getWorld().getWorld().tickableTileEntities){
 				World w;
-				if(te instanceof BrazierTileEntity && te.getDistanceSq(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED && (w = te.getWorld()) != null){
+				if(te instanceof BrazierTileEntity && te.getPos().distanceSq(e.getX(), e.getY(), e.getZ(), true) <= RANGE_SQUARED && (w = te.getWorld()) != null){
 					BlockState state = w.getBlockState(te.getPos());
 					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setResult(Event.Result.DENY);
@@ -45,9 +45,8 @@ public class ESEventHandlerCommon{
 		if(e.getEntity() instanceof EndermanEntity){
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
 			for(TileEntity te : e.getEntity().getEntityWorld().tickableTileEntities){
-				World w;
-				Vec3d entPos = e.getEntity().getPositionVec();
-				if(te instanceof BrazierTileEntity && te.getDistanceSq(entPos.x, entPos.y, entPos.z) <= RANGE_SQUARED && (w = te.getWorld()) != null){
+				Vector3d entPos = e.getEntity().getPositionVec();
+				if(te instanceof BrazierTileEntity && te.getPos().distanceSq(entPos, true) <= RANGE_SQUARED && te.getWorld() != null){
 					BlockState state = te.getBlockState();
 					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setCanceled(true);

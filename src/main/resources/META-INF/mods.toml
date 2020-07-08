@@ -26,6 +26,6 @@ Adds several utility blocks that expand vanilla-style automation
 [[dependencies.essentials]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.14.4,]"
+    versionRange="[1.16.0,]"
     ordering="NONE"
     side="BOTH"

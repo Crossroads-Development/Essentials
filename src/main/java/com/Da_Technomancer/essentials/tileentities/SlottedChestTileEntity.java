@@ -5,6 +5,7 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -71,8 +72,8 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(nbt.contains("slot" + i)){

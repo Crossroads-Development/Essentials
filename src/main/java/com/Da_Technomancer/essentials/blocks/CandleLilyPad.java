@@ -11,7 +11,7 @@ import net.minecraftforge.common.PlantType;
 public class CandleLilyPad extends LilyPadBlock{
 
 	protected CandleLilyPad(){
-		super(Block.Properties.create(Material.PLANTS).hardnessAndResistance(0).sound(SoundType.PLANT).lightValue(14));
+		super(Block.Properties.create(Material.PLANTS).hardnessAndResistance(0).sound(SoundType.PLANT).setLightLevel(s -> 14));
 		String name = "candle_lilypad";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
@@ -19,6 +19,6 @@ public class CandleLilyPad extends LilyPadBlock{
 
 	@Override
 	public PlantType getPlantType(IBlockReader world, BlockPos pos){
-		return PlantType.Water;
+		return PlantType.WATER;
 	}
 }

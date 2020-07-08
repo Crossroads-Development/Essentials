@@ -5,6 +5,7 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import com.Da_Technomancer.essentials.gui.container.FluidSlotManager;
 import com.Da_Technomancer.essentials.gui.container.IFluidSlotTE;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -71,8 +72,8 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 		fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("fluid"));
 	}
 

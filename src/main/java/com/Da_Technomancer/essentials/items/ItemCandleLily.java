@@ -7,8 +7,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.LilyPadItem;
 import net.minecraft.stats.Stats;
@@ -60,11 +60,11 @@ public class ItemCandleLily extends LilyPadItem{
 			BlockPos blockpos1 = blockpos.up();
 			BlockState iblockstate = worldIn.getBlockState(blockpos);
 			Material material = iblockstate.getMaterial();
-			IFluidState ifluidstate = worldIn.getFluidState(blockpos);
+			FluidState ifluidstate = worldIn.getFluidState(blockpos);
 			if((ifluidstate.getFluid() == Fluids.WATER || material == Material.ICE) && worldIn.isAirBlock(blockpos1)){
 
 				// special case for handling blocks placement with water lilies
-				BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(worldIn, blockpos1);
+				BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.create(worldIn, blockpos1);
 				worldIn.setBlockState(blockpos1, ESBlocks.candleLilyPad.getDefaultState(), 11);
 				if(ForgeEventFactory.onBlockPlace(playerIn, blocksnapshot, Direction.UP)){
 					blocksnapshot.restore(true, false);

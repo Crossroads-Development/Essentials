@@ -87,16 +87,11 @@ public class WitherCannon extends Block{
 	}
 
 	@Override
-	public int tickRate(IWorldReader p_149738_1_){
-		return 4;
-	}
-
-	@Override
 	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
 		boolean powered = world.isBlockPowered(pos) || world.isBlockPowered(pos.up());
 		boolean wasActive = state.get(ESProperties.REDSTONE_BOOL);
 		if(powered && !wasActive){
-			world.getPendingBlockTicks().scheduleTick(pos, this, tickRate(world));
+			world.getPendingBlockTicks().scheduleTick(pos, this, 4);
 			world.setBlockState(pos, state.with(ESProperties.REDSTONE_BOOL, true), 4);
 		}else if(!powered && wasActive){
 			world.setBlockState(pos, state.with(ESProperties.REDSTONE_BOOL, false), 4);

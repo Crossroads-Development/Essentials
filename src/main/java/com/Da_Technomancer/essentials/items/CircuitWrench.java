@@ -16,8 +16,8 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
@@ -46,7 +46,7 @@ public class CircuitWrench extends Item{
 	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(32);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
-	private static final Tag<Item> COMPONENT_TAG = new ItemTags.Wrapper(new ResourceLocation(Essentials.MODID, "circuit_components"));//new ResourceLocation(Essentials.MODID, "circuit_components");
+	private static final ITag<Item> COMPONENT_TAG = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "circuit_components").toString());
 
 	static{
 		registerCircuit(ESBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
@@ -177,12 +177,12 @@ public class CircuitWrench extends Item{
 		return ActionResultType.PASS;
 	}
 
-	private static final Style style = new Style().setColor(TextFormatting.DARK_RED);
+	private static final Style style = Style.EMPTY.applyFormatting(TextFormatting.DARK_RED);
 
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		int mode = stack.getOrCreateTag().getInt(NBT_KEY) % MODES.size();
-		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).appendSibling(new TranslationTextComponent(MODES.get(mode).getTranslationKey())));
+		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").func_230530_a_(style).func_230529_a_(new TranslationTextComponent(MODES.get(mode).getTranslationKey())));//MCP note: setStyle, appendSibling
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_info"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_change_mode"));
 	}

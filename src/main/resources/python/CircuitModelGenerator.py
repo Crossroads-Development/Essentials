@@ -2,8 +2,8 @@
 
 toGen = ["or", "min", "max", "sum", "dif", "prod", "quot", "pow", "inv", "sin", "cos", "tan", "asin", "acos", "atan", "equals", "less", "more", "round", "ceil", "floor", "log", "reader", "modulo"]
 
-modelPath = "../../../../../resources/assets/essentials/models/block/circuit/"
-statePath = "../../../../../resources/assets/essentials/blockstates/"
+modelPath = "../../assets/essentials/models/block/circuit/"
+statePath = "../../assets/essentials/blockstates/"
 
 state_template = "{\n\t\"variants\": {\n\t\t\"horiz_facing=north\": { \"model\": \"essentials:block/circuit/{TYPE}\" },\n\t\t\"horiz_facing=south\": { \"model\": \"essentials:block/circuit/{TYPE}\", \"y\": 180 },\n\t\t\"horiz_facing=east\": { \"model\": \"essentials:block/circuit/{TYPE}\", \"y\": 90 },\n\t\t\"horiz_facing=west\": { \"model\": \"essentials:block/circuit/{TYPE}\", \"y\": 270 }\n\t}\n}"
 

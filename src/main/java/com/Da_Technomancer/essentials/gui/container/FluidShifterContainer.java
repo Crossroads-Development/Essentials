@@ -98,7 +98,7 @@ public class FluidShifterContainer extends Container{
 
 	@Override
 	public boolean canInteractWith(PlayerEntity playerIn){
-		return pos.distanceSq(playerIn.getPosition()) <= 64;
+		return pos.distanceSq(playerIn.getPositionVec(), true) <= 64;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -271,8 +272,8 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 	@Override
-	public void read(CompoundNBT nbt){
-		super.read(nbt);
+	public void read(BlockState state, CompoundNBT nbt){
+		super.read(state, nbt);
 
 		String recPath = nbt.getString("recipe");
 		if(recPath.isEmpty()){

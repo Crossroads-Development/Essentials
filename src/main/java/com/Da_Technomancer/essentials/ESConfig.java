@@ -4,9 +4,8 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -24,7 +23,7 @@ public class ESConfig{
 	/**
 	 * A common style applied to "quip" lines in tooltips
 	 */
-	public static final Style TT_QUIP = new Style().setColor(TextFormatting.AQUA).setItalic(true);
+	public static final Style TT_QUIP = Style.EMPTY.applyFormatting(TextFormatting.AQUA).setItalic(true);
 
 	public static ForgeConfigSpec.BooleanValue addWrench;
 
@@ -71,7 +70,7 @@ public class ESConfig{
 		serverSpec.setConfig(serverConfig);
 	}
 
-	private static final Tag<Item> WRENCH = new ItemTags.Wrapper(new ResourceLocation("forge", "wrench"));
+	private static final ITag<Item> WRENCH = ItemTags.makeWrapperTag("forge:wrench");
 
 	/**
 	 * @param stack The stack to test
