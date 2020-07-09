@@ -27,6 +27,8 @@ public class ESBlocks{
 	public static FertileSoil fertileSoilDarkOak;
 	public static FertileSoil fertileSoilAcacia;
 	public static FertileSoil fertileSoilBerry;
+	public static FertileSoil fertileSoilBrownMushroom;
+	public static FertileSoil fertileSoilRedMushroom;
 	public static CandleLilyPad candleLilyPad;
 	public static ItemChute itemChute;
 	public static ItemShifter itemShifter;
@@ -109,6 +111,8 @@ public class ESBlocks{
 		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.DARK_OAK_SAPLING.getDefaultState());
 		fertileSoilAcacia = new FertileSoil("acacia", Blocks.ACACIA_SAPLING.getDefaultState());
 		fertileSoilBerry = new FertileSoil("berry", Blocks.SWEET_BERRY_BUSH.getDefaultState());
+		fertileSoilBrownMushroom = new FertileSoil("brown_mushroom", Blocks.BROWN_MUSHROOM.getDefaultState());
+		fertileSoilRedMushroom = new FertileSoil("red_mushroom", Blocks.RED_MUSHROOM.getDefaultState());
 		hopperFilter = new HopperFilter();
 		itemChute = new ItemChute();
 		itemShifter = new ItemShifter();

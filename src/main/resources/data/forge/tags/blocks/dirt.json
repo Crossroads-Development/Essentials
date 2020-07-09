@@ -6,6 +6,8 @@
 		"essentials:fertile_soil_spruce",
 		"essentials:fertile_soil_jungle",
 		"essentials:fertile_soil_dark_oak",
-		"essentials:fertile_soil_acacia"
+		"essentials:fertile_soil_acacia",
+		"essentials:fertile_soil_red_mushroom",
+		"essentials:fertile_soil_brown_mushroom"
 	]
 }

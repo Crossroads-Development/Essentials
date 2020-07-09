@@ -10,15 +10,15 @@
 			"type": "spotlight",
 			"title": "Fertile Soil",
 			"item": "essentials:fertile_soil_wheat",
-			"text": "<item>Fertile Soil/$ is an aid to farming. It has 11 variants, for wheat, carrots, potatoes, beetroot, netherwart and the 6 saplings. Crops can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.$(br2)"
+			"text": "<item>Fertile Soil/$ is an aid to farming. It has 13 variants, for wheat, carrots, potatoes, beetroot, netherwart, the 6 saplings, and both mushrooms. Crops can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.$(br2)"
 		},
 		{
 			"type": "text",
-			"text": "At random intervals, if there is nothing growing on top of <item>Fertile Soil/$, it plants the crop corresponding to its type on itself for free, saving the trouble of replanting and enabling the automation of farming without villagers.$(br2)Growing large spruce trees using <item>Fertile Soil/$ has the side-effect of replacing the <item>Fertile Soil/$ with podzol "
+			"text": "At random intervals, if there is nothing growing on top of <item>Fertile Soil/$, it plants the crop corresponding to its type on itself for free, saving the trouble of replanting and enabling the automation of farming without villagers.$(br2)Brown and red mushrooms will only sprout in light level 12 or lower. Growing large spruce trees using <item>Fertile "
 		},
 		{
 			"type": "text",
-			"text": "as if it were normal dirt.$(br2)"
+			"text": "<item>Soil/$ has the side-effect of replacing the <item>Fertile Soil/$ with podzol as if it were normal dirt.$(br2)"
 		}
 	]
 }

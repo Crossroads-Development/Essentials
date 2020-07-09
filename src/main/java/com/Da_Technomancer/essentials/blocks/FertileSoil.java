@@ -1,10 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
@@ -87,8 +84,8 @@ public class FertileSoil extends Block{
 		}
 
 		BlockPos upPos = pos.offset(Direction.UP);
-
-		if(worldIn.isAirBlock(upPos)){
+		//Check light levels if this is a mushroom fertile soil
+		if(worldIn.isAirBlock(upPos) && (!(plant.getBlock() instanceof MushroomBlock) || worldIn.getLightSubtracted(upPos, 0) < 13)){
 			worldIn.setBlockState(upPos, plant);
 		}
 	}
