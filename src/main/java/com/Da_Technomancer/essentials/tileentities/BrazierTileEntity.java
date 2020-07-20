@@ -74,10 +74,6 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 				tar = 4;
 				out = stack.copy();
 				out.shrink(1);
-			}else if(stack.getItem() == Items.POISONOUS_POTATO){
-				tar = 7;
-				out = stack.copy();
-				out.shrink(1);
 			}else if(stack.getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND)){
 				tar = 6;
 				out = stack.copy();
