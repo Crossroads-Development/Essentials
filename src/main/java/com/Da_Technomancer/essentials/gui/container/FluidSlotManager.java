@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -34,6 +35,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FluidSlotManager{
@@ -58,6 +61,15 @@ public class FluidSlotManager{
 	private final int capacity;
 	private int fluidId;
 	private int fluidQty;//Offset by Short.MAX_VALUE to pack more info in
+	/**
+	 * A list of all fluid-item input slots associated with this fluid slot manager
+	 * As multiple container instances can be active at once on the server-side due to multiple players having the UI open, this needs to be a list.
+	 * WeakReferences are used to not force old containers to remain in memory, as there is no way to check for expiration of slots
+	 *
+	 * Only read from on the virtual-server side
+	 */
+	private final ArrayList<WeakReference<Slot>> fluidItemInSlots = new ArrayList<>(1);
+
 
 	//Per screen
 	private int windowXStart;
@@ -66,6 +78,7 @@ public class FluidSlotManager{
 	private int yPos;
 	private IntReferenceHolder idRef;
 	private IntReferenceHolder qtyRef;
+
 
 	private static final int MAX_HEIGHT = 48;
 	private static final ResourceLocation OVERLAY = new ResourceLocation(Essentials.MODID, "textures/gui/rectangle_fluid_overlay.png");
@@ -91,6 +104,10 @@ public class FluidSlotManager{
 		this.qtyRef = qtyRef;
 	}
 
+	public void linkSlot(Slot fluidItemInputSlot){
+		fluidItemInSlots.add(new WeakReference<>(fluidItemInputSlot));
+	}
+
 	public int getFluidId(){
 		return fluidId;
 	}
@@ -102,6 +119,16 @@ public class FluidSlotManager{
 	public void updateState(FluidStack newFluid){
 		fluidId = getFluidMap().getOrDefault(newFluid.getFluid().getRegistryName(), (short) 0);
 		fluidQty = newFluid.getAmount() - Short.MAX_VALUE;
+
+		for(int index = 0; index < fluidItemInSlots.size(); index++){
+			Slot contents = fluidItemInSlots.get(index).get();
+			if(contents == null){
+				fluidItemInSlots.remove(index);
+				index--;
+			}else{
+				contents.onSlotChanged();
+			}
+		}
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -146,6 +173,18 @@ public class FluidSlotManager{
 		}
 	}
 
+	/**
+	 * Creates a pair of (self-managing) slots for fluid containers to interact with fluid handlers
+	 * @param inv A fake inventory instance
+	 * @param startIndex The index to assign to the output slot (input slot will use startIndex + 1)
+	 * @param inXPos X st position of the input slot (UI relative)
+	 * @param inYPos Y st position of the input slot (UI relative)
+	 * @param outXPos X st position of the output slot (UI relative)
+	 * @param outYPos Y st position of the output slot (UI relative)
+	 * @param te The TE with fluid handler these slots link to
+	 * @param fluidIndex The indices of the fluid handler returned by the TE to interact with
+	 * @return A pair containing the output slot followed by the input slot, to be added to the container in that order
+	 */
 	public static Pair<Slot, Slot> createFluidSlots(IInventory inv, int startIndex, int inXPos, int inYPos, int outXPos, int outYPos, @Nullable IFluidSlotTE te, int[] fluidIndex){
 		InSlot in = new InSlot(inv, startIndex + 1, inXPos, inYPos, startIndex, te, fluidIndex);
 		OutSlot out = new OutSlot(inv, startIndex, outXPos, outYPos, in);
@@ -167,13 +206,8 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public int getSlotStackLimit(){
-			return 1;
-		}
-
-		@Override
-		public ItemStack onTake(PlayerEntity p_190901_1_, ItemStack p_190901_2_){
-			ItemStack s = super.onTake(p_190901_1_, p_190901_2_);
+		public ItemStack onTake(PlayerEntity player, ItemStack stack){
+			ItemStack s = super.onTake(player, stack);
 			inSlot.onSlotChanged();
 			return s;
 		}
@@ -186,6 +220,8 @@ public class FluidSlotManager{
 		private final IFluidSlotTE te;
 		//Array of all indices to interact with
 		private final int[] fluidIndices;
+		private boolean internalChange = false;//Used to prevent infinite recursive loops with onSlotChanged
+
 
 		private InSlot(IInventory inventoryIn, int index, int xPosition, int yPosition, int outSlotIndex, @Nullable IFluidSlotTE te, int[] fluidIndices){
 			super(inventoryIn, index, xPosition, yPosition);
@@ -200,55 +236,134 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public int getSlotStackLimit(){
-			return 1;
-		}
-
-		private boolean internalChange = false;
-
-		@Override
 		public void onSlotChanged(){
 			super.onSlotChanged();
 
-			ItemStack stack = getStack();
-			if(!internalChange && te != null && isItemValid(stack) && inventory.getStackInSlot(outSlotIndex).isEmpty()){
-				LazyOptional<IFluidHandlerItem> opt = stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
-				IFluidHandler handler = te.getFluidHandler();
+			ItemStack inSlot = getStack();
+
+			if(!internalChange && te != null && isItemValid(inSlot)){
+				internalChange = true;
+				ItemStack outSlot = inventory.getStackInSlot(outSlotIndex);
+				ItemStack inSlotCopy = inSlot.copy();//We make a copy of the inSlot so we can restore in case this fails
+				inSlotCopy.setCount(1);//Size needs to be one or item fluid capabilities refuse to work
+				LazyOptional<IFluidHandlerItem> opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+				IFluidHandler teHandler = te.getFluidHandler();
 				if(opt.isPresent()){
-					IFluidHandlerItem itHandler = opt.orElseThrow(NullPointerException::new);
-					for(int fluidIndex : fluidIndices){
-						//Try draining the item
-						int maxDrain = handler.getTankCapacity(fluidIndex) - handler.getFluidInTank(fluidIndex).getAmount();
-						FluidStack drained = itHandler.drain(maxDrain, IFluidHandler.FluidAction.SIMULATE);
-						if(handler.isFluidValid(fluidIndex, drained)){
-							maxDrain = handler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
-							if(maxDrain != 0){
-								itHandler.drain(drained, IFluidHandler.FluidAction.EXECUTE);
-								inventory.setInventorySlotContents(outSlotIndex, itHandler.getContainer());
-								internalChange = true;
-								inventory.setInventorySlotContents(getSlotIndex(), ItemStack.EMPTY);
+					IFluidHandlerItem itemHandler = opt.orElseThrow(NullPointerException::new);
+
+					//'Simple' route- we don't have to verify the output item
+					if(outSlot.isEmpty()){
+						//We try each fluid index, and stop when we have 1 effective transfer
+						for(int fluidIndex : fluidIndices){
+							//'Trust but verify' doesn't really apply- with IFluidHandlerItem, we can't even trust; Thus the following convolution
+							//We assume the teHandler will be well behaved
+							//We assume the itemHandler will have weird restrictions like minimum fluid increments
+
+							//Try draining the item
+							int drainQty = teHandler.getTankCapacity(fluidIndex) - teHandler.getFluidInTank(fluidIndex).getAmount();
+							FluidStack drained = itemHandler.drain(drainQty, IFluidHandler.FluidAction.SIMULATE);
+							if(teHandler.isFluidValid(fluidIndex, drained)){
+								drainQty = teHandler.fill(drained, IFluidHandler.FluidAction.SIMULATE);
+								//Make sure the item will actually allow draining this quantity of fluid, and perform the withdrawal
+								drained = itemHandler.drain(drainQty, IFluidHandler.FluidAction.EXECUTE);
+								drainQty = drained.getAmount();
+								if(drainQty > 0){
+									teHandler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+									inventory.setInventorySlotContents(outSlotIndex, itemHandler.getContainer());
+									inSlot.shrink(1);
+									inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+									inventory.markDirty();
+
+									internalChange = false;
+									return;
+								}
+							}
+
+							//Try filling the item
+							//Integer.MAX_VALUE / 2 instead of Integer.MAX_VALUE to prevent possible integer overflow errors in the handler
+							//Find how much the te can provide
+							FluidStack filled = teHandler.drain(Integer.MAX_VALUE / 2, IFluidHandler.FluidAction.SIMULATE);
+							//Fill as much as allowed, but only drain as much from the te as was actually filled
+							int filledQty = itemHandler.fill(filled, IFluidHandler.FluidAction.EXECUTE);
+							if(filledQty > 0){
+								filled.setAmount(filledQty);
+								teHandler.drain(filled, IFluidHandler.FluidAction.EXECUTE);
+								inventory.setInventorySlotContents(outSlotIndex, itemHandler.getContainer());
+								inSlot.shrink(1);
+								inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+
 								internalChange = false;
-								inventory.markDirty();
 								return;
 							}
 						}
+					}else{
+						//We attempt to move fluid with the item, check if the resulting container item will stack in the output, and if not, reverse actions
+						//We try each fluid index, and stop when we have 1 effective transfer
+						for(int fluidIndex : fluidIndices){
+							//We assume the teHandler will be well behaved
+							//We assume the itemHandler will have weird restrictions like minimum fluid increments
 
-						//Try filling the item
-						//Integer.MAX_VALUE / 2 instead of Integer.MAX_VALUE to prevent possible integer overflow errors in the handler
-						FluidStack filled = handler.drain(Integer.MAX_VALUE / 2, IFluidHandler.FluidAction.SIMULATE);
-						int filledQty = itHandler.fill(filled, IFluidHandler.FluidAction.EXECUTE);
-						if(filledQty != 0){
-							filled.setAmount(filledQty);
-							handler.drain(filled, IFluidHandler.FluidAction.EXECUTE);
-							inventory.setInventorySlotContents(outSlotIndex, itHandler.getContainer());
-							internalChange = true;
-							inventory.setInventorySlotContents(getSlotIndex(), ItemStack.EMPTY);
-							internalChange = false;
+							//Try draining the item
+							int drainQty = teHandler.getTankCapacity(fluidIndex) - teHandler.getFluidInTank(fluidIndex).getAmount();
+							FluidStack drained = itemHandler.drain(drainQty, IFluidHandler.FluidAction.SIMULATE);
+							if(teHandler.isFluidValid(fluidIndex, drained)){
+								drainQty = teHandler.fill(drained, IFluidHandler.FluidAction.SIMULATE);
+								//Make sure the item will actually allow draining this quantity of fluid, and perform the withdrawal
+								drained = itemHandler.drain(drainQty, IFluidHandler.FluidAction.EXECUTE);
+								drainQty = drained.getAmount();
+								ItemStack containerResult = itemHandler.getContainer();
+								if(drainQty > 0 && (containerResult.isEmpty() || BlockUtil.sameItem(containerResult, outSlot) && outSlot.getCount() + containerResult.getCount() <= containerResult.getMaxStackSize())){
+									teHandler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+									outSlot.grow(containerResult.getCount());
+									inventory.setInventorySlotContents(outSlotIndex, outSlot);
+									inSlot.shrink(1);
+									inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+									inventory.markDirty();
 
-							return;
+									internalChange = false;
+									return;
+								}else{
+									//Failed- revert the changes and continue
+									inSlotCopy = inSlot.copy();
+									inSlotCopy.setCount(1);
+									opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+									itemHandler = opt.orElseThrow(NullPointerException::new);
+									inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+									//no markDirty, as the final result is the same as the start state
+								}
+							}
+
+							//Try filling the item
+							//Integer.MAX_VALUE / 2 instead of Integer.MAX_VALUE to prevent possible integer overflow errors in the handler
+							//Find how much the te can provide
+							FluidStack filled = teHandler.drain(Integer.MAX_VALUE / 2, IFluidHandler.FluidAction.SIMULATE);
+							//Fill as much as allowed, but only drain as much from the te as was actually filled
+							int filledQty = itemHandler.fill(filled, IFluidHandler.FluidAction.EXECUTE);
+							ItemStack containerResult = itemHandler.getContainer();
+							if(filledQty > 0 && (containerResult.isEmpty() || BlockUtil.sameItem(containerResult, outSlot) && outSlot.getCount() + containerResult.getCount() <= containerResult.getMaxStackSize())){
+								filled.setAmount(filledQty);
+								teHandler.drain(filled, IFluidHandler.FluidAction.EXECUTE);
+								outSlot.grow(containerResult.getCount());
+								inventory.setInventorySlotContents(outSlotIndex, outSlot);
+								inSlot.shrink(1);
+								inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+
+								internalChange = false;
+								return;
+							}else{
+								//Failed- revert the changes and continue
+								inSlotCopy = inSlot.copy();
+								inSlotCopy.setCount(1);
+								opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+								itemHandler = opt.orElseThrow(NullPointerException::new);
+								inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+								//no markDirty, as the final result is the same as the start state
+							}
 						}
 					}
+
 				}
+				internalChange = false;
 			}
 		}
 	}

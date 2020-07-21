@@ -53,7 +53,9 @@ public class FluidShifterContainer extends Container{
 		}
 		Pair<Slot, Slot> slots = FluidSlotManager.createFluidSlots(inv, 0, 100, 19, 100, 54, this.te, new int[] {0});
 		addSlot(slots.getLeft());
-		addSlot(slots.getRight());
+		Slot fluidInSlot = slots.getRight();
+		te.getFluidManager().linkSlot(fluidInSlot);
+		addSlot(fluidInSlot);
 
 		//Player inv
 		for(int i = 0; i < 9; i++){

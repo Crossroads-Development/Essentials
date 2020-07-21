@@ -1,4 +1,6 @@
 Hopper Filter
 essentials:hopper_filter
 The <item>Hopper Filter/$ is a way of preventing hoppers from moving items that don't match a filter. It can be placed either between the hopper and the block it's pulling items from, to prevent the hopper extracting items that don't match, or between the hopper and the block it's pushing items to, to prevent the hopper inserting items that don't match.
-The filter can be set by right clicking an item into the filter. If a shulker box is used as the filter, the filter will match everything in the shulker box. 
+The filter can be set by right clicking an item into the filter. If a shulker box is used as the filter, the filter will match everything in the shulker box.
+<page|image||Hopper Filter Uses|essentials:textures/book/hopper_filter_dual.png>
+Here we see two configurations for <item>Hopper Filters/$. On the left, only wood will be pulled from the top chest. On the right, all items will move from the chest into the hopper, but only cobble will be pushed by the hopper into the lower chest. <item>Hopper Filter/$ can also be oriented sideways.

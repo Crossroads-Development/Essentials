@@ -92,7 +92,7 @@ public class RedstoneUtil extends BlockUtil{
 	public static int getRedstoneOnSide(World w, BlockPos pos, Direction dir){
 		BlockPos offsetPos = pos.offset(dir);
 		BlockState state = w.getBlockState(offsetPos);
-		return state.getBlock() == Blocks.REDSTONE_WIRE ? state.get(RedstoneWireBlock.POWER) : w.getRedstonePower(offsetPos, dir);
+		return Math.min(15, state.getBlock() == Blocks.REDSTONE_WIRE ? state.get(RedstoneWireBlock.POWER) : w.getRedstonePower(offsetPos, dir));
 	}
 
 	/**

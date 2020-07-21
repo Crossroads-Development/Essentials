@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.tileentities.ItemSplitterTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -39,11 +40,11 @@ public class ItemSplitter extends BasicItemSplitter{
 	
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
-		int i = Math.max(worldIn.getRedstonePower(pos.down(), Direction.DOWN), Math.max(worldIn.getRedstonePower(pos.up(), Direction.UP), Math.max(worldIn.getRedstonePower(pos.east(), Direction.EAST), Math.max(worldIn.getRedstonePower(pos.west(), Direction.WEST), Math.max(worldIn.getRedstonePower(pos.north(), Direction.NORTH), worldIn.getRedstonePower(pos.south(), Direction.SOUTH))))));
-		i = Math.min(i, 15);
+		int i = RedstoneUtil.getRedstoneAtPos(worldIn, pos);
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof ItemSplitterTileEntity && ((ItemSplitterTileEntity) te).redstone != i){
 			((ItemSplitterTileEntity) te).redstone = i;
+			te.markDirty();
 		}
 	}
 

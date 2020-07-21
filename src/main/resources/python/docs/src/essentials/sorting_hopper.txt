@@ -1,0 +1,6 @@
+Sorting Hopper
+essentials:sorting_hopper
+The <item>Sorting Hoppers/$ acts like a normal hopper, except it prevents items being drawn from it if the <item>Sorting Hoppers/$ can output them.
+A column of <item>Sorting Hoppers/$ pointed sideways will sort out items at each layer. This pairs well with the <item><link:essentials/hopper_filter>Hopper Filter/$ or <item><link:essentials/slotted_chest>Slotted Chest/$!
+<page|image||Simple Sorting System|essentials:textures/book/sorting_hopper_vertical.png>
+A simple example of how these <item>Sorting Hoppers/$ can be used is pictured, here alongside <item><link:essentials/hopper_filter>Hopper Filters/$, each <item>Sorting Hopper/$ will push any items matching the <item><link:essentials/hopper_filter>filter/$ into the chest, with any items that don't match being pulled by the hopper below it. Any items that matched none of the <item><link:essentials/hopper_filter>filters/$ ends up in the bottom hopper/chest.
