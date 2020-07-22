@@ -24,10 +24,12 @@ import java.util.Random;
 public class FertileSoil extends Block{
 
 	private final BlockState plant;
+	private final SeedCategory category;
 
-	protected FertileSoil(String plantName, BlockState plant){
-		super(Block.Properties.create(plant.getBlock() == Blocks.NETHER_WART ? Material.SAND : Material.EARTH).hardnessAndResistance(0.5F).sound(SoundType.GROUND).tickRandomly());
+	protected FertileSoil(String plantName, BlockState plant, SeedCategory category){
+		super(Block.Properties.create(category == SeedCategory.HELL_CROP ? Material.SAND : Material.EARTH).hardnessAndResistance(0.5F).sound(SoundType.GROUND).tickRandomly());
 		this.plant = plant;
+		this.category = category;
 		String name = "fertile_soil_" + plantName;
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
@@ -49,7 +51,7 @@ public class FertileSoil extends Block{
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.benefits"));
-		if(plant.getBlock() == Blocks.NETHER_WART){
+		if(category == SeedCategory.HELL_CROP){
 			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").func_230530_a_(ESConfig.TT_QUIP));//MCP note: setStyle
 		}
 	}
@@ -84,9 +86,20 @@ public class FertileSoil extends Block{
 		}
 
 		BlockPos upPos = pos.offset(Direction.UP);
-		//Check light levels if this is a mushroom fertile soil
-		if(worldIn.isAirBlock(upPos) && (!(plant.getBlock() instanceof MushroomBlock) || worldIn.getLightSubtracted(upPos, 0) < 13)){
+		//Check light levels are low enough if this is a mushroom fertile soil
+		//Check light levels are high enough if this is a crop
+		if(worldIn.isAirBlock(upPos) && (category != SeedCategory.MUSHROOM || worldIn.getLightSubtracted(upPos, 0) < 13) && (category != SeedCategory.CROP || worldIn.getLightSubtracted(upPos, 0) > 7)){
 			worldIn.setBlockState(upPos, plant);
 		}
+	}
+
+	public enum SeedCategory{
+
+		CROP(),
+		TREE(),
+		HELL_CROP(),
+		BERRY(),
+		MUSHROOM();
+
 	}
 }

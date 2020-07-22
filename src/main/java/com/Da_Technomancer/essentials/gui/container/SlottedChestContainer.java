@@ -22,7 +22,7 @@ public class SlottedChestContainer extends Container{
 	@ObjectHolder("slotted_chest")
 	private static ContainerType<SlottedChestContainer> TYPE = null;
 
-	private final SlottedChestTileEntity.Inventory inv;
+	public final SlottedChestTileEntity.Inventory inv;
 	/**
 	 * Holds the locked filter for the slotted chest
 	 * On the virtual server side, this instance is shared with the TE, and changes will write back and be saved

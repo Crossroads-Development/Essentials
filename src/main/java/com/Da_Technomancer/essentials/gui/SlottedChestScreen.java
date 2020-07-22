@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 
 public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
-	
+
 	private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
 	public SlottedChestScreen(SlottedChestContainer cont, PlayerInventory playerInventory, ITextComponent text){
@@ -26,7 +26,16 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
-		func_230459_a_(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
+		//We add the ability to render a tooltip for locked empty slots
+//		func_230459_a_(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
+		if(minecraft.player.inventory.getItemStack().isEmpty() && hoveredSlot != null){
+			if(hoveredSlot.getHasStack()){
+				renderTooltip(matrix, hoveredSlot.getStack(), mouseX, mouseY);
+			}else if(hoveredSlot.inventory == container.inv && hoveredSlot.getSlotIndex() < container.filter.length && !container.filter[hoveredSlot.getSlotIndex()].isEmpty()){
+				//If this is a slot in the slotted chest that is empty, but has a filter, we render a tooltip for the filter item
+				renderTooltip(matrix, container.filter[hoveredSlot.getSlotIndex()], mouseX, mouseY);
+			}
+		}
 	}
 
 	//MCP note: render screen
