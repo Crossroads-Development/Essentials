@@ -15,6 +15,7 @@ public class ESProperties{
 	public static final IntegerProperty BRAZIER_CONTENTS = IntegerProperty.create("br_cont", 0, 6);
 	public static final BooleanProperty REDSTONE_BOOL = BooleanProperty.create("redstone_bool");
 	public static final BooleanProperty EXTENDED = BooleanProperty.create("extended");
+	public static final BooleanProperty SHIFTING = BooleanProperty.create("shifting");
 	//0: No head, 1: Head in positive direction, 2: Head in negative direction
 	public static final IntegerProperty HEAD = IntegerProperty.create("head", 0, 2);
 	public static final EnumProperty<Direction.Axis> AXIS = EnumProperty.create("axis", Direction.Axis.class);

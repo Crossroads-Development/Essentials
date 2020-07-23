@@ -40,7 +40,7 @@ public class ItemCandleLily extends LilyPadItem{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.candle_lily.desc"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.candle_lilypad.desc"));
 	}
 
 	@Override

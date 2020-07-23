@@ -83,8 +83,8 @@ public class AutoCrafter extends ContainerBlock{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt." + Essentials.MODID + ".auto_crafter_basic"));
-		tooltip.add(new TranslationTextComponent("tt." + Essentials.MODID + ".auto_crafter_book"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.auto_crafter_basic"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.auto_crafter_book"));
 
 	}
 }

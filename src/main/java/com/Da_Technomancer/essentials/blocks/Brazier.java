@@ -19,7 +19,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -151,8 +151,8 @@ public class Brazier extends ContainerBlock{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Able to hold Water, Lava, Glowstone, Coal Blocks, and Soul Sand"));
-		tooltip.add(new StringTextComponent("Can prevent fall damage with liquid, emit light with Glowstone/Coal/Lava, destroy dropped items with Lava, or blocks witch spawns with Soul Sand"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.brazier.desc"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.brazier.purpose"));
 	}
 
 //	@Override

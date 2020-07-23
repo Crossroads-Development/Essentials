@@ -19,15 +19,15 @@ import java.util.Set;
  */
 public class WorldBuffer implements IBlockReader{
 	
-	private final World worldObj;
+	private final World world;
 	private final HashMap<BlockPos, BlockState> memory = new HashMap<>();
 	
 	public WorldBuffer(World worldObj){
-		this.worldObj = worldObj;
+		this.world = worldObj;
 	}
 	
 	public World getWorld(){
-		return worldObj;
+		return world;
 	}
 	
 	public void addChange(BlockPos pos, BlockState state){
@@ -50,7 +50,7 @@ public class WorldBuffer implements IBlockReader{
 			return memory.get(pos);
 		}
 		
-		return worldObj.getBlockState(pos);
+		return world.getBlockState(pos);
 	}
 
 	@Override
@@ -60,8 +60,8 @@ public class WorldBuffer implements IBlockReader{
 
 	public void applyChanges(int flags){
 		for(Entry<BlockPos, BlockState> ent : memory.entrySet()){
-			if(worldObj.getBlockState(ent.getKey()) != ent.getValue()){
-				worldObj.setBlockState(ent.getKey(), ent.getValue(), flags);
+			if(world.getBlockState(ent.getKey()) != ent.getValue()){
+				world.setBlockState(ent.getKey(), ent.getValue(), flags);
 			}
 		}
 		memory.clear();

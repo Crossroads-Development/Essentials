@@ -85,7 +85,7 @@ public class WitherCannon extends Block{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt." + Essentials.MODID + ".wither_cannon"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.wither_cannon"));
 	}
 
 	@Override

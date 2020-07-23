@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -45,7 +45,7 @@ public class ItemShifter extends AbstractShifter{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Ejects contained items out the faced side, moved into inventories or dropped onto the ground"));
-		tooltip.add(new StringTextComponent("Can 'push' items through a line of up to " + ESConfig.itemChuteRange.get() + " Transport Chutes"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_shifter.desc"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_shifter.range", ESConfig.itemChuteRange.get()));
 	}
 }

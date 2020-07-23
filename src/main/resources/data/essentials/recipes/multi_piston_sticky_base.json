@@ -1,0 +1,22 @@
+{
+	"result": {
+		"item": "essentials:multi_piston_sticky"
+	},
+	"pattern": [
+		"***",
+		"$#$",
+		"$$$"
+	],
+	"type": "minecraft:crafting_shaped",
+	"key": {
+		"#": {
+			"item": "minecraft:sticky_piston"
+		},
+		"$": {
+			"tag": "forge:ingots/iron"
+		},
+		"*": {
+			"tag": "forge:ingots/gold"
+		}
+	}
+}

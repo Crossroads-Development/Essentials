@@ -18,7 +18,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,8 +64,8 @@ public class ItemChute extends Block{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new StringTextComponent("Extends the output range of Item Shifters along a line of chutes"));
-		tooltip.add(new StringTextComponent("Safe for decoration"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_chute.desc"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.item_chute.decor"));
 	}
 
 	@Override

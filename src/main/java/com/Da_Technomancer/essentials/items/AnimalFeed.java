@@ -55,6 +55,6 @@ public class AnimalFeed extends Item{
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new TranslationTextComponent("tt." + Essentials.MODID + ".animal_feed"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.animal_feed"));
 	}
 }

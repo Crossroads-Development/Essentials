@@ -130,7 +130,6 @@
 	"tt.essentials.slotted_chest.quip": "The partitions make it bigger somehow",
 	"tt.essentials.speed_hopper.sort":  "Has the same sorting properties as a Sorting Hopper",
 	"tt.essentials.speed_hopper.desc": "Inserts or extracts entire stacks at a time",
-	"tt.essentials.candle_lily.desc": "Decorative and light emitting",
 	"tt.essentials.obsidian_kit.desc": "Insta-breaks obsidian on right click, but uses the tool",
 	"tt.essentials.hopper_filter.desc": "Allows items to be moved through it only if they match the filter",
 	"tt.essentials.hopper_filter.move": "Doesn't move items on its own",
@@ -168,6 +167,15 @@
 	"tt.essentials.log_circuit": "Outputs the base 10 logarithm of the input",
 	"tt.essentials.modulo_circuit": "Outputs the remainder of dividing the back input by the side input",
 	"tt.essentials.reader_circuit": "Reads the block behind it like a Comparator. Has a wider range of values",
+	"tt.essentials.multi_piston.desc": "An uber piston that can push up to %1$d blocks away and can move up to %2$d blocks at a time",
+	"tt.essentials.multi_piston.reds": "Extension length controlled by redstone signal strength",
+	"tt.essentials.brazier.desc": "Able to hold Water, Lava, Glowstone, Coal Blocks, and Soul Sand",
+	"tt.essentials.brazier.purpose": "Can prevent fall damage with liquid, emit light with Glowstone/Coal/Lava, destroy dropped items with Lava, or blocks witch spawns & ender teleportation with Soul Sand",
+	"tt.essentials.candle_lilypad.desc": "A light emitting lilypad",
+	"tt.essentials.item_chute.desc": "Extends the output range of Item Shifters along a line of chutes",
+	"tt.essentials.item_chute.decor": "Safe for decoration",
+	"tt.essentials.item_shifter.desc": "Ejects contained items out the faced side, moved into inventories or dropped onto the ground",
+	"tt.essentials.item_shifter.range": "Can 'push' items through a line of up to %1$d Transport Chutes",
 
 	"tt.essentials.empty_fluid": "Empty",
 
