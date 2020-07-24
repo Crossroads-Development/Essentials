@@ -103,6 +103,10 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		}
 	}
 
+	/**
+	 * Forces the circuit to recalculate the power output, and propogate any changes to the world and dependents
+	 * Virtual server side ONLY
+	 */
 	public void recalculateOutput(){
 		buildConnections();//Can be needed when reloading
 

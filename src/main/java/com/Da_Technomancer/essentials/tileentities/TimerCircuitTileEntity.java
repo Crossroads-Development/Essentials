@@ -52,8 +52,8 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	public void tick(){
 		ticksExisted++;
 
-		int clockTime = (int) (ticksExisted % Math.max(MIN_PERIOD, settingPeriod));
-		if(ticksExisted % RedstoneUtil.DELAY == 0 && (clockTime == 0 || clockTime == Math.max(MIN_DURATION, settingDuration))){
+		int clockTime = (int) (ticksExisted / RedstoneUtil.DELAY) % Math.max(MIN_PERIOD, settingPeriod);
+		if(!world.isRemote && ticksExisted % RedstoneUtil.DELAY == 0 && (clockTime == 0 || clockTime == Math.max(MIN_DURATION, settingDuration))){
 			//Force circuits to recalculate when output changes
 			recalculateOutput();
 		}

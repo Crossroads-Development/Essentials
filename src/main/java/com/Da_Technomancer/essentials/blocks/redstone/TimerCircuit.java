@@ -51,7 +51,14 @@ public class TimerCircuit extends AbstractCircuit{
 		}else if(playerIn.getHeldItem(hand).getItem() == ESItems.circuitWrench){
 			return ActionResultType.PASS;
 		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof TimerCircuitTileEntity){
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, (TimerCircuitTileEntity) te, buf -> {buf.writeInt(((TimerCircuitTileEntity) te).settingPeriod); buf.writeString(((TimerCircuitTileEntity) te).settingStrPeriod); buf.writeInt(((TimerCircuitTileEntity) te).settingDuration); buf.writeString(((TimerCircuitTileEntity) te).settingStrDuration); buf.writeBlockPos(pos);});
+			TimerCircuitTileEntity tte = (TimerCircuitTileEntity) te;
+			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> {
+				buf.writeInt(tte.settingPeriod);
+				buf.writeString(tte.settingStrPeriod);
+				buf.writeInt(tte.settingDuration);
+				buf.writeString(tte.settingStrDuration);
+				buf.writeBlockPos(pos);
+			});
 		}
 
 		return ActionResultType.SUCCESS;
