@@ -66,6 +66,7 @@
 	"block.essentials.log_circuit": "Logarithm Circuit",
 	"block.essentials.modulo_circuit": "Modulo Circuit",
 	"block.essentials.reader_circuit": "Reader Circuit",
+	"block.essentials.timer_circuit": "Clock Circuit",
 	
 	
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
@@ -84,7 +85,11 @@
 	"container.circuit_wrench": "Circuit Wrench",
 	"container.search_bar": "Filter",
 	"container.cons_circuit": "Circuit Output Strength",
+	"container.timer_circuit": "Clock Circuit Settings",
 	"container.auto_crafter": "Auto-Crafter",
+	"container.cons_circuit.bar": "Output value",
+	"container.timer_circuit.duration": "Pulse Duration (reds. ticks)",
+	"container.timer_circuit.period": "Clock Period (reds. ticks)",
 
 
 	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
@@ -158,7 +163,7 @@
 	"tt.essentials.asin_circuit": "Outputs arcsin of the back input, in radians",
 	"tt.essentials.acos_circuit": "Outputs arccos of the back input, in radians",
 	"tt.essentials.atan_circuit": "Outputs arctan of the back input, in radians",
-	"tt.essentials.equals_circuit": "Outputs 1 iff the two inputs are equal (within 1%)",
+	"tt.essentials.equals_circuit": "Outputs 1 iff the two inputs are equal (within 0.1%)",
 	"tt.essentials.less_circuit": "Outputs 1 iff the back input is less than the side input",
 	"tt.essentials.more_circuit": "Outputs 1 iff the back input is greater than the side input",
 	"tt.essentials.round_circuit": "Outputs the input rounded to an integer",
@@ -167,6 +172,7 @@
 	"tt.essentials.log_circuit": "Outputs the base 10 logarithm of the input",
 	"tt.essentials.modulo_circuit": "Outputs the remainder of dividing the back input by the side input",
 	"tt.essentials.reader_circuit": "Reads the block behind it like a Comparator. Has a wider range of values",
+	"tt.essentials.timer_circuit": "Outputs a pulse of 1 at regular intervals set via UI, with pulse duration set via UI",
 	"tt.essentials.multi_piston.desc": "An uber piston that can push up to %1$d blocks away and can move up to %2$d blocks at a time",
 	"tt.essentials.multi_piston.reds": "Extension length controlled by redstone signal strength",
 	"tt.essentials.brazier.desc": "Able to hold Water, Lava, Glowstone, Coal Blocks, and Soul Sand",

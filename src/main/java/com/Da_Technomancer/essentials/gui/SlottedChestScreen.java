@@ -44,11 +44,9 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 		//Background
 		RenderSystem.color3f(1, 1, 1);
 		minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
-		int xOffset = guiLeft;
-		int yOffset = guiTop;
 		//drawTexturedModelRectangle
-		blit(matrix, xOffset, yOffset, 0, 0, xSize, 125);
-		blit(matrix, xOffset, yOffset + 125, 0, 126, xSize, 96);
+		blit(matrix, guiLeft, guiTop, 0, 0, xSize, 125);
+		blit(matrix, guiLeft, guiTop + 125, 0, 126, xSize, 96);
 
 		//Foreground
 		RenderSystem.pushLightingAttributes();

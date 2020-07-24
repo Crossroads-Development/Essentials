@@ -130,6 +130,7 @@ public final class Essentials{
 		registerTE(FluidSplitterTileEntity::new, "fluid_splitter", reg, fluidSplitter);
 		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
+		registerTE(TimerCircuitTileEntity::new, "timer_circuit", reg, timerCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
 		registerTE(WireJunctionTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
 		registerTE(AutoCrafterTileEntity::new, "auto_crafter", reg, autoCrafter);
@@ -152,6 +153,7 @@ public final class Essentials{
 		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
 		registerCon(CircuitWrenchContainer::new, CircuitWrenchScreen::new, "circuit_wrench", e);
 		registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
+		registerCon(TimerCircuitContainer::new, TimerCircuitScreen::new, "timer_circuit", e);
 		registerCon(AutoCrafterContainer::new, AutoCrafterScreen::new, "auto_crafter", e);
 	}
 
@@ -164,6 +166,7 @@ public final class Essentials{
 		registerConType(SlottedChestContainer::new, "slotted_chest", e);
 		registerConType(CircuitWrenchContainer::new, "circuit_wrench", e);
 		registerConType(ConstantCircuitContainer::new, "cons_circuit", e);
+		registerConType(TimerCircuitContainer::new, "timer_circuit", e);
 		registerConType(AutoCrafterContainer::new, "auto_crafter", e);
 	}
 

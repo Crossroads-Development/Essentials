@@ -75,6 +75,7 @@ public class ESBlocks{
 	public static AbstractCircuit logCircuit;
 	public static AbstractCircuit moduloCircuit;
 	public static ReaderCircuit readerCircuit;
+	public static TimerCircuit timerCircuit;
 	public static RedstoneTransmitter redstoneTransmitter;
 	public static RedstoneReceiver redstoneReceiver;
 
@@ -151,7 +152,7 @@ public class ESBlocks{
 		asinCircuit = new GenericACircuit("asin", (a) -> (float) Math.asin(a));
 		acosCircuit = new GenericACircuit("acos", (a) -> (float) Math.acos(a));
 		atanCircuit = new GenericACircuit("atan", (a) -> (float) Math.atan(a));
-		equalsCircuit = new GenericAACircuit("equals", (a0, a1) -> a0.equals(a1) || Math.abs(a0 - a1) / Math.max(a0, a1) <= 0.01F ? 1F : 0);//Checks if the smaller input is within 1% of the larger
+		equalsCircuit = new GenericAACircuit("equals", (a0, a1) -> a0.equals(a1) || Math.abs(a0 - a1) / Math.max(a0, a1) <= 0.001F ? 1F : 0);//Checks if the smaller input is within 0.1% of the larger
 		lessCircuit = new GenericABCircuit("less", (a, b) -> b < a ? 1F : 0);
 		moreCircuit = new GenericABCircuit("more", (a, b) -> b > a ? 1F : 0);
 		roundCircuit = new GenericACircuit("round", a1 -> (float) Math.round(a1));
@@ -160,6 +161,7 @@ public class ESBlocks{
 		logCircuit = new GenericACircuit("log", (a) -> (float) Math.log10(a));
 		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> b % a);
 		readerCircuit = new ReaderCircuit();
+		timerCircuit = new TimerCircuit();
 		redstoneTransmitter = new RedstoneTransmitter();
 		redstoneReceiver = new RedstoneReceiver();
 	}

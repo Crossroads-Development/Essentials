@@ -80,6 +80,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.equalsCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/equals.png"));
 		registerCircuit(ESBlocks.lessCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/less.png"));
 		registerCircuit(ESBlocks.moreCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/more.png"));
+		registerCircuit(ESBlocks.timerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/timer.png"));
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class CircuitWrench extends Item{
 			MODES.add(toRegister);
 			ICONS.add(icon);
 		}else{
-			Essentials.logger.info("Redundant circuit registration: " + toRegister.getRegistryName());
+			Essentials.logger.warn("Redundant circuit registration: " + toRegister.getRegistryName());
 		}
 	}
 

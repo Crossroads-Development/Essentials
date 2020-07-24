@@ -6,7 +6,7 @@ import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.SendNBTToServer;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -31,7 +31,7 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 	@Override
 	protected void init(){
 		super.init();
-		searchBar = new TextFieldWidget(font, guiLeft + 4, guiTop + 8, 144 - 4, 18, new TranslationTextComponent("container.search_bar"));
+		searchBar = new TextFieldWidget(font, guiLeft + 4, guiTop + 8, 144 - 4, 18, new TranslationTextComponent("container.cons_circuit.bar"));
 
 		searchBar.setCanLoseFocus(false);
 		searchBar.setTextColor(-1);
@@ -75,8 +75,8 @@ public class ConstantCircuitScreen extends ContainerScreen<ConstantCircuitContai
 	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
-		GlStateManager.disableLighting();
-		GlStateManager.disableBlend();
+		RenderSystem.disableLighting();
+		RenderSystem.disableBlend();
 		searchBar.render(matrix, mouseX, mouseY, partialTicks);
 	}
 
