@@ -61,4 +61,9 @@ public class ReaderCircuit extends AbstractCircuit{
 		}
 		return output;
 	}
+
+	@Override
+	public boolean usesQuartz(){
+		return false;
+	}
 }

@@ -1,7 +1,7 @@
 {
 	"category": "essentials",
 	"name": "Welcome!",
-	"icon": "essentials:candle_lilypad",
+	"icon": "minecraft:paper",
 	"sortnum": 0,
 	"priority": true,
 	"read_by_default": "true",
@@ -9,7 +9,7 @@
 		{
 			"type": "spotlight",
 			"title": "Welcome!",
-			"item": "essentials:candle_lilypad",
+			"item": "minecraft:paper",
 			"text": "Welcome to Essentials! Essentials is a mod by Technomancer about vanilla style automation- all of its features enhance or extend automation in a way that is simple, easy to understand, but also flexible.$(br2)This book should have all the information you need about "
 		},
 		{
@@ -18,6 +18,7 @@
 		},
 		{
 			"type": "text",
+			"anchor": "crossroads",
 			"text": "Crossroads is another mod by the same developer- if Crossroads is installed, it will also be documented in this book. Crossroads is a much larger steampunk mod designed to have interesting, tricky, and rewarding automation. It also has a powerful lategame and is highly configurable.$(br2)$(l:https://www.curseforge.com/minecraft/mc-mods/crossroads-mc)Why not give it a try?/$$(br2)"
 		}
 	]

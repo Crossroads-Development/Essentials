@@ -78,6 +78,8 @@ public class ESBlocks{
 	public static TimerCircuit timerCircuit;
 	public static RedstoneTransmitter redstoneTransmitter;
 	public static RedstoneReceiver redstoneReceiver;
+	public static AnalogLamp analogLamp;
+	public static DelayCircuit delayCircuit;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -128,7 +130,11 @@ public class ESBlocks{
 		fluidSplitter = new FluidSplitter();
 		witherCannon = new WitherCannon();
 		autoCrafter = new AutoCrafter();
+		analogLamp = new AnalogLamp();
+		redstoneTransmitter = new RedstoneTransmitter();
+		redstoneReceiver = new RedstoneReceiver();
 
+		//Circuits
 		wireCircuit = new WireCircuit();
 		wireJunctionCircuit = new WireJunctionCircuit();
 		consCircuit = new ConsCircuit();
@@ -162,7 +168,6 @@ public class ESBlocks{
 		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> b % a);
 		readerCircuit = new ReaderCircuit();
 		timerCircuit = new TimerCircuit();
-		redstoneTransmitter = new RedstoneTransmitter();
-		redstoneReceiver = new RedstoneReceiver();
+		delayCircuit = new DelayCircuit();
 	}
 }

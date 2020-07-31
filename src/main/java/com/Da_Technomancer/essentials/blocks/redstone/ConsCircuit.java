@@ -64,6 +64,11 @@ public class ConsCircuit extends AbstractCircuit{
 	}
 
 	@Override
+	public boolean usesQuartz(){
+		return true;//Considered a 'Basic Circuit'
+	}
+
+	@Override
 	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.cons_circuit"));
 	}

@@ -1,7 +1,7 @@
 Welcome!0
-essentials:candle_lilypad
+minecraft:paper
 Welcome to Essentials! Essentials is a mod by Technomancer about vanilla style automation- all of its features enhance or extend automation in a way that is simple, easy to understand, but also flexible.
 This book should have all the information you need about Essentials. If you have any questions or suggestions, feel free to join the <link:https://discord.gg/6g47knp>Discord/$, and if you find any bugs, please report them either on the <link:https://discord.gg/6g47knp>Discord/$ or <link:https://github.com/Da-Technomancer/Crossroads/>Github/$.
-
+<page|text|crossroads>
 Crossroads is another mod by the same developer- if Crossroads is installed, it will also be documented in this book. Crossroads is a much larger steampunk mod designed to have interesting, tricky, and rewarding automation. It also has a powerful lategame and is highly configurable.
 <link:https://www.curseforge.com/minecraft/mc-mods/crossroads-mc>Why not give it a try?/$

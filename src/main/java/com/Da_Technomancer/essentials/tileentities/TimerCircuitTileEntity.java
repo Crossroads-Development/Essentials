@@ -1,6 +1,8 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.TimerCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
@@ -37,6 +39,11 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 
 	public TimerCircuitTileEntity(){
 		super(TYPE);
+	}
+
+	@Override
+	protected AbstractCircuit getOwner(){
+		return ESBlocks.timerCircuit;
 	}
 
 	public int timerOutput(){

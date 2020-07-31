@@ -49,7 +49,12 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		super(type);
 	}
 
-	private AbstractCircuit getOwner(){
+	/**
+	 * Subclasses are encouraged to override this to directly return the block, instead of going through the blockstate
+	 * @return The block associated with this tile entity
+	 */
+	@Nonnull
+	protected AbstractCircuit getOwner(){
 		Block b = getBlockState().getBlock();
 		if(b instanceof AbstractCircuit){
 			return (AbstractCircuit) b;
@@ -104,10 +109,14 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	}
 
 	/**
-	 * Forces the circuit to recalculate the power output, and propogate any changes to the world and dependents
-	 * Virtual server side ONLY
+	 * Calculates the received & sanitized redstone signal strengths on each of the 3 possible input sides
+	 * Sides that don't accept input will be 0 in the output array
+	 * Virtual server side only
+	 * The result is not cached- do not call this method more than needed
+	 * @param owner The circuit block, as returned by getOwner()
+	 * @return A size 3 float array of redstone inputs, in order CCW, BACK, CW
 	 */
-	public void recalculateOutput(){
+	protected float[] getInputs(AbstractCircuit owner){
 		buildConnections();//Can be needed when reloading
 
 		float[] inputs = new float[3];
@@ -140,8 +149,6 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 		Direction facing = getFacing();
 
-		AbstractCircuit owner = getOwner();
-
 		//Any input without a circuit input uses vanilla redstone instead
 		for(int i = 0; i < 3; i++){
 			if(!hasSrc[i] && owner.useInput(Orient.values()[i])){
@@ -149,6 +156,17 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				inputs[i] = RedstoneUtil.getRedstoneOnSide(world, pos, dir);
 			}
 		}
+
+		return inputs;
+	}
+
+	/**
+	 * Forces the circuit to recalculate the power output, and propagate any changes to the world and dependents
+	 * Virtual server side ONLY
+	 */
+	public void recalculateOutput(){
+		AbstractCircuit owner = getOwner();
+		float[] inputs = getInputs(owner);
 
 		float newOutput;
 		try{
@@ -183,7 +201,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				otherHandler.findDependents(hanReference, 0, dir.getOpposite(), dir);
 			}
 
-			world.getPendingBlockTicks().scheduleTick(pos, own, RedstoneUtil.DELAY, TickPriority.NORMAL);
+			handleInputChange(TickPriority.NORMAL);
 		}
 	}
 
@@ -249,6 +267,14 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		return super.getCapability(cap, side);
 	}
 
+	/**
+	 * Called when the received input strength may have changed
+	 * @param priority The priority this tick should be scheduled with
+	 */
+	public void handleInputChange(TickPriority priority){
+		world.getPendingBlockTicks().scheduleTick(pos, getOwner(), RedstoneUtil.DELAY, priority);
+	}
+
 	private class RedsHandler implements IRedstoneHandler{
 
 		@Override
@@ -304,7 +330,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 		@Override
 		public void notifyInputChange(WeakReference<LazyOptional<IRedstoneHandler>> src){
-			world.getPendingBlockTicks().scheduleTick(pos, getOwner(), RedstoneUtil.DELAY, TickPriority.HIGH);
+			handleInputChange(TickPriority.HIGH);
 		}
 	}
 

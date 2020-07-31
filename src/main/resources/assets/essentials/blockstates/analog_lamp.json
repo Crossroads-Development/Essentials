@@ -1,0 +1,20 @@
+{
+	"variants": {
+		"redstone=0": { "model": "essentials:block/lamp/light_0" },
+		"redstone=1": { "model": "essentials:block/lamp/light_1" },
+		"redstone=2": { "model": "essentials:block/lamp/light_2" },
+		"redstone=3": { "model": "essentials:block/lamp/light_3" },
+		"redstone=4": { "model": "essentials:block/lamp/light_4" },
+		"redstone=5": { "model": "essentials:block/lamp/light_5" },
+		"redstone=6": { "model": "essentials:block/lamp/light_6" },
+		"redstone=7": { "model": "essentials:block/lamp/light_7" },
+		"redstone=8": { "model": "essentials:block/lamp/light_8" },
+		"redstone=9": { "model": "essentials:block/lamp/light_9" },
+		"redstone=10": { "model": "essentials:block/lamp/light_10" },
+		"redstone=11": { "model": "essentials:block/lamp/light_11" },
+		"redstone=12": { "model": "essentials:block/lamp/light_12" },
+		"redstone=13": { "model": "essentials:block/lamp/light_13" },
+		"redstone=14": { "model": "essentials:block/lamp/light_14" },
+		"redstone=15": { "model": "essentials:block/lamp/light_15" }
+	}
+}

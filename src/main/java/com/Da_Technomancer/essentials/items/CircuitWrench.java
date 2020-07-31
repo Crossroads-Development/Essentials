@@ -3,7 +3,6 @@ package com.Da_Technomancer.essentials.items;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractTile;
 import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import net.minecraft.block.BlockState;
@@ -39,11 +38,11 @@ public class CircuitWrench extends Item{
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(32);
+	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(33);
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(32);
+	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(33);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
 	private static final ITag<Item> COMPONENT_TAG = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "circuit_components").toString());
@@ -52,12 +51,12 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
 		registerCircuit(ESBlocks.wireJunctionCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire_junction.png"));
 		registerCircuit(ESBlocks.interfaceCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/interface.png"));
+		registerCircuit(ESBlocks.readerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/reader.png"));
 		registerCircuit(ESBlocks.consCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/constant.png"));
 		registerCircuit(ESBlocks.notCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/not.png"));
 		registerCircuit(ESBlocks.andCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/and.png"));
 		registerCircuit(ESBlocks.orCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/or.png"));
 		registerCircuit(ESBlocks.xorCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/xor.png"));
-		registerCircuit(ESBlocks.readerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/reader.png"));
 		registerCircuit(ESBlocks.sumCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sum.png"));
 		registerCircuit(ESBlocks.difCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/dif.png"));
 		registerCircuit(ESBlocks.prodCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/prod.png"));
@@ -81,6 +80,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.lessCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/less.png"));
 		registerCircuit(ESBlocks.moreCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/more.png"));
 		registerCircuit(ESBlocks.timerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/timer.png"));
+		registerCircuit(ESBlocks.delayCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/delay.png"));
 	}
 
 	/**
@@ -123,7 +123,10 @@ public class CircuitWrench extends Item{
 		BlockState toPlace = MODES.get(context.getItem().getOrCreateTag().getInt(NBT_KEY) % MODES.size()).getDefaultState();
 
 		if(!context.getPlayer().isCrouching() && state.getBlock() instanceof AbstractTile){
-			if(state.getBlock() == toPlace.getBlock()){
+			AbstractTile worldTile = (AbstractTile) state.getBlock();
+			AbstractTile placeTile = (AbstractTile) toPlace.getBlock();
+
+			if(worldTile == placeTile){
 				return ActionResultType.SUCCESS;
 			}
 
@@ -131,8 +134,8 @@ public class CircuitWrench extends Item{
 			if(context.getPlayer().isCreative()){
 				//Creative mode is free
 				allowed = true;
-			}else if(toPlace.getBlock() instanceof AbstractCircuit){
-				if(state.getBlock() instanceof AbstractCircuit){
+			}else if(placeTile.usesQuartz()){
+				if(worldTile.usesQuartz()){
 					//Circuit->circuit is free
 					allowed = true;
 				}else{
@@ -152,7 +155,7 @@ public class CircuitWrench extends Item{
 				//Non-circuits are free
 				allowed = true;
 
-				if(state.getBlock() instanceof AbstractCircuit){
+				if(worldTile.usesQuartz()){
 					//If we downgrade from a circuit to a non-circuit tile (like wire or junction), return a circuit component
 					ItemStack given = new ItemStack(COMPONENT_TAG.getRandomElement(context.getWorld().rand), 1);
 					if(!given.isEmpty()){

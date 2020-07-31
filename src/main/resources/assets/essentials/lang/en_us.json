@@ -34,8 +34,9 @@
 	"block.essentials.auto_crafter": "Auto-Crafter",
 	"block.essentials.redstone_transmitter": "Redstone Transmitter",
 	"block.essentials.redstone_receiver": "Redstone Receiver",
+	"block.essentials.analog_lamp": "Analog Lamp",
 
-	"block.essentials.wire_circuit": "Wire Plate",
+	"block.essentials.wire_circuit": "Circuit Wire Plate",
 	"block.essentials.wire_junction_circuit": "Wire Junction",
 	"block.essentials.interface_circuit": "Wire Splice Plate",
 	"block.essentials.and_circuit": "AND Circuit",
@@ -67,6 +68,7 @@
 	"block.essentials.modulo_circuit": "Modulo Circuit",
 	"block.essentials.reader_circuit": "Reader Circuit",
 	"block.essentials.timer_circuit": "Clock Circuit",
+	"block.essentials.delay_circuit": "Delay Circuit",
 	
 	
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
@@ -90,6 +92,8 @@
 	"container.cons_circuit.bar": "Output value",
 	"container.timer_circuit.duration": "Pulse Duration (reds. ticks)",
 	"container.timer_circuit.period": "Clock Period (reds. ticks)",
+	"container.delay_circuit": "Delay Circuit Settings",
+	"container.delay_circuit.delay": "Delay (reds. ticks)",
 
 
 	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
@@ -182,6 +186,8 @@
 	"tt.essentials.item_chute.decor": "Safe for decoration",
 	"tt.essentials.item_shifter.desc": "Ejects contained items out the faced side, moved into inventories or dropped onto the ground",
 	"tt.essentials.item_shifter.range": "Can 'push' items through a line of up to %1$d Transport Chutes",
+	"tt.essentials.analog_lamp.desc": "Emits light equal to the redstone signal strength",
+	"tt.essentials.delay_circuit": "Delays all signals and pulses by a constant time set via UI (minimum 1 reds. tick)",
 
 	"tt.essentials.empty_fluid": "Empty",
 

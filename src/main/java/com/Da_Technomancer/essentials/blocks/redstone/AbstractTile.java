@@ -58,4 +58,11 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 	public boolean canConnect(Direction side, BlockState state){
 		return side.getAxis() != Direction.Axis.Y;
 	}
+
+	/**
+	 * @return Whether this circuit requires quartz to make
+	 */
+	public boolean usesQuartz(){
+		return false;
+	}
 }

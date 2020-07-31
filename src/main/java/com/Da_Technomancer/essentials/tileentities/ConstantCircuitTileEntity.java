@@ -1,6 +1,8 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.block.BlockState;
@@ -28,6 +30,11 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 
 	public ConstantCircuitTileEntity(){
 		super(TYPE);
+	}
+
+	@Override
+	protected AbstractCircuit getOwner(){
+		return ESBlocks.consCircuit;
 	}
 
 	@Override

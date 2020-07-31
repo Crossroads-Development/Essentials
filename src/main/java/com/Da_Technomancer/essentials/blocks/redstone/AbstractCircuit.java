@@ -74,20 +74,20 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		if(blockIn == Blocks.REDSTONE_WIRE || blockIn instanceof RedstoneDiodeBlock){
-			//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
-			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(te instanceof CircuitTileEntity){
-				((CircuitTileEntity) te).buildConnections();
+		TileEntity te = worldIn.getTileEntity(pos);
+
+		if(te instanceof CircuitTileEntity){
+			CircuitTileEntity cte = (CircuitTileEntity) te;
+			if(blockIn == Blocks.REDSTONE_WIRE || blockIn instanceof RedstoneDiodeBlock){
+				//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
+				cte.handleInputChange(TickPriority.HIGH);
+			}else{
+				cte.builtConnections = false;
 			}
-		}else{
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(te instanceof CircuitTileEntity){
-				((CircuitTileEntity) te).builtConnections = false;
-				((CircuitTileEntity) te).buildConnections();
-			}
+
+			cte.buildConnections();
 		}
+
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 	}
 
@@ -124,6 +124,11 @@ public abstract class AbstractCircuit extends AbstractTile{
 	public boolean canConnect(Direction side, BlockState state){
 		Direction facing = state.get(ESProperties.HORIZ_FACING);
 		return side == facing || useInput(CircuitTileEntity.Orient.getOrient(side, facing));
+	}
+
+	@Override
+	public boolean usesQuartz(){
+		return true;
 	}
 
 	/**

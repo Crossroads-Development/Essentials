@@ -131,6 +131,7 @@ public final class Essentials{
 		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(TimerCircuitTileEntity::new, "timer_circuit", reg, timerCircuit);
+		registerTE(DelayCircuitTileEntity::new, "delay_circuit", reg, delayCircuit);
 		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
 		registerTE(WireJunctionTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
 		registerTE(AutoCrafterTileEntity::new, "auto_crafter", reg, autoCrafter);
@@ -155,6 +156,7 @@ public final class Essentials{
 		registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
 		registerCon(TimerCircuitContainer::new, TimerCircuitScreen::new, "timer_circuit", e);
 		registerCon(AutoCrafterContainer::new, AutoCrafterScreen::new, "auto_crafter", e);
+		registerCon(DelayCircuitContainer::new, DelayCircuitScreen::new, "delay_circuit", e);
 	}
 
 	@SubscribeEvent
@@ -168,6 +170,7 @@ public final class Essentials{
 		registerConType(ConstantCircuitContainer::new, "cons_circuit", e);
 		registerConType(TimerCircuitContainer::new, "timer_circuit", e);
 		registerConType(AutoCrafterContainer::new, "auto_crafter", e);
+		registerConType(DelayCircuitContainer::new, "delay_circuit", e);
 	}
 
 	@SubscribeEvent
