@@ -174,8 +174,11 @@ public class CircuitWrench extends Item{
 				}
 				context.getWorld().setBlockState(context.getPos(), toPlace);
 				return ActionResultType.SUCCESS;
+			}else{
+				//Print a message saying quartz is needed
+				context.getPlayer().sendStatusMessage(new TranslationTextComponent("tt.essentials.circuit_wrench.quartz"), true);
+				return ActionResultType.FAIL;
 			}
-			return ActionResultType.FAIL;
 		}
 
 		return ActionResultType.PASS;

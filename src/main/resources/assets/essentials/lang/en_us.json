@@ -101,6 +101,7 @@
 	"tt.essentials.circuit_wrench_setting": "Mode: ",
 	"tt.essentials.circuit_wrench_info": "Turns Wire Plates into circuitry on use, consuming nether quartz",
 	"tt.essentials.circuit_wrench_change_mode": "Change circuit type by sneak-clicking",
+	"tt.essentials.circuit_wrench.quartz": "Insufficient Nether Quartz",
 	"tt.essentials.auto_crafter_basic": "Automatically crafts when given a redstone pulse",
 	"tt.essentials.auto_crafter_book": "Set a recipe using the vanilla Recipe Book",
 	"tt.essentials.fluid_shifter_info": "Ejects contained fluid out the faced side into an attached inventory",
