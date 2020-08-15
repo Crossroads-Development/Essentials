@@ -27,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
@@ -79,9 +80,14 @@ public final class Essentials{
 	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new ESEventHandlerClient());
-		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, WitherSkullRenderer::new);
 		RenderTypeLookup.setRenderLayer(hopperFilter, RenderType.getCutout());
 		RenderTypeLookup.setRenderLayer(candleLilyPad, RenderType.getCutout());
+	}
+
+	@SuppressWarnings("unused")
+	@SubscribeEvent
+	public static void registerModels(ModelRegistryEvent e){
+		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, WitherSkullRenderer::new);
 	}
 
 	@SuppressWarnings("unused")
