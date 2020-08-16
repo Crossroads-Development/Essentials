@@ -124,7 +124,7 @@ public interface ILinkTE extends ILongReceiver{
 		if(player.isCrouching()){
 			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.clear"), player.getUniqueID());
 			clearLinks();
-		}else if(wrench.hasTag() && wrench.getTag().contains(POS_NBT) && wrench.getTag().getString(DIM_NBT).equals(player.world.func_234922_V_().func_240901_a_().toString())){//MCP note: get dimension type registry key, get resourcelocation path
+		}else if(wrench.hasTag() && wrench.getTag().contains(POS_NBT) && wrench.getTag().getString(DIM_NBT).equals(player.world.func_234923_W_().func_240901_a_().toString())){//MCP note: get world registry key, get resourcelocation path
 			BlockPos prev = BlockPos.fromLong(wrench.getTag().getLong(POS_NBT));
 
 			TileEntity te = player.world.getTileEntity(prev);
@@ -143,7 +143,7 @@ public interface ILinkTE extends ILongReceiver{
 			}
 
 			wrench.getTag().putLong(POS_NBT, getTE().getPos().toLong());
-			wrench.getTag().putString(DIM_NBT, getTE().getWorld().func_234922_V_().func_240901_a_().toString());//MCP note: get dimension type registry key, get resourcelocation path
+			wrench.getTag().putString(DIM_NBT, getTE().getWorld().func_234923_W_().func_240901_a_().toString());//MCP note: get world registry key, get resourcelocation path
 			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.start"), player.getUniqueID());
 			return wrench;
 		}

@@ -113,8 +113,8 @@ public class TimerCircuitScreen extends ContainerScreen<TimerCircuitContainer>{
 		blit(matrix, guiLeft + 18 - 2, guiTop + 50, 0, 0, 144, 18, 144, 18);
 
 		//Text
-		font.func_238422_b_(matrix, new TranslationTextComponent("container.timer_circuit.period"), guiLeft + 16, guiTop + 12, 0x404040);
-		font.func_238422_b_(matrix, new TranslationTextComponent("container.timer_circuit.duration"), guiLeft + 16, guiTop + 42, 0x404040);
+		font.func_243248_b(matrix, new TranslationTextComponent("container.timer_circuit.period"), guiLeft + 16, guiTop + 12, 0x404040);
+		font.func_243248_b(matrix, new TranslationTextComponent("container.timer_circuit.duration"), guiLeft + 16, guiTop + 42, 0x404040);
 	}
 
 	//MCP note: draw tooltip/foreground

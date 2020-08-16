@@ -135,7 +135,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 			int ind = src.getRight().ordinal();
 			if(ind > 2){
-				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + pos.toString() + "; Dim: " + world.func_234922_V_().toString() + "Type: " + getOwner().getRegistryName().toString());//MCP note: get RegistryKey<DimensionType>
+				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + pos.toString() + "; Dim: " + world.func_234923_W_().toString() + "Type: " + getOwner().getRegistryName().toString());//MCP note: get RegistryKey<World>
 				Essentials.logger.catching(e);
 				//Invalid state- remove this input and skip
 				sources.remove(i);

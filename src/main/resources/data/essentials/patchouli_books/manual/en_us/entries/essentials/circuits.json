@@ -28,7 +28,7 @@
 			"type": "image",
 			"anchor": "reader",
 			"border": "true",
-			"title": "A Reader circuit on a chest",
+			"title": "Reader circuit",
 			"images": [
 				"essentials:textures/book/circuit_reader.png"
 			],
@@ -60,7 +60,7 @@
 			"type": "image",
 			"anchor": "math",
 			"border": "true",
-			"title": "Quadratic Formula via circuits",
+			"title": "Quadratic Formula",
 			"images": [
 				"essentials:textures/book/circuit_math.png"
 			],

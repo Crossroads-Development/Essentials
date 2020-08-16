@@ -86,9 +86,8 @@ public class FertileSoil extends Block{
 		}
 
 		BlockPos upPos = pos.offset(Direction.UP);
-		//Check light levels are low enough if this is a mushroom fertile soil
 		//Check light levels are high enough if this is a crop
-		if(worldIn.isAirBlock(upPos) && (category != SeedCategory.MUSHROOM || worldIn.getLightSubtracted(upPos, 0) < 13) && (category != SeedCategory.CROP || worldIn.getLightSubtracted(upPos, 0) > 7)){
+		if(worldIn.isAirBlock(upPos) && (category != SeedCategory.CROP || worldIn.getLightSubtracted(upPos, 0) > 7)){
 			worldIn.setBlockState(upPos, plant);
 		}
 	}

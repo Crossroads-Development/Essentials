@@ -110,7 +110,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 			tt.add(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey()));
 			AbstractTile block = CircuitWrench.MODES.get(index);
 			block.addInformation(ItemStack.EMPTY, null, tt, ITooltipFlag.TooltipFlags.NORMAL);
-			renderTooltip(matrix, tt, mouseX, mouseY);
+			func_243308_b(matrix, tt, mouseX, mouseY);//MCP note: renderTooltip
 		}
 
 		RenderSystem.disableLighting();

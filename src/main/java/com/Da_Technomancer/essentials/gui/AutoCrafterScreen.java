@@ -182,6 +182,6 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 
 	public static List<RecipeBookCategories> getRecipeCategories(){
 		//Same categories as vanilla crafting table. Remember to change this if new crafting table categories are ever added
-		return Lists.newArrayList(RecipeBookCategories.SEARCH, RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE);
+		return Lists.newArrayList(RecipeBookCategories.CRAFTING_SEARCH, RecipeBookCategories.CRAFTING_EQUIPMENT, RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, RecipeBookCategories.CRAFTING_MISC, RecipeBookCategories.CRAFTING_REDSTONE);
 	}
 }

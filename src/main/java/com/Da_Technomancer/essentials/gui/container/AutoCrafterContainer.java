@@ -18,10 +18,13 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.RecipeBookCategory;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -183,6 +186,12 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	@Override
 	public List<RecipeBookCategories> getRecipeBookCategories(){
 		return AutoCrafterScreen.getRecipeCategories();//Redirect to a method in AutoCrafterScreen as RecipeBookCategories is client only
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public RecipeBookCategory func_241850_m(){
+		return RecipeBookCategory.CRAFTING;
 	}
 
 	@Override

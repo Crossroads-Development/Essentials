@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 
-	protected ArrayList<ITextProperties> tooltip = new ArrayList<>();
+	protected ArrayList<ITextComponent> tooltip = new ArrayList<>();
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/fluid_shifter.png");
 
 	public FluidShifterScreen(FluidShifterContainer container, PlayerInventory playerInventory, ITextComponent text){
@@ -34,7 +34,7 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		func_230459_a_(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
 		if(getSlotUnderMouse() == null){
-			renderTooltip(matrix, tooltip, mouseX, mouseY);
+			func_243308_b(matrix, tooltip, mouseX, mouseY);//MCP: renderTooltip
 		}
 		tooltip.clear();
 	}

@@ -95,7 +95,7 @@ public class DelayCircuitScreen extends ContainerScreen<DelayCircuitContainer>{
 		blit(matrix, guiLeft + 18 - 2, guiTop + 20, 0, 0, 144, 18, 144, 18);
 
 		//Text
-		font.func_238422_b_(matrix, new TranslationTextComponent("container.delay_circuit.delay"), guiLeft + 16, guiTop + 12, 0x404040);
+		font.func_243248_b(matrix, new TranslationTextComponent("container.delay_circuit.delay"), guiLeft + 16, guiTop + 12, 0x404040);
 	}
 
 	//MCP note: draw tooltip/foreground

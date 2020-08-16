@@ -22,11 +22,11 @@ public class ESEventHandlerCommon{
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public void blockWitchSpawns(LivingSpawnEvent e){
+	public void blockWitchSpawns(LivingSpawnEvent.CheckSpawn e){
 		//Prevents witch spawning if a nearby brazier has soulsand
-		if(e.getEntity() instanceof WitchEntity){
+		if(e.getEntity() instanceof WitchEntity && e.getWorld() instanceof World){
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
-			for(TileEntity te : e.getWorld().getWorld().tickableTileEntities){
+			for(TileEntity te : ((World) e.getWorld()).tickableTileEntities){
 				World w;
 				if(te instanceof BrazierTileEntity && te.getPos().distanceSq(e.getX(), e.getY(), e.getZ(), true) <= RANGE_SQUARED && (w = te.getWorld()) != null){
 					BlockState state = w.getBlockState(te.getPos());

@@ -20,6 +20,7 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -141,7 +142,7 @@ public class FluidSlotManager{
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void render(MatrixStack matrix, float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer, List<ITextProperties> tooltip){
+	public void render(MatrixStack matrix, float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer, List<ITextComponent> tooltip){
 		//Background
 		FluidStack clientState = getStack();
 		Minecraft.getInstance().getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
