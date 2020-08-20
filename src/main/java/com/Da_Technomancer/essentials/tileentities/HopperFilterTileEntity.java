@@ -127,6 +127,13 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
+	public void remove(){
+		super.remove();
+		passedHandlerNeg.invalidate();
+		passedHandlerPos.invalidate();
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side.getAxis() == getAxis()){
