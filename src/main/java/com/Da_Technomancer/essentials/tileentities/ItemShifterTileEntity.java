@@ -9,6 +9,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
@@ -29,6 +30,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	private static TileEntityType<ItemShifterTileEntity> TYPE = null;
 
 	private ItemStack inventory = ItemStack.EMPTY;
+	private LazyOptional<IItemHandler> outputOptionalCache = LazyOptional.empty();
 
 	public ItemShifterTileEntity(){
 		super(TYPE);
@@ -48,7 +50,15 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 			return;
 		}
 
-		inventory = ejectItem(world, endPos, getFacing(), inventory);
+		//We use a cache for the output, which the ejectItem method will use instead of checking for the TE independently
+		if(!outputOptionalCache.isPresent()){
+			TileEntity endTE = world.getTileEntity(endPos);
+			if(endTE != null){
+				outputOptionalCache = endTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getFacing().getOpposite());
+			}
+		}
+
+		inventory = ejectItem(world, endPos, getFacing(), inventory, outputOptionalCache);
 	}
 
 	@Override

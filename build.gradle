@@ -82,7 +82,6 @@ dependencies {
 	//Run with the full versions
 	runtimeOnly fg.deobf("mezz.jei:jei-$mc_version:$jei_version")
 
-//	Not yet updated to MC1.16.2
 //	compile(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
 }
 

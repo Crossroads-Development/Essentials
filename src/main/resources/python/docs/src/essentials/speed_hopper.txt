@@ -1,0 +1,3 @@
+High-Throughput Hopper
+essentials:speed_hopper
+The <item>High-Throughput Hopper/$ acts the same as the <item><link:essentials/sorting_hopper>Sorting Hopper/$, except it can move up to a stack of items at a time.

@@ -8,6 +8,8 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ISidedInventoryProvider;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.HopperContainer;
 import net.minecraft.inventory.container.INamedContainerProvider;
@@ -62,7 +64,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 	protected Direction getDir(){
 		if(dir == null){
-			BlockState state = world.getBlockState(pos);
+			BlockState state = getBlockState();
 			if(!(state.getBlock() instanceof SortingHopper)){
 				return Direction.DOWN;
 			}
@@ -243,7 +245,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 	protected boolean transferItemsOut(){
 		Direction facing = getDir();
-		final IItemHandler otherHandler = getHandlerAtPositon(world, pos.offset(facing), facing.getOpposite());
+		final IItemHandler otherHandler = getHandlerAtPosition(world, pos.offset(facing), facing.getOpposite(), null);
 
 		//Insertion via IItemHandler
 		if(otherHandler != null){
@@ -266,7 +268,9 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	}
 
 	protected boolean transferItemsIn(){
-		final IItemHandler otherHandler = getHandlerAtPositon(world, pos.offset(Direction.UP), Direction.DOWN);
+		BlockPos upPos = pos.up();
+		TileEntity aboveTE = world.getTileEntity(upPos);
+		final IItemHandler otherHandler = getHandlerAtPosition(world, upPos, Direction.DOWN, aboveTE);
 
 		//Transfer from IItemHandler
 		if(otherHandler != null){
@@ -288,7 +292,17 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 			boolean changed = false;
 
 			//Suck up dropped items
-			for(ItemEntity entityitem : world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.getX(), pos.getY() + 0.5D, pos.getZ(), pos.getX() + 1, pos.getY() + 2D, pos.getZ() + 1), EntityPredicates.IS_ALIVE)){
+			List<ItemEntity> itemEntities;
+
+			//If the block above is a Hopper Filter, we can pick up items through the filter, but only if they match the filter
+			if(aboveTE instanceof HopperFilterTileEntity){
+				ItemStack filter = ((HopperFilterTileEntity) aboveTE).getFilter();
+				itemEntities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.getX(), pos.getY() + 0.5D, pos.getZ(), pos.getX() + 1, pos.getY() + 3D, pos.getZ() + 1), entity -> entity.isAlive() && HopperFilterTileEntity.matchFilter(entity.getItem(), filter));
+			}else{
+				itemEntities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.getX(), pos.getY() + 0.5D, pos.getZ(), pos.getX() + 1, pos.getY() + 2D, pos.getZ() + 1), EntityPredicates.IS_ALIVE);
+			}
+
+			for(ItemEntity entityitem : itemEntities){
 				if(entityitem == null){
 					continue;
 				}
@@ -315,24 +329,33 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 		}
 	}
 
-	protected static IItemHandler getHandlerAtPositon(World world, BlockPos otherPos, Direction direction){
-		IItemHandler otherHandler = null;
-		final TileEntity tileEntity = world.getTileEntity(otherPos);
+	protected static IItemHandler getHandlerAtPosition(World world, BlockPos otherPos, Direction direction, @Nullable TileEntity aboveTE){
+		final TileEntity te = aboveTE == null ? world.getTileEntity(otherPos) : aboveTE;
 
-		if(tileEntity != null){
-			final LazyOptional<IItemHandler> capability = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
+		if(te != null){
+			final LazyOptional<IItemHandler> capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
 			if(capability.isPresent()){
-				otherHandler = capability.orElseThrow(NullPointerException::new);
+				IItemHandler handler = capability.orElseThrow(NullPointerException::new);
+				//This slot count check enables sorting hoppers to pull items from the world through a hopper filter when there is no inventory on the other side
+				if(handler.getSlots() > 0){
+					return handler;
+				}
 			}
 		}
 
-		if(otherHandler == null){
-			List<Entity> list = world.getEntitiesInAABBexcluding(null, new AxisAlignedBB(otherPos), EntityPredicates.HAS_INVENTORY);
-			if(!list.isEmpty()){
-				otherHandler = new InvWrapper((IInventory) list.get(world.rand.nextInt(list.size())));
-			}
+		//In vanilla, this is literally just composters
+		BlockState state = world.getBlockState(otherPos);
+		if(state.getBlock() instanceof ISidedInventoryProvider){
+			ISidedInventory inv = ((ISidedInventoryProvider) state.getBlock()).createInventory(state, world, otherPos);
+			return new InvWrapper(inv);
 		}
-		return otherHandler;
+
+		List<Entity> list = world.getEntitiesInAABBexcluding(null, new AxisAlignedBB(otherPos), EntityPredicates.HAS_INVENTORY);
+		if(!list.isEmpty()){
+			return new InvWrapper((IInventory) list.get(world.rand.nextInt(list.size())));
+		}
+
+		return null;
 	}
 
 	protected static boolean canCombine(ItemStack stack1, ItemStack stack2){

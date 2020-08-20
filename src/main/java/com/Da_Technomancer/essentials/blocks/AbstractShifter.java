@@ -61,9 +61,6 @@ public abstract class AbstractShifter extends ContainerBlock{
 			TileEntity te = worldIn.getTileEntity(pos);
 			if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
 				worldIn.setBlockState(pos, state.func_235896_a_(ESProperties.FACING));//MCP note: cycle
-				if(te instanceof AbstractShifterTileEntity){
-					((AbstractShifterTileEntity) te).refreshCache();
-				}
 			}else if(te instanceof AbstractShifterTileEntity){
 				NetworkHooks.openGui((ServerPlayerEntity) playerIn, (AbstractShifterTileEntity) te, pos);
 			}

@@ -3,8 +3,11 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
+import jdk.internal.jline.internal.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ISidedInventoryProvider;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -20,6 +23,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 
 public abstract class AbstractShifterTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider{
 
@@ -41,8 +45,14 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		return facing;
 	}
 
-	public void refreshCache(){
+	@Override
+	public void updateContainingBlockInfo(){
+		super.updateContainingBlockInfo();
 		facing = null;
+		refreshCache();
+	}
+
+	public void refreshCache(){
 		Direction dir = getFacing();
 		int extension;
 		int maxChutes = ESConfig.itemChuteRange.get();
@@ -57,17 +67,37 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		endPos = pos.offset(dir, extension);
 	}
 	
-	public static ItemStack ejectItem(World world, BlockPos pos, Direction fromSide, ItemStack stack){
+	public static ItemStack ejectItem(World world, BlockPos outputPos, Direction fromSide, ItemStack stack, @Nullable LazyOptional<IItemHandler> outputHandlerCache){
 		if(stack.isEmpty()){
 			return ItemStack.EMPTY;
 		}
 
-		TileEntity outputTE = world.getTileEntity(pos);
-		LazyOptional<IItemHandler> outputCap;
-		if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
-			IItemHandler outHandler = outputCap.orElseThrow(NullPointerException::new);
-			for(int i = 0; i < outHandler.getSlots(); i++){
-				ItemStack outStack = outHandler.insertItem(i, stack, false);
+		IItemHandler handler = null;
+
+		//Capability item handlers
+		//Null means no cache, check independently
+		if(outputHandlerCache == null){
+			TileEntity outputTE = world.getTileEntity(outputPos);
+			LazyOptional<IItemHandler> outputCap;
+			if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
+				handler = outputCap.orElseThrow(NullPointerException::new);
+			}
+		}else if(outputHandlerCache.isPresent()){
+			handler = outputHandlerCache.orElseThrow(NullPointerException::new);
+		}
+
+		//ISidedInventoryProvider
+		if(handler == null){
+			BlockState outputState = world.getBlockState(outputPos);
+			if(outputState.getBlock() instanceof ISidedInventoryProvider){
+				ISidedInventory inv = ((ISidedInventoryProvider) outputState.getBlock()).createInventory(outputState, world, outputPos);
+				handler = new InvWrapper(inv);
+			}
+		}
+
+		if(handler != null){
+			for(int i = 0; i < handler.getSlots(); i++){
+				ItemStack outStack = handler.insertItem(i, stack, false);
 				if(outStack.getCount() != stack.getCount()){
 					return outStack;
 				}
@@ -75,7 +105,8 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 			return stack;
 		}
 
-		ItemEntity ent = new ItemEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, stack);
+		//Drop the item in the world
+		ItemEntity ent = new ItemEntity(world, outputPos.getX() + 0.5D, outputPos.getY() + 0.5D, outputPos.getZ() + 0.5D, stack);
 		ent.setMotion(Vector3d.ZERO);
 		world.addEntity(ent);
 		return ItemStack.EMPTY;

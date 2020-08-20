@@ -9,6 +9,8 @@ import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ISidedInventoryProvider;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
@@ -17,10 +19,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
@@ -51,7 +55,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	private Direction.Axis getAxis(){
 		if(axisCache == null){
-			BlockState state = world.getBlockState(pos);
+			BlockState state = getBlockState();
 			if(state.getBlock() == ESBlocks.hopperFilter){
 				axisCache = state.get(ESProperties.AXIS);
 			}else{
@@ -61,12 +65,12 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		return axisCache;
 	}
 
-	public void clearCache(){
+	@Override
+	public void updateContainingBlockInfo(){
+		super.updateContainingBlockInfo();
 		axisCache = null;
-		if(passedHandler != null){
-			passedHandler.invalidate();
-			passedHandler = null;
-		}
+		passedHandlerNeg.invalidate();
+		passedHandlerPos.invalidate();
 	}
 
 	@Override
@@ -92,30 +96,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		filter = ItemStack.read(nbt);
 	}
 
-	private LazyOptional<IItemHandler> passedHandler = null;
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side.getAxis() == getAxis()){
-			if(passedHandler == null){
-				TileEntity te = world.getTileEntity(pos.offset(side.getOpposite()));
-				LazyOptional<IItemHandler> src;
-				if(te != null && (src = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)).isPresent()){
-					passedHandler = LazyOptional.of(() -> new ProxyItemHandler(src));
-					src.addListener((handler) -> {if(passedHandler != null) passedHandler.invalidate(); passedHandler = null;});
-				}else{
-					return LazyOptional.empty();
-				}
-			}
-
-			return (LazyOptional<T>) passedHandler;
-		}
-
-		return super.getCapability(cap, side);
-	}
-
-	private static boolean matchFilter(ItemStack query, ItemStack filt){
+	public static boolean matchFilter(ItemStack query, ItemStack filt){
 		if(filt.isEmpty()){
 			return false;
 		}
@@ -135,78 +116,82 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		return query.getItem() == filt.getItem();
 	}
 
-	private static class BlankHandler implements IItemHandler{
+	private LazyOptional<IItemHandler> passedHandlerPos = null;
+	private LazyOptional<IItemHandler> passedHandlerNeg = null;
 
-		@Override
-		public int getSlots(){
-			return 0;
+	private void updatePassedOptionals(){
+		if(passedHandlerPos == null || !passedHandlerPos.isPresent() && passedHandlerNeg == null || !passedHandlerNeg.isPresent()){
+			passedHandlerNeg = LazyOptional.of(() -> new ProxyItemHandler(Direction.getFacingFromAxis(Direction.AxisDirection.NEGATIVE, getAxis())));
+			passedHandlerPos = LazyOptional.of(() -> new ProxyItemHandler(Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, getAxis())));
+		}
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
+		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side.getAxis() == getAxis()){
+			updatePassedOptionals();
+			return (LazyOptional<T>) (side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? passedHandlerPos : passedHandlerNeg);
 		}
 
-		@Nonnull
-		@Override
-		public ItemStack getStackInSlot(int slot){
-			return ItemStack.EMPTY;
-		}
-
-		@Nonnull
-		@Override
-		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
-			return stack;
-		}
-
-		@Nonnull
-		@Override
-		public ItemStack extractItem(int slot, int amount, boolean simulate){
-			return ItemStack.EMPTY;
-		}
-
-		@Override
-		public int getSlotLimit(int slot){
-			return 0;
-		}
-
-		@Override
-		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
-			return false;
-		}
+		return super.getCapability(cap, side);
 	}
 
 	private class ProxyItemHandler implements IItemHandler{
 
-		private final LazyOptional<IItemHandler> src;
+		private final Direction side;
+		private LazyOptional<IItemHandler> src = LazyOptional.empty();
 
-		private ProxyItemHandler(LazyOptional<IItemHandler> src){
-			this.src = src;
+		private ProxyItemHandler(Direction side){
+			this.side = side;
 		}
 
+		@Nullable
 		private IItemHandler getHandler(){
 			if(src.isPresent()){
 				return src.orElseThrow(NullPointerException::new);
 			}else{
-				if(passedHandler != null){
-					passedHandler.invalidate();
+				BlockPos checkPos = pos.offset(side.getOpposite());
+				TileEntity checkTE = world.getTileEntity(checkPos);
+
+				if(checkTE != null){
+					src = checkTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+					if(src.isPresent()){
+						return src.orElseThrow(NullPointerException::new);
+					}
 				}
-				passedHandler = null;
-				return new BlankHandler();
+
+				BlockState checkState = world.getBlockState(checkPos);
+
+				if(checkState.getBlock() instanceof ISidedInventoryProvider){
+					//As the contract for ISidedInventoryProvider is poorly defined (there being only 1 vanilla example), we can't safely cache the result
+					ISidedInventory inv = ((ISidedInventoryProvider) checkState.getBlock()).createInventory(checkState, world, checkPos);
+					return new InvWrapper(inv);
+				}
+
+				return null;
 			}
 		}
 
 		@Override
 		public int getSlots(){
-			return getHandler().getSlots();
+			IItemHandler handler = getHandler();
+			return handler == null ? 0 : handler.getSlots();
 		}
 
 		@Nonnull
 		@Override
 		public ItemStack getStackInSlot(int slot){
-			return getHandler().getStackInSlot(slot);
+			IItemHandler handler = getHandler();
+			return handler == null ? ItemStack.EMPTY : handler.getStackInSlot(slot);
 		}
 
 		@Nonnull
 		@Override
 		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
-			if(matchFilter(stack, filter)){
-				return getHandler().insertItem(slot, stack, simulate);
+			IItemHandler handler = getHandler();
+			if(handler != null && matchFilter(stack, filter)){
+				return handler.insertItem(slot, stack, simulate);
 			}
 			return stack;
 		}
@@ -214,20 +199,23 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 		@Nonnull
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate){
-			if(matchFilter(getStackInSlot(slot), filter)){
-				return getHandler().extractItem(slot, amount, simulate);
+			IItemHandler handler = getHandler();
+			if(handler != null && matchFilter(getStackInSlot(slot), filter)){
+				return handler.extractItem(slot, amount, simulate);
 			}
 			return ItemStack.EMPTY;
 		}
 
 		@Override
 		public int getSlotLimit(int slot){
-			return getHandler().getSlotLimit(slot);
+			IItemHandler handler = getHandler();
+			return handler == null ? 0 : handler.getSlotLimit(slot);
 		}
 
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
-			return matchFilter(stack, filter) && getHandler().isItemValid(slot, stack);
+			IItemHandler handler = getHandler();
+			return handler != null && matchFilter(stack, filter) && handler.isItemValid(slot, stack);
 		}
 	}
 }

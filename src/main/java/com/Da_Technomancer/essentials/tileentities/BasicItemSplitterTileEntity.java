@@ -56,7 +56,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 		Direction dir = getFacing();
 		for(int i = 0; i < 2; i++){
-			inventory[i] = AbstractShifterTileEntity.ejectItem(world, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i]);
+			inventory[i] = AbstractShifterTileEntity.ejectItem(world, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i], null);
 		}
 		markDirty();
 	}
@@ -90,7 +90,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 		super.write(nbt);
 		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
-		nbt.putInt("transfered", transfered);
+		nbt.putInt("transfered", transferred);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
 				CompoundNBT inner = new CompoundNBT();
@@ -112,7 +112,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 			mode = 3 + 3 * nbt.getInt("mode");
 		}
 
-		transfered = nbt.getInt("transfered");
+		transferred = nbt.getInt("transfered");
 		for(int i = 0; i < 2; i++){
 			inventory[i] = ItemStack.read(nbt.getCompound("inv_" + i));
 		}
@@ -123,7 +123,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 		return 12;
 	}
 
-	private int transfered = 0;
+	private int transferred = 0;
 
 	private class InHandler implements IItemHandler{
 
@@ -156,8 +156,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 			//Tracking of individual remainder with regards to history
 			int remainder = accepted % denominator;
-			if(transfered < numerator){
-				goDown += Math.min(numerator - transfered + Math.min((remainder + transfered) % denominator, numerator), remainder);
+			if(transferred < numerator){
+				goDown += Math.min(numerator - transferred + Math.min((remainder + transferred) % denominator, numerator), remainder);
 			}
 
 			int goUp = accepted - goDown;
@@ -176,8 +176,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 				}else{
 					inventory[1].grow(goUp);
 				}
-				transfered += accepted;
-				transfered %= denominator;
+				transferred += accepted;
+				transferred %= denominator;
 			}
 
 			if(accepted > 0){
