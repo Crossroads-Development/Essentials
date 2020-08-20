@@ -69,8 +69,10 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	public void updateContainingBlockInfo(){
 		super.updateContainingBlockInfo();
 		axisCache = null;
-		passedHandlerNeg.invalidate();
-		passedHandlerPos.invalidate();
+		if(passedHandlerNeg != null){
+			passedHandlerNeg.invalidate();
+			passedHandlerPos.invalidate();
+		}
 	}
 
 	@Override
@@ -129,8 +131,10 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	@Override
 	public void remove(){
 		super.remove();
-		passedHandlerNeg.invalidate();
-		passedHandlerPos.invalidate();
+		if(passedHandlerNeg != null){
+			passedHandlerNeg.invalidate();
+			passedHandlerPos.invalidate();
+		}
 	}
 
 	@Override
