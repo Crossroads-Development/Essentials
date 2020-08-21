@@ -1,4 +1,10 @@
 {
+	"conditions": [
+		{
+			"type": "forge:mod_loaded",
+			"modid": "patchouli"
+		}
+	],
 	"parent": "minecraft:recipes/root",
 	"rewards": {
 		"recipes": [

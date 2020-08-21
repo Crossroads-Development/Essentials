@@ -1,14 +1,14 @@
 {
-  "result": {
-    "item": "essentials:multi_piston_sticky"
-  },
-  "ingredients": [
-    {
-      "item": "essentials:multi_piston"
-    },
-    {
-      "item": "minecraft:slime_ball"
-    }
-  ],
-  "type": "minecraft:crafting_shapeless"
+	"type": "minecraft:crafting_shapeless",
+	"result": {
+		"item": "essentials:multi_piston_sticky"
+	},
+	"ingredients": [
+		{
+			"item": "essentials:multi_piston"
+		},
+		{
+			"item": "minecraft:slime_ball"
+		}
+	]
 }

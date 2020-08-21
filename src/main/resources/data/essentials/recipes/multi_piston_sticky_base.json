@@ -1,22 +1,72 @@
 {
-	"result": {
-		"item": "essentials:multi_piston_sticky"
-	},
-	"pattern": [
-		"***",
-		"$#$",
-		"$$$"
-	],
-	"type": "minecraft:crafting_shaped",
-	"key": {
-		"#": {
-			"item": "minecraft:sticky_piston"
+	"type": "forge:conditional",
+	"recipes": [
+		{
+			"conditions": [
+				{
+					"type": "forge:not",
+					"value": {
+						"type": "forge:tag_empty",
+						"tag": "forge:ingots/tin"
+					}
+				},
+				{
+					"type": "forge:not",
+					"value": {
+						"type": "forge:tag_empty",
+						"tag": "forge:ingots/bronze"
+					}
+				}
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shaped",
+				"result": {
+					"item": "essentials:multi_piston_sticky"
+				},
+				"pattern": [
+					"***",
+					"$#$",
+					"$$$"
+				],
+				"key": {
+					"#": {
+						"item": "minecraft:sticky_piston"
+					},
+					"$": {
+						"tag": "forge:ingots/bronze"
+					},
+					"*": {
+						"tag": "forge:ingots/tin"
+					}
+				}
+			}
 		},
-		"$": {
-			"tag": "forge:ingots/iron"
-		},
-		"*": {
-			"tag": "forge:ingots/gold"
+		{
+			"conditions": [
+
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shaped",
+				"result": {
+					"item": "essentials:multi_piston_sticky"
+				},
+				"pattern": [
+					"***",
+					"$#$",
+					"$$$"
+				],
+				"key": {
+					"#": {
+						"item": "minecraft:sticky_piston"
+					},
+					"$": {
+						"tag": "forge:ingots/iron"
+					},
+					"*": {
+						"tag": "forge:ingots/gold"
+					}
+				}
+			}
 		}
-	}
+	]
 }

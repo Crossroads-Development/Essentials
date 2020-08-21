@@ -1,18 +1,31 @@
 {
-	"type": "minecraft:crafting_shapeless",
-	"result": {
-		"item": "patchouli:guide_book",
-		"nbt": {
-			"patchouli:book": "essentials:manual"
-		},
-		"count": 1
-	},
-	"ingredients": [
+	"type": "forge:conditional",
+	"recipes": [
 		{
-			"item": "minecraft:book"
-		},
-		{
-			"tag": "forge:nuggets/iron"
+			"conditions": [
+				{
+					"type": "forge:mod_loaded",
+					"modid": "patchouli"
+				}
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shapeless",
+				"result": {
+					"item": "patchouli:guide_book",
+					"nbt": {
+						"patchouli:book": "essentials:manual"
+					},
+					"count": 1
+				},
+				"ingredients": [
+					{
+						"item": "minecraft:book"
+					},
+					{
+						"tag": "forge:nuggets/iron"
+					}
+				]
+			}
 		}
 	]
 }
