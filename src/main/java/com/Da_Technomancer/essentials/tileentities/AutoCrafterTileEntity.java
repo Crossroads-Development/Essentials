@@ -60,7 +60,11 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	public ResourceLocation recipe;
 
 	public AutoCrafterTileEntity(){
-		super(TYPE);
+		this(TYPE);
+	}
+
+	protected AutoCrafterTileEntity(TileEntityType<? extends AutoCrafterTileEntity> type){
+		super(type);
 		Arrays.fill(inv, ItemStack.EMPTY);
 	}
 

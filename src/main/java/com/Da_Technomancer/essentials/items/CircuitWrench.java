@@ -122,62 +122,71 @@ public class CircuitWrench extends Item{
 		BlockState state = context.getWorld().getBlockState(context.getPos());
 		BlockState toPlace = MODES.get(context.getItem().getOrCreateTag().getInt(NBT_KEY) % MODES.size()).getDefaultState();
 
-		if(!context.getPlayer().isCrouching() && state.getBlock() instanceof AbstractTile){
-			AbstractTile worldTile = (AbstractTile) state.getBlock();
-			AbstractTile placeTile = (AbstractTile) toPlace.getBlock();
+		if(state.getBlock() instanceof AbstractTile){
+			if(!context.getPlayer().isSneaking()){
+				//Change circuit type
+				AbstractTile worldTile = (AbstractTile) state.getBlock();
+				AbstractTile placeTile = (AbstractTile) toPlace.getBlock();
 
-			if(worldTile == placeTile){
-				return ActionResultType.SUCCESS;
-			}
+				if(worldTile == placeTile){
+					return ActionResultType.SUCCESS;
+				}
 
-			boolean allowed = false;
-			if(context.getPlayer().isCreative()){
-				//Creative mode is free
-				allowed = true;
-			}else if(placeTile.usesQuartz()){
-				if(worldTile.usesQuartz()){
-					//Circuit->circuit is free
+				boolean allowed = false;
+				if(context.getPlayer().isCreative()){
+					//Creative mode is free
 					allowed = true;
-				}else{
-					//Have to pay for tile->circuit
-					List<ItemStack> playerInv = context.getPlayer().inventory.mainInventory;
-					for(ItemStack stack : playerInv){
-						if(COMPONENT_TAG.contains(stack.getItem())){
-							if(!context.getWorld().isRemote){
-								stack.shrink(1);
+				}else if(placeTile.usesQuartz()){
+					if(worldTile.usesQuartz()){
+						//Circuit->circuit is free
+						allowed = true;
+					}else{
+						//Have to pay for tile->circuit
+						List<ItemStack> playerInv = context.getPlayer().inventory.mainInventory;
+						for(ItemStack stack : playerInv){
+							if(COMPONENT_TAG.contains(stack.getItem())){
+								if(!context.getWorld().isRemote){
+									stack.shrink(1);
+								}
+								allowed = true;
+								break;
 							}
-							allowed = true;
-							break;
+						}
+					}
+				}else{
+					//Non-circuits are free
+					allowed = true;
+
+					if(worldTile.usesQuartz()){
+						//If we downgrade from a circuit to a non-circuit tile (like wire or junction), return a circuit component
+						ItemStack given = new ItemStack(COMPONENT_TAG.getRandomElement(context.getWorld().rand), 1);
+						if(!given.isEmpty()){
+							context.getPlayer().addItemStackToInventory(given);
 						}
 					}
 				}
-			}else{
-				//Non-circuits are free
-				allowed = true;
 
-				if(worldTile.usesQuartz()){
-					//If we downgrade from a circuit to a non-circuit tile (like wire or junction), return a circuit component
-					ItemStack given = new ItemStack(COMPONENT_TAG.getRandomElement(context.getWorld().rand), 1);
-					if(!given.isEmpty()){
-						context.getPlayer().addItemStackToInventory(given);
+				if(allowed){
+					if(toPlace.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
+						if(state.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
+							toPlace = toPlace.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING));
+						}else{
+							toPlace = toPlace.with(ESProperties.HORIZ_FACING, context.getPlayer().getAdjustedHorizontalFacing());
+						}
 					}
+					context.getWorld().setBlockState(context.getPos(), toPlace);
+					return ActionResultType.SUCCESS;
+				}else{
+					//Print a message saying quartz is needed
+					context.getPlayer().sendStatusMessage(new TranslationTextComponent("tt.essentials.circuit_wrench.quartz"), true);
+					return ActionResultType.FAIL;
 				}
-			}
-
-			if(allowed){
-				if(toPlace.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
-					if(state.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
-						toPlace = toPlace.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING));
-					}else{
-						toPlace = toPlace.with(ESProperties.HORIZ_FACING, context.getPlayer().getAdjustedHorizontalFacing());
-					}
-				}
-				context.getWorld().setBlockState(context.getPos(), toPlace);
-				return ActionResultType.SUCCESS;
 			}else{
-				//Print a message saying quartz is needed
-				context.getPlayer().sendStatusMessage(new TranslationTextComponent("tt.essentials.circuit_wrench.quartz"), true);
-				return ActionResultType.FAIL;
+				//Rotate circuit
+				if(state.func_235901_b_(ESProperties.HORIZ_FACING)){
+					context.getWorld().setBlockState(context.getPos(), state.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING).rotateY()));
+					return ActionResultType.SUCCESS;
+				}
 			}
 		}
 

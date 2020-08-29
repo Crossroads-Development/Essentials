@@ -43,11 +43,19 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	private final PlayerInventory playerInv;
 
 	public AutoCrafterContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
-		this(id, playerInventory, new Inventory(19), data.readString(), data.readBlockPos());
+		this(TYPE, id, playerInventory, data);
+	}
+
+	protected AutoCrafterContainer(ContainerType<? extends AutoCrafterContainer> type, int id, PlayerInventory playerInventory, PacketBuffer data){
+		this(type, id, playerInventory, new Inventory(19), data.readString(), data.readBlockPos());
 	}
 
 	public AutoCrafterContainer(int id, PlayerInventory playerInventory, IInventory inv, String recipeStr, BlockPos pos){
-		super(TYPE, id);
+		this(TYPE, id, playerInventory, inv, recipeStr, pos);
+	}
+
+	protected AutoCrafterContainer(ContainerType<? extends AutoCrafterContainer> type, int id, PlayerInventory playerInventory, IInventory inv, String recipeStr, BlockPos pos){
+		super(type, id);
 		playerInv = playerInventory;
 		TileEntity getTe = playerInventory.player.world.getTileEntity(pos);
 		if(getTe instanceof AutoCrafterTileEntity){

@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -27,11 +26,14 @@ import java.util.List;
 public class AutoCrafter extends ContainerBlock{
 
 	protected AutoCrafter(){
-		super(Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL));
-		String name = "auto_crafter";
-		setRegistryName(name);
+		this("auto_crafter");
 		ESBlocks.toRegister.add(this);
 		ESBlocks.blockAddQue(this);
+	}
+
+	protected AutoCrafter(String name){
+		super(Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL));
+		setRegistryName(name);
 	}
 
 	@Nullable
