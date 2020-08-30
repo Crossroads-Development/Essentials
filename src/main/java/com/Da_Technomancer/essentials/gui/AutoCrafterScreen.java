@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
+import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -125,11 +126,15 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		recipeBook.tick();
 	}
 
+	protected ResourceLocation getBackgroundTexture(){
+		return GUI_TEXTURE;
+	}
+
 	//MCP note: render screen
 	@Override
 	protected void func_230450_a_(MatrixStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
+		minecraft.getTextureManager().bindTexture(getBackgroundTexture());
 		//draw background
 		blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
 
@@ -139,10 +144,11 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		}
 
 		ItemStack[] inv = new ItemStack[19];
-		for(int i = 10; i < 19; i++){
+		//We start at 10 because the previous slots are ingredient storage slots not used for this
+		for(int i = 10; i < inv.length; i++){
 			inv[i] = container.getSlot(i).getStack();
 		}
-		IRecipe<CraftingInventory> iRecipe = container.te.findRecipe(inv);
+		IRecipe<CraftingInventory> iRecipe = container.te.findRecipe(AutoCrafterTileEntity.prepareCraftingInv(inv), container);
 
 		if(iRecipe != null){
 			RenderSystem.enableRescaleNormal();

@@ -48,13 +48,13 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	 * Inventory. Slots 0-8 are inputs, Slot 9 is output, slots 10-18 are recipe inputs
 	 * Recipe input slots are not accessible by automation, and contain "ghost" items.
 	 */
-	private final ItemStack[] inv = new ItemStack[19];
-	private final Inventory iInv = new Inventory(inv, this);
-	private boolean redstone = false;
+	protected final ItemStack[] inv = new ItemStack[invSize()];
+	protected final Inventory iInv = new Inventory(inv, this);
+	protected boolean redstone = false;
 
 
 	@Nullable
-	private RecipeManager recipeManager = null;
+	protected RecipeManager recipeManager = null;
 
 	@Nullable
 	public ResourceLocation recipe;
@@ -66,6 +66,10 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	protected AutoCrafterTileEntity(TileEntityType<? extends AutoCrafterTileEntity> type){
 		super(type);
 		Arrays.fill(inv, ItemStack.EMPTY);
+	}
+
+	protected int invSize(){
+		return 19;
 	}
 
 	/**
@@ -84,67 +88,47 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		return recipeManager;
 	}
 
-	/**
-	 * Checks if the passed recipe is valid, and if so returns it.
-	 * @param rec The recipe to validate
-	 * @param manager A RecipeManager instance
-	 * @return The recipe if it is valid, or null otherwise
-	 */
 	@Nullable
-	public static IRecipe<CraftingInventory> validateRecipe(ResourceLocation rec, RecipeManager manager){
-		if(rec == null){
-			return null;
-		}
-		return manager.getRecipe(rec).map(AutoCrafterTileEntity::validateRecipe).orElse(null);
+	public static IRecipe<?> lookupRecipe(RecipeManager manager, ResourceLocation recipe){
+		return recipe == null ? null : manager.getRecipe(recipe).orElse(null);
 	}
 
 	/**
-	 * Gets the currently selected recipe, or null otherwise
-	 * @param inventory The items to base the recipe off of. Only indices [10, 18] are used
-	 * @return The current recipe if applicable, or null otherwise
+	 * Makes a crafting inventory configured with the passed items
+	 * @param inv A size 19 or more array, uses indices [10, 19]
+	 * @return A crafting inventory
 	 */
-	@Nullable
-	public IRecipe<CraftingInventory> findRecipe(ItemStack[] inventory){
-		IRecipe<CraftingInventory> iRecipe;
-
-		if(recipe == null){
-			//No recipe has been directly set via recipe book/JEI. Pick a recipe based on manually configured inputs, if applicable
-
-			//Create a fake inventory with the manually configured inputs for finding a matching recipe
-			CraftingInventory fakeInv = new CraftingInventory(new Container(null, 0){
-				@Override
-				public boolean canInteractWith(PlayerEntity playerIn){
-					return false;
-				}
-			}, 3, 3);
-			for(int i = 0; i < 9; i++){
-				fakeInv.setInventorySlotContents(i, inventory[i + 10]);
+	public static CraftingInventory prepareCraftingInv(ItemStack[] inv){
+		CraftingInventory craftInv = new CraftingInventory(new Container(null, 0){
+			@Override
+			public boolean canInteractWith(PlayerEntity playerIn){
+				return false;
 			}
-			iRecipe = findRecipe(fakeInv);
-		}else{
-			//Recipe set via recipe book/JEI
-			iRecipe = validateRecipe(recipe, getRecipeManager());
+		}, 3, 3);
+		for(int i = 0; i < 9; i++){
+			craftInv.setInventorySlotContents(i, inv[i + 10]);
 		}
-		return iRecipe;
+		return craftInv;
 	}
 
 	/**
 	 * Gets the currently selected recipe, or null otherwise
 	 * @param fakeInv A fake crafting inventory to find a match from
+	 * @param container The calling container, if called via UI
 	 * @return The current recipe if applicable, or null otherwise
 	 */
 	@Nullable
-	private IRecipe<CraftingInventory> findRecipe(CraftingInventory fakeInv){
+	public IRecipe<CraftingInventory> findRecipe(CraftingInventory fakeInv, @Nullable AutoCrafterContainer container){
 		IRecipe<CraftingInventory> iRecipe;
 
 		if(recipe == null){
 			//No recipe has been directly set via recipe book/JEI. Pick a recipe based on manually configured inputs, if applicable
 			//Use the recipe manager to find a recipe matching the inputs
 			Optional<ICraftingRecipe> recipeOptional = getRecipeManager().getRecipe(IRecipeType.CRAFTING, fakeInv, world);
-			iRecipe = validateRecipe(recipeOptional.orElse(null));
+			iRecipe = validateRecipe(recipeOptional.orElse(null), container);
 		}else{
 			//Recipe set via recipe book/JEI
-			iRecipe = validateRecipe(recipe, getRecipeManager());
+			iRecipe = validateRecipe(lookupRecipe(getRecipeManager(), recipe), container);
 		}
 		return iRecipe;
 	}
@@ -152,11 +136,12 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	/**
 	 * Checks if the passed recipe is valid, and if so returns it.
 	 * @param rec The recipe to validate
+	 * @param container The calling container, if called via UI
 	 * @return The recipe if it is valid, or null otherwise
 	 */
 	@Nullable
 	@SuppressWarnings("unchecked")
-	private static IRecipe<CraftingInventory> validateRecipe(IRecipe<?> rec){
+	public IRecipe<CraftingInventory> validateRecipe(IRecipe<?> rec, @Nullable AutoCrafterContainer container){
 		if(rec == null || rec.getType() != IRecipeType.CRAFTING || !rec.canFit(3, 3)){
 			return null;
 		}
@@ -169,19 +154,10 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			markDirty();
 			if(redstone && world != null && !world.isRemote){
 				//Create a fake inventory with the manually configured inputs for finding a matching recipe
-				CraftingInventory fakeInv = new CraftingInventory(new Container(null, 0){
-					@Override
-					public boolean canInteractWith(PlayerEntity playerIn){
-						return false;
-					}
-				}, 3, 3);
-
-				for(int i = 0; i < 9; i++){
-					fakeInv.setInventorySlotContents(i, inv[i + 10]);
-				}
+				CraftingInventory fakeInv = prepareCraftingInv(inv);
 
 				//Re-use the newly created fakeInv to save having to re-create it
-				IRecipe<CraftingInventory> iRecipe = findRecipe(fakeInv);
+				IRecipe<CraftingInventory> iRecipe = findRecipe(fakeInv, null);
 
 				if(iRecipe != null){
 					ItemStack output;
@@ -286,7 +262,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			recipe = new ResourceLocation(recPath);
 		}
 
-		for(int i = 0; i < 19; ++i){
+		for(int i = 0; i < inv.length; ++i){
 			if(nbt.contains("slot_" + i)){
 				inv[i] = ItemStack.read(nbt.getCompound("slot_" + i));
 			}
@@ -299,7 +275,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 
-		for(int i = 0; i < 19; ++i){
+		for(int i = 0; i < inv.length; ++i){
 			if(!inv[i].isEmpty()){
 				nbt.put("slot_" + i, inv[i].write(new CompoundNBT()));
 			}
@@ -320,6 +296,40 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			nbt.putString("recipe", recipe.toString());
 		}
 		return nbt;
+	}
+
+	public int getLegalSlots(Item item, IInventory inv, @Nullable AutoCrafterContainer container){
+		//The maximum number of slots an item type can use is equal to the number of items in the recipe input
+		int count = 0;
+		if(recipe == null){
+			//If recipe was set via ghost items, use the manual config
+			for(int i = 10; i < 19; i++){//10-18 are the ghost recipe input
+				if(inv.getStackInSlot(i).getItem() == item){
+					count++;
+				}
+			}
+		}else{
+			IRecipe<CraftingInventory> rec = validateRecipe(lookupRecipe(getRecipeManager(), recipe), container);
+			if(rec != null){
+				ItemStack testStack = new ItemStack(item, 1);
+				for(Ingredient ingr : rec.getIngredients()){
+					if(ingr.test(testStack)){
+						count++;
+					}
+				}
+			}
+		}
+		return count;
+	}
+
+	public int getUsedSlots(Item item, IInventory inv){
+		int count = 0;
+		for(int i = 0; i < 9; i++){
+			if(inv.getStackInSlot(i).getItem() == item){
+				count++;
+			}
+		}
+		return count;
 	}
 
 	private final LazyOptional<IItemHandler> hanOptional = LazyOptional.of(InventoryHandler::new);
@@ -350,7 +360,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		}
 
 		if(!world.isRemote){
-			setRecipe(getRecipeManager().getRecipe(recipe).orElse(null));
+			setRecipe(lookupRecipe(getRecipeManager(), recipe));
 		}
 		markDirty();
 	}
@@ -381,41 +391,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
-		return new AutoCrafterContainer(id, playerInventory, iInv, recipe == null ? "" : recipe.toString(), pos);
-	}
-
-	public int getLegalSlots(Item item, IInventory inv){
-		//The maximum number of slots an item type can use is equal to the number of items in the recipe input
-		int count = 0;
-		if(recipe == null){
-			//If recipe was set via ghost items, use the manual config
-			for(int i = 10; i < 19; i++){//10-18 are the ghost recipe input
-				if(inv.getStackInSlot(i).getItem() == item){
-					count++;
-				}
-			}
-		}else{
-			IRecipe<CraftingInventory> rec = validateRecipe(recipe, getRecipeManager());
-			if(rec != null){
-				ItemStack testStack = new ItemStack(item, 1);
-				for(Ingredient ingr : rec.getIngredients()){
-					if(ingr.test(testStack)){
-						count++;
-					}
-				}
-			}
-		}
-		return count;
-	}
-
-	public int getUsedSlots(Item item, IInventory inv){
-		int count = 0;
-		for(int i = 0; i < 9; i++){
-			if(inv.getStackInSlot(i).getItem() == item){
-				count++;
-			}
-		}
-		return count;
+		return new AutoCrafterContainer(id, playerInventory, iInv, pos);
 	}
 
 	private class InventoryHandler implements IItemHandler{
@@ -438,7 +414,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 			//Only allow inserting items into a slot if there is no other slot with the same item or that item type is already in the slot
 			Item item = stack.getItem();
-			if(inv[slot].isEmpty() && getLegalSlots(item, iInv) <= getUsedSlots(item, iInv)){
+			if(inv[slot].isEmpty() && getLegalSlots(item, iInv, null) <= getUsedSlots(item, iInv)){
 				return stack;
 			}
 			if(!BlockUtil.sameItem(stack, inv[slot]) && !inv[slot].isEmpty()){
@@ -478,7 +454,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			//Only allow removing from an input slot if it contains an item above the limit for that type
 			if(slot < 9 && slot >= 0 && !inv[slot].isEmpty()){
 				Item item = inv[slot].getItem();
-				if(getUsedSlots(item, iInv) > getLegalSlots(item, iInv)){
+				if(getUsedSlots(item, iInv) > getLegalSlots(item, iInv, null)){
 					int change = Math.min(inv[slot].getCount(), amount);
 					ItemStack out = inv[slot].copy();
 					out.setCount(change);

@@ -47,7 +47,7 @@ public class AutoCrafter extends ContainerBlock{
 		TileEntity te;
 		if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof AutoCrafterTileEntity){
 			AutoCrafterTileEntity acTE = (AutoCrafterTileEntity) te;
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, acTE, buf -> {buf.writeString(acTE.recipe == null ? "" : acTE.recipe.toString()); buf.writeBlockPos(pos);});
+			NetworkHooks.openGui((ServerPlayerEntity) playerIn, acTE, pos);
 		}
 
 		return ActionResultType.SUCCESS;

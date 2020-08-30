@@ -47,14 +47,14 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	protected AutoCrafterContainer(ContainerType<? extends AutoCrafterContainer> type, int id, PlayerInventory playerInventory, PacketBuffer data){
-		this(type, id, playerInventory, new Inventory(19), data.readString(), data.readBlockPos());
+		this(type, id, playerInventory, new Inventory(19), data.readBlockPos());
 	}
 
-	public AutoCrafterContainer(int id, PlayerInventory playerInventory, IInventory inv, String recipeStr, BlockPos pos){
-		this(TYPE, id, playerInventory, inv, recipeStr, pos);
+	public AutoCrafterContainer(int id, PlayerInventory playerInventory, IInventory inv, BlockPos pos){
+		this(TYPE, id, playerInventory, inv, pos);
 	}
 
-	protected AutoCrafterContainer(ContainerType<? extends AutoCrafterContainer> type, int id, PlayerInventory playerInventory, IInventory inv, String recipeStr, BlockPos pos){
+	protected AutoCrafterContainer(ContainerType<? extends AutoCrafterContainer> type, int id, PlayerInventory playerInventory, IInventory inv, BlockPos pos){
 		super(type, id);
 		playerInv = playerInventory;
 		TileEntity getTe = playerInventory.player.world.getTileEntity(pos);
@@ -75,7 +75,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 					if(te == null){
 						return false;
 					}
-					int freeSlots = te.getLegalSlots(stack.getItem(), inv) - te.getUsedSlots(stack.getItem(), inv);
+					int freeSlots = te.getLegalSlots(stack.getItem(), inv, AutoCrafterContainer.this) - te.getUsedSlots(stack.getItem(), inv);
 					return freeSlots > 0 || freeSlots == 0 && BlockUtil.sameItem(getStack(), stack);
 				}
 			});
@@ -122,7 +122,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 			previous = current.copy();
 
 			//fromSlot 0-9 means TE -> Player, else Player -> TE input slots
-			if(fromSlot < 10 ? !mergeItemStack(current, 10, 46, true) : !mergeItemStack(current, 0, 10, false)){
+			if(fromSlot < 10 ? !mergeItemStack(current, 10, 46, true) : !mergeItemStack(current, 0, 9, false)){
 				return ItemStack.EMPTY;
 			}
 
@@ -155,7 +155,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 			if(playerInv.getItemStack().isEmpty()){
 				//Click on a recipe slot with an empty cursor
 
-				IRecipe<CraftingInventory> rec = AutoCrafterTileEntity.validateRecipe(te.recipe, te.getRecipeManager());
+				IRecipe<CraftingInventory> rec = te.validateRecipe(AutoCrafterTileEntity.lookupRecipe(te.getRecipeManager(), te.recipe), this);
 				if(rec == null){
 					inv.removeStackFromSlot(slotId);
 				}else{
