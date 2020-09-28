@@ -41,7 +41,7 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 		IVertexBuilder builder = buffer.getBuffer(LINK_TYPE);
 
 		for(BlockPos link : te.getLinks()){
-			Vector3d line = Vector3d.func_237491_b_(link);//A ray pointing from this TE to the link; Mapping note: method without 0.5 offset
+			Vector3d line = Vector3d.copy(link);//A ray pointing from this TE to the link
 			Vector3d widthVec = RenderUtil.findRayWidth(tePos, line, 0.3F);
 			Vector3d normal = line.crossProduct(widthVec);
 

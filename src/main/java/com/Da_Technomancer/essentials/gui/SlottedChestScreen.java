@@ -19,7 +19,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 		super(cont, playerInventory, text);
 		ySize = 222;
 		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
-		field_238745_s_ = ySize - 94;//MCP note: player inventory text overlay y position
+		playerInventoryTitleY = ySize - 94;//MCP note: player inventory text overlay y position
 	}
 
 	@Override
@@ -27,7 +27,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		//We add the ability to render a tooltip for locked empty slots
-//		func_230459_a_(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
+//		renderHoveredTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
 		if(minecraft.player.inventory.getItemStack().isEmpty() && hoveredSlot != null){
 			if(hoveredSlot.getHasStack()){
 				renderTooltip(matrix, hoveredSlot.getStack(), mouseX, mouseY);
@@ -40,7 +40,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 
 	//MCP note: render screen
 	@Override
-	protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		RenderSystem.color3f(1, 1, 1);
 		minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);

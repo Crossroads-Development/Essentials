@@ -167,8 +167,8 @@ public class CircuitWrench extends Item{
 				}
 
 				if(allowed){
-					if(toPlace.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
-						if(state.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
+					if(toPlace.hasProperty(ESProperties.HORIZ_FACING)){
+						if(state.hasProperty(ESProperties.HORIZ_FACING)){
 							toPlace = toPlace.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING));
 						}else{
 							toPlace = toPlace.with(ESProperties.HORIZ_FACING, context.getPlayer().getAdjustedHorizontalFacing());
@@ -183,7 +183,7 @@ public class CircuitWrench extends Item{
 				}
 			}else{
 				//Rotate circuit
-				if(state.func_235901_b_(ESProperties.HORIZ_FACING)){
+				if(state.hasProperty(ESProperties.HORIZ_FACING)){
 					context.getWorld().setBlockState(context.getPos(), state.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING).rotateY()));
 					return ActionResultType.SUCCESS;
 				}
@@ -198,7 +198,7 @@ public class CircuitWrench extends Item{
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		int mode = stack.getOrCreateTag().getInt(NBT_KEY) % MODES.size();
-		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").func_230530_a_(style).func_230529_a_(new TranslationTextComponent(MODES.get(mode).getTranslationKey())));//MCP note: setStyle, appendSibling
+		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(MODES.get(mode).getTranslationKey())));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_info"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_change_mode"));
 	}

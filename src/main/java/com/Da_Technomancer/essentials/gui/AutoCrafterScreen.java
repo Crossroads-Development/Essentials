@@ -39,7 +39,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		super(cont, playerInventory, text);
 		ySize = 186;
 		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
-		field_238745_s_ = ySize - 94;//MCP note: player inventory text overlay y position
+		playerInventoryTitleY = ySize - 94;//MCP note: player inventory text overlay y position
 	}
 
 	protected void init() {
@@ -58,21 +58,21 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int p_render_1_, int p_render_2_, float p_render_3_){
-		time += p_render_3_;
+	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+		time += partialTicks;
 		renderBackground(matrix);
 		if(recipeBook.isVisible() && widthTooNarrow){
-			func_230450_a_(matrix, p_render_3_, p_render_1_, p_render_2_);//MCP note: render screen
-			recipeBook.render(matrix, p_render_1_, p_render_2_, p_render_3_);
+			drawGuiContainerBackgroundLayer(matrix, partialTicks, mouseX, mouseY);//MCP note: render screen
+			recipeBook.render(matrix, mouseX, mouseY, partialTicks);
 		}else{
-			recipeBook.render(matrix, p_render_1_, p_render_2_, p_render_3_);
-			super.render(matrix, p_render_1_, p_render_2_, p_render_3_);
-			recipeBook.func_230477_a_(matrix, guiLeft, guiTop, true, p_render_3_);//MCP note: renderGhostRecipe
+			recipeBook.render(matrix, mouseX, mouseY, partialTicks);
+			super.render(matrix, mouseX, mouseY, partialTicks);
+			recipeBook.func_230477_a_(matrix, guiLeft, guiTop, true, partialTicks);//MCP note: renderGhostRecipe
 		}
 
-		func_230459_a_(matrix, p_render_1_, p_render_2_);//MCP note: renderHoveredToolTip
-		recipeBook.func_238924_c_(matrix, guiLeft, guiTop, p_render_1_, p_render_2_);//MCP note: renderToolTip
-		func_212932_b(recipeBook);
+		renderHoveredTooltip(matrix, mouseX, mouseY);
+		recipeBook.func_238924_c_(matrix, guiLeft, guiTop, mouseX, mouseY);//MCP note: renderToolTip
+		setListenerDefault(recipeBook);
 	}
 
 	@Override
@@ -110,9 +110,9 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public void removed(){
+	public void onClose(){
 		recipeBook.removed();
-		super.removed();
+		super.onClose();
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 
 	//MCP note: render screen
 	@Override
-	protected void func_230450_a_(MatrixStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
+	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		minecraft.getTextureManager().bindTexture(getBackgroundTexture());
 		//draw background

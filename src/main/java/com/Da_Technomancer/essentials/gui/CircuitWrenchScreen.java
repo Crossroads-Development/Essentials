@@ -148,14 +148,14 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 
 		EssentialsPackets.channel.sendToServer(new ConfigureWrenchOnServer(index));
 		minecraft.player.closeScreen();
-		playerInventory.player.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").func_230530_a_(style).func_230529_a_(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey())), playerInventory.player.getUniqueID());//MCP note: setStyle, appendSibling
+		playerInventory.player.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey())), playerInventory.player.getUniqueID());//MCP note: setStyle, appendSibling
 
 		return true;
 	}
 
 	//MCP note: render screen
 	@Override
-	protected void func_230450_a_(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		//Search bar
 		minecraft.getTextureManager().bindTexture(SEARCH_BAR_TEXTURE);
@@ -182,7 +182,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 
 	//MCP note: draw tooltip/foreground
 	@Override
-	protected void func_230451_b_(MatrixStack matrix, int p_230451_2_, int p_230451_3_){
+	protected void drawGuiContainerForegroundLayer(MatrixStack matrix, int p_230451_2_, int p_230451_3_){
 		//Don't render text overlays
 	}
 }

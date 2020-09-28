@@ -224,6 +224,6 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.quip").func_230530_a_(ESConfig.TT_QUIP));//MCP note: setStyle
+		tooltip.add(new TranslationTextComponent("tt.essentials.sorting_hopper.quip").setStyle(ESConfig.TT_QUIP));//MCP note: setStyle
 	}
 }

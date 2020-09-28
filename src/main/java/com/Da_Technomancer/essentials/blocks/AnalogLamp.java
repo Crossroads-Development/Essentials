@@ -26,7 +26,7 @@ import java.util.Random;
 public class AnalogLamp extends Block{
 
 	protected AnalogLamp(){
-		super(Properties.create(Material.REDSTONE_LIGHT).setLightLevel(state -> state.get(ESProperties.REDSTONE)).hardnessAndResistance(0.3F).sound(SoundType.GLASS).setPropagatesDownwards(AnalogLamp::propagateFunction));
+		super(Properties.create(Material.REDSTONE_LIGHT).setLightLevel(state -> state.get(ESProperties.REDSTONE)).hardnessAndResistance(0.3F).sound(SoundType.GLASS).setAllowsSpawn(AnalogLamp::propagateFunction));
 		String name = "analog_lamp";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);

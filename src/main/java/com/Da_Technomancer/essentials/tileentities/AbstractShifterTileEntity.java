@@ -37,7 +37,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 	protected Direction getFacing(){
 		if(facing == null){
 			BlockState state = getBlockState();
-			if(!state.func_235901_b_(ESProperties.FACING)){//MCP note: has
+			if(!state.hasProperty(ESProperties.FACING)){//MCP note: has
 				return Direction.DOWN;
 			}
 			facing = state.get(ESProperties.FACING);

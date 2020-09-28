@@ -416,7 +416,7 @@ public class MultiPistonBase extends Block{
 			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
 		}else if(state.getBlockHardness(world, curPos) < 0){
 			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
-		}else if(state.getBlock() instanceof PistonBlock && state.func_235901_b_(PistonBlock.EXTENDED)){//MCP note: has
+		}else if(state.getBlock() instanceof PistonBlock && state.hasProperty(PistonBlock.EXTENDED)){
 			reaction = state.get(PistonBlock.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;//Vanilla pistons report BLOCK even when retracted and movable
 		}
 

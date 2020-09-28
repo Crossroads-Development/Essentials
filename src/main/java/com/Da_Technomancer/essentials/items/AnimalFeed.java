@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.items;
 
-import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.dispenser.IBlockSource;
@@ -30,20 +29,20 @@ public class AnimalFeed extends Item{
 		DispenserBlock.registerDispenseBehavior(this, new Dispense());
 	}
 
-	private class Dispense extends OptionalDispenseBehavior{
+	private static class Dispense extends OptionalDispenseBehavior{
 
 		@Override
 		protected ItemStack dispenseStack(IBlockSource source, ItemStack stack){
 			World world = source.getWorld();
 			if(!world.isRemote()){
-				func_239796_a_(false);//MCP note: setSuccessful
+				setSuccessful(false);
 				BlockPos blockpos = source.getBlockPos().offset(source.getBlockState().get(DispenserBlock.FACING));
 
 				for(AnimalEntity e : world.getEntitiesWithinAABB(AnimalEntity.class, new AxisAlignedBB(blockpos))){
 					if(!stack.isEmpty() && e.getGrowingAge() == 0 && e.canBreed() && (!(e instanceof TameableEntity) || ((TameableEntity) e).isTamed())){
 						e.setInLove(null);
 						stack.shrink(1);
-						func_239796_a_(true);//MCP note: setSuccessful
+						setSuccessful(true);
 					}
 				}
 			}

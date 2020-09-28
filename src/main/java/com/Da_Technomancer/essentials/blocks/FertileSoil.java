@@ -52,7 +52,7 @@ public class FertileSoil extends Block{
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.benefits"));
 		if(category == SeedCategory.HELL_CROP){
-			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").func_230530_a_(ESConfig.TT_QUIP));//MCP note: setStyle
+			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").setStyle(ESConfig.TT_QUIP));//MCP note: setStyle
 		}
 	}
 

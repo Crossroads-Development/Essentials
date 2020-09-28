@@ -65,7 +65,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 	private Direction getFacing(){
 		BlockState s = getBlockState();
-		if(s.func_235901_b_(ESProperties.HORIZ_FACING)){//MCP note: has
+		if(s.hasProperty(ESProperties.HORIZ_FACING)){
 			return s.get(ESProperties.HORIZ_FACING);
 		}
 		remove();
@@ -135,7 +135,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 			int ind = src.getRight().ordinal();
 			if(ind > 2){
-				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + pos.toString() + "; Dim: " + world.func_234923_W_().toString() + "Type: " + getOwner().getRegistryName().toString());//MCP note: get RegistryKey<World>
+				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + pos.toString() + "; Dim: " + world.getDimensionKey().toString() + "Type: " + getOwner().getRegistryName().toString());
 				Essentials.logger.catching(e);
 				//Invalid state- remove this input and skip
 				sources.remove(i);
