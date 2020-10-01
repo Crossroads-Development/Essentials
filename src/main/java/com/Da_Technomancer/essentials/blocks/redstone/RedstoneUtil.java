@@ -28,6 +28,10 @@ public class RedstoneUtil extends BlockUtil{
 	 * Maximum value that circuits should be able to transfer- signal strengths above this should be capped to this value
 	 */
 	public static final float MAX_POWER = 1_000_000_000;
+	/**
+	 * Minimum value that circuits should be able to transfer- signal strengths below this should be capped to this value
+	 */
+	public static final float MIN_POWER = -MAX_POWER;
 
 	public static final int DELAY = 2;
 
@@ -45,15 +49,15 @@ public class RedstoneUtil extends BlockUtil{
 	 * @return The sanitized value
 	 */
 	public static float sanitize(float input){
-		if(input != input){
+		if(Float.isNaN(input)){
 			//NaN check
 			return 0;
 		}
 		if(input >= MAX_POWER){
 			return MAX_POWER;
 		}
-		if(input <= 0){
-			return 0;
+		if(input <= MIN_POWER){
+			return MIN_POWER;
 		}
 		return input;
 	}
@@ -81,8 +85,8 @@ public class RedstoneUtil extends BlockUtil{
 	 * @return Whether the value should be considered "changed"
 	 */
 	public static boolean didChange(float prevVal, float newVal){
-		//If the value changes between zero and nonzero, or if the value changed by more than 0.005%, consider this changed
-		return (newVal == 0 ^ prevVal == 0) || newVal != 0 && Math.abs(newVal - prevVal) / Math.abs(newVal) > 0.00_005;
+		//If the value changes sign/between zero and non-zero, or if the value changed by more than 0.005%, consider this changed
+		return Math.signum(newVal) != Math.signum(prevVal) || newVal != 0 && Math.abs(newVal - prevVal) / Math.abs(newVal) > 0.00_005;
 	}
 
 	/**

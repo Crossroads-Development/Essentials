@@ -139,7 +139,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 			}
 
 			sidesToCheck[ref.getRight().getIndex()] = null;
-			input = Math.max(input, RedstoneUtil.sanitize(handl.getOutput()));
+			input = RedstoneUtil.chooseInput(input, RedstoneUtil.sanitize(handl.getOutput()));
 		}
 
 		//Any input without a circuit input uses vanilla redstone instead

@@ -18,11 +18,15 @@
 		},
 		{
 			"type": "text",
-			"text": "<item>Circuits/$ that are either adjacent or connected with <item>Wire Plate/$ can transfer redstone values other than the vanilla 0-15 integers, including values up to 1 billion and decimals.$(br2)<item>Circuits/$ themselves can connect directly to vanilla redstone, and a <item>Wire Splice Plate/$ can connect <item>Wire Plate/$ with vanilla redstone. Each <item>Circuit/$ other than <item>Wire "
+			"text": "<item>Circuits/$ that are either adjacent or connected with <item>Wire Plate/$ can transfer redstone values other than the vanilla 0-15 integers, including values up to 1 billion, decimals, and negative numbers.$(br2)<item>Circuits/$ themselves can connect directly to vanilla redstone, and a <item>Wire Splice Plate/$ can connect <item>Wire Plate/$ with vanilla redstone. Each <item>Circuit"
 		},
 		{
 			"type": "text",
-			"text": "<item>Plate/$ and <item>Wire Splice Plate/$ has a two tick delay (1 redstone tick).$(br2)While holding a <item>Circuit Wrench/$, all nearby <item>Circuits/$ will display their output signal strength over them.$(br2)<item>Circuits/$ can be divided into a few categories:$(br2)"
+			"text": "<item>/$ other than <item>Wire Plate/$ and <item>Wire Splice Plate/$ has a two tick delay (1 redstone tick).$(br2)While holding a <item>Circuit Wrench/$, all nearby <item>Circuits/$ will display their output signal strength over them. When multiple circuits are outputting on the same <item>Wire Plate/$, the output value <em>farthest from zero/$ will be used (3 wins over 2, -3 wins over 2, 3 wins "
+		},
+		{
+			"type": "text",
+			"text": "over -3).$(br2)<item>Circuits/$ can be divided into a few categories:$(br2)"
 		},
 		{
 			"type": "image",
@@ -68,7 +72,7 @@
 		},
 		{
 			"type": "text",
-			"text": "with an invalid or negative output (like sqrt(-4) or 3-9) will output 0 instead.$(br2)"
+			"text": "with an invalid output (like sqrt(-4)) will output 0 instead.$(br2)"
 		},
 		{
 			"type": "image",
