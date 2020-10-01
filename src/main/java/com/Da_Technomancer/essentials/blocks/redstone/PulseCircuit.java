@@ -4,7 +4,7 @@ import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.DelayCircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.PulseCircuitTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,10 +24,13 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class DelayCircuit extends AbstractCircuit{
+public class PulseCircuit extends AbstractCircuit{
 
-	public DelayCircuit(){
-		super("delay_circuit");
+	public final Edge edge;
+	
+	public PulseCircuit(Edge edge){
+		super("pulse_" + edge.name + "_circuit");
+		this.edge = edge;
 	}
 
 	@Override
@@ -37,8 +40,8 @@ public class DelayCircuit extends AbstractCircuit{
 
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		if(te instanceof DelayCircuitTileEntity){
-			return ((DelayCircuitTileEntity) te).currentOutput();
+		if(te instanceof PulseCircuitTileEntity){
+			return ((PulseCircuitTileEntity) te).currentOutput(0);
 		}
 
 		return 0;
@@ -51,9 +54,9 @@ public class DelayCircuit extends AbstractCircuit{
 			super.onBlockActivated(state, worldIn, pos, playerIn, hand, hit);
 		}else if(playerIn.getHeldItem(hand).getItem() == ESItems.circuitWrench){
 			return ActionResultType.PASS;
-		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof DelayCircuitTileEntity){
-			DelayCircuitTileEntity tte = (DelayCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getPos(), tte.settingStrDelay));
+		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof PulseCircuitTileEntity){
+			PulseCircuitTileEntity tte = (PulseCircuitTileEntity) te;
+			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getPos(), tte.settingStrDuration));
 		}
 
 		return ActionResultType.SUCCESS;
@@ -62,11 +65,33 @@ public class DelayCircuit extends AbstractCircuit{
 	@Nullable
 	@Override
 	public TileEntity createNewTileEntity(IBlockReader worldIn){
-		return new DelayCircuitTileEntity();
+		return new PulseCircuitTileEntity();
 	}
 
 	@Override
 	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new TranslationTextComponent("tt.essentials.delay_circuit"));
+		tooltip.add(new TranslationTextComponent("tt.essentials.pulse_circuit_" + edge.name));
+	}
+
+	public enum Edge{
+
+		RISING(true, false, "rising"),
+		FALLING(false, true, "falling"),
+		DUAL(true, true, "dual");
+
+		public final String name;
+		public final boolean start;
+		public final boolean end;
+
+		Edge(boolean start, boolean end, String name){
+			this.name = name;
+			this.start = start;
+			this.end = end;
+		}
+
+		@Override
+		public String toString(){
+			return name;
+		}
 	}
 }

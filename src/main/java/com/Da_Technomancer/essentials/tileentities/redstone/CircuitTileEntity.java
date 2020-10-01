@@ -1,4 +1,4 @@
-package com.Da_Technomancer.essentials.tileentities;
+package com.Da_Technomancer.essentials.tileentities.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
@@ -143,7 +143,8 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				continue;
 			}
 
-			inputs[ind] = Math.max(inputs[ind], RedstoneUtil.sanitize(handl.getOutput()));
+			float newInput = RedstoneUtil.sanitize(handl.getOutput());
+			inputs[ind] = RedstoneUtil.chooseInput(inputs[ind], newInput);
 			hasSrc[ind] = true;
 		}
 

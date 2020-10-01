@@ -69,7 +69,10 @@
 	"block.essentials.reader_circuit": "Reader Circuit",
 	"block.essentials.timer_circuit": "Clock Circuit",
 	"block.essentials.delay_circuit": "Delay Circuit",
-	
+	"block.essentials.pulse_rising_circuit": "Pulse Former Circuit [Rising Edge]",
+	"block.essentials.pulse_falling_circuit": "Pulse Former Circuit [Falling Edge]",
+	"block.essentials.pulse_dual_circuit": "Pulse Former Circuit [Dual Edge]",
+
 	
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
 	"item.essentials.wrench": "Wrench",
@@ -94,6 +97,10 @@
 	"container.timer_circuit.period": "Clock Period (reds. ticks)",
 	"container.delay_circuit": "Delay Circuit Settings",
 	"container.delay_circuit.delay": "Delay (reds. ticks)",
+	"container.pulse_circuit_rising": "Pulse Circuit [Rising] Settings",
+	"container.pulse_circuit_falling": "Pulse Circuit [Falling] Settings",
+	"container.pulse_circuit_dual": "Pulse Circuit [Dual] Settings",
+	"container.pulse_circuit.duration": "Pulse Duration (reds. ticks)",
 
 
 	"tt.essentials.animal_feed": "Can breed any livestock. Usable by dispensers",
@@ -189,6 +196,9 @@
 	"tt.essentials.item_shifter.range": "Can 'push' items through a line of up to %1$d Transport Chutes",
 	"tt.essentials.analog_lamp.desc": "Emits light equal to the redstone signal strength",
 	"tt.essentials.delay_circuit": "Delays all signals and pulses by a constant time set via UI (minimum 1 reds. tick)",
+	"tt.essentials.pulse_circuit_rising": "Outputs a pulse of 1 for (setting) ticks at the start of a signal",
+	"tt.essentials.pulse_circuit_falling": "Outputs a pulse of 1 for (setting) ticks at the end of a signal",
+	"tt.essentials.pulse_circuit_dual": "Outputs a pulse of 1 for (setting) ticks at the start and end of a signal",
 
 	"tt.essentials.empty_fluid": "Empty",
 

@@ -9,6 +9,7 @@ import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.Da_Technomancer.essentials.tileentities.*;
+import com.Da_Technomancer.essentials.tileentities.redstone.*;
 import com.mojang.datafixers.DSL;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.ScreenManager;
@@ -143,6 +144,7 @@ public final class Essentials{
 		registerTE(AutoCrafterTileEntity::new, "auto_crafter", reg, autoCrafter);
 		registerTE(RedstoneTransmitterTileEntity::new, "redstone_transmitter", reg, redstoneTransmitter);
 		registerTE(RedstoneReceiverTileEntity::new, "redstone_receiver", reg, redstoneReceiver);
+		registerTE(PulseCircuitTileEntity::new, "pulse_circuit", reg, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
@@ -163,6 +165,7 @@ public final class Essentials{
 		registerCon(TimerCircuitContainer::new, TimerCircuitScreen::new, "timer_circuit", e);
 		registerCon(AutoCrafterContainer::new, AutoCrafterScreen::new, "auto_crafter", e);
 		registerCon(DelayCircuitContainer::new, DelayCircuitScreen::new, "delay_circuit", e);
+		registerCon(PulseCircuitContainer::new, PulseCircuitScreen::new, "pulse_circuit", e);
 	}
 
 	@SubscribeEvent
@@ -177,6 +180,7 @@ public final class Essentials{
 		registerConType(TimerCircuitContainer::new, "timer_circuit", e);
 		registerConType(AutoCrafterContainer::new, "auto_crafter", e);
 		registerConType(DelayCircuitContainer::new, "delay_circuit", e);
+		registerConType(PulseCircuitContainer::new, "pulse_circuit", e);
 	}
 
 	@SubscribeEvent

@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;

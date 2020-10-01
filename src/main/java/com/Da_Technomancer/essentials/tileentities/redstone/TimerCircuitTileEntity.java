@@ -1,9 +1,10 @@
-package com.Da_Technomancer.essentials.tileentities;
+package com.Da_Technomancer.essentials.tileentities.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.TimerCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.block.BlockState;
@@ -48,7 +49,7 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 
 	public int timerOutput(){
 		//Divide by RedstoneUtil.DELAY to convert from gameticks to redstone ticks
-		if((ticksExisted / RedstoneUtil.DELAY) % Math.max(MIN_PERIOD, settingPeriod) < Math.max(MIN_DURATION, settingDuration)){
+		if((ticksExisted / RedstoneUtil.DELAY) % settingPeriod < settingDuration){
 			return 1;
 		}else{
 			return 0;
@@ -59,8 +60,8 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	public void tick(){
 		ticksExisted++;
 
-		int clockTime = (int) (ticksExisted / RedstoneUtil.DELAY) % Math.max(MIN_PERIOD, settingPeriod);
-		if(!world.isRemote && ticksExisted % RedstoneUtil.DELAY == 0 && (clockTime == 0 || clockTime == Math.max(MIN_DURATION, settingDuration))){
+		int clockTime = (int) (ticksExisted / RedstoneUtil.DELAY) % settingPeriod;
+		if(!world.isRemote && ticksExisted % RedstoneUtil.DELAY == 0 && (clockTime == 0 || clockTime == settingDuration)){
 			//Force circuits to recalculate when output changes
 			recalculateOutput();
 		}
@@ -106,15 +107,15 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
-		return new TimerCircuitContainer(id, playerInv, settingPeriod, settingStrPeriod, settingDuration, settingStrDuration, pos);
+		return new TimerCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), pos, settingStrPeriod, settingStrDuration));
 	}
 
 	@Override
 	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
-		settingPeriod = nbt.getInt("value_p");
-		settingStrPeriod = nbt.getString("config_p");
-		settingDuration = nbt.getInt("value_d");
-		settingStrDuration = nbt.getString("config_d");
+		settingPeriod = Math.max(MIN_PERIOD, Math.round(nbt.getFloat("value_0")));
+		settingStrPeriod = nbt.getString("text_0");
+		settingDuration = Math.max(MIN_DURATION, Math.round(nbt.getFloat("value_1")));
+		settingStrDuration = nbt.getString("text_1");
 		markDirty();
 		recalculateOutput();
 	}

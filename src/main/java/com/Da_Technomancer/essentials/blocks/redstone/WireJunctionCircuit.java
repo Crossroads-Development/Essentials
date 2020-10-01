@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.tileentities.WireJunctionTileEntity;
-import com.Da_Technomancer.essentials.tileentities.WireTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.WireJunctionTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.WireTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;

@@ -1,9 +1,10 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.items.ESItems;
-import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
-import com.Da_Technomancer.essentials.tileentities.TimerCircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.TimerCircuitTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,13 +53,7 @@ public class TimerCircuit extends AbstractCircuit{
 			return ActionResultType.PASS;
 		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof TimerCircuitTileEntity){
 			TimerCircuitTileEntity tte = (TimerCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> {
-				buf.writeInt(tte.settingPeriod);
-				buf.writeString(tte.settingStrPeriod);
-				buf.writeInt(tte.settingDuration);
-				buf.writeString(tte.settingStrDuration);
-				buf.writeBlockPos(pos);
-			});
+			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getPos(), tte.settingStrPeriod, tte.settingStrDuration));
 		}
 
 		return ActionResultType.SUCCESS;

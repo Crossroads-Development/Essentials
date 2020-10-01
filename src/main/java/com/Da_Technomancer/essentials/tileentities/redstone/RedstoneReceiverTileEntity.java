@@ -1,4 +1,4 @@
-package com.Da_Technomancer.essentials.tileentities;
+package com.Da_Technomancer.essentials.tileentities.redstone;
 
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.Essentials;
@@ -6,6 +6,7 @@ import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;

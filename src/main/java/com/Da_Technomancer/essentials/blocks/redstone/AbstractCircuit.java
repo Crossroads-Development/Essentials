@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

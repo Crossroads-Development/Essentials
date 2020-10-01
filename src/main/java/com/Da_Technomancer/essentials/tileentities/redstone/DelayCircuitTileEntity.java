@@ -1,9 +1,10 @@
-package com.Da_Technomancer.essentials.tileentities;
+package com.Da_Technomancer.essentials.tileentities.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.block.BlockState;
@@ -61,7 +62,7 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 
 		if(queuedOutputs.isEmpty() ? RedstoneUtil.didChange(input, currentOutput) : RedstoneUtil.didChange(input, queuedOutputs.get(queuedOutputs.size() - 1).getLeft())){
 			//Add new value to queue
-			int delay = RedstoneUtil.DELAY * Math.max(MIN_DELAY, settingDelay);
+			int delay = RedstoneUtil.DELAY * settingDelay;
 			//We pretend ticks existed is an even number for delay, for consistancy with other time based circuits
 			queuedOutputs.add(Pair.of(input, delay + ticksExisted - (ticksExisted % RedstoneUtil.DELAY)));
 			markDirty();
@@ -131,13 +132,13 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
-		return new DelayCircuitContainer(id, playerInv, settingDelay, settingStrDelay, pos);
+		return new DelayCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), pos, settingStrDelay));
 	}
 
 	@Override
 	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
-		settingDelay = nbt.getInt("value_d");
-		settingStrDelay = nbt.getString("config_d");
+		settingDelay = Math.max(MIN_DELAY, Math.round(nbt.getFloat("value_0")));
+		settingStrDelay = nbt.getString("text_0");
 		if(!queuedOutputs.isEmpty()){
 			//If there is an existing queue, just skip to the final entry
 			currentOutput = queuedOutputs.get(queuedOutputs.size() - 1).getLeft();

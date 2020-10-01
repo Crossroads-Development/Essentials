@@ -67,6 +67,8 @@ public class RedstoneUtil extends BlockUtil{
 		input = sanitize(input);
 		if(input > 15){
 			return 15;
+		}else if(input < 0){
+			return 0;
 		}
 		return Math.round(input);
 	}
@@ -80,7 +82,7 @@ public class RedstoneUtil extends BlockUtil{
 	 */
 	public static boolean didChange(float prevVal, float newVal){
 		//If the value changes between zero and nonzero, or if the value changed by more than 0.005%, consider this changed
-		return (newVal == 0 ^ prevVal == 0) || Math.abs(newVal - prevVal) / newVal > 0.00_005;
+		return (newVal == 0 ^ prevVal == 0) || newVal != 0 && Math.abs(newVal - prevVal) / Math.abs(newVal) > 0.00_005;
 	}
 
 	/**
@@ -490,6 +492,23 @@ public class RedstoneUtil extends BlockUtil{
 			return -1F * (float) item2;
 		}else{
 			return null;
+		}
+	}
+
+	/**
+	 * Given two possible input values, chooses the input value to take as the 'true' input.
+	 * chooseInput(a, b) = chooseInput(b, a)
+	 * chooseInput(a, chooseInput(b, c)) = chooseInput(b, chooseInput(a, c))
+	 * @param in0 The first possible input value
+	 * @param in1 The second possible input value
+	 * @return The value to use as the real input
+	 */
+	public static float chooseInput(float in0, float in1){
+		//The highest magnitude input will be taken as the true input, with positive values winning ties
+		if(Math.abs(in0) < Math.abs(in1) || in0 == -in1 && in1 > 0){
+			return in1;
+		}else{
+			return in0;
 		}
 	}
 }

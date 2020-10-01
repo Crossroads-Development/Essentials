@@ -80,6 +80,9 @@ public class ESBlocks{
 	public static RedstoneReceiver redstoneReceiver;
 	public static AnalogLamp analogLamp;
 	public static DelayCircuit delayCircuit;
+	public static PulseCircuit pulseCircuitRising;
+	public static PulseCircuit pulseCircuitFalling;
+	public static PulseCircuit pulseCircuitDual;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -165,9 +168,12 @@ public class ESBlocks{
 		floorCircuit = new GenericACircuit("floor", (a) -> (float) Math.floor(a));
 		ceilCircuit = new GenericACircuit("ceil", (a) -> (float) Math.ceil(a));
 		logCircuit = new GenericACircuit("log", (a) -> (float) Math.log10(a));
-		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> b % a);
+		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> {a = Math.abs(a); return ((b % a) + a) % a;});//Does the clock modulus, not remainder modulus
 		readerCircuit = new ReaderCircuit();
 		timerCircuit = new TimerCircuit();
 		delayCircuit = new DelayCircuit();
+		pulseCircuitRising = new PulseCircuit(PulseCircuit.Edge.RISING);
+		pulseCircuitFalling = new PulseCircuit(PulseCircuit.Edge.FALLING);
+		pulseCircuitDual = new PulseCircuit(PulseCircuit.Edge.DUAL);
 	}
 }

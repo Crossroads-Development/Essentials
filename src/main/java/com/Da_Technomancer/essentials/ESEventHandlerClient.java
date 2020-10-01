@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.items.CircuitWrench;
-import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;

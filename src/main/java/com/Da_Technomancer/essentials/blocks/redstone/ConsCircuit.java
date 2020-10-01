@@ -1,13 +1,15 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.items.ESItems;
-import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
-import com.Da_Technomancer.essentials.tileentities.ConstantCircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.ConstantCircuitTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -51,7 +53,7 @@ public class ConsCircuit extends AbstractCircuit{
 		}else if(playerIn.getHeldItem(hand).getItem() == ESItems.circuitWrench){
 			return ActionResultType.PASS;
 		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof ConstantCircuitTileEntity){
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, (ConstantCircuitTileEntity) te, buf -> {buf.writeFloat(((ConstantCircuitTileEntity) te).setting); buf.writeString(((ConstantCircuitTileEntity) te).settingStr); buf.writeBlockPos(pos);});
+			NetworkHooks.openGui((ServerPlayerEntity) playerIn, (INamedContainerProvider) te, buf -> CircuitContainer.encodeData(buf, te.getPos(), ((ConstantCircuitTileEntity) te).settingStr));
 		}
 
 		return ActionResultType.SUCCESS;

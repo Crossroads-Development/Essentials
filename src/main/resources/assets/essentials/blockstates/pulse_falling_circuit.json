@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"horiz_facing=north": { "model": "essentials:block/circuit/pulse_falling" },
+		"horiz_facing=south": { "model": "essentials:block/circuit/pulse_falling", "y": 180 },
+		"horiz_facing=east": { "model": "essentials:block/circuit/pulse_falling", "y": 90 },
+		"horiz_facing=west": { "model": "essentials:block/circuit/pulse_falling", "y": 270 }
+	}
+}

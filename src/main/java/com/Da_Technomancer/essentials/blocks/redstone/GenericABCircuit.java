@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.tileentities.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -35,7 +35,7 @@ public class GenericABCircuit extends AbstractCircuit{
 
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		return function.apply(Math.max(in0, in2), in1);
+		return function.apply(RedstoneUtil.chooseInput(in0, in2), in1);
 	}
 
 	@Override

@@ -1,8 +1,9 @@
-package com.Da_Technomancer.essentials.tileentities;
+package com.Da_Technomancer.essentials.tileentities.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
+import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.block.BlockState;
@@ -68,13 +69,13 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
-		return new ConstantCircuitContainer(id, playerInv, setting, settingStr, pos);
+		return new ConstantCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), pos, settingStr));
 	}
 
 	@Override
 	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
-		setting = nbt.getFloat("value");
-		settingStr = nbt.getString("config");
+		setting = nbt.getFloat("value_0");
+		settingStr = nbt.getString("text_0");
 		markDirty();
 		recalculateOutput();
 	}

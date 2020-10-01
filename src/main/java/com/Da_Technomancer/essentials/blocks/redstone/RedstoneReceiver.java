@@ -3,7 +3,7 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
-import com.Da_Technomancer.essentials.tileentities.RedstoneReceiverTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.RedstoneReceiverTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;

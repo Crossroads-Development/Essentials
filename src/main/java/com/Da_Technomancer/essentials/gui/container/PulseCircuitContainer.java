@@ -7,12 +7,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
-public class ConstantCircuitContainer extends CircuitContainer{
+public class PulseCircuitContainer extends CircuitContainer{
 
-	@ObjectHolder("cons_circuit")
-	private static ContainerType<ConstantCircuitContainer> TYPE = null;
+	@ObjectHolder("pulse_circuit")
+	private static ContainerType<PulseCircuitContainer> TYPE = null;
 
-	public ConstantCircuitContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
+	public PulseCircuitContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
 		super(TYPE, id, playerInventory, data);
 	}
 
