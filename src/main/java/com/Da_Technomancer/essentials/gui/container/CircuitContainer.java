@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.gui.container;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -21,7 +20,7 @@ public abstract class CircuitContainer extends Container{
 		}else{
 			pos = data.readBlockPos();
 			for(int i = 0; i < inputs.length; i++){
-				inputs[i] = data.readString();
+				inputs[i] = data.readString(Short.MAX_VALUE);
 			}
 		}
 	}
