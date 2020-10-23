@@ -67,7 +67,7 @@ public class ConsCircuit extends AbstractCircuit{
 
 	@Override
 	public boolean usesQuartz(){
-		return true;//Considered a 'Basic Circuit'
+		return false;//Considered a 'Basic Circuit'
 	}
 
 	@Override
