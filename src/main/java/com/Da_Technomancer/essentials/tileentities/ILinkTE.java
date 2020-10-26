@@ -26,8 +26,9 @@ public interface ILinkTE extends ILongReceiver{
 	ITag<Item> LINKING_TOOLS = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "linking_tool").toString());
 	String POS_NBT = "c_link";
 	String DIM_NBT = "c_link_dim";
-	byte LINK_PACKET_ID = 8;
-	byte CLEAR_PACKET_ID = 9;
+	byte LINK_PACKET_ID = 8;//Used to add a link with position encoded into the message
+	byte CLEAR_PACKET_ID = 9;//Used to remove all links
+	byte REMOVE_PACKET_ID = 10;//Used to remove a single link with position encoded into the message
 
 	static boolean isLinkTool(ItemStack stack){
 		return LINKING_TOOLS.contains(stack.getItem());

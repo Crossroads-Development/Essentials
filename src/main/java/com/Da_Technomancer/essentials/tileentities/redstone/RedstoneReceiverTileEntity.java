@@ -49,6 +49,14 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 
 	//Used for bi-directional linking
 	protected void setSrc(BlockPos srcIn){
+		if(src != null){
+			//Unlink from the previous source if applicable
+			BlockPos worldSrc = pos.add(src);
+			TileEntity srcTE = world.getTileEntity(worldSrc);
+			if(srcTE instanceof RedstoneTransmitterTileEntity){
+				((RedstoneTransmitterTileEntity) srcTE).unlink(pos.subtract(worldSrc));
+			}
+		}
 		src = srcIn;
 		markDirty();
 		notifyOutputChange();
@@ -156,6 +164,14 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 	public void remove(){
 		super.remove();
 		circOpt.invalidate();
+		if(!world.isRemote && src != null){
+			//Unlink from the previous source if applicable
+			BlockPos worldSrc = pos.add(src);
+			TileEntity srcTE = world.getTileEntity(worldSrc);
+			if(srcTE instanceof RedstoneTransmitterTileEntity){
+				((RedstoneTransmitterTileEntity) srcTE).unlink(pos.subtract(worldSrc));
+			}
+		}
 	}
 
 	private LazyOptional<IRedstoneHandler> circOpt = LazyOptional.of(CircHandler::new);

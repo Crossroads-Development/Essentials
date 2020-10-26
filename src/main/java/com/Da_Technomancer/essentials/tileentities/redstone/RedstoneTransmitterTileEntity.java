@@ -81,6 +81,16 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 		return output;
 	}
 
+	/**
+	 * Unlinks from a single receiver, typically used when the receiver is broken/re-linked
+	 * Does not unlink the receiver from this
+	 * @param toRemove The position relative to this of the receiver being unlinked
+	 */
+	public void unlink(BlockPos toRemove){
+		linked.remove(toRemove);
+		BlockUtil.sendClientPacketAround(world, pos, new SendLongToClient(REMOVE_PACKET_ID, toRemove.toLong(), pos));
+	}
+
 	@Override
 	public void clearLinks(){
 		for(BlockPos linkPos : linked){
@@ -249,6 +259,8 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 			linked.add(BlockPos.fromLong(message));
 		}else if(identifier == CLEAR_PACKET_ID){
 			linked.clear();
+		}else if(identifier == REMOVE_PACKET_ID){
+			linked.remove(BlockPos.fromLong(message));
 		}
 	}
 
