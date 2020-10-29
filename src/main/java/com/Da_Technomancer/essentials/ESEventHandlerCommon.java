@@ -64,7 +64,7 @@ public class ESEventHandlerCommon{
 			e.setResult(Event.Result.DENY);
 			e.setCanceled(true);
 			AnimalEntity an = (AnimalEntity) e.getTarget();
-			if(!e.getWorld().isRemote && an.getGrowingAge() == 0 && an.canBreed()){
+			if(!e.getWorld().isRemote && an.getGrowingAge() == 0){
 				an.setInLove(e.getPlayer());
 				if(!e.getPlayer().isCreative()){
 					e.getItemStack().shrink(1);

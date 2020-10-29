@@ -39,7 +39,7 @@ public class AnimalFeed extends Item{
 				BlockPos blockpos = source.getBlockPos().offset(source.getBlockState().get(DispenserBlock.FACING));
 
 				for(AnimalEntity e : world.getEntitiesWithinAABB(AnimalEntity.class, new AxisAlignedBB(blockpos))){
-					if(!stack.isEmpty() && e.getGrowingAge() == 0 && e.canBreed() && (!(e instanceof TameableEntity) || ((TameableEntity) e).isTamed())){
+					if(!stack.isEmpty() && e.getGrowingAge() == 0 && (!(e instanceof TameableEntity) || ((TameableEntity) e).isTamed())){
 						e.setInLove(null);
 						stack.shrink(1);
 						setSuccessful(true);
