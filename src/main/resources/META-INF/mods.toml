@@ -12,7 +12,7 @@ displayName="Essentials" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 # logoFile="examplemod.png" #optional
 credits='''Many textures created by 5284973.
-Translations by XuyuEre, Луксиния Гримхольд.''' #optional
+Translations by XuyuEre, Луксиния Гримхольд, scikirbypoke.''' #optional
 authors="Technomancer" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
