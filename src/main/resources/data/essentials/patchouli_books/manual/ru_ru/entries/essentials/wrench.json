@@ -1,0 +1,16 @@
+{
+	"category": "essentials",
+	"name": "Разводной ключ",
+	"icon": "essentials:wrench",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "spotlight",
+			"title": "Разводной ключ",
+			"item": "essentials:wrench",
+			"text": "$(item)Разводной ключ/$ - это нормальный инструмент настройки используемый для Essentials и Crossroads.$(br2)У него нет прочности. Оба мода примут ключи других модов в большинстве случаев.$(br2)"
+		}
+	]
+}

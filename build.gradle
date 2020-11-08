@@ -19,13 +19,13 @@ archivesBaseName = "essentials"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-compileJava.options.encoding = 'UTF-8'
+//compileJava.options.encoding = 'UTF-8'
 //Exclude python scripts from the build
 sourceSets.main.java.exclude('**/python/**')
 
-tasks.withType(JavaCompile) {
-	options.encoding = 'UTF-8'
-}
+//tasks.withType(JavaCompile) {
+//	options.encoding = 'UTF-8'
+//}
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -42,6 +42,9 @@ minecraft {
 			// Recommended logging level for the console
 			property 'forge.logging.console.level', 'debug'
 
+			// Make patchouli work
+			properties 'mixin.env.disableRefMap': 'true'
+
 			mods {
 				essentials {
 					source sourceSets.main
@@ -57,6 +60,9 @@ minecraft {
 
 			// Recommended logging level for the console
 			property 'forge.logging.console.level', 'debug'
+
+			// Make patchouli work
+			properties 'mixin.env.disableRefMap': 'true'
 
 			mods {
 				essentials {
@@ -82,7 +88,7 @@ dependencies {
 	//Run with the full versions
 	runtimeOnly fg.deobf("mezz.jei:jei-$mc_version:$jei_version")
 
-//	compile(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+	compile(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

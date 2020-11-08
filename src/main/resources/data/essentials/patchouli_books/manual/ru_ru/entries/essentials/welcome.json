@@ -1,0 +1,25 @@
+{
+	"category": "essentials",
+	"name": "Добро пожаловать!",
+	"icon": "minecraft:paper",
+	"sortnum": 0,
+	"priority": true,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "spotlight",
+			"title": "Welcome!",
+			"item": "minecraft:paper",
+			"text": "Добро пожаловать в Essentials! Essentials это mod созданный Technomancer-ом, про автоматизацию в ванильном стиле - все его возможности усиливают или расширяют автоматизацию так, чтобы её можно было бы легко понять, но при этом, она довольно гибка. Эта книга должна иметь всю необходимую вам информацию про "
+		},
+		{
+			"type": "text",
+			"text": "Essentials. Если у вас есть вопросы, либо какие-нибуть предложения, присоеденяйтесь $(l:https://discord.gg/6g47knp)Discord/$, и если вы нашли баг, пожалуйста сообщите о нём либо $(l:https://discord.gg/6g47knp)Discord/$ либо $(l:https://github.com/Da-Technomancer/Crossroads/)Github/$.$(br2)"
+		},
+		{
+			"type": "text",
+			"anchor": "crossroads",
+			"text": "Crossroads это мод от того же разработчика - если Crossroads установлен, его документация появится в этой книге. Crossroads - это намного больший стимпанк-мод разработанный для интересной, хитровывернутой и доставляющей автоматизации. У него также много эндгейма и он полностью настраиваемый.$(br2)$(l:https://www.curseforge.com/minecraft/mc-mods/crossroads-mc) почему бы не попробовать?/$$(br2)"
+		}
+	]
+}

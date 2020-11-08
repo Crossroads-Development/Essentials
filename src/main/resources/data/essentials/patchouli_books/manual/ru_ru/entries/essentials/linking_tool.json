@@ -1,0 +1,16 @@
+{
+	"category": "essentials",
+	"name": "Cвязывающее устройство",
+	"icon": "essentials:linking_tool",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "spotlight",
+			"title": "Cвязывающее устройство",
+			"item": "essentials:linking_tool",
+			"text": "<item>Cвязывающее устройство/$ используется некоторыми механизмами для соединения входов и выходов. Правой кнопкой на вход, потом на выход, для создания связи.$(br2)"
+		}
+	]
+}

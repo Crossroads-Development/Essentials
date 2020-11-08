@@ -1,0 +1,16 @@
+{
+	"category": "essentials",
+	"name": "Дополнительные рецепты",
+	"icon": "minecraft:name_tag",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "spotlight",
+			"title": "Дополнительные рецепты",
+			"item": "minecraft:name_tag",
+			"text": "Essentials добавляет простые рецепты для сёдел и бирок. Essentials также добавляет рецепт 2x2 для поршня. Они могут быть показаны в таких модах как Just Enough Items, как обычно.$(br2)"
+		}
+	]
+}

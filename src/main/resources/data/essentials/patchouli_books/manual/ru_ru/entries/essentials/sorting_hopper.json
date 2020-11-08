@@ -1,0 +1,33 @@
+{
+	"category": "essentials",
+	"name": "Сортирующая воронка",
+	"icon": "essentials:sorting_hopper",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "spotlight",
+			"title": "Сортирующая воронка",
+			"item": "essentials:sorting_hopper",
+			"text": "<item>Сортирующая воронка/$ действует как обычная воронка, только запрещает вытаскивать из неё предметы, если <item>Сортирующая воронка/$ может их вывести. Столбец <item>Сортирующих воронок/$ с выводами вбок, будут сортировать предметы на каждом слое. Это хорошо сочетается с <item>$(l:essentials/hopper_filter)Фильтром для воронки/$ или <item>$(l:essentials/slotted_chest)Прорезным "
+		},
+		{
+			"type": "text",
+			"text": "<item>$(l:essentials/slotted_chest)Сундуком/$!$(br2)"
+		},
+		{
+			"type": "image",
+			"border": "true",
+			"title": "Простая система сортировки",
+			"images": [
+				"essentials:textures/book/sorting_hopper_vertical.png"
+			],
+			"text": "Простой пример, как эти <item>Сортирующие воронки/$ могут быть использованы, вот здесь "
+		},
+		{
+			"type": "text",
+			"text": "<item>$(l:essentials/hopper_filter)Фильтр для воронки/$, каждая <item>Сортирующая воронка/$ будут выталкивать предметы подходящие <item>$(l:essentials/hopper_filter)Фильтрам/$ в сундук, и каждый неподходящий предмет будет вытолкнут в воронку ниже. Любые предметы неподходящие ни одому из <item>$(l:essentials/hopper_filter)Фильтров/$ оказываются в нижней воронке/сундуке.$(br2)"
+		}
+	]
+}
