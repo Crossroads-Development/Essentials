@@ -75,7 +75,7 @@ public class ItemChute extends Block{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
-		//Block updates are propogated down lines of Item Chutes, allowing caching of target positions for Item Shifters
+		//Block updates are propagated down lines of Item Chutes, allowing caching of target positions for Item Shifters
 		if(fromPos != null){
 			Direction.Axis axis = state.get(ESProperties.AXIS);
 			Direction dir = Direction.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());

@@ -62,6 +62,12 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
+	public void refreshCache(){
+		super.refreshCache();
+		outputOptionalCache = LazyOptional.empty();
+	}
+
+	@Override
 	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 
