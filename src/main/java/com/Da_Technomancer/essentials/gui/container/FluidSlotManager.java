@@ -103,6 +103,9 @@ public class FluidSlotManager{
 		this.yPos = yPos;
 		this.idRef = idRef;
 		this.qtyRef = qtyRef;
+		//Sets them to previously initialized values (empty) to prevent getting 0,0 values from before they are updated by packets
+		this.idRef.set(fluidId);
+		this.qtyRef.set(fluidQty);
 	}
 
 	public void linkSlot(Slot fluidItemInputSlot){

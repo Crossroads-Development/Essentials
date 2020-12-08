@@ -15,6 +15,6 @@ public class DelayCircuitScreen extends CircuitScreen<DelayCircuitContainer>{
 	protected void init(){
 		super.init();
 
-		createTextBar(0, 18, 28, new TranslationTextComponent("container.timer_circuit.period"));
+		createTextBar(0, 18, 28, new TranslationTextComponent("container.delay_circuit.delay"));
 	}
 }
