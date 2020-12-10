@@ -1,6 +1,6 @@
 {
 	"category": "essentials",
-	"name": "Wrench",
+	"name": "扳手",
 	"icon": "essentials:wrench",
 	"sortnum": 0,
 	"priority": false,
@@ -8,9 +8,9 @@
 	"pages": [
 		{
 			"type": "spotlight",
-			"title": "Wrench",
+			"title": "扳手",
 			"item": "essentials:wrench",
-			"text": "The $(item)Wrench/$ is a normal adjustment tool used for Essentials and Crossroads.$(br2)It does not have durability. Both mods will accept other mods' wrench tools in most cases.$(br2)"
+			"text": "$(item)扳手/$是用于Essentials和Crossroads的一种普通方块调整工具。$(br2)它没有耐久。大部分情况下，这两个模组的方块都会接受来自其他模组的扳手。$(br2)"
 		}
 	]
 }

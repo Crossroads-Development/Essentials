@@ -1,16 +1,16 @@
 {
 	"category": "essentials",
-	"name": "Slotted Chest",
+	"name": "分格箱子",
 	"icon": "essentials:slotted_chest",
 	"read_by_default": "true",
 	"pages": [
 		{
 			"type": "text",
-			"text": "The $(item)Slotted Chest/$ is a one block chest the size of a double chest, and it has a very interesting quirk.$(br2)When removing an item from a slot, it leaves a ghost item behind. You can shift click into the $(item)Slotted Chest/$, but only if the slot the items are going to already has the matching item. To clear a ghost item, shift click it with an empty cursor."
+			"text": "$(item)分格箱子/$是一种有大型箱子容量的单方块箱子，而且有一个非常有趣的奇特之处。$(br2)从箱子的一格里移除一个物品，它就会在在这一格留下一个幽灵物品。你可以用shift右击往$(item)分格箱子/$里塞东西，但只有在有匹配格子的情况下塞得进去。要清除一个幽灵物品，只需要直接用鼠标指针shift右击。"
 		},
 		{
 			"type": "text",
-			"text": "Also, automation will respect the ghost items, will only be able to insert into a slot if it already has a match and when extracting items it always leaves a ghost item behind. This lets you format your storage chests without fear of shift clicks or automation messing it up."
+			"text": "另外，自动化也会尊重幽灵物品，在有匹配幽灵时才能插入物品，取出物品时也会继续留下相应的幽灵。这让你能格式化你的存储箱，而且不需要担心shift右击或自动化搞乱箱子。"
 		}
 	]
 }

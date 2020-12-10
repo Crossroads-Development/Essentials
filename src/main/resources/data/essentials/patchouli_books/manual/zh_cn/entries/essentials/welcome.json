@@ -1,6 +1,6 @@
 {
 	"category": "essentials",
-	"name": "Welcome!",
+	"name": "欢迎！",
 	"icon": "minecraft:paper",
 	"sortnum": 0,
 	"priority": true,
@@ -8,18 +8,18 @@
 	"pages": [
 		{
 			"type": "spotlight",
-			"title": "Welcome!",
+			"title": "欢迎！",
 			"item": "minecraft:paper",
-			"text": "Welcome to Essentials! Essentials is a mod by Technomancer about vanilla style automation- all of its features enhance or extend automation in a way that is simple, easy to understand, but also flexible.$(br2)This book should have all the information you need about "
+			"text": "欢迎来到Essentials！Essentials是一个Technomancer开发的关于原版风格自动化的模组，模组所有的特性都以一种简单、易于理解且灵活的方式增强或拓展了自动化。$(br2)这本书会有所有你需要知道的关于Essentials的信息。"
 		},
 		{
 			"type": "text",
-			"text": "Essentials. If you have any questions or suggestions, feel free to join the $(l:https://discord.gg/6g47knp)Discord/$, and if you find any bugs, please report them either on the $(l:https://discord.gg/6g47knp)Discord/$ or $(l:https://github.com/Da-Technomancer/Crossroads/)Github/$.$(br2)"
+			"text": "如果你有任何疑问或建议，可随时加入$(l:https://discord.gg/6g47knp)Discord/$，如果你发现了任何bug，请在$(l:https://discord.gg/6g47knp)Discord/$或$(l:https://github.com/Da-Technomancer/Crossroads/)Github/$汇报。$(br2)"
 		},
 		{
 			"type": "text",
 			"anchor": "crossroads",
-			"text": "Crossroads is another mod by the same developer- if Crossroads is installed, it will also be documented in this book. Crossroads is a much larger steampunk mod designed to have interesting, tricky, and rewarding automation. It also has a powerful lategame and is highly configurable.$(br2)$(l:https://www.curseforge.com/minecraft/mc-mods/crossroads-mc)Why not give it a try?/$$(br2)"
+			"text": "Crossroads是来自同一个开发者的模组。如果Crossroads也安装了，其内容也会在本书内记录。Crossroads是一个更大的蒸汽朋克模组，设计为提供有趣、棘手和有收获的自动化。它在游戏后期提供强大的功能，并且高度可配置。$(br2)$(l:https://www.curseforge.com/minecraft/mc-mods/crossroads-mc)为什么不试一下？/$$(br2)"
 		}
 	]
 }
