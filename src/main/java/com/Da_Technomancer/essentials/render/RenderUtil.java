@@ -48,6 +48,22 @@ public class RenderUtil{
 	}
 
 	/**
+	 * Adds a vertex to the builder using the BLOCK vertex format
+	 * @param builder The active builder
+	 * @param matrix The reference matrix
+	 * @param pos The position of this vertex
+	 * @param u The u coord of this vertex texture mapping
+	 * @param v The v coord of this vertex texture mapping
+	 * @param normal  The normal vector to this vertex
+	 * @param light The light value
+	 * @param col A size 4 array (r, g, b, a) defining the color, scale [0, 255]
+	 */
+	@OnlyIn(Dist.CLIENT)
+	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, IPosition pos, float u, float v, IPosition normal, int light, int[] col){
+		builder.pos(matrix.getLast().getMatrix(), (float) pos.getX(), (float) pos.getY(), (float) pos.getZ()).color(col[0], col[1], col[2], col[3]).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), (float) normal.getX(), (float) normal.getY(), (float) normal.getZ()).endVertex();
+	}
+
+	/**
 	 * Finds the width vector for drawing a 2d plane along a set ray
 	 *
 	 * What is this for?:

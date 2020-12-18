@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
+import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import com.Da_Technomancer.essentials.tileentities.redstone.RedstoneReceiverTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -46,9 +47,9 @@ public class RedstoneReceiver extends ContainerBlock implements IWireConnect{
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 		TileEntity te = worldIn.getTileEntity(pos);
 		Item dye;
-		if(ILinkTE.isLinkTool(heldItem) && te instanceof RedstoneReceiverTileEntity){
+		if(LinkHelper.isLinkTool(heldItem) && te instanceof RedstoneReceiverTileEntity){
 			if(!worldIn.isRemote){
-				((RedstoneReceiverTileEntity) te).wrench(heldItem, playerIn);
+				LinkHelper.wrench((ILinkTE) te, heldItem, playerIn);
 			}
 			return ActionResultType.SUCCESS;
 		}else if((dye = heldItem.getItem()) instanceof DyeItem && te instanceof RedstoneReceiverTileEntity){
@@ -125,6 +126,16 @@ public class RedstoneReceiver extends ContainerBlock implements IWireConnect{
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof RedstoneReceiverTileEntity){
 			((RedstoneReceiverTileEntity) te).buildDependents();
+		}
+	}
+
+	@Override
+	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.getBlock() != newState.getBlock()){
+			TileEntity te = worldIn.getTileEntity(pos);
+			if(te instanceof RedstoneReceiverTileEntity){
+				((RedstoneReceiverTileEntity) te).createLinkEnd(null);
+			}
 		}
 	}
 }

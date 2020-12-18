@@ -47,7 +47,7 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 
 	@Override
 	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
+		if(state.getBlock() != newState.getBlock()) {
 			TileEntity te = worldIn.getTileEntity(pos);
 			if (te instanceof SlottedChestTileEntity) {
 				InventoryHelper.dropInventoryItems(worldIn, pos, ((SlottedChestTileEntity) te).iInv);

@@ -38,11 +38,11 @@ public class CircuitWrench extends Item{
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(33);
+	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(37);
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(36);
+	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(37);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
 	private static final ITag<Item> COMPONENT_TAG = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "circuit_components").toString());
@@ -79,6 +79,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.equalsCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/equals.png"));
 		registerCircuit(ESBlocks.lessCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/less.png"));
 		registerCircuit(ESBlocks.moreCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/more.png"));
+		registerCircuit(ESBlocks.absCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/abs.png"));
 		registerCircuit(ESBlocks.timerCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/timer.png"));
 		registerCircuit(ESBlocks.delayCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/delay.png"));
 		registerCircuit(ESBlocks.pulseCircuitRising, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pulse_rising.png"));

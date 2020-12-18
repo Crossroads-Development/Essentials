@@ -135,7 +135,7 @@ public final class Essentials{
 		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
 		registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", reg, basicFluidSplitter);
 		registerTE(FluidSplitterTileEntity::new, "fluid_splitter", reg, fluidSplitter);
-		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit);
+		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit);
 		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 		registerTE(TimerCircuitTileEntity::new, "timer_circuit", reg, timerCircuit);
 		registerTE(DelayCircuitTileEntity::new, "delay_circuit", reg, delayCircuit);

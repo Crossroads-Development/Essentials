@@ -8,6 +8,7 @@ import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
@@ -47,19 +48,39 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 		return false;
 	}
 
-	//Used for bi-directional linking
-	protected void setSrc(BlockPos srcIn){
+	@Override
+	public boolean createLinkSource(ILinkTE endpoint, @Nullable PlayerEntity player){
+		return false;//No-Op, doesn't create links
+	}
+
+	@Override
+	public void removeLinkSource(BlockPos end){
+		//No-op, doesn't create links
+	}
+
+	@Override
+	public void createLinkEnd(ILinkTE newSrcTE){
 		if(src != null){
 			//Unlink from the previous source if applicable
 			BlockPos worldSrc = pos.add(src);
 			TileEntity srcTE = world.getTileEntity(worldSrc);
 			if(srcTE instanceof RedstoneTransmitterTileEntity){
-				((RedstoneTransmitterTileEntity) srcTE).unlink(pos.subtract(worldSrc));
+				((RedstoneTransmitterTileEntity) srcTE).removeLinkSource(pos.subtract(worldSrc));
 			}
 		}
-		src = srcIn;
+		src = newSrcTE == null ? null : newSrcTE.getTE().getPos().subtract(pos);
+		if(newSrcTE instanceof RedstoneTransmitterTileEntity){
+			//Dye this block to match the source
+			BlockState srcState = newSrcTE.getTE().getBlockState();
+			world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.COLOR, srcState.getBlock() == ESBlocks.redstoneTransmitter ? srcState.get(ESProperties.COLOR) : DyeColor.WHITE));
+		}
 		markDirty();
 		notifyOutputChange();
+	}
+
+	@Override
+	public void removeLinkEnd(BlockPos src){
+		createLinkEnd(null);
 	}
 
 	public void dye(DyeColor color){
@@ -164,14 +185,6 @@ public class RedstoneReceiverTileEntity extends TileEntity implements ILinkTE{
 	public void remove(){
 		super.remove();
 		circOpt.invalidate();
-		if(!world.isRemote && src != null){
-			//Unlink from the previous source if applicable
-			BlockPos worldSrc = pos.add(src);
-			TileEntity srcTE = world.getTileEntity(worldSrc);
-			if(srcTE instanceof RedstoneTransmitterTileEntity){
-				((RedstoneTransmitterTileEntity) srcTE).unlink(pos.subtract(worldSrc));
-			}
-		}
 	}
 
 	private LazyOptional<IRedstoneHandler> circOpt = LazyOptional.of(CircHandler::new);

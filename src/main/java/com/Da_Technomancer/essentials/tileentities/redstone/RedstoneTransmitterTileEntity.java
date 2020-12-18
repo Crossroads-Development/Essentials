@@ -9,6 +9,7 @@ import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.packets.SendLongToClient;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
+import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -19,7 +20,6 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -28,9 +28,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Set;
 
 @ObjectHolder(Essentials.MODID)
@@ -39,8 +39,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	@ObjectHolder("redstone_transmitter")
 	public static TileEntityType<RedstoneTransmitterTileEntity> TYPE = null;
 
-	private Set<BlockPos> linked = new HashSet<>();
-
+	public final LinkHelper linkHelper = new LinkHelper(this);
 
 	private boolean builtConnections = false;
 	//The current output, regardless of a pending update
@@ -52,7 +51,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox(){
-		return ILinkTE.frustrum(this);
+		return linkHelper.frustrum();
 	}
 
 	@Override
@@ -61,14 +60,13 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	public void dye(DyeColor color){
-		if(world.getBlockState(pos).get(ESProperties.COLOR) != color){
+		if(getBlockState().get(ESProperties.COLOR) != color){
 			world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.COLOR, color));
 
-			for(BlockPos link : linked){
-				BlockPos worldLink = pos.add(link);
-				BlockState linkState = world.getBlockState(worldLink);
+			for(BlockPos link : linkHelper.getLinksAbsolute()){
+				BlockState linkState = world.getBlockState(link);
 				if(linkState.getBlock() == ESBlocks.redstoneReceiver){
-					world.setBlockState(worldLink, linkState.with(ESProperties.COLOR, color));
+					world.setBlockState(link, linkState.with(ESProperties.COLOR, color));
 				}
 			}
 		}
@@ -81,27 +79,9 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 		return output;
 	}
 
-	/**
-	 * Unlinks from a single receiver, typically used when the receiver is broken/re-linked
-	 * Does not unlink the receiver from this
-	 * @param toRemove The position relative to this of the receiver being unlinked
-	 */
-	public void unlink(BlockPos toRemove){
-		linked.remove(toRemove);
-		BlockUtil.sendClientPacketAround(world, pos, new SendLongToClient(REMOVE_PACKET_ID, toRemove.toLong(), pos));
-	}
-
 	@Override
-	public void clearLinks(){
-		for(BlockPos linkPos : linked){
-			TileEntity te = world.getTileEntity(linkPos);
-			if(te instanceof RedstoneReceiverTileEntity){
-				((RedstoneReceiverTileEntity) te).setSrc(null);
-			}
-		}
-		linked.clear();
-		markDirty();
-		BlockUtil.sendClientPacketAround(world, pos, new SendLongToClient(CLEAR_PACKET_ID, 0, pos));
+	public void removeLinkSource(BlockPos end){
+		linkHelper.removeLink(end);
 	}
 
 	public void buildConnections(){
@@ -164,8 +144,8 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 
 		if(RedstoneUtil.didChange(output, input)){
 			output = input;
-			for(BlockPos link : linked){
-				TileEntity te = world.getTileEntity(pos.add(link));
+			for(BlockPos link : linkHelper.getLinksAbsolute()){
+				TileEntity te = world.getTileEntity(link);
 				if(te instanceof RedstoneReceiverTileEntity){
 					((RedstoneReceiverTileEntity) te).notifyOutputChange();
 				}
@@ -177,10 +157,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	@Override
 	public CompoundNBT getUpdateTag(){
 		CompoundNBT nbt = super.getUpdateTag();
-		int count = 0;
-		for(BlockPos relPos : linked){
-			nbt.putLong("link_" + count++, relPos.toLong());
-		}
+		linkHelper.writeNBT(nbt);
 		return nbt;
 	}
 
@@ -188,21 +165,14 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	public void read(BlockState state, CompoundNBT nbt){
 		super.read(state, nbt);
 		output = nbt.getFloat("out");
-		int i = 0;
-		while(nbt.contains("link_" + i)){
-			linked.add(BlockPos.fromLong(nbt.getLong("link_" + i)));
-			i++;
-		}
+		linkHelper.readNBT(nbt);
 	}
 
 	@Override
 	public CompoundNBT write(CompoundNBT nbt){
 		super.write(nbt);
 		nbt.putFloat("out", output);
-		int count = 0;
-		for(BlockPos relPos : linked){
-			nbt.putLong("link_" + count++, relPos.toLong());
-		}
+		linkHelper.writeNBT(nbt);
 		return nbt;
 	}
 
@@ -212,13 +182,18 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
+	public Color getColor(){
+		return new Color(getBlockState().get(ESProperties.COLOR).getColorValue());
+	}
+
+	@Override
 	public boolean canLink(ILinkTE otherTE){
 		return otherTE instanceof RedstoneReceiverTileEntity;
 	}
 
 	@Override
 	public Set<BlockPos> getLinks(){
-		return linked;
+		return linkHelper.getLinksRelative();
 	}
 
 	@Override
@@ -232,36 +207,13 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public boolean link(ILinkTE endpoint, PlayerEntity player){
-		BlockPos linkPos = endpoint.getTE().getPos().subtract(pos);
-		if(linked.contains(linkPos)){
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.taken"), player.getUniqueID());
-		}else if(linked.size() < getMaxLinks()){
-			linked.add(linkPos);
-			BlockUtil.sendClientPacketAround(world, pos, new SendLongToClient(LINK_PACKET_ID, linkPos.toLong(), pos));
-			getTE().markDirty();
-			RedstoneReceiverTileEntity recTe = (RedstoneReceiverTileEntity) endpoint;
-			recTe.setSrc(pos.subtract(recTe.getPos()));
-			recTe.dye(world.getBlockState(pos).get(ESProperties.COLOR));
-
-			world.neighborChanged(linkPos, ESBlocks.redstoneTransmitter, linkPos);
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.success", getTE().getPos(), endpoint.getTE().getPos()), player.getUniqueID());
-			return true;
-		}else{
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.full", getMaxLinks()), player.getUniqueID());
-		}
-		return false;
+	public boolean createLinkSource(ILinkTE endpoint, @Nullable PlayerEntity player){
+		return linkHelper.addLink(endpoint, player);
 	}
 
 	@Override
 	public void receiveLong(byte identifier, long message, @Nullable ServerPlayerEntity sendingPlayer){
-		if(identifier == LINK_PACKET_ID){
-			linked.add(BlockPos.fromLong(message));
-		}else if(identifier == CLEAR_PACKET_ID){
-			linked.clear();
-		}else if(identifier == REMOVE_PACKET_ID){
-			linked.remove(BlockPos.fromLong(message));
-		}
+		linkHelper.handleIncomingPacket(identifier, message);
 	}
 
 	@Override
@@ -273,7 +225,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	private final LazyOptional<IRedstoneHandler> circOpt = LazyOptional.of(CircuitHandler::new);
 	private WeakReference<LazyOptional<IRedstoneHandler>> circRef = new WeakReference<>(circOpt);
 
-	private ArrayList<Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Direction>> sources = new ArrayList<>(1);
+	private final ArrayList<Pair<WeakReference<LazyOptional<IRedstoneHandler>>, Direction>> sources = new ArrayList<>(1);
 
 	@Nonnull
 	@Override

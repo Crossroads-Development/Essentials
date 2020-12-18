@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
+import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import com.Da_Technomancer.essentials.tileentities.redstone.RedstoneTransmitterTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -82,9 +83,9 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 		TileEntity te = worldIn.getTileEntity(pos);
 		Item item;
-		if(ILinkTE.isLinkTool(heldItem) && te instanceof RedstoneTransmitterTileEntity){
+		if(LinkHelper.isLinkTool(heldItem) && te instanceof RedstoneTransmitterTileEntity){
 			if(!worldIn.isRemote){
-				((RedstoneTransmitterTileEntity) te).wrench(heldItem, playerIn);
+				LinkHelper.wrench((ILinkTE) te, heldItem, playerIn);
 			}
 			return ActionResultType.SUCCESS;
 		}else if((item = heldItem.getItem()) instanceof DyeItem && te instanceof RedstoneTransmitterTileEntity){
@@ -123,5 +124,15 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 	@Override
 	public boolean canConnect(Direction side, BlockState state){
 		return true;
+	}
+
+	@Override
+	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.getBlock() != newState.getBlock()){
+			TileEntity te = worldIn.getTileEntity(pos);
+			if(te instanceof RedstoneTransmitterTileEntity){
+				((RedstoneTransmitterTileEntity) te).linkHelper.unlinkAllEndpoints();
+			}
+		}
 	}
 }

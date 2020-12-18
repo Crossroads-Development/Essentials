@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.render;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
+import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
 
+import java.awt.*;
+
 public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntityRenderer<T>{
 
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Essentials.MODID, "textures/model/link_line.png");
@@ -30,7 +33,7 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 	@Override
 	public void render(T te, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay){
 		//Only render link lines if the player is holding a linking tool
-		if(!ILinkTE.isLinkTool(Minecraft.getInstance().player.getHeldItem(Hand.MAIN_HAND)) && !ILinkTE.isLinkTool(Minecraft.getInstance().player.getHeldItem(Hand.OFF_HAND))){
+		if(!LinkHelper.isLinkTool(Minecraft.getInstance().player.getHeldItem(Hand.MAIN_HAND)) && !LinkHelper.isLinkTool(Minecraft.getInstance().player.getHeldItem(Hand.OFF_HAND))){
 			return;
 		}
 
@@ -40,6 +43,12 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 		matrix.translate(0.5, 0.5, 0.5);
 		IVertexBuilder builder = buffer.getBuffer(LINK_TYPE);
 
+		Color linkCol = te.getColor();
+		float alpha = 0.7F;
+		int[] col = new int[] {linkCol.getRed(), linkCol.getGreen(), linkCol.getBlue(), (int) (alpha * 255)};
+
+		float uWidth = 1F / 3F;
+
 		for(BlockPos link : te.getLinks()){
 			Vector3d line = Vector3d.copy(link);//A ray pointing from this TE to the link
 			Vector3d widthVec = RenderUtil.findRayWidth(tePos, line, 0.3F);
@@ -47,10 +56,15 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 
 			float length = (float) line.length();
 
-			RenderUtil.addVertexBlock(builder, matrix, widthVec.scale(-1), 0, 0, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//min-min
-			RenderUtil.addVertexBlock(builder, matrix, widthVec, 1, 0, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//max-min
-			RenderUtil.addVertexBlock(builder, matrix, line.add(widthVec), 1, length, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//max-max
-			RenderUtil.addVertexBlock(builder, matrix, line.subtract(widthVec), 0, length, normal, 0.7F, RenderUtil.BRIGHT_LIGHT);//min-max
+			RenderUtil.addVertexBlock(builder, matrix, widthVec.scale(-1), 0, 0, normal, alpha, RenderUtil.BRIGHT_LIGHT);//min-min
+			RenderUtil.addVertexBlock(builder, matrix, widthVec, uWidth, 0, normal, alpha, RenderUtil.BRIGHT_LIGHT);//max-min
+			RenderUtil.addVertexBlock(builder, matrix, line.add(widthVec), uWidth, length / 3F, normal, alpha, RenderUtil.BRIGHT_LIGHT);//max-max
+			RenderUtil.addVertexBlock(builder, matrix, line.subtract(widthVec), 0, length / 3F, normal, alpha, RenderUtil.BRIGHT_LIGHT);//min-max
+
+			RenderUtil.addVertexBlock(builder, matrix, widthVec.scale(-1), uWidth, 0, normal, RenderUtil.BRIGHT_LIGHT, col);//min-min
+			RenderUtil.addVertexBlock(builder, matrix, widthVec, uWidth * 2, 0, normal, RenderUtil.BRIGHT_LIGHT, col);//max-min
+			RenderUtil.addVertexBlock(builder, matrix, line.add(widthVec), uWidth * 2, length / 3F, normal, RenderUtil.BRIGHT_LIGHT, col);//max-max
+			RenderUtil.addVertexBlock(builder, matrix, line.subtract(widthVec), uWidth, length / 3F, normal, RenderUtil.BRIGHT_LIGHT, col);//min-max
 		}
 		matrix.pop();
 	}

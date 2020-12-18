@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.items;
 
-import com.Da_Technomancer.essentials.tileentities.ILinkTE;
+import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -33,9 +33,9 @@ public class LinkingTool extends Item{
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		CompoundNBT nbt = stack.getTag();
-		if(nbt != null && nbt.contains(ILinkTE.POS_NBT)){
-			BlockPos linked = BlockPos.fromLong(stack.getTag().getLong(ILinkTE.POS_NBT));
-			String dim = stack.getTag().getString(ILinkTE.DIM_NBT);
+		if(nbt != null && nbt.contains(LinkHelper.POS_NBT)){
+			BlockPos linked = BlockPos.fromLong(stack.getTag().getLong(LinkHelper.POS_NBT));
+			String dim = stack.getTag().getString(LinkHelper.DIM_NBT);
 			tooltip.add(new TranslationTextComponent("tt.essentials.linking.info", linked.getX(), linked.getY(), linked.getZ(), dim));
 		}else{
 			tooltip.add(new TranslationTextComponent("tt.essentials.linking.none"));

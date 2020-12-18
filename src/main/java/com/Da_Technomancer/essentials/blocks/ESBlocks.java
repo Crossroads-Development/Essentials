@@ -74,6 +74,7 @@ public class ESBlocks{
 	public static AbstractCircuit ceilCircuit;
 	public static AbstractCircuit logCircuit;
 	public static AbstractCircuit moduloCircuit;
+	public static AbstractCircuit absCircuit;
 	public static ReaderCircuit readerCircuit;
 	public static TimerCircuit timerCircuit;
 	public static RedstoneTransmitter redstoneTransmitter;
@@ -169,6 +170,7 @@ public class ESBlocks{
 		ceilCircuit = new GenericACircuit("ceil", (a) -> (float) Math.ceil(a));
 		logCircuit = new GenericACircuit("log", (a) -> (float) Math.log10(a));
 		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> {a = Math.abs(a); return ((b % a) + a) % a;});//Does the clock modulus, not remainder modulus
+		absCircuit = new GenericACircuit("abs", Math::abs);
 		readerCircuit = new ReaderCircuit();
 		timerCircuit = new TimerCircuit();
 		delayCircuit = new DelayCircuit();
