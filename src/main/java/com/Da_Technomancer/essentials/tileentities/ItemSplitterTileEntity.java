@@ -32,12 +32,12 @@ public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 	}
 
 	@Override
-	protected int getActualMode(){
-		return redstone;
+	public SplitDistribution getDistribution(){
+		return SplitDistribution.FIFTEEN;
 	}
 
 	@Override
-	public int getBase(){
-		return 15;
+	public int getMode(){
+		return redstone;
 	}
 } 

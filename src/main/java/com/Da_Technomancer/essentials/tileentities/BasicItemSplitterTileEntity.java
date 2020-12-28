@@ -21,8 +21,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	@ObjectHolder("basic_item_splitter")
 	private static TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
 
-	public static final int[] MODES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 	private final ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
+	private int transferred = 0;//Tracks how many items have been transferred in one batch of 12/15
 
 	public BasicItemSplitterTileEntity(TileEntityType<? extends AbstractSplitterTE> type){
 		super(type);
@@ -30,11 +30,6 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 	public BasicItemSplitterTileEntity(){
 		this(TYPE);
-	}
-
-	@Override
-	protected int[] getModes(){
-		return MODES;
 	}
 
 	@Override
@@ -90,7 +85,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 		super.write(nbt);
 		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
-		nbt.putInt("transfered", transferred);
+		nbt.putInt("transferred", transferred);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
 				CompoundNBT inner = new CompoundNBT();
@@ -112,18 +107,11 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 			mode = 3 + 3 * nbt.getInt("mode");
 		}
 
-		transferred = nbt.getInt("transfered");
+		transferred = nbt.getInt("transferred");
 		for(int i = 0; i < 2; i++){
 			inventory[i] = ItemStack.read(nbt.getCompound("inv_" + i));
 		}
 	}
-
-	@Override
-	public int getBase(){
-		return 12;
-	}
-
-	private int transferred = 0;
 
 	private class InHandler implements IItemHandler{
 
@@ -138,29 +126,68 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 				return stack;
 			}
 
-			int numerator = getActualMode();
-			int denominator = getBase();
+			int numerator = mode;
+			AbstractSplitterTE.SplitDistribution distribution = getDistribution();
+			int denominator = distribution.base;
 
-			int accepted;//How many total qty we can accept
+			int accepted;//How many total qty we accepted
+			int goDown;//How many of accepted went down vs up
+			int spaceDown = stack.getMaxStackSize() - inventory[0].getCount();
+			int spaceUp = stack.getMaxStackSize() - inventory[1].getCount();
 			if(numerator == 0){
-				accepted = stack.getMaxStackSize() - inventory[1].getCount();
+				accepted = Math.min(spaceUp, stack.getCount());
+				goDown = 0;
 			}else if(numerator == denominator){
-				accepted = stack.getMaxStackSize() - inventory[0].getCount();
+				accepted = Math.min(spaceDown, stack.getCount());
+				goDown = accepted;
 			}else{
-				accepted = denominator * (stack.getMaxStackSize() - inventory[0].getCount()) / numerator;
-				accepted = Math.min(accepted, denominator * (stack.getMaxStackSize() - inventory[1].getCount()) / (denominator - numerator));
-			}
-			accepted = Math.max(0, Math.min(stack.getCount(), accepted));//Sanity checks/bounding
+				//Calculate the split for the amount divisible by our base first
+				int baseQty = stack.getCount() - stack.getCount() % denominator;
+				accepted = denominator * spaceDown / numerator;
+				accepted = Math.min(accepted, denominator * spaceUp / (denominator - numerator));
+				accepted = Math.max(0, Math.min(baseQty, accepted));//Sanity checks/bounding
+				goDown = numerator * (accepted / denominator);//Basic portion, before the remainder
 
-			int goDown = numerator * (accepted / denominator);//Basic portion, with no need to interact with transferred
+				if(accepted == baseQty){
+					//Tracking of remainder, which follows the pattern in the distribution
+					spaceDown -= goDown;
+					spaceUp -= (accepted - goDown);
+					//Done iteratively, as the pattern is unpredictable and the total remainder is necessarily small (< numerator)
+					int remainder = stack.getCount() - accepted;
+					for(int i = 0; i < remainder; i++){
+						boolean shouldGoDown = distribution.shouldDispense(mode, i + transferred);
+						if(shouldGoDown){
+							if(spaceDown <= 0){
+								//Stop
+								break;
+							}else{
+								spaceDown -= 1;
+								goDown += 1;
+								accepted += 1;
+							}
+						}else{
+							if(spaceUp <= 0){
+								//Stop
+								break;
+							}else{
+								spaceUp -= 1;
+								accepted += 1;
+							}
+						}
 
-			//Tracking of individual remainder with regards to history
-			int remainder = accepted % denominator;
-			if(transferred < numerator){
-				goDown += Math.min(numerator - transferred + Math.min((remainder + transferred) % denominator, numerator), remainder);
+						transferred += 1;
+					}
+					transferred %= denominator;
+				}
 			}
+
+//			if(transferred < numerator){
+//				goDown += Math.min(numerator - transferred + Math.min((remainder + transferred) % denominator, numerator), remainder);
+//			}
 
 			int goUp = accepted - goDown;
+
+			//Actually move the items
 
 			if(!simulate && accepted != 0){
 				if(inventory[0].isEmpty()){

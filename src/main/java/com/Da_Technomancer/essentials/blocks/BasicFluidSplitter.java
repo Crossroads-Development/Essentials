@@ -45,6 +45,6 @@ public class BasicFluidSplitter extends AbstractSplitter{
 
 	@Override
 	protected ITextComponent getModeComponent(AbstractSplitterTE te, int newMode){
-		return new TranslationTextComponent("tt.essentials.basic_fluid_splitter.mode", BasicFluidSplitterTileEntity.MODES[newMode], te.getBase());
+		return new TranslationTextComponent("tt.essentials.basic_fluid_splitter.mode", newMode, te.getDistribution().base);
 	}
 }

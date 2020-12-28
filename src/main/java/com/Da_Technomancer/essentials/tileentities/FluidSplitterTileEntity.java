@@ -32,12 +32,12 @@ public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 	}
 
 	@Override
-	protected int getActualMode(){
+	public int getMode(){
 		return redstone;
 	}
 
 	@Override
-	public int getBase(){
-		return 15;
+	public SplitDistribution getDistribution(){
+		return SplitDistribution.FIFTEEN;
 	}
 } 

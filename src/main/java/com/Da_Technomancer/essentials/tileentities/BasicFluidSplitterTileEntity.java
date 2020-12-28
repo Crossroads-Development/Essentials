@@ -21,7 +21,6 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 	@ObjectHolder("basic_fluid_splitter")
 	private static TileEntityType<BasicFluidSplitterTileEntity> TYPE = null;
 
-	public static final int[] MODES = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 	private final FluidStack[] inventory = new FluidStack[] {FluidStack.EMPTY, FluidStack.EMPTY};
 	private static final int CAPACITY = 4000;
 
@@ -31,11 +30,6 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
 	public BasicFluidSplitterTileEntity(){
 		this(TYPE);
-	}
-
-	@Override
-	protected int[] getModes(){
-		return MODES;
 	}
 
 	@Override
@@ -91,7 +85,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 		super.write(nbt);
 		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
-		nbt.putInt("transfered", transfered);
+		nbt.putInt("transferred", transferred);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
 				CompoundNBT inner = new CompoundNBT();
@@ -113,18 +107,13 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 			mode = 3 + 3 * nbt.getInt("mode");
 		}
 
-		transfered = nbt.getInt("transfered");
+		transferred = nbt.getInt("transferred");
 		for(int i = 0; i < 2; i++){
 			inventory[i] = FluidStack.loadFluidStackFromNBT(nbt.getCompound("inv_" + i));
 		}
 	}
 
-	@Override
-	public int getBase(){
-		return 12;
-	}
-
-	private int transfered = 0;
+	private int transferred = 0;
 
 	private class InHandler implements IFluidHandler{
 
@@ -160,30 +149,68 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 				return 0;
 			}
 
-			int numerator = getActualMode();
-			int denominator = getBase();
+			int numerator = getMode();
+			SplitDistribution distribution = getDistribution();
+			int denominator = distribution.base;
 
-			int accepted;//How many total qty we can accept
+			int accepted;//How many total qty we accepted
+			int goDown;//How many of accepted went down vs up
+			int spaceDown = CAPACITY - inventory[0].getAmount();
+			int spaceUp = CAPACITY - inventory[1].getAmount();
 			if(numerator == 0){
-				accepted = CAPACITY - inventory[1].getAmount();
+				accepted = Math.min(spaceUp, stack.getAmount());
+				goDown = 0;
 			}else if(numerator == denominator){
-				accepted = CAPACITY - inventory[0].getAmount();
+				accepted = Math.min(spaceDown, stack.getAmount());
+				goDown = accepted;
 			}else{
-				accepted = denominator * (CAPACITY - inventory[0].getAmount()) / numerator;
-				accepted = Math.min(accepted, denominator * (CAPACITY - inventory[1].getAmount()) / (denominator - numerator));
-			}
-			accepted = Math.max(0, Math.min(stack.getAmount(), accepted));//Sanity checks/bounding
+				//Calculate the split for the amount divisible by our base first
+				int baseQty = stack.getAmount() - stack.getAmount() % denominator;
+				accepted = denominator * spaceDown / numerator;
+				accepted = Math.min(accepted, denominator * spaceUp / (denominator - numerator));
+				accepted = Math.max(0, Math.min(baseQty, accepted));//Sanity checks/bounding
+				goDown = numerator * (accepted / denominator);//Basic portion, before the remainder
 
-			int goDown = numerator * (accepted / denominator);//Basic portion, with no need to interact with transferred
+				if(accepted == baseQty){
+					//Tracking of remainder, which follows the pattern in the distribution
+					spaceDown -= goDown;
+					spaceUp -= (accepted - goDown);
+					//Done iteratively, as the pattern is unpredictable and the total remainder is necessarily small (< numerator)
+					int remainder = stack.getAmount() - accepted;
+					for(int i = 0; i < remainder; i++){
+						boolean shouldGoDown = distribution.shouldDispense(mode, i + transferred);
+						if(shouldGoDown){
+							if(spaceDown <= 0){
+								//Stop
+								break;
+							}else{
+								spaceDown -= 1;
+								goDown += 1;
+								accepted += 1;
+							}
+						}else{
+							if(spaceUp <= 0){
+								//Stop
+								break;
+							}else{
+								spaceUp -= 1;
+								accepted += 1;
+							}
+						}
 
-			//Tracking of individual remainder with regards to history
-			int remainder = accepted % denominator;
-			if(transfered < numerator){
-				goDown += Math.min(numerator - transfered + Math.min((remainder + transfered) % denominator, numerator), remainder);
+						transferred += 1;
+					}
+					transferred %= denominator;
+				}
 			}
+
+//			if(transferred < numerator){
+//				goDown += Math.min(numerator - transferred + Math.min((remainder + transferred) % denominator, numerator), remainder);
+//			}
 
 			int goUp = accepted - goDown;
-			
+
+			//Actually move the fluid
 
 			if(action.execute() && accepted != 0){
 				if(inventory[0].isEmpty()){
@@ -199,11 +226,11 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 				}else{
 					inventory[1].grow(goUp);
 				}
-				transfered += accepted % denominator;
-				transfered %= denominator;
+				transferred += accepted;
+				transferred %= denominator;
 			}
 
-			return Math.max(accepted, 0);
+			return accepted;
 		}
 
 		@Nonnull
