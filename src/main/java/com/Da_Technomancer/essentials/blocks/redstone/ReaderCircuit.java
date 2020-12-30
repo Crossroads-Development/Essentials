@@ -35,24 +35,25 @@ public class ReaderCircuit extends AbstractCircuit{
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
 		World world = te.getWorld();
-		BlockPos pos = te.getPos();
 		Direction back = CircuitTileEntity.Orient.BACK.getFacing(te.getBlockState().get(ESProperties.HORIZ_FACING));
+		BlockPos readPos = te.getPos().offset(back);
 		float output;
-		pos = pos.offset(back);
-		BlockState state = world.getBlockState(pos);
+		BlockState state = world.getBlockState(readPos);
 		Block block = state.getBlock();
-		if(block instanceof IReadable){
-			output = ((IReadable) block).read(world, pos, state);
+		IReadable readable = RedstoneUtil.getReadable(block);
+		if(readable != null){
+			output = readable.read(world, readPos, state);
 		}else if(state.hasComparatorInputOverride()){
-			output = state.getComparatorInputOverride(world, pos);
-		}else if(state.isNormalCube(world, pos)){
-			pos = pos.offset(back);
-			state = world.getBlockState(pos);
+			output = state.getComparatorInputOverride(world, readPos);
+		}else if(state.isNormalCube(world, readPos)){
+			readPos = readPos.offset(back);
+			state = world.getBlockState(readPos);
 			block = state.getBlock();
-			if(block instanceof IReadable){
-				output = ((IReadable) block).read(world, pos, state);
+			readable = RedstoneUtil.getReadable(block);
+			if(readable != null){
+				output = readable.read(world, readPos, state);
 			}else if(state.hasComparatorInputOverride()){
-				output = state.getComparatorInputOverride(world, pos);
+				output = state.getComparatorInputOverride(world, readPos);
 			}else{
 				output = 0;
 			}
