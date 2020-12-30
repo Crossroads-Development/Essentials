@@ -143,7 +143,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 			if(stack.isEmpty()){
 				return 0;
 			}
-			
+
 			//Ensure we are allowed to accept
 			if(!inventory[0].isEmpty() && !BlockUtil.sameFluid(stack, inventory[0]) || !inventory[1].isEmpty() && !BlockUtil.sameFluid(stack, inventory[1])){
 				return 0;
@@ -169,39 +169,41 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 				accepted = denominator * spaceDown / numerator;
 				accepted = Math.min(accepted, denominator * spaceUp / (denominator - numerator));
 				accepted = Math.max(0, Math.min(baseQty, accepted));//Sanity checks/bounding
-				goDown = numerator * (accepted / denominator);//Basic portion, before the remainder
-
-				if(accepted == baseQty){
-					//Tracking of remainder, which follows the pattern in the distribution
-					spaceDown -= goDown;
-					spaceUp -= (accepted - goDown);
-					//Done iteratively, as the pattern is unpredictable and the total remainder is necessarily small (< numerator)
-					int remainder = stack.getAmount() - accepted;
-					for(int i = 0; i < remainder; i++){
-						boolean shouldGoDown = distribution.shouldDispense(mode, i + transferred);
-						if(shouldGoDown){
-							if(spaceDown <= 0){
-								//Stop
-								break;
-							}else{
-								spaceDown -= 1;
-								goDown += 1;
-								accepted += 1;
-							}
-						}else{
-							if(spaceUp <= 0){
-								//Stop
-								break;
-							}else{
-								spaceUp -= 1;
-								accepted += 1;
-							}
-						}
-
-						transferred += 1;
-					}
-					transferred %= denominator;
+				if(accepted % denominator != 0){
+					//The direct calculation of goDown is only valid for the portion divisible by the base
+					accepted -= accepted % denominator;
 				}
+				goDown = numerator * accepted / denominator;//Basic portion, before the remainder
+
+				//Tracking of remainder, which follows the pattern in the distribution
+				spaceDown -= goDown;
+				spaceUp -= (accepted - goDown);
+				//Done iteratively, as the pattern is unpredictable and the total remainder is necessarily small (< numerator)
+				int remainder = stack.getAmount() - accepted;
+				for(int i = 0; i < remainder; i++){
+					boolean shouldGoDown = distribution.shouldDispense(mode, transferred);
+					if(shouldGoDown){
+						if(spaceDown <= 0){
+							//Stop
+							break;
+						}else{
+							spaceDown -= 1;
+							goDown += 1;
+							accepted += 1;
+						}
+					}else{
+						if(spaceUp <= 0){
+							//Stop
+							break;
+						}else{
+							spaceUp -= 1;
+							accepted += 1;
+						}
+					}
+
+					transferred += 1;
+				}
+				transferred %= denominator;
 			}
 
 //			if(transferred < numerator){

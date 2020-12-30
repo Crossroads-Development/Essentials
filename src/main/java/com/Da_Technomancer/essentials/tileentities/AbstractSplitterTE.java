@@ -74,6 +74,7 @@ public abstract class AbstractSplitterTE extends TileEntity implements ITickable
 				0b110101010101, // 7/12
 				0b101101101101, // 2/3
 				0b011101110111, // 3/4
+				0b111101110111, // 5/6
 				0b011111111111, // 11/12
 				0b111111111111  // 1/1
 		}),
