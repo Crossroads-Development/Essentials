@@ -6,6 +6,7 @@ import net.minecraft.world.World;
 
 /**
  * Any block can implement this interface to be readable by Reader Circuits (Circuit version of a comparator)
+ * Or can register an instance of this interface with RedstoneUtil::registerReadable to avoid a hard dependency
  */
 public interface IReadable{
 

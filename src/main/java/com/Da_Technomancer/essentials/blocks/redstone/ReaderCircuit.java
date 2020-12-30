@@ -39,7 +39,7 @@ public class ReaderCircuit extends AbstractCircuit{
 		Direction back = CircuitTileEntity.Orient.BACK.getFacing(te.getBlockState().get(ESProperties.HORIZ_FACING));
 		float output;
 		pos = pos.offset(back);
-		BlockState state = world.getBlockState(pos);
+		BlockState state = te.getBlockState();
 		Block block = state.getBlock();
 		IReadable readable = RedstoneUtil.getReadable(block);
 		if(readable != null){

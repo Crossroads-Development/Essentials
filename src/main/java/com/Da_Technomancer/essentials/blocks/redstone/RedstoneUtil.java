@@ -3,9 +3,13 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -25,9 +29,11 @@ public class RedstoneUtil extends BlockUtil{
 	public static Capability<IRedstoneHandler> REDSTONE_CAPABILITY = null;
 
 	/**
-	 * Public for read-only; Modify using registerCircuit()
+	 * Allows other mods to support being read by a reader circuit without a hard dependency on Essentials
+	 *
+	 * Public for read-only; Modify using registerReadable()
 	 */
-	public static final Map<Block,IReadable> READABLES = new HashMap<>();
+	public static final Map<ResourceLocation, IReadable> READABLES = new HashMap<>();
 
 	/**
 	 * Maximum value that circuits should be able to transfer- signal strengths above this should be capped to this value
@@ -41,10 +47,11 @@ public class RedstoneUtil extends BlockUtil{
 	public static final int DELAY = 2;
 
 	public static void registerReadable(Block block, IReadable readable){
-		if(!READABLES.containsKey(block) || block instanceof IReadable){
-			READABLES.put(block, readable);
+		ResourceLocation blockRegName = block.getRegistryName();
+		if(!READABLES.containsKey(blockRegName) && !(block instanceof IReadable)){
+			READABLES.put(blockRegName, readable);
 		}else{
-			Essentials.logger.warn("Redundant readable handler registration: " + block.getRegistryName());
+			Essentials.logger.warn("Redundant readable handler registration: " + blockRegName);
 		}
 	}
 
@@ -53,7 +60,7 @@ public class RedstoneUtil extends BlockUtil{
 		if(block instanceof IReadable){
 			return ((IReadable) block);
 		}else{
-			return READABLES.get(block); //Return an IReadable handler from the registry instead.
+			return READABLES.get(block.getRegistryName()); //Return an IReadable handler from the registry instead.
 		}
 	}
 
