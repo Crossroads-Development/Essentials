@@ -3,9 +3,7 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.block.*;
 import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
@@ -17,12 +15,19 @@ import net.minecraftforge.common.capabilities.CapabilityManager;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @ParametersAreNonnullByDefault
 public class RedstoneUtil extends BlockUtil{
 
 	@CapabilityInject(IRedstoneHandler.class)
 	public static Capability<IRedstoneHandler> REDSTONE_CAPABILITY = null;
+
+	/**
+	 * Public for read-only; Modify using registerCircuit()
+	 */
+	public static final Map<Block,IReadable> READABLES = new HashMap<>();
 
 	/**
 	 * Maximum value that circuits should be able to transfer- signal strengths above this should be capped to this value
@@ -34,6 +39,23 @@ public class RedstoneUtil extends BlockUtil{
 	public static final float MIN_POWER = -MAX_POWER;
 
 	public static final int DELAY = 2;
+
+	public static void registerReadable(Block block, IReadable readable){
+		if(!READABLES.containsKey(block) || block instanceof IReadable){
+			READABLES.put(block, readable);
+		}else{
+			Essentials.logger.warn("Redundant readable handler registration: " + block.getRegistryName());
+		}
+	}
+
+	@Nullable
+	public static IReadable getReadable(Block block) {
+		if(block instanceof IReadable){
+			return ((IReadable) block);
+		}else{
+			return READABLES.get(block); //Return an IReadable handler from the registry instead.
+		}
+	}
 
 	/**
 	 * Get the maximum range Essentials redstone signals can travel

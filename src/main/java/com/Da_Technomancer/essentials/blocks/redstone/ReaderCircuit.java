@@ -41,16 +41,18 @@ public class ReaderCircuit extends AbstractCircuit{
 		pos = pos.offset(back);
 		BlockState state = world.getBlockState(pos);
 		Block block = state.getBlock();
-		if(block instanceof IReadable){
-			output = ((IReadable) block).read(world, pos, state);
+		IReadable readable = RedstoneUtil.getReadable(block);
+		if(readable != null){
+			output = readable.read(world, pos, state);
 		}else if(state.hasComparatorInputOverride()){
 			output = state.getComparatorInputOverride(world, pos);
 		}else if(state.isNormalCube(world, pos)){
 			pos = pos.offset(back);
 			state = world.getBlockState(pos);
 			block = state.getBlock();
-			if(block instanceof IReadable){
-				output = ((IReadable) block).read(world, pos, state);
+			readable = RedstoneUtil.getReadable(block);
+			if(readable != null){
+				output = readable.read(world, pos, state);
 			}else if(state.hasComparatorInputOverride()){
 				output = state.getComparatorInputOverride(world, pos);
 			}else{
