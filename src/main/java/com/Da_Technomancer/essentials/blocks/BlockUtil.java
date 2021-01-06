@@ -23,6 +23,13 @@ public class BlockUtil{
 		return optional != null && optional.isPresent() ? optional.orElseThrow(NullPointerException::new) : null;
 	}
 
+	/**
+	 * Sends a packet from the server to the client, to all players 'near' a position
+	 * Only valid for packets on the Essentials channel
+	 * @param world The world to target the packet in
+	 * @param pos The target position the packet reception area is centered around
+	 * @param packet The server->client packet to be send. Essentials channel packets only.
+	 */
 	public static void sendClientPacketAround(World world, BlockPos pos, Packet packet){
 		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.getDimensionKey())), packet);
 	}

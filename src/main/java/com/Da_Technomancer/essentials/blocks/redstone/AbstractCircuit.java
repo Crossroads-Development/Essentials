@@ -7,10 +7,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.RedstoneDiodeBlock;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -62,11 +60,12 @@ public abstract class AbstractCircuit extends AbstractTile{
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
+	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
 		TileEntity te = worldIn.getTileEntity(pos);
 		if(te instanceof CircuitTileEntity && !worldIn.isRemote){
-			((CircuitTileEntity) te).builtConnections = false;
-			((CircuitTileEntity) te).buildConnections();
+			CircuitTileEntity cte = (CircuitTileEntity) te;
+			cte.builtConnections = false;
+			cte.buildConnections();
 		}else{
 			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.VERY_HIGH);
 		}
