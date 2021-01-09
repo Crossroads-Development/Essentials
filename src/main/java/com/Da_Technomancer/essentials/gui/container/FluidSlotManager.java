@@ -21,8 +21,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -44,6 +42,8 @@ public class FluidSlotManager{
 
 	/**
 	 * Keep a map of all registered fluids to a short ID. Of note is that the map is sorted by registry ID to ensure that all clients and the server agree upon mappings without synchronization
+	 * No entry with value -1 is stored, and an id of -1 should be treated as meaning 'empty fluidstack'
+	 * This map does contain "minecraft:empty"
 	 */
 	private static BiMap<ResourceLocation, Short> fluidIDs = null;
 
@@ -91,7 +91,7 @@ public class FluidSlotManager{
 	 */
 	public FluidSlotManager(FluidStack init, int capacity){
 		this.capacity = capacity;
-		fluidId = getFluidMap().getOrDefault(init.getFluid().getRegistryName(), (short) 0);
+		fluidId = getFluidMap().getOrDefault(init.getFluid().getRegistryName(), (short) -1);
 		fluidQty = init.getAmount() - Short.MAX_VALUE;
 	}
 
@@ -121,7 +121,7 @@ public class FluidSlotManager{
 	}
 
 	public void updateState(FluidStack newFluid){
-		fluidId = getFluidMap().getOrDefault(newFluid.getFluid().getRegistryName(), (short) 0);
+		fluidId = getFluidMap().getOrDefault(newFluid.getFluid().getRegistryName(), (short) -1);
 		fluidQty = newFluid.getAmount() - Short.MAX_VALUE;
 
 		for(int index = 0; index < fluidItemInSlots.size(); index++){
@@ -137,7 +137,12 @@ public class FluidSlotManager{
 
 	@OnlyIn(Dist.CLIENT)
 	public FluidStack getStack(){
-		Fluid f = ForgeRegistries.FLUIDS.getValue(getFluidMap().inverse().getOrDefault((short) idRef.get(), Fluids.WATER.getRegistryName()));
+		short fluidId = (short) idRef.get();
+		if(fluidId < 0){
+			return FluidStack.EMPTY;
+		}
+		//These values default to water to prevent the possibility of crashing if any registry is corrupted
+		Fluid f = ForgeRegistries.FLUIDS.getValue(getFluidMap().inverse().getOrDefault(fluidId, Fluids.WATER.getRegistryName()));
 		if(f == null){
 			f = Fluids.WATER;
 		}
@@ -169,11 +174,11 @@ public class FluidSlotManager{
 
 		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
 			if(clientState.isEmpty()){
-				tooltip.add(new TranslationTextComponent("tt.essentials.empty_fluid"));
+				tooltip.add(new TranslationTextComponent("tt.essentials.fluid_contents.empty"));
 			}else{
 				tooltip.add(clientState.getDisplayName());
-				tooltip.add(new StringTextComponent(clientState.getAmount() + "/" + capacity));
 			}
+			tooltip.add(new TranslationTextComponent("tt.essentials.fluid_contents", clientState.getAmount(), capacity));
 		}
 	}
 

@@ -10,7 +10,7 @@ import java.util.function.Supplier;
  */
 public class IntDeferredRef extends IntReferenceHolder{
 
-	private int setVal;
+	private Integer setVal = null;//We use an Integer to allow a null value, which indicates that no value has been initialized or set yet
 	private final Supplier<Integer> src;
 	private final boolean isRemote;
 
@@ -22,7 +22,7 @@ public class IntDeferredRef extends IntReferenceHolder{
 
 	@Override
 	public int get(){
-		return setVal;
+		return setVal == null ? 0 : setVal;
 	}
 
 	@Override
@@ -32,10 +32,19 @@ public class IntDeferredRef extends IntReferenceHolder{
 
 	@Override
 	public boolean isDirty(){
-		int prev = setVal;
-		int curr = isRemote ? prev : src.get();//On the server side, take the supplier as the 'true' value
-		boolean dirty = prev != curr;
-		setVal = curr;
+		if(isRemote){
+			return false;//This shouldn't ever be called on the client side, but if it were, this isn't the side that should originate updates
+		}
+
+		boolean dirty;
+		if(setVal == null){
+			dirty = true;//No value has been initialized on either side, we must be in need of a resync
+		}else{
+			//On the server side, take the supplier as the 'true' value
+			dirty = (int) setVal != src.get();
+		}
+		setVal = src.get();//Update the last value synced to clients
+
 		return dirty;
 	}
 }
