@@ -38,11 +38,11 @@ public class CircuitWrench extends Item{
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(37);
+	public static final ArrayList<AbstractTile> MODES = new ArrayList<>(38);
 	/**
 	 * Public for read-only; Modify using registerCircuit()
 	 */
-	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(37);
+	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(38);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
 	private static final ITag<Item> COMPONENT_TAG = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "circuit_components").toString());
@@ -85,6 +85,7 @@ public class CircuitWrench extends Item{
 		registerCircuit(ESBlocks.pulseCircuitRising, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pulse_rising.png"));
 		registerCircuit(ESBlocks.pulseCircuitFalling, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pulse_falling.png"));
 		registerCircuit(ESBlocks.pulseCircuitDual, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/pulse_dual.png"));
+		registerCircuit(ESBlocks.signCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/sign.png"));
 	}
 
 	/**

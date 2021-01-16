@@ -37,7 +37,7 @@ public abstract class AbstractSplitterTE extends TileEntity implements ITickable
 
 	public int increaseMode(){
 		mode++;
-		mode %= getDistribution().base;
+		mode %= getDistribution().maxMode();
 		markDirty();
 		return mode;
 	}
@@ -105,9 +105,13 @@ public abstract class AbstractSplitterTE extends TileEntity implements ITickable
 			this.patterns = patterns;
 		}
 
+		public int maxMode(){
+			return patterns.length;
+		}
+
 		public boolean shouldDispense(int mode, int stage){
 			stage %= base;
-			return ((patterns[mode % base] >>> stage) & 0x1) == 1;
+			return ((patterns[mode % patterns.length] >>> stage) & 0x1) == 1;
 		}
 	}
 }

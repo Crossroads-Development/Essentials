@@ -16,11 +16,17 @@ public class GenericACircuit extends AbstractCircuit{
 
 	private final String ttName;
 	private final Function<Float, Float> function;
+	private final boolean usesQuartz;
 
 	public GenericACircuit(String name, Function<Float, Float> function){
+		this(name, function, true);
+	}
+
+	public GenericACircuit(String name, Function<Float, Float> function, boolean usesQuartz){
 		super(name +"_circuit");
 		this.ttName = "tt." + Essentials.MODID + "." + name + "_circuit";
 		this.function = function;
+		this.usesQuartz = usesQuartz;
 	}
 
 	@Override
@@ -36,5 +42,10 @@ public class GenericACircuit extends AbstractCircuit{
 	@Override
 	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent(ttName));
+	}
+
+	@Override
+	public boolean usesQuartz(){
+		return usesQuartz;
 	}
 }

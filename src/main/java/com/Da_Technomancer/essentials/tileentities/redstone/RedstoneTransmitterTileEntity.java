@@ -7,7 +7,6 @@ import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
-import com.Da_Technomancer.essentials.packets.SendLongToClient;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import net.minecraft.block.BlockState;
@@ -136,7 +135,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 		//Don't check any side with a circuit
 		for(Direction dir : sidesToCheck){
 			if(dir != null){
-				input = Math.max(RedstoneUtil.getRedstoneOnSide(world, pos, dir), input);
+				input = RedstoneUtil.chooseInput(input, RedstoneUtil.getRedstoneOnSide(world, pos, dir));
 			}
 		}
 

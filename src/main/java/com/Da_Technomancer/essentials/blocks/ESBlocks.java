@@ -75,6 +75,7 @@ public class ESBlocks{
 	public static AbstractCircuit logCircuit;
 	public static AbstractCircuit moduloCircuit;
 	public static AbstractCircuit absCircuit;
+	public static AbstractCircuit signCircuit;
 	public static ReaderCircuit readerCircuit;
 	public static TimerCircuit timerCircuit;
 	public static RedstoneTransmitter redstoneTransmitter;
@@ -143,7 +144,7 @@ public class ESBlocks{
 		wireJunctionCircuit = new WireJunctionCircuit();
 		consCircuit = new ConsCircuit();
 		//The function outputs will be sanitized regardless, so no sanity-checks are included in the function
-		interfaceCircuit = new GenericACircuit("interface", (a) -> a);
+		interfaceCircuit = new GenericACircuit("interface", (a) -> a, false);
 		andCircuit = new GenericAACircuit("and", (a0, a1) -> a0 > 0 && a1 > 0 ? 1F : 0F);
 		notCircuit = new GenericACircuit("not", (a) -> a > 0 ? 0F : 1F);
 		orCircuit = new GenericAACircuit("or", (a0, a1) -> a0 > 0 || a1 > 0 ? 1F : 0F);
@@ -171,6 +172,7 @@ public class ESBlocks{
 		logCircuit = new GenericACircuit("log", (a) -> (float) Math.log10(a));
 		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> {a = Math.abs(a); return ((b % a) + a) % a;});//Does the clock modulus, not remainder modulus
 		absCircuit = new GenericACircuit("abs", Math::abs);
+		signCircuit = new GenericACircuit("sign", Math::signum);
 		readerCircuit = new ReaderCircuit();
 		timerCircuit = new TimerCircuit();
 		delayCircuit = new DelayCircuit();
