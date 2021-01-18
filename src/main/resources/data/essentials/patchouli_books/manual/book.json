@@ -1,7 +1,7 @@
 {
-	"name": "Essentials Guidebook",
-	"subtitle": "Guide to Essentials and/or Crossroads",
-	"landing_text": "Welcome to Essentials!$(br2)This book contains documentation on Essentials, and also Crossroads if it is installed.",
+	"name": "book.essentials.name",
+	"subtitle": "book.essentials.subtext",
+	"landing_text": "book.essentials.landing",
 	"version": "1",
 	"book_texture": "patchouli:textures/gui/book_cyan.png",
 	"model": "essentials:book_tech",
