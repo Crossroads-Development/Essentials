@@ -67,6 +67,8 @@
 	"block.essentials.log_circuit": "对数电路",
 	"block.essentials.modulo_circuit": "取模电路",
 	"block.essentials.reader_circuit": "读取器电路",
+    "block.essentials.abs_circuit": "绝对值电路",
+	"block.essentials.sign_circuit": "符号函数电路",
 	"block.essentials.timer_circuit": "时钟电路",
 	"block.essentials.delay_circuit": "延迟电路",
 	"block.essentials.pulse_rising_circuit": "脉冲形成器电路 [上升沿]",
@@ -127,7 +129,7 @@
 	"tt.essentials.linking.clear": "正在清除链接",
 	"tt.essentials.linking.full": "所有$1%d个链接已被占据；正在取消链接",
 	"tt.essentials.linking.success": "已建立从%1$s到%2$s的链接",
-	"tt.essentials.linking.taken": "设备已链接；正在取消链接",
+	"tt.essentials.linking.remove": "已取消从%1$s到%2$s的链接",
 	"tt.essentials.linking.none": "未链接",
 	"tt.essentials.linking.desc": "使用右击链接机器，顺序为先发射端再接收端。使用潜行右击可清除链接",
 	"tt.essentials.linking.info": "从 (%1$d, %2$d, %3$d) 来的链接；维度：%4$s",
@@ -182,6 +184,8 @@
 	"tt.essentials.floor_circuit": "输出输入数值的向下取整",
 	"tt.essentials.ceil_circuit": "输出输入数值的向上取整",
 	"tt.essentials.log_circuit": "输出输入值以10为底的对数",
+	"tt.essentials.abs_circuit": "输出输入数值的绝对值",
+	"tt.essentials.sign_circuit": "输出输入值的正负号（输出为1，-1和0）",
 	"tt.essentials.modulo_circuit": "输出背面输入除以侧面输入的余数",
 	"tt.essentials.reader_circuit": "像比较器一样读取背面的方块。输出值的范围更大",
 	"tt.essentials.timer_circuit": "以UI设置的间隔和持续时间发出强度为1的脉冲",
@@ -200,9 +204,14 @@
 	"tt.essentials.pulse_circuit_falling": "在信号结束时发出可设置时间的强度为1的脉冲",
 	"tt.essentials.pulse_circuit_dual": "在信号开始和结束时发出可设置时间的强度为1的脉冲",
 
-	"tt.essentials.empty_fluid": "空",
+    "tt.essentials.fluid_contents": "%1$d/%2$d",
+	"tt.essentials.fluid_contents.empty": "空",
 
 	"entity.essentials.cannon_skull": "凋零之首",
+
+	"book.essentials.name": "Essentials指导手册",
+	"book.essentials.subtext": "Essentials指南",
+	"book.essentials.landing": "欢迎来到Essentials！$(br2)这本书包含了Essentials的文档，如果也安装了交错道途，也会有对应的文档。",
 
 	"itemGroup.essentials": "Essentials"
 }
