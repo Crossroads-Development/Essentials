@@ -23,39 +23,30 @@ public class PacketManager{
 	private static final HashMap<Class<?>, Function<PacketBuffer, Object>> readMap = new HashMap<>();
 
 	static{
-		writeMap.put(boolean.class, (val, buf) -> buf.writeBoolean((boolean) val));
-		writeMap.put(Boolean.class, (val, buf) -> buf.writeBoolean((Boolean) val));
-		writeMap.put(byte.class, (val, buf) -> buf.writeByte((byte) val));
-		writeMap.put(Byte.class, (val, buf) -> buf.writeByte((Byte) val));
-		writeMap.put(int.class, (val, buf) -> buf.writeInt((int) val));
-		writeMap.put(Integer.class, (val, buf) -> buf.writeInt((Integer) val));
-		writeMap.put(long.class, (val, buf) -> buf.writeLong((long) val));
-		writeMap.put(Long.class, (val, buf) -> buf.writeLong((Long) val));
-		writeMap.put(float.class, (val, buf) -> buf.writeFloat((float) val));
-		writeMap.put(Float.class, (val, buf) -> buf.writeFloat((Float) val));
-		writeMap.put(double.class, (val, buf) -> buf.writeDouble((double) val));
-		writeMap.put(Double.class, (val, buf) -> buf.writeDouble((Double) val));
-		writeMap.put(BlockPos.class, (val, buf) -> buf.writeBlockPos((BlockPos) val));
-		writeMap.put(CompoundNBT.class, (val, buf) -> buf.writeCompoundTag((CompoundNBT) val));
-		writeMap.put(byte[].class, (val, buf) -> buf.writeByteArray((byte[]) val));
-		writeMap.put(String.class, (val, buf) -> buf.writeString((String) val));
+		//Primitives and primitive wrappers
+		addCodec(boolean.class, (val, buf) -> buf.writeBoolean((boolean) val), PacketBuffer::readBoolean);
+		addCodec(Boolean.class, (val, buf) -> buf.writeBoolean((Boolean) val), PacketBuffer::readBoolean);
+		addCodec(byte.class, (val, buf) -> buf.writeByte((byte) val), PacketBuffer::readByte);
+		addCodec(Byte.class, (val, buf) -> buf.writeByte((Byte) val), PacketBuffer::readByte);
+		addCodec(int.class, (val, buf) -> buf.writeInt((int) val), PacketBuffer::readInt);
+		addCodec(Integer.class, (val, buf) -> buf.writeInt((Integer) val), PacketBuffer::readInt);
+		addCodec(long.class, (val, buf) -> buf.writeLong((long) val), PacketBuffer::readLong);
+		addCodec(Long.class, (val, buf) -> buf.writeLong((Long) val), PacketBuffer::readLong);
+		addCodec(float.class, (val, buf) -> buf.writeFloat((float) val), PacketBuffer::readFloat);
+		addCodec(Float.class, (val, buf) -> buf.writeFloat((Float) val), PacketBuffer::readFloat);
+		addCodec(double.class, (val, buf) -> buf.writeDouble((double) val), PacketBuffer::readDouble);
+		addCodec(Double.class, (val, buf) -> buf.writeDouble((Double) val), PacketBuffer::readDouble);
+		//Other
+		addCodec(String.class, (val, buf) -> buf.writeString((String) val), PacketManager::readString);
+		addCodec(BlockPos.class, (val, buf) -> buf.writeBlockPos((BlockPos) val), PacketBuffer::readBlockPos);
+		addCodec(CompoundNBT.class, (val, buf) -> buf.writeCompoundTag((CompoundNBT) val), PacketBuffer::readCompoundTag);
+		//Arrays
+		addCodec(byte[].class, (val, buf) -> buf.writeByteArray((byte[]) val), PacketBuffer::readByteArray);
+	}
 
-		readMap.put(boolean.class, PacketBuffer::readBoolean);
-		readMap.put(Boolean.class, PacketBuffer::readBoolean);
-		readMap.put(byte.class, PacketBuffer::readByte);
-		readMap.put(Byte.class, PacketBuffer::readByte);
-		readMap.put(int.class, PacketBuffer::readInt);
-		readMap.put(Integer.class, PacketBuffer::readInt);
-		readMap.put(long.class, PacketBuffer::readLong);
-		readMap.put(Long.class, PacketBuffer::readLong);
-		readMap.put(float.class, PacketBuffer::readFloat);
-		readMap.put(Float.class, PacketBuffer::readFloat);
-		readMap.put(double.class, PacketBuffer::readDouble);
-		readMap.put(Double.class, PacketBuffer::readDouble);
-		readMap.put(BlockPos.class, PacketBuffer::readBlockPos);
-		readMap.put(CompoundNBT.class, PacketBuffer::readCompoundTag);
-		readMap.put(byte[].class, PacketBuffer::readByteArray);
-		readMap.put(String.class, PacketManager::readString);
+	public static void addCodec(Class<?> clazz, BiConsumer<Object, PacketBuffer> writer, Function<PacketBuffer, Object> reader){
+		writeMap.put(clazz, writer);
+		readMap.put(clazz, reader);
 	}
 
 	public static <T extends Packet> void encode(T packet, PacketBuffer buf){
@@ -72,6 +63,7 @@ public class PacketManager{
 					writer.accept(f.get(packet), buf);
 				}catch(IllegalAccessException | ClassCastException e){
 					Essentials.logger.error("Failed to encode packet class. Report to mod author: " + f.getType().toString(), e);
+					throw new IllegalStateException();
 				}
 			}
 		}
@@ -83,7 +75,7 @@ public class PacketManager{
 			packet = clazz.getConstructor().newInstance();
 		}catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e){
 			Essentials.logger.error("Unable to instantiate packet. Report to mod author: " + clazz.toString(), e);
-			return null;
+			throw new IllegalStateException();
 		}
 
 		Field[] toDecode;
@@ -94,11 +86,13 @@ public class PacketManager{
 			Function<PacketBuffer, Object> reader = readMap.get(f.getType());
 			if(reader == null){
 				Essentials.logger.error("Failed to get reader for packet class. Report to mod author: " + f.getType().toString());
+				throw new IllegalStateException();
 			}else{
 				try{
 					f.set(packet, reader.apply(buf));
 				}catch(IllegalAccessException | ClassCastException e){
 					Essentials.logger.error("Failed to decode packet class. Report to mod author: " + f.getType().toString(), e);
+					throw new IllegalStateException();
 				}
 			}
 		}
@@ -113,6 +107,6 @@ public class PacketManager{
 	}
 
 	private static String readString(PacketBuffer buf){
-		return buf.readString(Short.MAX_VALUE);
+		return buf.readString(Short.MAX_VALUE);//Re-implementation that isn't client side only
 	}
 }
