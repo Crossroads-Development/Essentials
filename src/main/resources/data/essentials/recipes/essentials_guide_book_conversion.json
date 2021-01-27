@@ -19,10 +19,11 @@
 				},
 				"ingredients": [
 					{
-						"item": "minecraft:book"
-					},
-					{
-						"tag": "forge:nuggets/iron"
+						"type": "forge:nbt",
+						"item": "patchouli:guide_book",
+						"nbt": {
+							"patchouli:book": "essentials:manual"
+						}
 					}
 				]
 			}

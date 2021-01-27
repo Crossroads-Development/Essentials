@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.items;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.integration.ESIntegration;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -32,5 +33,7 @@ public class ESItems{
 		animalFeed = new AnimalFeed();
 		circuitWrench = new CircuitWrench();
 		linkingTool = new LinkingTool();
+
+		ESIntegration.initItems();
 	}
 }
