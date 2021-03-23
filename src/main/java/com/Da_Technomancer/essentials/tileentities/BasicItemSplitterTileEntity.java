@@ -158,7 +158,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 				//Done iteratively, as the pattern is unpredictable and the total remainder is necessarily small (< numerator)
 				int remainder = stack.getCount() - accepted;
 				for(int i = 0; i < remainder; i++){
-					boolean shouldGoDown = distribution.shouldDispense(mode, transferred);
+					boolean shouldGoDown = distribution.shouldDispense(mode, transferred + i);
 					if(shouldGoDown){
 						if(spaceDown <= 0){
 							//Stop
@@ -177,10 +177,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 							accepted += 1;
 						}
 					}
-
-					transferred += 1;
 				}
-				transferred %= denominator;
 			}
 
 //			if(transferred < numerator){
