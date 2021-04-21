@@ -20,10 +20,10 @@ public class HopperFilterRenderer extends TileEntityRenderer<HopperFilterTileEnt
 			return;
 		}
 
-		matrix.push();
+		matrix.pushPose();
 		matrix.translate(0.5D, 0.5D, 0.5D);
 		matrix.scale(0.5F, 0.5F, 0.5F);
-		Minecraft.getInstance().getItemRenderer().renderItem(te.getFilter(), ItemCameraTransforms.TransformType.FIXED, combinedLight, combinedOverlay, matrix, renderBuf);
-		matrix.pop();
+		Minecraft.getInstance().getItemRenderer().renderStatic(te.getFilter(), ItemCameraTransforms.TransformType.FIXED, combinedLight, combinedOverlay, matrix, renderBuf);
+		matrix.popPose();
 	}
 }

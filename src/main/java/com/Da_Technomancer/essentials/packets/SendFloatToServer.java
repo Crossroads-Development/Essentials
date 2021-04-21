@@ -39,7 +39,7 @@ public class SendFloatToServer extends ServerPacket{
 	@Override
 	protected void run(@Nullable ServerPlayerEntity player){
 		if(player != null){
-			TileEntity te = player.getEntityWorld().getTileEntity(pos);
+			TileEntity te = player.getCommandSenderWorld().getBlockEntity(pos);
 
 			if(te instanceof IFloatReceiver){
 				((IFloatReceiver) te).receiveFloat(id, val, player);

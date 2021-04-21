@@ -15,10 +15,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 public class ObsidianCuttingKit extends Item{
 
 	protected ObsidianCuttingKit(){
-		super(new Properties().group(ESItems.TAB_ESSENTIALS));
+		super(new Properties().tab(ESItems.TAB_ESSENTIALS));
 		String name = "obsidian_cutting_kit";
 		setRegistryName(name);
 		ESItems.toRegister.add(this);
@@ -26,17 +28,17 @@ public class ObsidianCuttingKit extends Item{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.obsidian_kit.desc"));
 	}
 
 	@Override
-	public ActionResultType onItemUse(ItemUseContext context){
-		if(context.getWorld().getBlockState(context.getPos()).getBlock() == Blocks.OBSIDIAN){
-			if(!context.getWorld().isRemote){
-				context.getWorld().destroyBlock(context.getPos(), true);
+	public ActionResultType useOn(ItemUseContext context){
+		if(context.getLevel().getBlockState(context.getClickedPos()).getBlock() == Blocks.OBSIDIAN){
+			if(!context.getLevel().isClientSide){
+				context.getLevel().destroyBlock(context.getClickedPos(), true);
 				if(context.getPlayer() == null || !context.getPlayer().isCreative()){
-					context.getItem().shrink(1);
+					context.getItemInHand().shrink(1);
 				}
 			}
 			return ActionResultType.SUCCESS;

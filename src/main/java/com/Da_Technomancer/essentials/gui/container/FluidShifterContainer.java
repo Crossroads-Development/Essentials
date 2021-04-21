@@ -37,15 +37,15 @@ public class FluidShifterContainer extends Container{
 		super(TYPE, id);
 		this.inv = new FluidSlotManager.FakeInventory(this);
 		this.pos = pos;
-		TileEntity t = playerInventory.player.world.getTileEntity(pos);
+		TileEntity t = playerInventory.player.level.getBlockEntity(pos);
 		if(t instanceof FluidShifterTileEntity){
 			this.te = (FluidShifterTileEntity) t;
 			//Track fluid fields
-			boolean remote = te.getWorld().isRemote;
+			boolean remote = te.getLevel().isClientSide;
 			fluidIdRef = new IntDeferredRef(te.getFluidManager()::getFluidId, remote);
 			fluidQtyRef = new IntDeferredRef(te.getFluidManager()::getFluidQty, remote);
-			trackInt(fluidIdRef);
-			trackInt(fluidQtyRef);
+			addDataSlot(fluidIdRef);
+			addDataSlot(fluidQtyRef);
 		}else{
 			this.te = null;
 			fluidIdRef = null;
@@ -70,23 +70,23 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(PlayerEntity playerIn, int fromSlot){
+	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
-		Slot slot = inventorySlots.get(fromSlot);
+		Slot slot = slots.get(fromSlot);
 
-		if(slot != null && slot.getHasStack()){
-			ItemStack current = slot.getStack();
+		if(slot != null && slot.hasItem()){
+			ItemStack current = slot.getItem();
 			previous = current.copy();
 
 			//fromSlot < slotCount means TE -> Player, else Player -> TE input slots
-			if(fromSlot < 2 ? !mergeItemStack(current, 2, 36 + 2, true) : !mergeItemStack(current, 0, 2, false)){
+			if(fromSlot < 2 ? !moveItemStackTo(current, 2, 36 + 2, true) : !moveItemStackTo(current, 0, 2, false)){
 				return ItemStack.EMPTY;
 			}
 
 			if(current.isEmpty()){
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			}else{
-				slot.onSlotChanged();
+				slot.setChanged();
 			}
 
 			if(current.getCount() == previous.getCount()){
@@ -99,21 +99,21 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean canInteractWith(PlayerEntity playerIn){
-		return pos.distanceSq(playerIn.getPositionVec(), true) <= 64;
+	public boolean stillValid(PlayerEntity playerIn){
+		return pos.distSqr(playerIn.position(), true) <= 64;
 	}
 
 	@Override
-	public void onContainerClosed(PlayerEntity playerIn){
-		super.onContainerClosed(playerIn);
+	public void removed(PlayerEntity playerIn){
+		super.removed(playerIn);
 
-		if(te != null && !te.getWorld().isRemote){
+		if(te != null && !te.getLevel().isClientSide){
 			if(playerIn.isAlive() && !(playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected())){
-				playerIn.inventory.placeItemBackInInventory(te.getWorld(), inv.getStackInSlot(0).getStack());
-				playerIn.inventory.placeItemBackInInventory(te.getWorld(), inv.getStackInSlot(1).getStack());
+				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(0).getStack());
+				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(1).getStack());
 			}else{
-				playerIn.dropItem(inventorySlots.get(0).getStack(), false);
-				playerIn.dropItem(inventorySlots.get(1).getStack(), false);
+				playerIn.drop(slots.get(0).getItem(), false);
+				playerIn.drop(slots.get(1).getItem(), false);
 			}
 		}
 	}

@@ -45,15 +45,15 @@ public class DelayCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		TileEntity te;
-		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-			super.onBlockActivated(state, worldIn, pos, playerIn, hand, hit);
-		}else if(playerIn.getHeldItem(hand).getItem() == ESItems.circuitWrench){
+		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+			super.use(state, worldIn, pos, playerIn, hand, hit);
+		}else if(playerIn.getItemInHand(hand).getItem() == ESItems.circuitWrench){
 			return ActionResultType.PASS;
-		}else if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof DelayCircuitTileEntity){
+		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof DelayCircuitTileEntity){
 			DelayCircuitTileEntity tte = (DelayCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getPos(), tte.settingStrDelay));
+			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrDelay));
 		}
 
 		return ActionResultType.SUCCESS;
@@ -61,12 +61,12 @@ public class DelayCircuit extends AbstractCircuit{
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader worldIn){
+	public TileEntity newBlockEntity(IBlockReader worldIn){
 		return new DelayCircuitTileEntity();
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.delay_circuit"));
 	}
 }

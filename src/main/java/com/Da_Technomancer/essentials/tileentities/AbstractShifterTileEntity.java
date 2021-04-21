@@ -41,14 +41,14 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 			if(!state.hasProperty(ESProperties.FACING)){//MCP note: has
 				return Direction.DOWN;
 			}
-			facing = state.get(ESProperties.FACING);
+			facing = state.getValue(ESProperties.FACING);
 		}
 		return facing;
 	}
 
 	@Override
-	public void updateContainingBlockInfo(){
-		super.updateContainingBlockInfo();
+	public void clearCache(){
+		super.clearCache();
 		facing = null;
 		refreshCache();
 	}
@@ -59,13 +59,13 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		int maxChutes = ESConfig.itemChuteRange.get();
 
 		for(extension = 1; extension <= maxChutes; extension++){
-			BlockState target = world.getBlockState(pos.offset(dir, extension));
-			if(target.getBlock() != ESBlocks.itemChute || target.get(ESProperties.AXIS) != dir.getAxis()){
+			BlockState target = level.getBlockState(worldPosition.relative(dir, extension));
+			if(target.getBlock() != ESBlocks.itemChute || target.getValue(ESProperties.AXIS) != dir.getAxis()){
 				break;
 			}
 		}
 
-		endPos = pos.offset(dir, extension);
+		endPos = worldPosition.relative(dir, extension);
 	}
 	
 	public static ItemStack ejectItem(World world, BlockPos outputPos, Direction fromSide, ItemStack stack, @Nullable LazyOptional<IItemHandler> outputHandlerCache){
@@ -78,7 +78,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		//Capability item handlers
 		//Null means no cache, check independently
 		if(outputHandlerCache == null){
-			TileEntity outputTE = world.getTileEntity(outputPos);
+			TileEntity outputTE = world.getBlockEntity(outputPos);
 			LazyOptional<IItemHandler> outputCap;
 			if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
 				handler = outputCap.orElseThrow(NullPointerException::new);
@@ -91,7 +91,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		if(handler == null){
 			BlockState outputState = world.getBlockState(outputPos);
 			if(outputState.getBlock() instanceof ISidedInventoryProvider){
-				ISidedInventory inv = ((ISidedInventoryProvider) outputState.getBlock()).createInventory(outputState, world, outputPos);
+				ISidedInventory inv = ((ISidedInventoryProvider) outputState.getBlock()).getContainer(outputState, world, outputPos);
 				handler = new InvWrapper(inv);
 			}
 		}
@@ -108,8 +108,8 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 
 		//Drop the item in the world
 		ItemEntity ent = new ItemEntity(world, outputPos.getX() + 0.5D, outputPos.getY() + 0.5D, outputPos.getZ() + 0.5D, stack);
-		ent.setMotion(Vector3d.ZERO);
-		world.addEntity(ent);
+		ent.setDeltaMovement(Vector3d.ZERO);
+		world.addFreshEntity(ent);
 		return ItemStack.EMPTY;
 	}
 
@@ -118,7 +118,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 			return FluidStack.EMPTY;
 		}
 
-		TileEntity outputTE = world.getTileEntity(pos);
+		TileEntity outputTE = world.getBlockEntity(pos);
 		LazyOptional<IFluidHandler> outHandlerCon;
 		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
 			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);

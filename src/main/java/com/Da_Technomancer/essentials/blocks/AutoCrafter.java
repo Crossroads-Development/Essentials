@@ -32,20 +32,20 @@ public class AutoCrafter extends ContainerBlock{
 	}
 
 	protected AutoCrafter(String name){
-		super(Block.Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL));
+		super(AbstractBlock.Properties.of(Material.METAL).strength(2).sound(SoundType.METAL));
 		setRegistryName(name);
 	}
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader worldIn){
+	public TileEntity newBlockEntity(IBlockReader worldIn){
 		return new AutoCrafterTileEntity();
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		TileEntity te;
-		if(!worldIn.isRemote && (te = worldIn.getTileEntity(pos)) instanceof AutoCrafterTileEntity){
+		if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof AutoCrafterTileEntity){
 			AutoCrafterTileEntity acTE = (AutoCrafterTileEntity) te;
 			NetworkHooks.openGui((ServerPlayerEntity) playerIn, acTE, pos);
 		}
@@ -54,15 +54,15 @@ public class AutoCrafter extends ContainerBlock{
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state){
+	public BlockRenderType getRenderShape(BlockState state){
 		return BlockRenderType.MODEL;
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
-		if(!world.isRemote){
-			boolean powered = world.isBlockPowered(pos) || world.isBlockPowered(pos.up());
-			TileEntity te = world.getTileEntity(pos);
+		if(!world.isClientSide){
+			boolean powered = world.hasNeighborSignal(pos) || world.hasNeighborSignal(pos.above());
+			TileEntity te = world.getBlockEntity(pos);
 			if(te instanceof AutoCrafterTileEntity){
 				((AutoCrafterTileEntity) te).redstoneUpdate(powered);
 			}
@@ -70,21 +70,21 @@ public class AutoCrafter extends ContainerBlock{
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getTileEntity(pos);
+			TileEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof AutoCrafterTileEntity) {
 				((AutoCrafterTileEntity) te).dropItems();
-				worldIn.updateComparatorOutputLevel(pos, this);
+				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
-			super.onReplaced(state, worldIn, pos, newState, isMoving);
+			super.onRemove(state, worldIn, pos, newState, isMoving);
 		}
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.auto_crafter_basic"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.auto_crafter_book"));
 

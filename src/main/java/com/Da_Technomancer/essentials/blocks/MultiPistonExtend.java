@@ -21,16 +21,18 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class MultiPistonExtend extends Block{
 
 	private final boolean sticky;
 
 	protected MultiPistonExtend(boolean sticky){
-		super(Properties.create(Material.PISTON).hardnessAndResistance(0.5F));
+		super(Properties.of(Material.PISTON).strength(0.5F));
 		this.sticky = sticky;
 		String name = "multi_piston_extend" + (sticky ? "_sticky" : "");
 		setRegistryName(name);
-		setDefaultState(getDefaultState().with(ESProperties.AXIS, Direction.Axis.Y).with(ESProperties.HEAD, 0));
+		registerDefaultState(defaultBlockState().setValue(ESProperties.AXIS, Direction.Axis.Y).setValue(ESProperties.HEAD, 0));
 		ESBlocks.toRegister.add(this);
 	}
 
@@ -43,56 +45,56 @@ public class MultiPistonExtend extends Block{
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){
+	public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){
 		if(!MultiPistonBase.changingWorld){
-			Direction.Axis axis = state.get(ESProperties.AXIS);
-			Direction.AxisDirection dir = getDirFromHead(state.get(ESProperties.HEAD));
+			Direction.Axis axis = state.getValue(ESProperties.AXIS);
+			Direction.AxisDirection dir = getDirFromHead(state.getValue(ESProperties.HEAD));
 
 			Block piston = sticky ? ESBlocks.multiPistonSticky : ESBlocks.multiPiston;
 
 			for(Direction.AxisDirection actDir : Direction.AxisDirection.values()){
 				//Don't try to interact in the side with the piston head
 				if(actDir != dir){
-					BlockPos adjPos = pos.offset(Direction.getFacingFromAxis(actDir, axis));
+					BlockPos adjPos = pos.relative(Direction.get(actDir, axis));
 					BlockState adjState = world.getBlockState(adjPos);
 					//Even though under normal usage this if statement should be a guaranteed true, we check anyway in case we ended up in a glitched state, either through a bug or a player using the setblock command
-					if((adjState.getBlock() == piston && adjState.get(ESProperties.FACING).getAxis() == axis) || (adjState.getBlock() == this && adjState.get(ESProperties.AXIS) == axis)){
+					if((adjState.getBlock() == piston && adjState.getValue(ESProperties.FACING).getAxis() == axis) || (adjState.getBlock() == this && adjState.getValue(ESProperties.AXIS) == axis)){
 						world.destroyBlock(adjPos, false);
 					}
 				}
 			}
 		}
 
-		super.onReplaced(state, world, pos, newState, isMoving);
+		super.onRemove(state, world, pos, newState, isMoving);
 	}
 
 	@Override
-	public void harvestBlock(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack){
-		InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), getPickBlock(state, null, worldIn, pos, player));
-		super.harvestBlock(worldIn, player, pos, state, te, stack);
+	public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack){
+		InventoryHelper.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), getPickBlock(state, null, worldIn, pos, player));
+		super.playerDestroy(worldIn, player, pos, state, te, stack);
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.AXIS, ESProperties.HEAD);
 	}
 
-	private static final VoxelShape[] ROD_BB = new VoxelShape[] {makeCuboidShape(0.001D, 6, 6, 15.999D, 10, 10), makeCuboidShape(6, 0.001D, 6, 10, 15.999D, 10), makeCuboidShape(6, 6, 0.001D, 10, 10, 15.999D)};
-	private static final VoxelShape[] HEAD_BB = new VoxelShape[] {makeCuboidShape(0, 0, 0, 16, 5, 16), makeCuboidShape(0, 11, 0, 16, 16, 16), makeCuboidShape(0, 0, 0, 16, 16, 5), makeCuboidShape(0, 0, 11, 16, 16, 16), makeCuboidShape(0, 0, 0, 5, 16, 16), makeCuboidShape(11D, 0, 0, 16, 16, 16)};
+	private static final VoxelShape[] ROD_BB = new VoxelShape[] {box(0.001D, 6, 6, 15.999D, 10, 10), box(6, 0.001D, 6, 10, 15.999D, 10), box(6, 6, 0.001D, 10, 10, 15.999D)};
+	private static final VoxelShape[] HEAD_BB = new VoxelShape[] {box(0, 0, 0, 16, 5, 16), box(0, 11, 0, 16, 16, 16), box(0, 0, 0, 16, 16, 5), box(0, 0, 11, 16, 16, 16), box(0, 0, 0, 5, 16, 16), box(11D, 0, 0, 16, 16, 16)};
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
-		Direction.Axis axis = state.get(ESProperties.AXIS);
-		Direction.AxisDirection dir = getDirFromHead(state.get(ESProperties.HEAD));
+		Direction.Axis axis = state.getValue(ESProperties.AXIS);
+		Direction.AxisDirection dir = getDirFromHead(state.getValue(ESProperties.HEAD));
 		if(dir == null){
 			return ROD_BB[axis.ordinal()];
 		}else{
-			return VoxelShapes.combine(ROD_BB[axis.ordinal()], HEAD_BB[Direction.getFacingFromAxis(dir, axis).getIndex()], IBooleanFunction.OR);
+			return VoxelShapes.joinUnoptimized(ROD_BB[axis.ordinal()], HEAD_BB[Direction.get(dir, axis).get3DDataValue()], IBooleanFunction.OR);
 		}
 	}
 
 	@Override
-	public PushReaction getPushReaction(BlockState state){
+	public PushReaction getPistonPushReaction(BlockState state){
 		return PushReaction.BLOCK;
 	}
 

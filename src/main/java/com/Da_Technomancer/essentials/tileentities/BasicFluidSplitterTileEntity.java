@@ -15,6 +15,9 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
+import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE.SplitDistribution;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 @ObjectHolder(Essentials.MODID)
 public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
@@ -33,8 +36,8 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void updateContainingBlockInfo(){
-		super.updateContainingBlockInfo();
+	public void clearCache(){
+		super.clearCache();
 		primaryOpt.invalidate();
 		secondaryOpt.invalidate();
 		inOpt.invalidate();
@@ -51,14 +54,14 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
 		Direction dir = getFacing();
 		for(int i = 0; i < 2; i++){
-			inventory[i] = AbstractShifterTileEntity.ejectFluid(world, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i]);
+			inventory[i] = AbstractShifterTileEntity.ejectFluid(level, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i]);
 		}
-		markDirty();
+		setChanged();
 	}
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		primaryOpt.invalidate();
 		secondaryOpt.invalidate();
 		inOpt.invalidate();
@@ -81,8 +84,8 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
 		nbt.putInt("transferred", transferred);
@@ -97,8 +100,8 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 
 		//The way this block saves to nbt was changed in 2.2.0, and a "type" of 1 means the encoding is the new version, while 0 mean old version
 		if(nbt.getByte("type") == 1){
@@ -289,7 +292,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 					out.setAmount(drained);
 					if(action.execute()){
 						inventory[index].shrink(drained);
-						markDirty();
+						setChanged();
 					}
 					return out;
 				}
@@ -307,7 +310,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 				out.setAmount(drained);
 				if(action.execute()){
 					inventory[index].shrink(drained);
-					markDirty();
+					setChanged();
 				}
 				return out;
 			}

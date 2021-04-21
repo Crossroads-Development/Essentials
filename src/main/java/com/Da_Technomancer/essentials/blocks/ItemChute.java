@@ -27,12 +27,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class ItemChute extends Block{
 
-	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, 2, 2, 16, 14, 14), makeCuboidShape(2, 0, 2, 14, 16, 14), makeCuboidShape(2, 2, 0, 14, 14, 16)};
+	private static final VoxelShape[] BB = new VoxelShape[] {box(0, 2, 2, 16, 14, 14), box(2, 0, 2, 14, 16, 14), box(2, 2, 0, 14, 14, 16)};
 	
 	protected ItemChute(){
-		super(Properties.create(Material.IRON).hardnessAndResistance(1.5F).sound(SoundType.METAL));
+		super(Properties.of(Material.METAL).strength(1.5F).sound(SoundType.METAL));
 		String name = "item_chute";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
@@ -42,14 +44,14 @@ public class ItemChute extends Block{
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(ESProperties.AXIS, context.getFace().getAxis());
+		return defaultBlockState().setValue(ESProperties.AXIS, context.getClickedFace().getAxis());
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.func_235896_a_(ESProperties.AXIS));//MCP note: cycle
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+			if(!worldIn.isClientSide){
+				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.AXIS));//MCP note: cycle
 			}
 			return ActionResultType.SUCCESS;
 		}
@@ -58,18 +60,18 @@ public class ItemChute extends Block{
 
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
-		return BB[state.get(ESProperties.AXIS).ordinal()];
+		return BB[state.getValue(ESProperties.AXIS).ordinal()];
 	}
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.item_chute.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.item_chute.decor"));
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.AXIS);
 	}
 
@@ -77,11 +79,11 @@ public class ItemChute extends Block{
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
 		//Block updates are propagated down lines of Item Chutes, allowing caching of target positions for Item Shifters
 		if(fromPos != null){
-			Direction.Axis axis = state.get(ESProperties.AXIS);
-			Direction dir = Direction.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
+			Direction.Axis axis = state.getValue(ESProperties.AXIS);
+			Direction dir = Direction.getNearest(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
 			if(dir.getAxis() == axis){
 				fromPos = pos;
-				pos = pos.offset(dir);
+				pos = pos.relative(dir);
 				worldIn.getBlockState(pos).neighborChanged(worldIn, pos, this, fromPos, false);
 			}
 		}

@@ -33,13 +33,13 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 	@Override
 	public void render(T te, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay){
 		//Only render link lines if the player is holding a linking tool
-		if(!LinkHelper.isLinkTool(Minecraft.getInstance().player.getHeldItem(Hand.MAIN_HAND)) && !LinkHelper.isLinkTool(Minecraft.getInstance().player.getHeldItem(Hand.OFF_HAND))){
+		if(!LinkHelper.isLinkTool(Minecraft.getInstance().player.getItemInHand(Hand.MAIN_HAND)) && !LinkHelper.isLinkTool(Minecraft.getInstance().player.getItemInHand(Hand.OFF_HAND))){
 			return;
 		}
 
-		Vector3d tePos = new Vector3d(te.getPos().getX() + 0.5, te.getPos().getY() + 0.5, te.getPos().getZ() + 0.5);
+		Vector3d tePos = new Vector3d(te.getBlockPos().getX() + 0.5, te.getBlockPos().getY() + 0.5, te.getBlockPos().getZ() + 0.5);
 
-		matrix.push();
+		matrix.pushPose();
 		matrix.translate(0.5, 0.5, 0.5);
 		IVertexBuilder builder = buffer.getBuffer(LINK_TYPE);
 
@@ -50,9 +50,9 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 		float uWidth = 1F / 3F;
 
 		for(BlockPos link : te.getLinks()){
-			Vector3d line = Vector3d.copy(link);//A ray pointing from this TE to the link
+			Vector3d line = Vector3d.atLowerCornerOf(link);//A ray pointing from this TE to the link
 			Vector3d widthVec = RenderUtil.findRayWidth(tePos, line, 0.3F);
-			Vector3d normal = line.crossProduct(widthVec);
+			Vector3d normal = line.cross(widthVec);
 
 			float length = (float) line.length();
 
@@ -66,11 +66,11 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 			RenderUtil.addVertexBlock(builder, matrix, line.add(widthVec), uWidth * 2, length / 3F, normal, RenderUtil.BRIGHT_LIGHT, col);//max-max
 			RenderUtil.addVertexBlock(builder, matrix, line.subtract(widthVec), uWidth, length / 3F, normal, RenderUtil.BRIGHT_LIGHT, col);//min-max
 		}
-		matrix.pop();
+		matrix.popPose();
 	}
 
 	@Override
-	public boolean isGlobalRenderer(T te){
+	public boolean shouldRenderOffScreen(T te){
 		return true;
 	}
 
@@ -81,7 +81,7 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 		}
 
 		private static RenderType initType(){
-			return RenderType.makeType("link_line", DefaultVertexFormats.BLOCK, 7, 256, false, true, RenderType.State.getBuilder().texture(new RenderState.TextureState(TEXTURE, false, false)).transparency(RenderState.TRANSLUCENT_TRANSPARENCY).build(false));
+			return RenderType.create("link_line", DefaultVertexFormats.BLOCK, 7, 256, false, true, RenderType.State.builder().setTextureState(new RenderState.TextureState(TEXTURE, false, false)).setTransparencyState(RenderState.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
 		}
 	}
 }

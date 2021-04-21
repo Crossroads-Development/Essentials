@@ -33,19 +33,19 @@ public abstract class AbstractCircuit extends AbstractTile{
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(ESProperties.HORIZ_FACING, context.getPlacementHorizontalFacing());
+		return defaultBlockState().setValue(ESProperties.HORIZ_FACING, context.getHorizontalDirection());
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.HORIZ_FACING);//.add(EssentialsProperties.REDSTONE_BOOL);
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-			if(!worldIn.isRemote){
-				worldIn.setBlockState(pos, state.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING).rotateY()));
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+			if(!worldIn.isClientSide){
+				worldIn.setBlockAndUpdate(pos, state.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING).getClockWise()));
 			}
 			return ActionResultType.SUCCESS;
 		}
@@ -55,25 +55,25 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader worldIn){
+	public TileEntity newBlockEntity(IBlockReader worldIn){
 		return new CircuitTileEntity();
 	}
 
 	@Override
-	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
-		TileEntity te = worldIn.getTileEntity(pos);
-		if(te instanceof CircuitTileEntity && !worldIn.isRemote){
+	public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
+		TileEntity te = worldIn.getBlockEntity(pos);
+		if(te instanceof CircuitTileEntity && !worldIn.isClientSide){
 			CircuitTileEntity cte = (CircuitTileEntity) te;
 			cte.builtConnections = false;
 			cte.buildConnections();
 		}else{
-			worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.VERY_HIGH);
+			worldIn.getBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.VERY_HIGH);
 		}
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		TileEntity te = worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getBlockEntity(pos);
 
 		if(te instanceof CircuitTileEntity){
 			CircuitTileEntity cte = (CircuitTileEntity) te;
@@ -91,9 +91,9 @@ public abstract class AbstractCircuit extends AbstractTile{
 	}
 
 	@Override
-	public int getWeakPower(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction side){
-		if(side.getOpposite() == state.get(ESProperties.HORIZ_FACING)){
-			TileEntity te = blockAccess.getTileEntity(pos);
+	public int getSignal(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction side){
+		if(side.getOpposite() == state.getValue(ESProperties.HORIZ_FACING)){
+			TileEntity te = blockAccess.getBlockEntity(pos);
 			if(te instanceof CircuitTileEntity){
 				return RedstoneUtil.clampToVanilla(((CircuitTileEntity) te).getOutput());
 			}
@@ -103,17 +103,17 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Override
 	public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side){
-		return side != null && (side.getOpposite() == state.get(ESProperties.HORIZ_FACING) || useInput(CircuitTileEntity.Orient.getOrient(side.getOpposite(), state.get(ESProperties.HORIZ_FACING))));
+		return side != null && (side.getOpposite() == state.getValue(ESProperties.HORIZ_FACING) || useInput(CircuitTileEntity.Orient.getOrient(side.getOpposite(), state.getValue(ESProperties.HORIZ_FACING))));
 	}
 
 	@Override
-	public boolean canProvidePower(BlockState state){
+	public boolean isSignalSource(BlockState state){
 		return true;
 	}
 
 	@Override
 	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random){
-		TileEntity te = worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof CircuitTileEntity){
 			((CircuitTileEntity) te).recalculateOutput();
 		}
@@ -121,7 +121,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Override
 	public boolean canConnect(Direction side, BlockState state){
-		Direction facing = state.get(ESProperties.HORIZ_FACING);
+		Direction facing = state.getValue(ESProperties.HORIZ_FACING);
 		return side == facing || useInput(CircuitTileEntity.Orient.getOrient(side, facing));
 	}
 

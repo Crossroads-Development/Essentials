@@ -59,44 +59,44 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	}
 
 	private void filterChanged(){
-		if(world.isRemote){
+		if(level.isClientSide){
 			return;
 		}
 		CompoundNBT slotNBT = new CompoundNBT();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				slotNBT.put("lock" + i, lockedInv[i].write(new CompoundNBT()));
+				slotNBT.put("lock" + i, lockedInv[i].save(new CompoundNBT()));
 			}
 		}
-		BlockUtil.sendClientPacketAround(world, pos, new SendNBTToClient(slotNBT, pos));
+		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(slotNBT, worldPosition));
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(nbt.contains("slot" + i)){
-				inv[i] = ItemStack.read(nbt.getCompound("slot" + i));
+				inv[i] = ItemStack.of(nbt.getCompound("slot" + i));
 				//Backward compatibility.
-				lockedInv[i] = ItemStack.read(nbt.getCompound("slot" + i));
+				lockedInv[i] = ItemStack.of(nbt.getCompound("slot" + i));
 			}
 			if(nbt.contains("lockSlot" + i)){
-				lockedInv[i] = ItemStack.read(nbt.getCompound("lockSlot" + i));
+				lockedInv[i] = ItemStack.of(nbt.getCompound("lockSlot" + i));
 			}
 		}
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(!inv[i].isEmpty()){
-				nbt.put("slot" + i, inv[i].write(new CompoundNBT()));
+				nbt.put("slot" + i, inv[i].save(new CompoundNBT()));
 			}
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].write(new CompoundNBT()));
+				nbt.put("lockSlot" + i, lockedInv[i].save(new CompoundNBT()));
 			}
 		}
 
@@ -108,7 +108,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		CompoundNBT nbt = super.getUpdateTag();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].write(new CompoundNBT()));
+				nbt.put("lockSlot" + i, lockedInv[i].save(new CompoundNBT()));
 			}
 		}
 		return nbt;
@@ -130,7 +130,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		for(int i = 0; i < 54; i++){
 			if(nbt.contains("lock" + i)){
-				lockedInv[i] = ItemStack.read(nbt.getCompound("lock" + i));
+				lockedInv[i] = ItemStack.of(nbt.getCompound("lock" + i));
 			}else{
 				lockedInv[i] = ItemStack.EMPTY;
 			}
@@ -162,7 +162,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
-			if(slot >= 54 || stack.isEmpty() || !ItemStack.areItemsEqual(stack, lockedInv[slot])){
+			if(slot >= 54 || stack.isEmpty() || !ItemStack.isSame(stack, lockedInv[slot])){
 				return stack;
 			}
 
@@ -205,7 +205,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
-			return slot < 54 && ItemStack.areItemsEqual(stack, lockedInv[slot]) && ItemStack.areItemStackTagsEqual(stack, lockedInv[slot]);
+			return slot < 54 && ItemStack.isSame(stack, lockedInv[slot]) && ItemStack.tagMatches(stack, lockedInv[slot]);
 		}
 	}
 
@@ -228,17 +228,17 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		}
 
 		@Override
-		public int getSizeInventory(){
+		public int getContainerSize(){
 			return inv.length;
 		}
 
 		@Override
-		public ItemStack getStackInSlot(int index){
+		public ItemStack getItem(int index){
 			return index >= inv.length ? ItemStack.EMPTY : inv[index];
 		}
 
 		@Override
-		public ItemStack decrStackSize(int index, int count){
+		public ItemStack removeItem(int index, int count){
 			if(index >= inv.length || inv[index].isEmpty()){
 				return ItemStack.EMPTY;
 			}
@@ -247,7 +247,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		}
 
 		@Override
-		public ItemStack removeStackFromSlot(int index){
+		public ItemStack removeItemNoUpdate(int index){
 			if(index >= inv.length){
 				return ItemStack.EMPTY;
 			}
@@ -258,7 +258,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		}
 
 		@Override
-		public void setInventorySlotContents(int index, ItemStack stack){
+		public void setItem(int index, ItemStack stack){
 			if(index < inv.length){
 				inv[index] = stack;
 				if(!stack.isEmpty()){
@@ -269,29 +269,29 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		}
 
 		@Override
-		public int getInventoryStackLimit(){
+		public int getMaxStackSize(){
 			return 64;
 		}
 
 		@Override
-		public void markDirty(){
+		public void setChanged(){
 			if(te != null){
-				te.markDirty();
+				te.setChanged();
 			}
 		}
 
 		@Override
-		public boolean isUsableByPlayer(PlayerEntity playerEntity){
+		public boolean stillValid(PlayerEntity playerEntity){
 			return true;
 		}
 
 		@Override
-		public boolean isItemValidForSlot(int index, ItemStack stack){
+		public boolean canPlaceItem(int index, ItemStack stack){
 			return index < inv.length && (inv[index].isEmpty() ? lockedInv[index].isEmpty() || SlottedChestContainer.doStackContentsMatch(stack, lockedInv[index]) : SlottedChestContainer.doStackContentsMatch(stack, inv[index]));
 		}
 
 		@Override
-		public void clear(){
+		public void clearContent(){
 			for(int i = 0; i < inv.length; i++){
 				inv[i] = ItemStack.EMPTY;
 				lockedInv[i] = ItemStack.EMPTY;

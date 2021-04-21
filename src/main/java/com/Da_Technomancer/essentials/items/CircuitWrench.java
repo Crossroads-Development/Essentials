@@ -45,7 +45,7 @@ public class CircuitWrench extends Item{
 	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(38);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
-	private static final ITag<Item> COMPONENT_TAG = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "circuit_components").toString());
+	private static final ITag<Item> COMPONENT_TAG = ItemTags.bind(new ResourceLocation(Essentials.MODID, "circuit_components").toString());
 
 	static{
 		registerCircuit(ESBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
@@ -103,17 +103,17 @@ public class CircuitWrench extends Item{
 	}
 
 	protected CircuitWrench(){
-		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS));
+		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS));
 		String name = "circuit_wrench";
 		setRegistryName(name);
 		ESItems.toRegister.add(this);
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn){
-		ItemStack stack = playerIn.getHeldItem(handIn);
+	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn){
+		ItemStack stack = playerIn.getItemInHand(handIn);
 		if(playerIn.isCrouching()){
-			if(!worldIn.isRemote){
+			if(!worldIn.isClientSide){
 				NetworkHooks.openGui((ServerPlayerEntity) playerIn, UIProvider.INSTANCE);
 			}
 			return new ActionResult<>(ActionResultType.SUCCESS, stack);
@@ -123,12 +123,12 @@ public class CircuitWrench extends Item{
 	}
 
 	@Override
-	public ActionResultType onItemUse(ItemUseContext context){
-		BlockState state = context.getWorld().getBlockState(context.getPos());
-		BlockState toPlace = MODES.get(context.getItem().getOrCreateTag().getInt(NBT_KEY) % MODES.size()).getDefaultState();
+	public ActionResultType useOn(ItemUseContext context){
+		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
+		BlockState toPlace = MODES.get(context.getItemInHand().getOrCreateTag().getInt(NBT_KEY) % MODES.size()).defaultBlockState();
 
 		if(state.getBlock() instanceof AbstractTile){
-			if(!context.getPlayer().isSneaking()){
+			if(!context.getPlayer().isShiftKeyDown()){
 				//Change circuit type
 				AbstractTile worldTile = (AbstractTile) state.getBlock();
 				AbstractTile placeTile = (AbstractTile) toPlace.getBlock();
@@ -147,10 +147,10 @@ public class CircuitWrench extends Item{
 						allowed = true;
 					}else{
 						//Have to pay for tile->circuit
-						List<ItemStack> playerInv = context.getPlayer().inventory.mainInventory;
+						List<ItemStack> playerInv = context.getPlayer().inventory.items;
 						for(ItemStack stack : playerInv){
 							if(COMPONENT_TAG.contains(stack.getItem())){
-								if(!context.getWorld().isRemote){
+								if(!context.getLevel().isClientSide){
 									stack.shrink(1);
 								}
 								allowed = true;
@@ -164,9 +164,9 @@ public class CircuitWrench extends Item{
 
 					if(worldTile.usesQuartz()){
 						//If we downgrade from a circuit to a non-circuit tile (like wire or junction), return a circuit component
-						ItemStack given = new ItemStack(COMPONENT_TAG.getRandomElement(context.getWorld().rand), 1);
+						ItemStack given = new ItemStack(COMPONENT_TAG.getRandomElement(context.getLevel().random), 1);
 						if(!given.isEmpty()){
-							context.getPlayer().addItemStackToInventory(given);
+							context.getPlayer().addItem(given);
 						}
 					}
 				}
@@ -174,22 +174,22 @@ public class CircuitWrench extends Item{
 				if(allowed){
 					if(toPlace.hasProperty(ESProperties.HORIZ_FACING)){
 						if(state.hasProperty(ESProperties.HORIZ_FACING)){
-							toPlace = toPlace.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING));
+							toPlace = toPlace.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING));
 						}else{
-							toPlace = toPlace.with(ESProperties.HORIZ_FACING, context.getPlayer().getAdjustedHorizontalFacing());
+							toPlace = toPlace.setValue(ESProperties.HORIZ_FACING, context.getPlayer().getMotionDirection());
 						}
 					}
-					context.getWorld().setBlockState(context.getPos(), toPlace);
+					context.getLevel().setBlockAndUpdate(context.getClickedPos(), toPlace);
 					return ActionResultType.SUCCESS;
 				}else{
 					//Print a message saying quartz is needed
-					context.getPlayer().sendStatusMessage(new TranslationTextComponent("tt.essentials.circuit_wrench.quartz"), true);
+					context.getPlayer().displayClientMessage(new TranslationTextComponent("tt.essentials.circuit_wrench.quartz"), true);
 					return ActionResultType.FAIL;
 				}
 			}else{
 				//Rotate circuit
 				if(state.hasProperty(ESProperties.HORIZ_FACING)){
-					context.getWorld().setBlockState(context.getPos(), state.with(ESProperties.HORIZ_FACING, state.get(ESProperties.HORIZ_FACING).rotateY()));
+					context.getLevel().setBlockAndUpdate(context.getClickedPos(), state.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING).getClockWise()));
 					return ActionResultType.SUCCESS;
 				}
 			}
@@ -198,12 +198,12 @@ public class CircuitWrench extends Item{
 		return ActionResultType.PASS;
 	}
 
-	private static final Style style = Style.EMPTY.applyFormatting(TextFormatting.DARK_RED);
+	private static final Style style = Style.EMPTY.applyFormat(TextFormatting.DARK_RED);
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		int mode = stack.getOrCreateTag().getInt(NBT_KEY) % MODES.size();
-		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(MODES.get(mode).getTranslationKey())));
+		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(MODES.get(mode).getDescriptionId())));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_info"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_change_mode"));
 	}

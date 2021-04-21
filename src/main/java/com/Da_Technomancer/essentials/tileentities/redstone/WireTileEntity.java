@@ -37,8 +37,8 @@ public class WireTileEntity extends TileEntity{
 	}
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		redsOptional.invalidate();
 	}
 
@@ -65,10 +65,10 @@ public class WireTileEntity extends TileEntity{
 				return;
 			}
 			HashSet<BlockPos> visited = new HashSet<>();
-			visited.add(pos);
+			visited.add(worldPosition);
 			for(Direction dir : Direction.Plane.HORIZONTAL){
 				if(dir != fromSide){
-					TileEntity neighbor = world.getTileEntity(pos.offset(dir));
+					TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 					IRedstoneHandler handler;
 					if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, dir.getOpposite()))) != null){
 						if(handler instanceof RedsHandler){
@@ -83,12 +83,12 @@ public class WireTileEntity extends TileEntity{
 
 		//A more efficient routing algorithm that is used in place of the stricter API when going between wires, which can be expected to be well behaved
 		protected void routeDependents(WeakReference<LazyOptional<IRedstoneHandler>> src, int dist, Direction fromSide, Direction nominalSide, HashSet<BlockPos> visited){
-			if(!visited.add(pos) || ++dist >= RedstoneUtil.getMaxRange()){
+			if(!visited.add(worldPosition) || ++dist >= RedstoneUtil.getMaxRange()){
 				return;
 			}
 			for(Direction dir : Direction.Plane.HORIZONTAL){
 				if(dir != fromSide){
-					TileEntity neighbor = world.getTileEntity(pos.offset(dir));
+					TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 					IRedstoneHandler handler;
 					if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, dir.getOpposite()))) != null){
 						if(handler instanceof RedsHandler){
@@ -107,10 +107,10 @@ public class WireTileEntity extends TileEntity{
 				return;
 			}
 			HashSet<BlockPos> visited = new HashSet<>();
-			visited.add(pos);
+			visited.add(worldPosition);
 			for(Direction dir : Direction.Plane.HORIZONTAL){
 				if(dir != toSide){
-					TileEntity neighbor = world.getTileEntity(pos.offset(dir));
+					TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 					IRedstoneHandler handler;
 					if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, dir.getOpposite()))) != null){
 						if(handler instanceof RedsHandler){
@@ -125,12 +125,12 @@ public class WireTileEntity extends TileEntity{
 
 		//A more efficient routing algorithm that is used in place of the stricter API when going between wires, which can be expected to be well behaved
 		protected void routeSrc(WeakReference<LazyOptional<IRedstoneHandler>> dependency, int dist, Direction toSide, Direction nominalSide, HashSet<BlockPos> visited){
-			if(!visited.add(pos) || ++dist >= RedstoneUtil.getMaxRange()){
+			if(!visited.add(worldPosition) || ++dist >= RedstoneUtil.getMaxRange()){
 				return;
 			}
 			for(Direction dir : Direction.Plane.HORIZONTAL){
 				if(dir != toSide){
-					TileEntity neighbor = world.getTileEntity(pos.offset(dir));
+					TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 					IRedstoneHandler handler;
 					if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, dir.getOpposite()))) != null){
 						if(handler instanceof RedsHandler){

@@ -40,8 +40,8 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 
 	public CircuitWrenchScreen(CircuitWrenchContainer cont, PlayerInventory playerInventory, ITextComponent text){
 		super(cont, playerInventory, text);
-		ySize = 18 * ROWS + 18;
-		xSize = 18 * COLUMNS;
+		imageHeight = 18 * ROWS + 18;
+		imageWidth = 18 * COLUMNS;
 
 		for(int i = 0; i < CircuitWrench.MODES.size(); i++){
 			options.add(i);
@@ -51,31 +51,31 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	@Override
 	protected void init(){
 		super.init();
-		searchBar = new TextFieldWidget(font, guiLeft + 4, guiTop + 8, COLUMNS * 18 - 4, 18, new TranslationTextComponent("container.search_bar"));
+		searchBar = new TextFieldWidget(font, leftPos + 4, topPos + 8, COLUMNS * 18 - 4, 18, new TranslationTextComponent("container.search_bar"));
 		searchBar.setCanLoseFocus(false);
 		searchBar.setTextColor(-1);
-		searchBar.setDisabledTextColour(-1);
-		searchBar.setEnableBackgroundDrawing(false);
-		searchBar.setMaxStringLength(20);
+		searchBar.setTextColorUneditable(-1);
+		searchBar.setBordered(false);
+		searchBar.setMaxLength(20);
 		searchBar.setResponder(this::filterChanged);
 		children.add(searchBar);
-		setFocusedDefault(searchBar);
+		setInitialFocus(searchBar);
 	}
 
 	@Override
 	public void resize(Minecraft p_resize_1_, int p_resize_2_, int p_resize_3_){
-		String s = searchBar.getText();
+		String s = searchBar.getValue();
 		init(p_resize_1_, p_resize_2_, p_resize_3_);
-		searchBar.setText(s);
+		searchBar.setValue(s);
 	}
 
 	@Override
 	public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_){
 		if(p_keyPressed_1_ == 256){
-			minecraft.player.closeScreen();
+			minecraft.player.closeContainer();
 		}
 
-		return searchBar.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || searchBar.canWrite() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
+		return searchBar.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_) || searchBar.canConsumeInput() || super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_);
 	}
 
 	/**
@@ -85,8 +85,8 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	 */
 	private int getSelectedMode(float xPos, float yPos){
 		//Made relative to the start of the modes window
-		xPos -= guiLeft;
-		yPos -= guiTop + 18;
+		xPos -= leftPos;
+		yPos -= topPos + 18;
 
 		int xInd = (int) Math.floor(xPos / 18F);
 		int yInd = (int) Math.floor(yPos / 18F);
@@ -107,10 +107,10 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 		int index = getSelectedMode(mouseX, mouseY);
 		if(index >= 0){
 			ArrayList<ITextComponent> tt = new ArrayList<>();
-			tt.add(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey()));
+			tt.add(new TranslationTextComponent(CircuitWrench.MODES.get(index).getDescriptionId()));
 			AbstractTile block = CircuitWrench.MODES.get(index);
-			block.addInformation(ItemStack.EMPTY, null, tt, ITooltipFlag.TooltipFlags.NORMAL);
-			func_243308_b(matrix, tt, mouseX, mouseY);//MCP note: renderTooltip
+			block.appendHoverText(ItemStack.EMPTY, null, tt, ITooltipFlag.TooltipFlags.NORMAL);
+			renderComponentTooltip(matrix, tt, mouseX, mouseY);//MCP note: renderTooltip
 		}
 
 		RenderSystem.disableLighting();
@@ -123,14 +123,14 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 
 		for(int i = 0; i < CircuitWrench.MODES.size(); i++){
 			AbstractTile tile = CircuitWrench.MODES.get(i);
-			String name = I18n.format(tile.getTranslationKey()).toLowerCase();
+			String name = I18n.get(tile.getDescriptionId()).toLowerCase();
 			if(name.contains(newFilter.toLowerCase().trim())){
 				options.add(i);
 			}
 		}
 	}
 
-	private static final Style style = Style.EMPTY.applyFormatting(TextFormatting.DARK_RED);
+	private static final Style style = Style.EMPTY.applyFormat(TextFormatting.DARK_RED);
 
 	@Override
 	public boolean mouseClicked(double xPos, double yPos, int button){
@@ -147,24 +147,24 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 		}
 
 		EssentialsPackets.channel.sendToServer(new ConfigureWrenchOnServer(index));
-		minecraft.player.closeScreen();
-		playerInventory.player.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(CircuitWrench.MODES.get(index).getTranslationKey())), playerInventory.player.getUniqueID());//MCP note: setStyle, appendSibling
+		minecraft.player.closeContainer();
+		inventory.player.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(CircuitWrench.MODES.get(index).getDescriptionId())), inventory.player.getUUID());//MCP note: setStyle, appendSibling
 
 		return true;
 	}
 
 	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		//Search bar
-		minecraft.getTextureManager().bindTexture(SEARCH_BAR_TEXTURE);
-		blit(matrix, guiLeft, guiTop, 0, 0, xSize, 18, xSize, 18);
+		minecraft.getTextureManager().bind(SEARCH_BAR_TEXTURE);
+		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 18, imageWidth, 18);
 
 		//Rows
-		minecraft.getTextureManager().bindTexture(ROW_TEXTURE);
+		minecraft.getTextureManager().bind(ROW_TEXTURE);
 		for(int i = 1; i <= ROWS; i++){
-			blit(matrix, guiLeft, guiTop + i * 18, 0, 0, xSize, 18, xSize, 18);
+			blit(matrix, leftPos, topPos + i * 18, 0, 0, imageWidth, 18, imageWidth, 18);
 		}
 
 		//Foreground
@@ -175,14 +175,14 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 			if(sprite == null){
 				sprite = MISSING_TEXTURE;
 			}
-			minecraft.getTextureManager().bindTexture(sprite);
-			blit(matrix, (i % COLUMNS) * 18 + 1 + guiLeft, (i / COLUMNS) * 18 + 19 + guiTop, 0, 0, 16, 16, 16, 16);
+			minecraft.getTextureManager().bind(sprite);
+			blit(matrix, (i % COLUMNS) * 18 + 1 + leftPos, (i / COLUMNS) * 18 + 19 + topPos, 0, 0, 16, 16, 16, 16);
 		}
 	}
 
 	//MCP note: draw tooltip/foreground
 	@Override
-	protected void drawGuiContainerForegroundLayer(MatrixStack matrix, int p_230451_2_, int p_230451_3_){
+	protected void renderLabels(MatrixStack matrix, int p_230451_2_, int p_230451_3_){
 		//Don't render text overlays
 	}
 }

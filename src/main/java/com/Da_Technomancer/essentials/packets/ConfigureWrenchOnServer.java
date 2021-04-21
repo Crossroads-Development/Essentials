@@ -38,14 +38,14 @@ public class ConfigureWrenchOnServer extends ServerPacket{
 			return;
 		}
 		Hand hand = null;
-		if(player.getHeldItemMainhand().getItem() == ESItems.circuitWrench){
+		if(player.getMainHandItem().getItem() == ESItems.circuitWrench){
 			hand = Hand.MAIN_HAND;
-		}else if(player.getHeldItemOffhand().getItem() == ESItems.circuitWrench){
+		}else if(player.getOffhandItem().getItem() == ESItems.circuitWrench){
 			hand = Hand.OFF_HAND;
 		}
 
 		if(hand != null){
-			ItemStack held = player.getHeldItem(hand);
+			ItemStack held = player.getItemInHand(hand);
 			held.getOrCreateTag().putInt(CircuitWrench.NBT_KEY, modeIndex);
 		}
 	}

@@ -37,10 +37,10 @@ public class SendFloatToClient extends ClientPacket{
 
 	@Override
 	protected void run(){
-		if(Minecraft.getInstance().world == null){
+		if(Minecraft.getInstance().level == null){
 			return;
 		}
-		TileEntity te = Minecraft.getInstance().world.getTileEntity(pos);
+		TileEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
 
 		if(te instanceof IFloatReceiver){
 			((IFloatReceiver) te).receiveFloat(id, val, null);

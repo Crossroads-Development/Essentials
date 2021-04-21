@@ -27,7 +27,7 @@ public class WireJunctionCircuit extends AbstractTile{
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		//Wire junctions propagate block updates horizontally to make sure any attached circuit can update when a new connection is made/broken
-		TileEntity te = worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof WireTileEntity){
 			WireTileEntity wte = (WireTileEntity) te;
 
@@ -41,13 +41,13 @@ public class WireJunctionCircuit extends AbstractTile{
 
 			if(fromPos == null || fromPos.equals(pos)){
 				for(Direction dir : Direction.Plane.HORIZONTAL){
-					worldIn.neighborChanged(pos.offset(dir), this, pos);
+					worldIn.neighborChanged(pos.relative(dir), this, pos);
 				}
 			}else{
 				//If possible, only propagate the block update along the direction it came from- as this is a junction
-				Direction dir = Direction.getFacingFromVector(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
+				Direction dir = Direction.getNearest(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
 				if(dir.getAxis() != Direction.Axis.Y){
-					worldIn.neighborChanged(pos.offset(dir), this, pos);
+					worldIn.neighborChanged(pos.relative(dir), this, pos);
 				}
 			}
 		}
@@ -57,17 +57,17 @@ public class WireJunctionCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader worldIn){
+	public TileEntity newBlockEntity(IBlockReader worldIn){
 		return new WireJunctionTileEntity();
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 		worldIn.neighborChanged(pos, this, pos);
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.wire_junction_circuit"));
 	}
 }

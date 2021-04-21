@@ -20,7 +20,7 @@ public abstract class CircuitContainer extends Container{
 		}else{
 			pos = data.readBlockPos();
 			for(int i = 0; i < inputs.length; i++){
-				inputs[i] = data.readString(Short.MAX_VALUE);
+				inputs[i] = data.readUtf(Short.MAX_VALUE);
 			}
 		}
 	}
@@ -32,14 +32,14 @@ public abstract class CircuitContainer extends Container{
 	public static PacketBuffer encodeData(PacketBuffer buf, BlockPos pos, String... inputs){
 		buf.writeBlockPos(pos);
 		for(String input : inputs){
-			buf.writeString(input);
+			buf.writeUtf(input);
 		}
 		return buf;
 	}
 
 	@Override
-	public boolean canInteractWith(PlayerEntity playerIn){
-		return pos != null && pos.distanceSq(playerIn.getPositionVec(), true) <= 64;
+	public boolean stillValid(PlayerEntity playerIn){
+		return pos != null && pos.distSqr(playerIn.position(), true) <= 64;
 	}
 
 	public abstract int inputBars();

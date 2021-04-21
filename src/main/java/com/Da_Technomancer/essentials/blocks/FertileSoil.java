@@ -27,7 +27,7 @@ public class FertileSoil extends Block{
 	private final SeedCategory category;
 
 	protected FertileSoil(String plantName, BlockState plant, SeedCategory category){
-		super(Block.Properties.create(category == SeedCategory.HELL_CROP ? Material.SAND : Material.EARTH).hardnessAndResistance(0.5F).sound(SoundType.GROUND).tickRandomly());
+		super(AbstractBlock.Properties.of(category == SeedCategory.HELL_CROP ? Material.SAND : Material.DIRT).strength(0.5F).sound(SoundType.GRAVEL).randomTicks());
 		this.plant = plant;
 		this.category = category;
 		String name = "fertile_soil_" + plantName;
@@ -48,7 +48,7 @@ public class FertileSoil extends Block{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.benefits"));
 		if(category == SeedCategory.HELL_CROP){
@@ -85,10 +85,10 @@ public class FertileSoil extends Block{
 			return;
 		}
 
-		BlockPos upPos = pos.offset(Direction.UP);
+		BlockPos upPos = pos.relative(Direction.UP);
 		//Check light levels are high enough if this is a crop
-		if(worldIn.isAirBlock(upPos) && (category != SeedCategory.CROP || worldIn.getLightSubtracted(upPos, 0) > 7)){
-			worldIn.setBlockState(upPos, plant);
+		if(worldIn.isEmptyBlock(upPos) && (category != SeedCategory.CROP || worldIn.getRawBrightness(upPos, 0) > 7)){
+			worldIn.setBlockAndUpdate(upPos, plant);
 		}
 	}
 

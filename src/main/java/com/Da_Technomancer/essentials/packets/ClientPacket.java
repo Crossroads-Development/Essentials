@@ -32,7 +32,7 @@ public abstract class ClientPacket extends Packet{
 			return;
 		}
 
-		Minecraft.getInstance().enqueue(this::run);
+		Minecraft.getInstance().tell(this::run);
 	}
 
 	/**

@@ -31,7 +31,7 @@ public class BlockUtil{
 	 * @param packet The server->client packet to be send. Essentials channel packets only.
 	 */
 	public static void sendClientPacketAround(World world, BlockPos pos, Packet packet){
-		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.getDimensionKey())), packet);
+		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension())), packet);
 	}
 
 	/**
@@ -43,7 +43,7 @@ public class BlockUtil{
 		if(a == null || b == null){
 			return false;
 		}
-		return ItemStack.areItemsEqual(a, b) && ItemStack.areItemStackTagsEqual(a, b);
+		return ItemStack.isSame(a, b) && ItemStack.tagMatches(a, b);
 	}
 
 	/**

@@ -25,26 +25,26 @@ public class ItemShifter extends AbstractShifter{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new ItemShifterTileEntity();
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getTileEntity(pos);
+			TileEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof ItemShifterTileEntity) {
-				InventoryHelper.dropInventoryItems(worldIn, pos, (ItemShifterTileEntity) te);
-				worldIn.updateComparatorOutputLevel(pos, this);
+				InventoryHelper.dropContents(worldIn, pos, (ItemShifterTileEntity) te);
+				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
-			super.onReplaced(state, worldIn, pos, newState, isMoving);
+			super.onRemove(state, worldIn, pos, newState, isMoving);
 		}
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.item_shifter.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.item_shifter.range", ESConfig.itemChuteRange.get()));
 	}

@@ -20,7 +20,7 @@ public class CircuitWrenchContainer extends Container{
 	}
 
 	@Override
-	public boolean canInteractWith(PlayerEntity playerIn){
-		return playerIn.getHeldItemOffhand().getItem() == ESItems.circuitWrench || playerIn.getHeldItemMainhand().getItem() == ESItems.circuitWrench;
+	public boolean stillValid(PlayerEntity playerIn){
+		return playerIn.getOffhandItem().getItem() == ESItems.circuitWrench || playerIn.getMainHandItem().getItem() == ESItems.circuitWrench;
 	}
 }

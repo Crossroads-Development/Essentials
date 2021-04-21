@@ -21,13 +21,13 @@ public class FluidShifter extends AbstractShifter{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new FluidShifterTileEntity();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_shifter_info"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_shifter_range", ESConfig.itemChuteRange.get()));
 	}

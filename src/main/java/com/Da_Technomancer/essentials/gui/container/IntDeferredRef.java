@@ -31,7 +31,7 @@ public class IntDeferredRef extends IntReferenceHolder{
 	}
 
 	@Override
-	public boolean isDirty(){
+	public boolean checkAndClearUpdateFlag(){
 		if(isRemote){
 			return false;//This shouldn't ever be called on the client side, but if it were, this isn't the side that should originate updates
 		}

@@ -59,16 +59,16 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		if(b instanceof AbstractCircuit){
 			return (AbstractCircuit) b;
 		}
-		remove();
+		setRemoved();
 		return ESBlocks.consCircuit;
 	}
 
 	private Direction getFacing(){
 		BlockState s = getBlockState();
 		if(s.hasProperty(ESProperties.HORIZ_FACING)){
-			return s.get(ESProperties.HORIZ_FACING);
+			return s.getValue(ESProperties.HORIZ_FACING);
 		}
-		remove();
+		setRemoved();
 		return Direction.NORTH;
 	}
 
@@ -87,10 +87,10 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 			//If no dependents, assume we're outputting to vanilla redstone
 			if(dependents.isEmpty() && RedstoneUtil.clampToVanilla(output) != RedstoneUtil.clampToVanilla(newPower)){
 				output = newPower;
-				world.neighborChanged(pos.offset(facing), getOwner(), pos.offset(facing.getOpposite()));
+				level.neighborChanged(worldPosition.relative(facing), getOwner(), worldPosition.relative(facing.getOpposite()));
 			}
 			output = newPower;
-			BlockUtil.sendClientPacketAround(world, pos, new SendFloatToClient(0, output, pos));
+			BlockUtil.sendClientPacketAround(level, worldPosition, new SendFloatToClient(0, output, worldPosition));
 			for(int i = 0; i < dependents.size(); i++){
 				WeakReference<LazyOptional<IRedstoneHandler>> dependent = dependents.get(i);
 				IRedstoneHandler handler;
@@ -104,7 +104,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				handler.notifyInputChange(hanReference);
 			}
 
-			markDirty();
+			setChanged();
 		}
 	}
 
@@ -135,7 +135,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 			int ind = src.getRight().ordinal();
 			if(ind > 2){
-				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + pos.toString() + "; Dim: " + world.getDimensionKey().toString() + "Type: " + getOwner().getRegistryName().toString());
+				IndexOutOfBoundsException e = new IndexOutOfBoundsException("Input into redstone device on the front! Pos: " + worldPosition.toString() + "; Dim: " + level.dimension().toString() + "Type: " + getOwner().getRegistryName().toString());
 				Essentials.logger.catching(e);
 				//Invalid state- remove this input and skip
 				sources.remove(i);
@@ -154,7 +154,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		for(int i = 0; i < 3; i++){
 			if(!hasSrc[i] && owner.useInput(Orient.values()[i])){
 				Direction dir = Orient.values()[i].getFacing(facing);
-				inputs[i] = RedstoneUtil.getRedstoneOnSide(world, pos, dir);
+				inputs[i] = RedstoneUtil.getRedstoneOnSide(level, worldPosition, dir);
 			}
 		}
 
@@ -179,7 +179,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	}
 
 	public void buildConnections(){
-		if(!builtConnections && !world.isRemote){
+		if(!builtConnections && !level.isClientSide){
 			builtConnections = true;
 			dependents.clear();
 			sources.clear();
@@ -188,7 +188,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 			for(Orient or : Orient.INPUTS){
 				if(own.useInput(or)){
 					Direction checkDir = or.getFacing(dir);
-					TileEntity te = world.getTileEntity(pos.offset(checkDir));
+					TileEntity te = level.getBlockEntity(worldPosition.relative(checkDir));
 					IRedstoneHandler otherHandler;
 					if(te != null && (otherHandler = BlockUtil.get(te.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, checkDir.getOpposite()))) != null){
 						otherHandler.requestSrc(hanReference, 0, checkDir.getOpposite(), checkDir);
@@ -196,7 +196,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				}
 			}
 
-			TileEntity te = world.getTileEntity(pos.offset(dir));
+			TileEntity te = level.getBlockEntity(worldPosition.relative(dir));
 			IRedstoneHandler otherHandler;
 			if(te != null && (otherHandler = BlockUtil.get(te.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, dir.getOpposite()))) != null){
 				otherHandler.findDependents(hanReference, 0, dir.getOpposite(), dir);
@@ -207,8 +207,8 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	}
 
 	@Override
-	public void updateContainingBlockInfo(){
-		super.updateContainingBlockInfo();
+	public void clearCache(){
+		super.clearCache();
 
 		output = 0;
 		builtConnections = false;
@@ -217,42 +217,42 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 		hanOptional.invalidate();
 		hanOptional = LazyOptional.of(RedsHandler::new);
 		hanReference = new WeakReference<>(hanOptional);
-		if(world != null && !world.isRemote){
-			BlockUtil.sendClientPacketAround(world, pos, new SendFloatToClient(0, output, pos));
+		if(level != null && !level.isClientSide){
+			BlockUtil.sendClientPacketAround(level, worldPosition, new SendFloatToClient(0, output, worldPosition));
 			buildConnections();
-			markDirty();
+			setChanged();
 		}
 	}
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		hanOptional.invalidate();
 	}
 
 	@Override
 	public void receiveFloat(byte id, float value, @Nullable ServerPlayerEntity sender){
-		if(id == 0 && world.isRemote){
+		if(id == 0 && level.isClientSide){
 			output = value;
 		}
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		output = nbt.getFloat("pow");
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putFloat("pow", output);
 		return nbt;
 	}
 
 	@Override
 	public CompoundNBT getUpdateTag(){
-		return write(new CompoundNBT());
+		return save(new CompoundNBT());
 	}
 
 	@Nonnull
@@ -273,7 +273,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	 * @param priority The priority this tick should be scheduled with
 	 */
 	public void handleInputChange(TickPriority priority){
-		world.getPendingBlockTicks().scheduleTick(pos, getOwner(), RedstoneUtil.DELAY, priority);
+		level.getBlockTicks().scheduleTick(worldPosition, getOwner(), RedstoneUtil.DELAY, priority);
 	}
 
 	private class RedsHandler implements IRedstoneHandler{
@@ -350,9 +350,9 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 					return FRONT;
 				}else if(front.getOpposite() == dir){
 					return BACK;
-				}else if(front.rotateY() == dir){
+				}else if(front.getClockWise() == dir){
 					return CW;
-				}else if(front.rotateYCCW() == dir){
+				}else if(front.getCounterClockWise() == dir){
 					return CCW;
 				}
 			}
@@ -366,9 +366,9 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				case BACK:
 					return front.getOpposite();
 				case CW:
-					return front.rotateY();
+					return front.getClockWise();
 				case CCW:
-					return front.rotateYCCW();
+					return front.getCounterClockWise();
 				default:
 					throw new IllegalStateException("Unhandled Orientation: " + name());
 			}

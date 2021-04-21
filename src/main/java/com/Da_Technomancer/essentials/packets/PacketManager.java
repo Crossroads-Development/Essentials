@@ -37,9 +37,9 @@ public class PacketManager{
 		addCodec(double.class, (val, buf) -> buf.writeDouble((double) val), PacketBuffer::readDouble);
 		addCodec(Double.class, (val, buf) -> buf.writeDouble((Double) val), PacketBuffer::readDouble);
 		//Other
-		addCodec(String.class, (val, buf) -> buf.writeString((String) val), PacketManager::readString);
+		addCodec(String.class, (val, buf) -> buf.writeUtf((String) val), PacketManager::readString);
 		addCodec(BlockPos.class, (val, buf) -> buf.writeBlockPos((BlockPos) val), PacketBuffer::readBlockPos);
-		addCodec(CompoundNBT.class, (val, buf) -> buf.writeCompoundTag((CompoundNBT) val), PacketBuffer::readCompoundTag);
+		addCodec(CompoundNBT.class, (val, buf) -> buf.writeNbt((CompoundNBT) val), PacketBuffer::readNbt);
 		//Arrays
 		addCodec(byte[].class, (val, buf) -> buf.writeByteArray((byte[]) val), PacketBuffer::readByteArray);
 	}
@@ -107,6 +107,6 @@ public class PacketManager{
 	}
 
 	private static String readString(PacketBuffer buf){
-		return buf.readString(Short.MAX_VALUE);//Re-implementation that isn't client side only
+		return buf.readUtf(Short.MAX_VALUE);//Re-implementation that isn't client side only
 	}
 }

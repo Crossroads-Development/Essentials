@@ -125,9 +125,9 @@ public class RedstoneUtil extends BlockUtil{
 	 * @return The strength of the redstone signal a blocks is receiving on a given side
 	 */
 	public static int getRedstoneOnSide(World w, BlockPos pos, Direction dir){
-		BlockPos offsetPos = pos.offset(dir);
+		BlockPos offsetPos = pos.relative(dir);
 		BlockState state = w.getBlockState(offsetPos);
-		return Math.min(15, state.getBlock() == Blocks.REDSTONE_WIRE ? state.get(RedstoneWireBlock.POWER) : w.getRedstonePower(offsetPos, dir));
+		return Math.min(15, state.getBlock() == Blocks.REDSTONE_WIRE ? state.getValue(RedstoneWireBlock.POWER) : w.getSignal(offsetPos, dir));
 	}
 
 	/**

@@ -19,10 +19,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class FluidSplitter extends BasicFluidSplitter{
 
 	public FluidSplitter(){
-		super("fluid_splitter", Properties.create(Material.IRON).hardnessAndResistance(3));
+		super("fluid_splitter", Properties.of(Material.METAL).strength(3));
 	}
 
 	@Override
@@ -31,23 +33,23 @@ public class FluidSplitter extends BasicFluidSplitter{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new FluidSplitterTileEntity();
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
 		int i = RedstoneUtil.getRedstoneAtPos(worldIn, pos);
-		TileEntity te = worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof FluidSplitterTileEntity && ((FluidSplitterTileEntity) te).redstone != i){
 			((FluidSplitterTileEntity) te).redstone = i;
-			te.markDirty();
+			te.setChanged();
 		}
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_splitter_basic"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_splitter_formula"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_splitter_chute"));

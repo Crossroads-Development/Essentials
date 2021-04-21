@@ -14,9 +14,11 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractTile extends ContainerBlock implements IWireConnect{
 
-	private static final Properties PROP = Properties.create(Material.MISCELLANEOUS).hardnessAndResistance(0, 0).sound(SoundType.WOOD);
+	private static final Properties PROP = Properties.of(Material.DECORATION).strength(0, 0).sound(SoundType.WOOD);
 
 	protected AbstractTile(String name){
 		super(PROP);
@@ -25,7 +27,7 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 		//Don't register an item form
 	}
 
-	private static final VoxelShape BB = makeCuboidShape(0, 0, 0, 16, 2, 16);
+	private static final VoxelShape BB = box(0, 0, 0, 16, 2, 16);
 
 	@Override
 	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player){
@@ -38,18 +40,18 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state){
+	public BlockRenderType getRenderShape(BlockState state){
 		return BlockRenderType.MODEL;
 	}
 
 	@Override
-	public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos){
-		return hasEnoughSolidSide(worldIn, pos.down(), Direction.UP);
+	public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos){
+		return canSupportCenter(worldIn, pos.below(), Direction.UP);
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		if(!state.isValidPosition(worldIn, pos)){
+		if(!state.canSurvive(worldIn, pos)){
 			worldIn.destroyBlock(pos, true);
 		}
 	}

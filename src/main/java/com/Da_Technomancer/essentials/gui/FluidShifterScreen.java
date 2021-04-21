@@ -23,8 +23,8 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 	@Override
 	protected void init(){
 		super.init();
-		if(container.te != null){
-			container.te.getFluidManager().initScreen(guiLeft, guiTop, 60, 71, container.fluidIdRef, container.fluidQtyRef);
+		if(menu.te != null){
+			menu.te.getFluidManager().initScreen(leftPos, topPos, 60, 71, menu.fluidIdRef, menu.fluidQtyRef);
 		}
 	}
 
@@ -32,21 +32,21 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
-		renderHoveredTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
+		renderTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
 		if(getSlotUnderMouse() == null){
-			func_243308_b(matrix, tooltip, mouseX, mouseY);//MCP: renderTooltip
+			renderComponentTooltip(matrix, tooltip, mouseX, mouseY);//MCP: renderTooltip
 		}
 		tooltip.clear();
 	}
 
 	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
-		minecraft.getTextureManager().bindTexture(TEXTURE);
-		blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
-		if(container.te != null){
-			container.te.getFluidManager().render(matrix, partialTicks, mouseX, mouseY, font, tooltip);
+		minecraft.getTextureManager().bind(TEXTURE);
+		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		if(menu.te != null){
+			menu.te.getFluidManager().render(matrix, partialTicks, mouseX, mouseY, font, tooltip);
 		}
 	}
 }

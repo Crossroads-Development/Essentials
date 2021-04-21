@@ -15,10 +15,12 @@ import net.minecraftforge.common.PlantType;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock;
+
 public class CandleLilyPad extends LilyPadBlock{
 
 	protected CandleLilyPad(){
-		super(Block.Properties.create(Material.PLANTS).hardnessAndResistance(0).sound(SoundType.PLANT).setLightLevel(s -> 14));
+		super(AbstractBlock.Properties.of(Material.PLANT).strength(0).sound(SoundType.GRASS).lightLevel(s -> 14));
 		String name = "candle_lilypad";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
@@ -30,7 +32,7 @@ public class CandleLilyPad extends LilyPadBlock{
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.candle_lilypad.desc"));
 	}
 }

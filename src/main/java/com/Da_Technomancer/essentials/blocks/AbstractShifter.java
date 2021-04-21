@@ -20,47 +20,49 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractShifter extends ContainerBlock{
 
 	protected AbstractShifter(String name){
-		super(Properties.create(Material.IRON).hardnessAndResistance(2).sound(SoundType.METAL));
+		super(Properties.of(Material.METAL).strength(2).sound(SoundType.METAL));
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
 		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state){
+	public BlockRenderType getRenderShape(BlockState state){
 		return BlockRenderType.MODEL;
 	}
 
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(ESProperties.FACING, context.getNearestLookingDirection().getOpposite());
+		return defaultBlockState().setValue(ESProperties.FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
 	public BlockState rotate(BlockState state, Rotation rot){
-		return state.with(ESProperties.FACING, rot.rotate(state.get(ESProperties.FACING)));
+		return state.setValue(ESProperties.FACING, rot.rotate(state.getValue(ESProperties.FACING)));
 	}
 
 	@Override
 	public BlockState mirror(BlockState state, Mirror mirrorIn){
-		return state.rotate(mirrorIn.toRotation(state.get(ESProperties.FACING)));
+		return state.rotate(mirrorIn.getRotation(state.getValue(ESProperties.FACING)));
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.FACING);
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(!worldIn.isRemote){
-			TileEntity te = worldIn.getTileEntity(pos);
-			if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-				worldIn.setBlockState(pos, state.func_235896_a_(ESProperties.FACING));//MCP note: cycle
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		if(!worldIn.isClientSide){
+			TileEntity te = worldIn.getBlockEntity(pos);
+			if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.FACING));//MCP note: cycle
 			}else if(te instanceof AbstractShifterTileEntity){
 				NetworkHooks.openGui((ServerPlayerEntity) playerIn, (AbstractShifterTileEntity) te, pos);
 			}
@@ -70,7 +72,7 @@ public abstract class AbstractShifter extends ContainerBlock{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
-		TileEntity te = worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof AbstractShifterTileEntity){
 			((AbstractShifterTileEntity) te).refreshCache();
 		}

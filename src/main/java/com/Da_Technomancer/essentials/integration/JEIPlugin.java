@@ -60,7 +60,7 @@ public class JEIPlugin implements IModPlugin{
 				if(doTransfer){
 					CraftingInventory craftInv = new CraftingInventory(new Container(null, 0){
 						@Override
-						public boolean canInteractWith(PlayerEntity playerIn){
+						public boolean stillValid(PlayerEntity playerIn){
 							return false;
 						}
 					}, 3, 3);
@@ -72,16 +72,16 @@ public class JEIPlugin implements IModPlugin{
 						}
 
 						ItemStack ingr = entry.getValue().getDisplayedIngredient();
-						craftInv.setInventorySlotContents(entry.getKey() - 1, ingr == null ? ItemStack.EMPTY : ingr);
+						craftInv.setItem(entry.getKey() - 1, ingr == null ? ItemStack.EMPTY : ingr);
 					}
 
-					Optional<ICraftingRecipe> recipeOptional = Minecraft.getInstance().getConnection().getRecipeManager().getRecipe(IRecipeType.CRAFTING, craftInv, playerEntity.world);
+					Optional<ICraftingRecipe> recipeOptional = Minecraft.getInstance().getConnection().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING, craftInv, playerEntity.level);
 
 					if(recipeOptional.isPresent() && c.te != null){
 						c.te.recipe = recipeOptional.orElse(null).getId();
 						CompoundNBT nbt = new CompoundNBT();
 						nbt.putString("recipe", c.te.recipe.toString());
-						EssentialsPackets.channel.sendToServer(new SendNBTToServer(nbt, c.te.getPos()));
+						EssentialsPackets.channel.sendToServer(new SendNBTToServer(nbt, c.te.getBlockPos()));
 					}
 				}
 			}catch(Exception e){

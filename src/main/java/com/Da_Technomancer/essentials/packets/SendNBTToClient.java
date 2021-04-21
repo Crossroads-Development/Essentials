@@ -32,7 +32,7 @@ public class SendNBTToClient extends ClientPacket{
 
 	@Override
 	protected void run(){
-		TileEntity te = Minecraft.getInstance().world.getTileEntity(pos);
+		TileEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
 
 		if(te instanceof INBTReceiver){
 			((INBTReceiver) te).receiveNBT(nbt, null);

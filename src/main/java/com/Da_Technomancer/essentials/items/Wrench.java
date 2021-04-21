@@ -22,7 +22,7 @@ public class Wrench extends Item{
 
 	protected Wrench(){
 		//Wrench tooltype added as some other mods check tooltypes for wrenches
-		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS).addToolType(ToolType.get("wrench"), 0));
+		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS).addToolType(ToolType.get("wrench"), 0));
 		String name = "wrench";
 		setRegistryName(name);
 		ESItems.toRegister.add(this);
@@ -42,7 +42,7 @@ public class Wrench extends Item{
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.wrench"));
 	}
 }

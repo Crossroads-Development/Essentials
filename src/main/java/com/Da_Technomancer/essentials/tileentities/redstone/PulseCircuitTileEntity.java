@@ -52,7 +52,7 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 		if(b instanceof PulseCircuit){
 			return ((PulseCircuit) b).edge;
 		}
-		remove();
+		setRemoved();
 		return PulseCircuit.Edge.RISING;
 	}
 
@@ -75,23 +75,23 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 			if(addPulse){
 				pulseStTime = ticksExisted;
 			}
-			markDirty();
+			setChanged();
 		}
 	}
 
 	@Override
 	public void tick(){
 		ticksExisted++;
-		if(!world.isRemote && RedstoneUtil.didChange(currentOutput(-2), currentOutput(-1))){
+		if(!level.isClientSide && RedstoneUtil.didChange(currentOutput(-2), currentOutput(-1))){
 			//Force circuits to recalculate when output changes
 			recalculateOutput();
-			markDirty();
+			setChanged();
 		}
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putInt("setting_d", settingDuration);
 		nbt.putString("setting_s_d", settingStrDuration);
 		nbt.putLong("existed", ticksExisted);
@@ -101,8 +101,8 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		settingDuration = nbt.getInt("setting_d");
 		settingStrDuration = nbt.getString("setting_s_d");
 		ticksExisted = nbt.getLong("existed");
@@ -118,14 +118,14 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
-		return new PulseCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), pos, settingStrDuration));
+		return new PulseCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrDuration));
 	}
 
 	@Override
 	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		settingDuration = Math.max(Math.round(nbt.getFloat("value_0")), MIN_DURATION);
 		settingStrDuration = nbt.getString("text_0");
-		markDirty();
+		setChanged();
 		recalculateOutput();
 	}
 }

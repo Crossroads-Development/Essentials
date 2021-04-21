@@ -57,7 +57,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	protected AutoCrafterContainer(ContainerType<? extends AutoCrafterContainer> type, int id, PlayerInventory playerInventory, IInventory inv, BlockPos pos){
 		super(type, id);
 		playerInv = playerInventory;
-		TileEntity getTe = playerInventory.player.world.getTileEntity(pos);
+		TileEntity getTe = playerInventory.player.level.getBlockEntity(pos);
 		if(getTe instanceof AutoCrafterTileEntity){
 			te = (AutoCrafterTileEntity) getTe;
 		}else{
@@ -71,12 +71,12 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 		for(int i = 0; i < 9; i++){
 			addSlot(new Slot(inv, i, 8 + i * 18, 73){
 				@Override
-				public boolean isItemValid(ItemStack stack){
+				public boolean mayPlace(ItemStack stack){
 					if(te == null){
 						return false;
 					}
 					int freeSlots = te.getLegalSlots(stack.getItem(), inv, AutoCrafterContainer.this) - te.getUsedSlots(stack.getItem(), inv);
-					return freeSlots > 0 || freeSlots == 0 && BlockUtil.sameItem(getStack(), stack);
+					return freeSlots > 0 || freeSlots == 0 && BlockUtil.sameItem(getItem(), stack);
 				}
 			});
 		}
@@ -84,7 +84,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 		//Output slot
 		addSlot(new Slot(inv, 9, 133, 33){
 			@Override
-			public boolean isItemValid(ItemStack stack){
+			public boolean mayPlace(ItemStack stack){
 				return false;
 			}
 		});
@@ -108,28 +108,28 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	@Override
-	public boolean canInteractWith(PlayerEntity playerIn){
-		return inv.isUsableByPlayer(playerIn);
+	public boolean stillValid(PlayerEntity playerIn){
+		return inv.stillValid(playerIn);
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(PlayerEntity playerIn, int fromSlot){
+	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
-		Slot slot = inventorySlots.get(fromSlot);
+		Slot slot = slots.get(fromSlot);
 
-		if(slot != null && slot.getHasStack()){
-			ItemStack current = slot.getStack();
+		if(slot != null && slot.hasItem()){
+			ItemStack current = slot.getItem();
 			previous = current.copy();
 
 			//fromSlot 0-9 means TE -> Player, else Player -> TE input slots
-			if(fromSlot < 10 ? !mergeItemStack(current, 10, 46, true) : !mergeItemStack(current, 0, 9, false)){
+			if(fromSlot < 10 ? !moveItemStackTo(current, 10, 46, true) : !moveItemStackTo(current, 0, 9, false)){
 				return ItemStack.EMPTY;
 			}
 
 			if(current.isEmpty()){
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			}else{
-				slot.onSlotChanged();
+				slot.setChanged();
 			}
 
 			if(current.getCount() == previous.getCount()){
@@ -142,7 +142,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	@Override
-	public void func_217056_a(boolean p_217056_1_, IRecipe<?> rec, ServerPlayerEntity player){
+	public void handlePlacement(boolean p_217056_1_, IRecipe<?> rec, ServerPlayerEntity player){
 		//Called on the server side to set recipe on the clients
 		if(te != null){
 			te.setRecipe(rec);
@@ -150,45 +150,45 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	@Override
-	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
+	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
 		if(slotId > 9 && slotId < 19 && player != null && te != null){
-			if(playerInv.getItemStack().isEmpty()){
+			if(playerInv.getCarried().isEmpty()){
 				//Click on a recipe slot with an empty cursor
 
 				IRecipe<CraftingInventory> rec = te.validateRecipe(AutoCrafterTileEntity.lookupRecipe(te.getRecipeManager(), te.recipe), this);
 				if(rec == null){
-					inv.removeStackFromSlot(slotId);
+					inv.removeItemNoUpdate(slotId);
 				}else{
 					List<Ingredient> ingr = rec.getIngredients();
 					int index = slotId - 10;
 					int width = rec instanceof IShapedRecipe ? ((IShapedRecipe<CraftingInventory>) rec).getRecipeWidth() : 3;
-					if(index % 3 < width && !ingr.get(index - (3 - width) * (index / 3)).hasNoMatchingItems()){
+					if(index % 3 < width && !ingr.get(index - (3 - width) * (index / 3)).isEmpty()){
 						//Has an "item" from the recipe in the clicked slot to clear
-						if(player.world.isRemote){
+						if(player.level.isClientSide){
 							te.recipe = null;
 						}else{
 							te.setRecipe(null);
 						}
-						inv.removeStackFromSlot(slotId);
+						inv.removeItemNoUpdate(slotId);
 					}
 				}
 			}else{
 				//Click on a recipe slot with an item in the cursor
 
 				//Clear any configured recipe
-				if(player.world.isRemote){
+				if(player.level.isClientSide){
 					te.recipe = null;
 				}else{
 					te.setRecipe(null);
 				}
 
-				ItemStack s = playerInv.getItemStack().copy();
+				ItemStack s = playerInv.getCarried().copy();
 				s.setCount(1);
-				inv.setInventorySlotContents(slotId, s);
+				inv.setItem(slotId, s);
 			}
 		}
 
-		return super.slotClick(slotId, dragType, clickTypeIn, player);
+		return super.clicked(slotId, dragType, clickTypeIn, player);
 	}
 
 	@Override
@@ -198,37 +198,37 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public RecipeBookCategory func_241850_m(){
+	public RecipeBookCategory getRecipeBookType(){
 		return RecipeBookCategory.CRAFTING;
 	}
 
 	@Override
-	public void fillStackedContents(RecipeItemHelper recipeHelper){
+	public void fillCraftSlotsStackedContents(RecipeItemHelper recipeHelper){
 		//Insert a recipe
 	}
 
 	@Override
-	public void clear(){
+	public void clearCraftingContent(){
 		//Empties recipe- no op
 	}
 
 	@Override
-	public boolean matches(IRecipe<? super CraftingInventory> recipeIn){
+	public boolean recipeMatches(IRecipe<? super CraftingInventory> recipeIn){
 		return false;
 	}
 
 	@Override
-	public int getOutputSlot(){
+	public int getResultSlotIndex(){
 		return 9;
 	}
 
 	@Override
-	public int getWidth(){
+	public int getGridWidth(){
 		return 3;
 	}
 
 	@Override
-	public int getHeight(){
+	public int getGridHeight(){
 		return 3;
 	}
 
@@ -244,17 +244,17 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 		}
 
 		@Override
-		public boolean canTakeStack(PlayerEntity playerIn){
+		public boolean mayPickup(PlayerEntity playerIn){
 			return false;
 		}
 
 		@Override
-		public int getSlotStackLimit(){
+		public int getMaxStackSize(){
 			return 0;
 		}
 
 		@Override
-		public boolean isItemValid(ItemStack stack){
+		public boolean mayPlace(ItemStack stack){
 			return false;
 		}
 	}

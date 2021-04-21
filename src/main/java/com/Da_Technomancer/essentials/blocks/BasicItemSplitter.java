@@ -16,6 +16,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class BasicItemSplitter extends AbstractSplitter{
 
 	protected BasicItemSplitter(String name, Properties prop){
@@ -23,7 +26,7 @@ public class BasicItemSplitter extends AbstractSplitter{
 	}
 
 	public BasicItemSplitter(){
-		super("basic_item_splitter", Block.Properties.create(Material.IRON).hardnessAndResistance(3));
+		super("basic_item_splitter", AbstractBlock.Properties.of(Material.METAL).strength(3));
 	}
 
 	@Override
@@ -32,13 +35,13 @@ public class BasicItemSplitter extends AbstractSplitter{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new BasicItemSplitterTileEntity();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_basic"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.basic_item_splitter_formula"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_chute"));

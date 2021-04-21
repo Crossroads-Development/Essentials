@@ -6,6 +6,8 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
+import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE.SplitDistribution;
+
 @ObjectHolder(Essentials.MODID)
 public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 
@@ -19,15 +21,15 @@ public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putInt("reds", redstone);
 		return nbt;
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		redstone = nbt.getInt("reds");
 	}
 

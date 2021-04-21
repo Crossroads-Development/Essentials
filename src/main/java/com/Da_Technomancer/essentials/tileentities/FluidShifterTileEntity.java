@@ -24,6 +24,8 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 @ObjectHolder(Essentials.MODID)
 public class FluidShifterTileEntity extends AbstractShifterTileEntity implements IFluidSlotTE{
 
@@ -48,7 +50,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 
 	@Override
 	public void tick(){
-		if(world.isRemote){
+		if(level.isClientSide){
 			return;
 		}
 
@@ -56,35 +58,35 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 			refreshCache();
 		}
 
-		FluidStack remaining = AbstractShifterTileEntity.ejectFluid(world, endPos, getFacing(), fluid);
+		FluidStack remaining = AbstractShifterTileEntity.ejectFluid(level, endPos, getFacing(), fluid);
 		if(remaining.getAmount() != fluid.getAmount()){
 			fluid = remaining;
 			getFluidManager().updateState(fluid);
-			markDirty();
+			setChanged();
 		}
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.put("fluid", fluid.writeToNBT(new CompoundNBT()));
 		return nbt;
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("fluid"));
 	}
 
 	@Override
 	public CompoundNBT getUpdateTag(){
-		return write(super.getUpdateTag());
+		return save(super.getUpdateTag());
 	}
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		invOptional.invalidate();
 	}
 
@@ -108,7 +110,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
-		return new FluidShifterContainer(id, playerInventory, pos);
+		return new FluidShifterContainer(id, playerInventory, worldPosition);
 	}
 
 	@Override
@@ -156,7 +158,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 					}else{
 						fluid.grow(filled);
 					}
-					markDirty();
+					setChanged();
 					getFluidManager().updateState(fluid);
 				}
 				return filled;
@@ -177,7 +179,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 
 				if(drained > 0 && action.execute()){
 					fluid.shrink(drained);
-					markDirty();
+					setChanged();
 					getFluidManager().updateState(fluid);
 				}
 				return drainFluid;
@@ -198,7 +200,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 			if(drained > 0 && action.execute()){
 				fluid.shrink(drained);
 				getFluidManager().updateState(fluid);
-				markDirty();
+				setChanged();
 			}
 
 			return drainFluid;

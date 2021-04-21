@@ -49,15 +49,15 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	public void setFilter(ItemStack filter){
 		this.filter = filter;
-		BlockUtil.sendClientPacketAround(world, pos, new SendNBTToClient(filter.write(new CompoundNBT()), pos));
-		markDirty();
+		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(filter.save(new CompoundNBT()), worldPosition));
+		setChanged();
 	}
 
 	private Direction.Axis getAxis(){
 		if(axisCache == null){
 			BlockState state = getBlockState();
 			if(state.getBlock() == ESBlocks.hopperFilter){
-				axisCache = state.get(ESProperties.AXIS);
+				axisCache = state.getValue(ESProperties.AXIS);
 			}else{
 				return Direction.Axis.Y;
 			}
@@ -66,8 +66,8 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public void updateContainingBlockInfo(){
-		super.updateContainingBlockInfo();
+	public void clearCache(){
+		super.clearCache();
 		axisCache = null;
 		if(passedHandlerNeg != null){
 			passedHandlerNeg.invalidate();
@@ -76,26 +76,26 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
-		nbt.put("filter", filter.write(new CompoundNBT()));
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
+		nbt.put("filter", filter.save(new CompoundNBT()));
 		return nbt;
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
-		filter = ItemStack.read(nbt.getCompound("filter"));
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
+		filter = ItemStack.of(nbt.getCompound("filter"));
 	}
 
 	@Override
 	public CompoundNBT getUpdateTag(){
-		return write(super.getUpdateTag());
+		return save(super.getUpdateTag());
 	}
 
 	@Override
 	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
-		filter = ItemStack.read(nbt);
+		filter = ItemStack.of(nbt);
 	}
 
 	public static boolean matchFilter(ItemStack query, ItemStack filt){
@@ -123,14 +123,14 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	private void updatePassedOptionals(){
 		if(passedHandlerPos == null || !passedHandlerPos.isPresent() && passedHandlerNeg == null || !passedHandlerNeg.isPresent()){
-			passedHandlerNeg = LazyOptional.of(() -> new ProxyItemHandler(Direction.getFacingFromAxis(Direction.AxisDirection.NEGATIVE, getAxis())));
-			passedHandlerPos = LazyOptional.of(() -> new ProxyItemHandler(Direction.getFacingFromAxis(Direction.AxisDirection.POSITIVE, getAxis())));
+			passedHandlerNeg = LazyOptional.of(() -> new ProxyItemHandler(Direction.get(Direction.AxisDirection.NEGATIVE, getAxis())));
+			passedHandlerPos = LazyOptional.of(() -> new ProxyItemHandler(Direction.get(Direction.AxisDirection.POSITIVE, getAxis())));
 		}
 	}
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		if(passedHandlerNeg != null){
 			passedHandlerNeg.invalidate();
 			passedHandlerPos.invalidate();
@@ -162,8 +162,8 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 			if(src.isPresent()){
 				return src.orElseThrow(NullPointerException::new);
 			}else{
-				BlockPos checkPos = pos.offset(side.getOpposite());
-				TileEntity checkTE = world.getTileEntity(checkPos);
+				BlockPos checkPos = worldPosition.relative(side.getOpposite());
+				TileEntity checkTE = level.getBlockEntity(checkPos);
 
 				if(checkTE != null){
 					src = checkTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
@@ -172,11 +172,11 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 					}
 				}
 
-				BlockState checkState = world.getBlockState(checkPos);
+				BlockState checkState = level.getBlockState(checkPos);
 
 				if(checkState.getBlock() instanceof ISidedInventoryProvider){
 					//As the contract for ISidedInventoryProvider is poorly defined (there being only 1 vanilla example), we can't safely cache the result
-					ISidedInventory inv = ((ISidedInventoryProvider) checkState.getBlock()).createInventory(checkState, world, checkPos);
+					ISidedInventory inv = ((ISidedInventoryProvider) checkState.getBlock()).getContainer(checkState, level, checkPos);
 					return new InvWrapper(inv);
 				}
 

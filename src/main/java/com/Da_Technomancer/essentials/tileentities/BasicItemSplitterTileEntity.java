@@ -33,8 +33,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void updateContainingBlockInfo(){
-		super.updateContainingBlockInfo();
+	public void clearCache(){
+		super.clearCache();
 		primaryOpt.invalidate();
 		secondaryOpt.invalidate();
 		inOpt.invalidate();
@@ -51,14 +51,14 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 		Direction dir = getFacing();
 		for(int i = 0; i < 2; i++){
-			inventory[i] = AbstractShifterTileEntity.ejectItem(world, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i], null);
+			inventory[i] = AbstractShifterTileEntity.ejectItem(level, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i], null);
 		}
-		markDirty();
+		setChanged();
 	}
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		primaryOpt.invalidate();
 		secondaryOpt.invalidate();
 		inOpt.invalidate();
@@ -81,15 +81,15 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
 		nbt.putInt("transferred", transferred);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
 				CompoundNBT inner = new CompoundNBT();
-				inventory[i].write(inner);
+				inventory[i].save(inner);
 				nbt.put("inv_" + i, inner);
 			}
 		}
@@ -97,8 +97,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 
 		//The way this block saves to nbt was changed in 2.2.0, and a "type" of 1 means the encoding is the new version, while 0 mean old version
 		if(nbt.getByte("type") == 1){
@@ -109,7 +109,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 		transferred = nbt.getInt("transferred");
 		for(int i = 0; i < 2; i++){
-			inventory[i] = ItemStack.read(nbt.getCompound("inv_" + i));
+			inventory[i] = ItemStack.of(nbt.getCompound("inv_" + i));
 		}
 	}
 
@@ -279,7 +279,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 			if(simulate){
 				return new ItemStack(inventory[index].getItem(), moved, inventory[index].getTag());
 			}
-			markDirty();
+			setChanged();
 			return inventory[index].split(moved);
 		}
 

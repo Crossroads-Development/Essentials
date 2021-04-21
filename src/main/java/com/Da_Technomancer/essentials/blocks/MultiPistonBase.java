@@ -36,6 +36,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.*;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 /**
  * Notable differences from a normal piston include:
  * DIST_LIMIT blocks head range, distance controlled by signal strength,
@@ -49,7 +51,7 @@ public class MultiPistonBase extends Block{
 	private static final int DIST_LIMIT = 15;
 	private static final int PUSH_LIMIT = 64;
 	private static final int DELAY = RedstoneUtil.DELAY;
-	private static final VoxelShape[] BB = new VoxelShape[] {makeCuboidShape(0, 5, 0, 16, 16, 16), makeCuboidShape(0, 0, 0, 16, 11, 16), makeCuboidShape(0, 0, 5, 16, 16, 16), makeCuboidShape(0, 0, 0, 16, 16, 11), makeCuboidShape(5, 0, 0, 16, 16, 16), makeCuboidShape(0, 0, 0, 11, 16, 16)};
+	private static final VoxelShape[] BB = new VoxelShape[] {box(0, 5, 0, 16, 16, 16), box(0, 0, 0, 16, 11, 16), box(0, 0, 5, 16, 16, 16), box(0, 0, 0, 16, 16, 11), box(5, 0, 0, 16, 16, 16), box(0, 0, 0, 11, 16, 16)};
 	private final boolean sticky;
 
 	/**
@@ -59,17 +61,17 @@ public class MultiPistonBase extends Block{
 	protected static boolean changingWorld = false;
 
 	protected MultiPistonBase(boolean sticky){
-		super(Properties.create(Material.PISTON).hardnessAndResistance(0.5F).sound(SoundType.METAL));
+		super(Properties.of(Material.PISTON).strength(0.5F).sound(SoundType.METAL));
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
 		setRegistryName(name);
 		this.sticky = sticky;
-		setDefaultState(getDefaultState().with(ESProperties.FACING, Direction.NORTH).with(ESProperties.EXTENDED, false).with(ESProperties.SHIFTING, false));
+		registerDefaultState(defaultBlockState().setValue(ESProperties.FACING, Direction.NORTH).setValue(ESProperties.EXTENDED, false).setValue(ESProperties.SHIFTING, false));
 		ESBlocks.toRegister.add(this);
 		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.FACING, ESProperties.EXTENDED, ESProperties.SHIFTING);
 	}
 
@@ -77,11 +79,11 @@ public class MultiPistonBase extends Block{
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
 		//Place with player orientation
-		return getDefaultState().with(ESProperties.FACING, context.getNearestLookingDirection().getOpposite());
+		return defaultBlockState().setValue(ESProperties.FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.multi_piston.desc", DIST_LIMIT, PUSH_LIMIT));
 		tooltip.add(new TranslationTextComponent("tt.essentials.multi_piston.reds"));
 	}
@@ -89,32 +91,32 @@ public class MultiPistonBase extends Block{
 	@Override
 	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
 		//Extended multipistons have a different shape
-		if(state.get(ESProperties.EXTENDED)){
-			return BB[state.get(ESProperties.FACING).getIndex()];
+		if(state.getValue(ESProperties.EXTENDED)){
+			return BB[state.getValue(ESProperties.FACING).get3DDataValue()];
 		}else{
-			return VoxelShapes.fullCube();
+			return VoxelShapes.block();
 		}
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){	BlockState otherState;
+	public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){	BlockState otherState;
 	//An internal change- due to this piston being in the process of extending/retracting (changing world) or due to this piston entering/leaving shifting state should not trigger the breaking of the extension
-	if(!changingWorld && (newState.getBlock() != this || state.with(ESProperties.SHIFTING, false) != newState.with(ESProperties.SHIFTING, false))){
+	if(!changingWorld && (newState.getBlock() != this || state.setValue(ESProperties.SHIFTING, false) != newState.setValue(ESProperties.SHIFTING, false))){
 			//Sanity check included to make sure the adjacent blocks is actually an extension- unlike vanilla pistons, multi pistons are supposed to actually work and not break bedrock
-			if(state.get(ESProperties.EXTENDED) && (otherState = world.getBlockState(pos.offset(state.get(ESProperties.FACING)))).getBlock() == (sticky ? ESBlocks.multiPistonExtendSticky : ESBlocks.multiPistonExtend) && otherState.get(ESProperties.AXIS) == state.get(ESProperties.FACING).getAxis()){
+			if(state.getValue(ESProperties.EXTENDED) && (otherState = world.getBlockState(pos.relative(state.getValue(ESProperties.FACING)))).getBlock() == (sticky ? ESBlocks.multiPistonExtendSticky : ESBlocks.multiPistonExtend) && otherState.getValue(ESProperties.AXIS) == state.getValue(ESProperties.FACING).getAxis()){
 				//Break the multipiston head along this
-				world.destroyBlock(pos.offset(state.get(ESProperties.FACING)), false);
+				world.destroyBlock(pos.relative(state.getValue(ESProperties.FACING)), false);
 			}
 		}
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		//Rotate with a wrench
-		if(ESConfig.isWrench(playerIn.getHeldItem(hand)) && !state.get(ESProperties.EXTENDED) && !state.get(ESProperties.SHIFTING)){
-			if(!worldIn.isRemote){
-				BlockState endState = state.func_235896_a_(ESProperties.FACING);//MCP note: cycle
-				worldIn.setBlockState(pos, endState);
+		if(ESConfig.isWrench(playerIn.getItemInHand(hand)) && !state.getValue(ESProperties.EXTENDED) && !state.getValue(ESProperties.SHIFTING)){
+			if(!worldIn.isClientSide){
+				BlockState endState = state.cycle(ESProperties.FACING);//MCP note: cycle
+				worldIn.setBlockAndUpdate(pos, endState);
 			}
 			return ActionResultType.SUCCESS;
 		}
@@ -122,24 +124,24 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public PushReaction getPushReaction(BlockState state){
+	public PushReaction getPistonPushReaction(BlockState state){
 		//If extended or currently extending, this can not be moved. Otherwise it can be moved
-		return state.get(ESProperties.EXTENDED) || state.get(ESProperties.SHIFTING) ? PushReaction.BLOCK : PushReaction.NORMAL;
+		return state.getValue(ESProperties.EXTENDED) || state.getValue(ESProperties.SHIFTING) ? PushReaction.BLOCK : PushReaction.NORMAL;
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void animateTick(BlockState state, World worldIn, BlockPos pos, Random rand){
-		if(state.get(ESProperties.SHIFTING)){
+		if(state.getValue(ESProperties.SHIFTING)){
 			double particleRad = 0.75D;
 			for(int i = 0; i < 4; i++){
-				worldIn.addOptionalParticle(ParticleTypes.SMOKE, pos.getX() + 0.5D + rand.nextGaussian() * particleRad, pos.getY() + 0.5D + rand.nextGaussian() * particleRad, pos.getZ() + 0.5D + rand.nextGaussian() * particleRad, 0, 0, 0);
+				worldIn.addAlwaysVisibleParticle(ParticleTypes.SMOKE, pos.getX() + 0.5D + rand.nextGaussian() * particleRad, pos.getY() + 0.5D + rand.nextGaussian() * particleRad, pos.getZ() + 0.5D + rand.nextGaussian() * particleRad, 0, 0, 0);
 			}
 		}
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		neighborChanged(world.getBlockState(pos), world, pos, this, pos, false);
 	}
 
@@ -150,24 +152,24 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
-		if(worldIn.isRemote || changingWorld || state.get(ESProperties.SHIFTING)){
+		if(worldIn.isClientSide || changingWorld || state.getValue(ESProperties.SHIFTING)){
 			return;
 		}
 
 		//If incoming redstone signal would cause an extension different than current, schedule a change DELAY from now, and set shifting
-		Direction facing = state.get(ESProperties.FACING);
+		Direction facing = state.getValue(ESProperties.FACING);
 		int redstone = getRedstoneInput(worldIn, pos, state, facing);
 		int currExtend = getCurrentExtension(worldIn, pos, state, facing);
 		//TODO should we check for obstructions?
 
 		if(redstone > currExtend){
 			//Extension has a delay of DELAY ticks
-			worldIn.setBlockState(pos, state.with(ESProperties.SHIFTING, true), 2);
-			worldIn.getPendingBlockTicks().scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
+			worldIn.setBlock(pos, state.setValue(ESProperties.SHIFTING, true), 2);
+			worldIn.getBlockTicks().scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
 			playSound(worldIn, pos, false, true);
 		}else{
 			//Retraction happens instantly
-			tick(state, (ServerWorld) worldIn, pos, worldIn.rand);
+			tick(state, (ServerWorld) worldIn, pos, worldIn.random);
 		}
 	}
 
@@ -185,7 +187,7 @@ public class MultiPistonBase extends Block{
 //		target = Math.min(target, DIST_LIMIT);
 		if(facing == Direction.UP){
 			//Account for world height limits when pointed up
-			target = Math.min(target, world.getHeight() - pos.getY() - 1);
+			target = Math.min(target, world.getMaxBuildHeight() - pos.getY() - 1);
 		}else if(facing == Direction.DOWN){
 			//Check for world floor
 			target = Math.min(target, pos.getY());
@@ -200,26 +202,26 @@ public class MultiPistonBase extends Block{
 	 */
 	private void playSound(World world, BlockPos pos, boolean moving, boolean extension){
 		if(moving){
-			world.playSound(null, pos, extension ? SoundEvents.BLOCK_PISTON_EXTEND : SoundEvents.BLOCK_PISTON_CONTRACT, SoundCategory.BLOCKS, 1, 1);
+			world.playSound(null, pos, extension ? SoundEvents.PISTON_EXTEND : SoundEvents.PISTON_CONTRACT, SoundCategory.BLOCKS, 1, 1);
 		}else{
-			world.playSound(null, pos, SoundEvents.BLOCK_METAL_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCKS, 1, 1);
+			world.playSound(null, pos, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, SoundCategory.BLOCKS, 1, 1);
 		}
 	}
 
 	private int getCurrentExtension(World world, BlockPos pos, BlockState state, Direction facing){
 		int currentExtension = 0;
 
-		if(state.get(ESProperties.EXTENDED)){
-			BlockPos checkPos = pos.offset(facing);
+		if(state.getValue(ESProperties.EXTENDED)){
+			BlockPos checkPos = pos.relative(facing);
 			BlockState curState = world.getBlockState(checkPos);
 			Block tarBlock = getExtensionBlock(sticky);
 
 			//Find the current extension
 			//The distance limit check is in case people mess around with setblock commands
 			Direction.AxisDirection dir;
-			while(curState.getBlock() == tarBlock && curState.get(ESProperties.AXIS) == facing.getAxis() && (dir = MultiPistonExtend.getDirFromHead(curState.get(ESProperties.HEAD))) != facing.getOpposite().getAxisDirection() && currentExtension != DIST_LIMIT){
+			while(curState.getBlock() == tarBlock && curState.getValue(ESProperties.AXIS) == facing.getAxis() && (dir = MultiPistonExtend.getDirFromHead(curState.getValue(ESProperties.HEAD))) != facing.getOpposite().getAxisDirection() && currentExtension != DIST_LIMIT){
 				currentExtension++;
-				checkPos = checkPos.offset(facing);
+				checkPos = checkPos.relative(facing);
 				curState = world.getBlockState(checkPos);
 				if(dir != null){
 					//Sanity check to make sure we don't have an invalid extension line
@@ -246,12 +248,12 @@ public class MultiPistonBase extends Block{
 	@Override
 	public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand){
 		//We re-check everything as the world could have changed in the previous 2 ticks
-		Direction facing = state.get(ESProperties.FACING);
+		Direction facing = state.getValue(ESProperties.FACING);
 		int redstone = getRedstoneInput(world, pos, state, facing);
 		int currExtend = getCurrentExtension(world, pos, state, facing);
 
-		state = state.with(ESProperties.SHIFTING, false);
-		world.setBlockState(pos, state, 2);//Reset shifting state
+		state = state.setValue(ESProperties.SHIFTING, false);
+		world.setBlock(pos, state, 2);//Reset shifting state
 
 		if(currExtend == redstone){
 			return;//No change needed
@@ -267,22 +269,22 @@ public class MultiPistonBase extends Block{
 
 			//If we are extending further, and we weren't blocked, queue another extension
 			if(!blocked && currExtend + 1 < redstone){
-				state = state.with(ESProperties.SHIFTING, true);
-				world.setBlockState(pos, state, 2);
-				world.getPendingBlockTicks().scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
+				state = state.setValue(ESProperties.SHIFTING, true);
+				world.setBlock(pos, state, 2);
+				world.getBlockTicks().scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
 			}
 
 			//Don't apply block updates until after all changes have been applied to avoid a variety of issues, including rail dupe bugs
 			Set<BlockPos> toUpdate = wBuf.changedPositions();
 			wBuf.applyChanges(1 | 2 | 64);//Flags used: 1: block update; 2: Send change to client; 64: isMoving
 			for(BlockPos posToUpdate : toUpdate){
-				world.notifyNeighborsOfStateChange(posToUpdate, this);
+				world.updateNeighborsAt(posToUpdate, this);
 			}
 
 			if(!blocked){
 				playSound(world, pos, true, true);
-				state = state.with(ESProperties.EXTENDED, redstone != 0);
-				world.setBlockState(pos, state, 2);
+				state = state.setValue(ESProperties.EXTENDED, redstone != 0);
+				world.setBlock(pos, state, 2);
 			}
 		}else{
 			//If we're retracting, we do it all at once, but calculate the result one block at a time
@@ -295,12 +297,12 @@ public class MultiPistonBase extends Block{
 			Set<BlockPos> toUpdate = wBuf.changedPositions();
 			wBuf.applyChanges(1 | 2 | 64);//Flags used: 1: block update; 2: Send change to client; 64: isMoving
 			for(BlockPos posToUpdate : toUpdate){
-				world.notifyNeighborsOfStateChange(posToUpdate, this);
+				world.updateNeighborsAt(posToUpdate, this);
 			}
 
 			playSound(world, pos, true, false);
-			state = state.with(ESProperties.EXTENDED, redstone != 0);
-			world.setBlockState(pos, state, 2);
+			state = state.setValue(ESProperties.EXTENDED, redstone != 0);
+			world.setBlock(pos, state, 2);
 		}
 
 		changingWorld = false;
@@ -318,14 +320,14 @@ public class MultiPistonBase extends Block{
 	private boolean shiftExtension(WorldBuffer world, BlockPos pos, Direction facing, int currentExtension, boolean out){
 		Direction moveDir = out ? facing : facing.getOpposite();
 		LinkedHashSet<BlockPos> movedBlocks = new LinkedHashSet<>(PUSH_LIMIT + 1);
-		BlockPos prevHeadPos = pos.offset(facing, currentExtension);
+		BlockPos prevHeadPos = pos.relative(facing, currentExtension);
 		Block extendBlock = getExtensionBlock(sticky);
 		if(!out){
 			//Temporarily add the piston head to prevent it blocking movement paths
 			movedBlocks.add(prevHeadPos);
 		}
 		//Only build a moveset if we are moving out or we are retracting with a sticky head
-		if((out || sticky) && buildMoveset(pos, world, prevHeadPos.offset(facing), moveDir, movedBlocks, !out)){
+		if((out || sticky) && buildMoveset(pos, world, prevHeadPos.relative(facing), moveDir, movedBlocks, !out)){
 			//Something is in the way
 			if(!out){
 				//If retracting, leave attached blocks behind but finish retracting
@@ -341,19 +343,19 @@ public class MultiPistonBase extends Block{
 
 		//Change the current head
 		if(currentExtension != 0){
-			world.addChange(prevHeadPos, out ? extendBlock.getDefaultState().with(ESProperties.AXIS, facing.getAxis()) : Blocks.AIR.getDefaultState());
+			world.addChange(prevHeadPos, out ? extendBlock.defaultBlockState().setValue(ESProperties.AXIS, facing.getAxis()) : Blocks.AIR.defaultBlockState());
 		}
 
 		for(BlockPos changePos : movedBlocks){
 
 			//Move blocks forward
 			BlockState prevState = world.getBlockState(changePos);
-			if(prevState.getPushReaction() == PushReaction.DESTROY){
+			if(prevState.getPistonPushReaction() == PushReaction.DESTROY){
 				world.getWorld().destroyBlock(changePos, true);//Destroy the blocks in the actual world to drop items
 			}else{
-				world.addChange(changePos.offset(moveDir), prevState);
+				world.addChange(changePos.relative(moveDir), prevState);
 			}
-			world.addChange(changePos, Blocks.AIR.getDefaultState());
+			world.addChange(changePos, Blocks.AIR.defaultBlockState());
 
 			//Find and move entities
 			//We use isSlimeBlock over isSticky as honey blocks aren't bouncy
@@ -365,26 +367,26 @@ public class MultiPistonBase extends Block{
 
 		if(out){
 			//Add the extended head
-			world.addChange(pos.offset(facing, currentExtension + 1), extendBlock.getDefaultState().with(ESProperties.AXIS, facing.getAxis()).with(ESProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
+			world.addChange(pos.relative(facing, currentExtension + 1), extendBlock.defaultBlockState().setValue(ESProperties.AXIS, facing.getAxis()).setValue(ESProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
 		}else if(currentExtension != 1){
 			//Add the retracted head
-			world.addChange(pos.offset(facing, currentExtension - 1), extendBlock.getDefaultState().with(ESProperties.AXIS, facing.getAxis()).with(ESProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
+			world.addChange(pos.relative(facing, currentExtension - 1), extendBlock.defaultBlockState().setValue(ESProperties.AXIS, facing.getAxis()).setValue(ESProperties.HEAD, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 2));
 		}
 
 		return false;
 	}
 
 	private void moveEnts(World world, BlockPos activePos, Direction moveDir, boolean sticky){
-		AxisAlignedBB BB = new AxisAlignedBB(activePos.offset(moveDir));
+		AxisAlignedBB BB = new AxisAlignedBB(activePos.relative(moveDir));
 		ArrayList<Entity> movingEnts = new ArrayList<>(4);
 		getEntitiesMultiChunk(BB, world, movingEnts);
 		for(Entity ent : movingEnts){
-			if(ent.getPushReaction() != PushReaction.IGNORE){
-				ent.setPositionAndUpdate(ent.getPosX() + (double) moveDir.getXOffset(), ent.getPosY() + (double) moveDir.getYOffset(), ent.getPosZ() + (double) moveDir.getZOffset());
+			if(ent.getPistonPushReaction() != PushReaction.IGNORE){
+				ent.teleportTo(ent.getX() + (double) moveDir.getStepX(), ent.getY() + (double) moveDir.getStepY(), ent.getZ() + (double) moveDir.getStepZ());
 				//If the entity is on a "sticky" blocks, bounce them
 				if(sticky){
-					ent.addVelocity(moveDir.getXOffset(), moveDir.getYOffset(), moveDir.getZOffset());
-					ent.velocityChanged = true;
+					ent.push(moveDir.getStepX(), moveDir.getStepY(), moveDir.getStepZ());
+					ent.hurtMarked = true;
 				}
 			}
 		}
@@ -409,15 +411,15 @@ public class MultiPistonBase extends Block{
 		BlockState state = world.getBlockState(curPos);
 
 		//While vanilla has this very good and logical system for blocks exposing how they react to pistons, there is for no necessary reason a large number of exceptions
-		PushReaction reaction = state.getPushReaction();
+		PushReaction reaction = state.getPistonPushReaction();
 		if(state.getBlock().isAir(state, world.getWorld(), curPos)){
 			reaction = PushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
 		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock().hasTileEntity(state) || pistonPos.equals(curPos)){
 			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
-		}else if(state.getBlockHardness(world, curPos) < 0){
+		}else if(state.getDestroySpeed(world, curPos) < 0){
 			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
 		}else if(state.getBlock() instanceof PistonBlock && state.hasProperty(PistonBlock.EXTENDED)){
-			reaction = state.get(PistonBlock.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;//Vanilla pistons report BLOCK even when retracted and movable
+			reaction = state.getValue(PistonBlock.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;//Vanilla pistons report BLOCK even when retracted and movable
 		}
 
 		boolean blocked = false;
@@ -429,29 +431,29 @@ public class MultiPistonBase extends Block{
 				//else treat push-only as normal
 			case NORMAL:
 				//Check for world height
-				if(moveDir == Direction.UP && curPos.getY() == world.getWorld().getHeight() || moveDir == Direction.DOWN && curPos.getY() == 0){
+				if(moveDir == Direction.UP && curPos.getY() == world.getWorld().getMaxBuildHeight() || moveDir == Direction.DOWN && curPos.getY() == 0){
 					blocked = true;
 					break;
 				}
 
 				//The curPos needs to be added BEFORE recursively building a moveset to ensure it's counted in recursive push limit checks
 				movedBlocks.add(curPos);
-				blocked = movedBlocks.size() > PUSH_LIMIT || buildMoveset(pistonPos, world, curPos.offset(moveDir), moveDir, movedBlocks, false);
+				blocked = movedBlocks.size() > PUSH_LIMIT || buildMoveset(pistonPos, world, curPos.relative(moveDir), moveDir, movedBlocks, false);
 				//Crazy as it seems, it is necessary to remove and then re-add this position. This moves the curPos to the end of the movedBlocks.
 				movedBlocks.remove(curPos);
 				movedBlocks.add(curPos);
 
 				//Do blocks behind this if sticky & can stick to (honey & slime don't stick together)
-				if(state.isStickyBlock() && state.canStickTo(world.getBlockState(curPos.offset(moveDir.getOpposite())))){
-					blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(moveDir.getOpposite()), moveDir, movedBlocks, true);
+				if(state.isStickyBlock() && state.canStickTo(world.getBlockState(curPos.relative(moveDir.getOpposite())))){
+					blocked = blocked || buildMoveset(pistonPos, world, curPos.relative(moveDir.getOpposite()), moveDir, movedBlocks, true);
 				}
 
 				//Do blocks son the sides if sticky
 				if(state.isStickyBlock()){
 					for(Direction side : Direction.values()){
 						//Check this is on the sides, and that it is something it can actually stick to
-						if(side.getAxis() != moveDir.getAxis() && state.canStickTo(world.getBlockState(curPos.offset(side)))){
-							blocked = blocked || buildMoveset(pistonPos, world, curPos.offset(side), moveDir, movedBlocks, true);
+						if(side.getAxis() != moveDir.getAxis() && state.canStickTo(world.getBlockState(curPos.relative(side)))){
+							blocked = blocked || buildMoveset(pistonPos, world, curPos.relative(side), moveDir, movedBlocks, true);
 						}
 					}
 				}
@@ -488,11 +490,11 @@ public class MultiPistonBase extends Block{
 
 		for(int iLoop = i; iLoop <= j; iLoop++){
 			for(int kLoop = k; kLoop <= l; kLoop++){
-				if(worldIn.chunkExists(iLoop, kLoop)){
+				if(worldIn.hasChunk(iLoop, kLoop)){
 					Chunk chunk = worldIn.getChunkAt(new BlockPos(iLoop * 16, 100, kLoop * 16));
 					for(int yLoop = yMin; yLoop <= yMax; yLoop++){
-						if(!chunk.getEntityLists()[yLoop].isEmpty()){
-							for(Entity entity : chunk.getEntityLists()[yLoop]){
+						if(!chunk.getEntitySections()[yLoop].isEmpty()){
+							for(Entity entity : chunk.getEntitySections()[yLoop]){
 								if(entity.getBoundingBox().intersects(checkBox)){
 									entList.add(entity);
 								}

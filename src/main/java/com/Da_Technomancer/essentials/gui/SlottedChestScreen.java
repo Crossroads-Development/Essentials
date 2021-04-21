@@ -17,9 +17,9 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 
 	public SlottedChestScreen(SlottedChestContainer cont, PlayerInventory playerInventory, ITextComponent text){
 		super(cont, playerInventory, text);
-		ySize = 222;
+		imageHeight = 222;
 		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
-		playerInventoryTitleY = ySize - 94;//MCP note: player inventory text overlay y position
+		inventoryLabelY = imageHeight - 94;//MCP note: player inventory text overlay y position
 	}
 
 	@Override
@@ -28,40 +28,40 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		//We add the ability to render a tooltip for locked empty slots
 //		renderHoveredTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
-		if(minecraft.player.inventory.getItemStack().isEmpty() && hoveredSlot != null){
-			if(hoveredSlot.getHasStack()){
-				renderTooltip(matrix, hoveredSlot.getStack(), mouseX, mouseY);
-			}else if(hoveredSlot.inventory == container.inv && hoveredSlot.getSlotIndex() < container.filter.length && !container.filter[hoveredSlot.getSlotIndex()].isEmpty()){
+		if(minecraft.player.inventory.getCarried().isEmpty() && hoveredSlot != null){
+			if(hoveredSlot.hasItem()){
+				renderTooltip(matrix, hoveredSlot.getItem(), mouseX, mouseY);
+			}else if(hoveredSlot.container == menu.inv && hoveredSlot.getSlotIndex() < menu.filter.length && !menu.filter[hoveredSlot.getSlotIndex()].isEmpty()){
 				//If this is a slot in the slotted chest that is empty, but has a filter, we render a tooltip for the filter item
-				renderTooltip(matrix, container.filter[hoveredSlot.getSlotIndex()], mouseX, mouseY);
+				renderTooltip(matrix, menu.filter[hoveredSlot.getSlotIndex()], mouseX, mouseY);
 			}
 		}
 	}
 
 	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		RenderSystem.color3f(1, 1, 1);
-		minecraft.getTextureManager().bindTexture(CHEST_GUI_TEXTURE);
+		minecraft.getTextureManager().bind(CHEST_GUI_TEXTURE);
 		//drawTexturedModelRectangle
-		blit(matrix, guiLeft, guiTop, 0, 0, xSize, 125);
-		blit(matrix, guiLeft, guiTop + 125, 0, 126, xSize, 96);
+		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 125);
+		blit(matrix, leftPos, topPos + 125, 0, 126, imageWidth, 96);
 
 		//Foreground
 		RenderSystem.pushLightingAttributes();
-		RenderHelper.enableStandardItemLighting();
+		RenderHelper.turnBackOn();
 		RenderSystem.disableLighting();
 		for(int i = 0; i < 54; i++){
-			ItemStack filter = container.filter[i];
-			Slot renderSlot = container.inventorySlots.get(i);
-			if(!filter.isEmpty() && !renderSlot.getHasStack()){
-				itemRenderer.renderItemAndEffectIntoGUI(minecraft.player, filter, guiLeft + renderSlot.xPos, guiTop + renderSlot.yPos);
-				itemRenderer.renderItemOverlayIntoGUI(font, filter, guiLeft + renderSlot.xPos, guiTop + renderSlot.yPos, "0");
+			ItemStack filter = menu.filter[i];
+			Slot renderSlot = menu.slots.get(i);
+			if(!filter.isEmpty() && !renderSlot.hasItem()){
+				itemRenderer.renderAndDecorateItem(minecraft.player, filter, leftPos + renderSlot.x, topPos + renderSlot.y);
+				itemRenderer.renderGuiItemDecorations(font, filter, leftPos + renderSlot.x, topPos + renderSlot.y, "0");
 			}
 		}
 		RenderSystem.enableLighting();
-		RenderHelper.disableStandardItemLighting();
+		RenderHelper.turnOff();
 		RenderSystem.popAttributes();
 	}
 }

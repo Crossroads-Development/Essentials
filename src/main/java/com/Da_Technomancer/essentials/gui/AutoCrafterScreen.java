@@ -37,23 +37,23 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 
 	public AutoCrafterScreen(AutoCrafterContainer cont, PlayerInventory playerInventory, ITextComponent text){
 		super(cont, playerInventory, text);
-		ySize = 186;
+		imageHeight = 186;
 		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
-		playerInventoryTitleY = ySize - 94;//MCP note: player inventory text overlay y position
+		inventoryLabelY = imageHeight - 94;//MCP note: player inventory text overlay y position
 	}
 
 	protected void init() {
 		super.init();
 		widthTooNarrow = width < 379;
-		recipeBook.init(width, height, Minecraft.getInstance(), widthTooNarrow, container);
-		guiLeft = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
+		recipeBook.init(width, height, Minecraft.getInstance(), widthTooNarrow, menu);
+		leftPos = recipeBook.updateScreenPosition(widthTooNarrow, width, imageWidth);
 		children.add(recipeBook);
-		setFocusedDefault(recipeBook);
-		addButton(new ImageButton(guiLeft + 5, height / 2 - 49, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
-			recipeBook.initSearchBar(widthTooNarrow);
+		setInitialFocus(recipeBook);
+		addButton(new ImageButton(leftPos + 5, height / 2 - 49, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
+			recipeBook.initVisuals(widthTooNarrow);
 			recipeBook.toggleVisibility();
-			guiLeft = recipeBook.updateScreenPosition(widthTooNarrow, width, xSize);
-			((ImageButton) p_214076_1_).setPosition(guiLeft + 5, height / 2 - 49);
+			leftPos = recipeBook.updateScreenPosition(widthTooNarrow, width, imageWidth);
+			((ImageButton) p_214076_1_).setPosition(leftPos + 5, height / 2 - 49);
 		}));
 	}
 
@@ -62,22 +62,22 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		time += partialTicks;
 		renderBackground(matrix);
 		if(recipeBook.isVisible() && widthTooNarrow){
-			drawGuiContainerBackgroundLayer(matrix, partialTicks, mouseX, mouseY);//MCP note: render screen
+			renderBg(matrix, partialTicks, mouseX, mouseY);//MCP note: render screen
 			recipeBook.render(matrix, mouseX, mouseY, partialTicks);
 		}else{
 			recipeBook.render(matrix, mouseX, mouseY, partialTicks);
 			super.render(matrix, mouseX, mouseY, partialTicks);
-			recipeBook.func_230477_a_(matrix, guiLeft, guiTop, true, partialTicks);//MCP note: renderGhostRecipe
+			recipeBook.renderGhostRecipe(matrix, leftPos, topPos, true, partialTicks);//MCP note: renderGhostRecipe
 		}
 
-		renderHoveredTooltip(matrix, mouseX, mouseY);
-		recipeBook.func_238924_c_(matrix, guiLeft, guiTop, mouseX, mouseY);//MCP note: renderToolTip
-		setListenerDefault(recipeBook);
+		renderTooltip(matrix, mouseX, mouseY);
+		recipeBook.renderTooltip(matrix, leftPos, topPos, mouseX, mouseY);//MCP note: renderToolTip
+		magicalSpecialHackyFocus(recipeBook);
 	}
 
 	@Override
-	protected boolean isPointInRegion(int p_195359_1_, int p_195359_2_, int p_195359_3_, int p_195359_4_, double p_195359_5_, double p_195359_7_){
-		return (!widthTooNarrow || !recipeBook.isVisible()) && super.isPointInRegion(p_195359_1_, p_195359_2_, p_195359_3_, p_195359_4_, p_195359_5_, p_195359_7_);
+	protected boolean isHovering(int p_195359_1_, int p_195359_2_, int p_195359_3_, int p_195359_4_, double p_195359_5_, double p_195359_7_){
+		return (!widthTooNarrow || !recipeBook.isVisible()) && super.isHovering(p_195359_1_, p_195359_2_, p_195359_3_, p_195359_4_, p_195359_5_, p_195359_7_);
 	}
 
 	@Override
@@ -91,16 +91,16 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 
 	@Override
 	protected boolean hasClickedOutside(double p_195361_1_, double p_195361_3_, int p_195361_5_, int p_195361_6_, int p_195361_7_){
-		boolean flag = p_195361_1_ < (double) p_195361_5_ || p_195361_3_ < (double) p_195361_6_ || p_195361_1_ >= (double) (p_195361_5_ + xSize) || p_195361_3_ >= (double) (p_195361_6_ + ySize);
-		return recipeBook.func_195604_a(p_195361_1_, p_195361_3_, guiLeft, guiTop, xSize, ySize, p_195361_7_) && flag;
+		boolean flag = p_195361_1_ < (double) p_195361_5_ || p_195361_3_ < (double) p_195361_6_ || p_195361_1_ >= (double) (p_195361_5_ + imageWidth) || p_195361_3_ >= (double) (p_195361_6_ + imageHeight);
+		return recipeBook.hasClickedOutside(p_195361_1_, p_195361_3_, leftPos, topPos, imageWidth, imageHeight, p_195361_7_) && flag;
 	}
 
 	/**
 	 * Called when the mouse is clicked over a slot or outside the gui.
 	 */
 	@Override
-	protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type){
-		super.handleMouseClick(slotIn, slotId, mouseButton, type);
+	protected void slotClicked(Slot slotIn, int slotId, int mouseButton, ClickType type){
+		super.slotClicked(slotIn, slotId, mouseButton, type);
 		recipeBook.slotClicked(slotIn);
 	}
 
@@ -110,13 +110,13 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public void onClose(){
+	public void removed(){
 		recipeBook.removed();
-		super.onClose();
+		super.removed();
 	}
 
 	@Override
-	public RecipeBookGui getRecipeGui(){
+	public RecipeBookGui getRecipeBookComponent(){
 		return recipeBook;
 	}
 
@@ -132,31 +132,31 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 
 	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
+	protected void renderBg(MatrixStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		minecraft.getTextureManager().bindTexture(getBackgroundTexture());
+		minecraft.getTextureManager().bind(getBackgroundTexture());
 		//draw background
-		blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
+		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
 		//foreground
-		if(container.te == null){
+		if(menu.te == null){
 			return;
 		}
 
 		ItemStack[] inv = new ItemStack[19];
 		//We start at 10 because the previous slots are ingredient storage slots not used for this
 		for(int i = 10; i < inv.length; i++){
-			inv[i] = container.getSlot(i).getStack();
+			inv[i] = menu.getSlot(i).getItem();
 		}
-		IRecipe<CraftingInventory> iRecipe = container.te.findRecipe(AutoCrafterTileEntity.prepareCraftingInv(inv), container);
+		IRecipe<CraftingInventory> iRecipe = menu.te.findRecipe(AutoCrafterTileEntity.prepareCraftingInv(inv), menu);
 
 		if(iRecipe != null){
 			RenderSystem.enableRescaleNormal();
 
-			RenderHelper.enableStandardItemLighting();
+			RenderHelper.turnBackOn();
 
 			//If the recipe was set via recipe book/JEI, render the ingredients manually (if it was set via input slots, the slots will render the items for us)
-			if(container.te.recipe != null){
+			if(menu.te.recipe != null){
 				boolean shaped = iRecipe instanceof IShapedRecipe;
 				int width = 3;
 				if(shaped){
@@ -165,24 +165,24 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 
 				List<Ingredient> ingredients = iRecipe.getIngredients();
 				for(int i = 0; i < ingredients.size(); i++){
-					ItemStack[] matching = ingredients.get(i).getMatchingStacks();
+					ItemStack[] matching = ingredients.get(i).getItems();
 					if(matching.length == 0){
 						continue;
 					}
 					ItemStack s = matching[(int) Math.floor(time / 30F) % matching.length];
-					itemRenderer.renderItemIntoGUI(s, 44 + 18 * (i % width) + guiLeft, 15 + 18 * (i / width) + guiTop);
+					itemRenderer.renderGuiItem(s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
 				}
 			}
 
 			//Render the output
-			ItemStack output = iRecipe.getRecipeOutput();
-			itemRenderer.renderItemIntoGUI(output, 106 + guiLeft, 33 + guiTop);
+			ItemStack output = iRecipe.getResultItem();
+			itemRenderer.renderGuiItem(output, 106 + leftPos, 33 + topPos);
 			if(output.getCount() > 1){
-				itemRenderer.renderItemOverlayIntoGUI(font, output, guiLeft + 106, guiTop + 33, null);
+				itemRenderer.renderGuiItemDecorations(font, output, leftPos + 106, topPos + 33, null);
 			}
 
 			RenderSystem.disableRescaleNormal();
-			RenderHelper.disableStandardItemLighting();
+			RenderHelper.turnOff();
 		}
 	}
 

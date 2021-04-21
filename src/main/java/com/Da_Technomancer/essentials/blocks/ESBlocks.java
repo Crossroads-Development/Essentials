@@ -88,7 +88,7 @@ public class ESBlocks{
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
-	public static final Item.Properties itemBlockProp = new Item.Properties().group(ESItems.TAB_ESSENTIALS);
+	public static final Item.Properties itemBlockProp = new Item.Properties().tab(ESItems.TAB_ESSENTIALS);
 
 	/**
 	 * Registers the item form of a blocks and the item model.
@@ -107,20 +107,20 @@ public class ESBlocks{
 		sortingHopper = new SortingHopper();
 		speedHopper = new SpeedHopper();
 		candleLilyPad = new CandleLilyPad();
-		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.getDefaultState().with(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
-		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.getDefaultState().with(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
-		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.getDefaultState().with(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
-		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.getDefaultState().with(BeetrootBlock.BEETROOT_AGE, 0), FertileSoil.SeedCategory.CROP);
-		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.getDefaultState().with(NetherWartBlock.AGE, 0), FertileSoil.SeedCategory.HELL_CROP);
-		fertileSoilOak = new FertileSoil("oak", Blocks.OAK_SAPLING.getDefaultState(), FertileSoil.SeedCategory.TREE);
-		fertileSoilBirch = new FertileSoil("birch", Blocks.BIRCH_SAPLING.getDefaultState(), FertileSoil.SeedCategory.TREE);
-		fertileSoilSpruce = new FertileSoil("spruce", Blocks.SPRUCE_SAPLING.getDefaultState(), FertileSoil.SeedCategory.TREE);
-		fertileSoilJungle = new FertileSoil("jungle", Blocks.JUNGLE_SAPLING.getDefaultState(), FertileSoil.SeedCategory.TREE);
-		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.DARK_OAK_SAPLING.getDefaultState(), FertileSoil.SeedCategory.TREE);
-		fertileSoilAcacia = new FertileSoil("acacia", Blocks.ACACIA_SAPLING.getDefaultState(), FertileSoil.SeedCategory.TREE);
-		fertileSoilBerry = new FertileSoil("berry", Blocks.SWEET_BERRY_BUSH.getDefaultState(), FertileSoil.SeedCategory.BERRY);
-		fertileSoilBrownMushroom = new FertileSoil("brown_mushroom", Blocks.BROWN_MUSHROOM.getDefaultState(), FertileSoil.SeedCategory.MUSHROOM);
-		fertileSoilRedMushroom = new FertileSoil("red_mushroom", Blocks.RED_MUSHROOM.getDefaultState(), FertileSoil.SeedCategory.MUSHROOM);
+		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.defaultBlockState().setValue(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
+		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.defaultBlockState().setValue(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
+		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.defaultBlockState().setValue(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
+		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.defaultBlockState().setValue(BeetrootBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
+		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.defaultBlockState().setValue(NetherWartBlock.AGE, 0), FertileSoil.SeedCategory.HELL_CROP);
+		fertileSoilOak = new FertileSoil("oak", Blocks.OAK_SAPLING.defaultBlockState(), FertileSoil.SeedCategory.TREE);
+		fertileSoilBirch = new FertileSoil("birch", Blocks.BIRCH_SAPLING.defaultBlockState(), FertileSoil.SeedCategory.TREE);
+		fertileSoilSpruce = new FertileSoil("spruce", Blocks.SPRUCE_SAPLING.defaultBlockState(), FertileSoil.SeedCategory.TREE);
+		fertileSoilJungle = new FertileSoil("jungle", Blocks.JUNGLE_SAPLING.defaultBlockState(), FertileSoil.SeedCategory.TREE);
+		fertileSoilDarkOak = new FertileSoil("dark_oak", Blocks.DARK_OAK_SAPLING.defaultBlockState(), FertileSoil.SeedCategory.TREE);
+		fertileSoilAcacia = new FertileSoil("acacia", Blocks.ACACIA_SAPLING.defaultBlockState(), FertileSoil.SeedCategory.TREE);
+		fertileSoilBerry = new FertileSoil("berry", Blocks.SWEET_BERRY_BUSH.defaultBlockState(), FertileSoil.SeedCategory.BERRY);
+		fertileSoilBrownMushroom = new FertileSoil("brown_mushroom", Blocks.BROWN_MUSHROOM.defaultBlockState(), FertileSoil.SeedCategory.MUSHROOM);
+		fertileSoilRedMushroom = new FertileSoil("red_mushroom", Blocks.RED_MUSHROOM.defaultBlockState(), FertileSoil.SeedCategory.MUSHROOM);
 		hopperFilter = new HopperFilter();
 		itemChute = new ItemChute();
 		itemShifter = new ItemShifter();

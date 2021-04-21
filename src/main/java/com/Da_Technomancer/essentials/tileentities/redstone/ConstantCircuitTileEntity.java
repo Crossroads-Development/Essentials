@@ -39,8 +39,8 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putFloat("setting", setting);
 		nbt.putString("setting_s", settingStr);
 		return nbt;
@@ -55,8 +55,8 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		setting = nbt.getFloat("setting");
 		settingStr = nbt.getString("setting_s");
 	}
@@ -69,14 +69,14 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
-		return new ConstantCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), pos, settingStr));
+		return new ConstantCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStr));
 	}
 
 	@Override
 	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		setting = nbt.getFloat("value_0");
 		settingStr = nbt.getString("text_0");
-		markDirty();
+		setChanged();
 		recalculateOutput();
 	}
 }

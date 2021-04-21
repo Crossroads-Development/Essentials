@@ -30,10 +30,12 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class SlottedChest extends ContainerBlock implements IReadable{
 
 	protected SlottedChest(){
-		super(Properties.create(Material.WOOD).hardnessAndResistance(2).sound(SoundType.WOOD));
+		super(Properties.of(Material.WOOD).strength(2).sound(SoundType.WOOD));
 		String name = "slotted_chest";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
@@ -41,37 +43,37 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new SlottedChestTileEntity();
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if(state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getTileEntity(pos);
+			TileEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof SlottedChestTileEntity) {
-				InventoryHelper.dropInventoryItems(worldIn, pos, ((SlottedChestTileEntity) te).iInv);
-				worldIn.updateComparatorOutputLevel(pos, this);
+				InventoryHelper.dropContents(worldIn, pos, ((SlottedChestTileEntity) te).iInv);
+				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
-			super.onReplaced(state, worldIn, pos, newState, isMoving);
+			super.onRemove(state, worldIn, pos, newState, isMoving);
 		}
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state){
+	public BlockRenderType getRenderShape(BlockState state){
 		return BlockRenderType.MODEL;
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(!worldIn.isRemote){
-			TileEntity te = worldIn.getTileEntity(pos);
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		if(!worldIn.isClientSide){
+			TileEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof SlottedChestTileEntity){
 				ItemStack[] filter = ((SlottedChestTileEntity) te).lockedInv;
 				NetworkHooks.openGui((ServerPlayerEntity) playerIn, (SlottedChestTileEntity) te, (buf) -> {
 					for(ItemStack lock : filter){
-						buf.writeItemStack(lock);
+						buf.writeItem(lock);
 					}
 				});
 			}
@@ -81,19 +83,19 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.quip").setStyle(ESConfig.TT_QUIP));
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride(BlockState p_149740_1_){
+	public boolean hasAnalogOutputSignal(BlockState p_149740_1_){
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(BlockState state, World world, BlockPos pos){
-		TileEntity te = world.getTileEntity(pos);
+	public int getAnalogOutputSignal(BlockState state, World world, BlockPos pos){
+		TileEntity te = world.getBlockEntity(pos);
 		if(te instanceof SlottedChestTileEntity){
 			float val = ((SlottedChestTileEntity) te).calcComparator() * 15F;
 			val = MathHelper.floor(val * 14.0F) + (val > 0 ? 1 : 0);
@@ -105,7 +107,7 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 
 	@Override
 	public float read(World world, BlockPos pos, BlockState state){
-		TileEntity te = world.getTileEntity(pos);
+		TileEntity te = world.getBlockEntity(pos);
 		if(te instanceof SlottedChestTileEntity){
 			return ((SlottedChestTileEntity) te).calcComparator() * 15F;
 		}

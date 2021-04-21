@@ -31,7 +31,7 @@ public class WorldBuffer implements IBlockReader{
 	}
 	
 	public void addChange(BlockPos pos, BlockState state){
-		pos = pos.toImmutable();
+		pos = pos.immutable();
 		if(getBlockState(pos) == state){
 			return;
 		}
@@ -40,7 +40,7 @@ public class WorldBuffer implements IBlockReader{
 
 	@Nullable
 	@Override
-	public TileEntity getTileEntity(BlockPos pos){
+	public TileEntity getBlockEntity(BlockPos pos){
 		return null;
 	}
 
@@ -61,7 +61,7 @@ public class WorldBuffer implements IBlockReader{
 	public void applyChanges(int flags){
 		for(Entry<BlockPos, BlockState> ent : memory.entrySet()){
 			if(world.getBlockState(ent.getKey()) != ent.getValue()){
-				world.setBlockState(ent.getKey(), ent.getValue(), flags);
+				world.setBlock(ent.getKey(), ent.getValue(), flags);
 			}
 		}
 		memory.clear();

@@ -35,46 +35,46 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 
 	@Override
 	public void tick(){
-		if(world.isRemote){
+		if(level.isClientSide){
 			return;
 		}
 
-		if(world.getGameTime() % 10 == 0){
-			ServerWorld server = (ServerWorld) world;
+		if(level.getGameTime() % 10 == 0){
+			ServerWorld server = (ServerWorld) level;
 
-			BlockState state = world.getBlockState(pos);
+			BlockState state = level.getBlockState(worldPosition);
 			if(state.getBlock() != ESBlocks.brazier){
-				remove();
+				setRemoved();
 				return;
 			}
-			switch(world.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS)){
+			switch(level.getBlockState(worldPosition).getValue(ESProperties.BRAZIER_CONTENTS)){
 				case 2:
-					server.spawnParticle(ParticleTypes.LAVA, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
+					server.sendParticles(ParticleTypes.LAVA, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
 					break;
 				case 3:
-					server.spawnParticle(ParticleTypes.FLAME, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
+					server.sendParticles(ParticleTypes.FLAME, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 3, 0, 0, 0, 0.01D);
 					break;
 				case 6:
-					server.spawnParticle(ParticleTypes.POOF, pos.getX() + .25 + (.5 * Math.random()), pos.getY() + 1 + (Math.random() * .25D), pos.getZ() + .25 + (.5 * Math.random()), 0, -1, 0.5D, 1, 0.01D);
+					server.sendParticles(ParticleTypes.POOF, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 0, -1, 0.5D, 1, 0.01D);
 					break;
 			}
 		}
 	}
 
 	public ItemStack useItem(ItemStack stack){
-		int type = world.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS);
+		int type = level.getBlockState(worldPosition).getValue(ESProperties.BRAZIER_CONTENTS);
 		ItemStack out = stack;
 		if(type == 0){
 			int tar = 0;
-			if(stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK)){
+			if(stack.getItem() == Item.byBlock(Blocks.COAL_BLOCK)){
 				tar = 3;
 				out = stack.copy();
 				out.shrink(1);
-			}else if(stack.getItem() == Item.getItemFromBlock(Blocks.GLOWSTONE)){
+			}else if(stack.getItem() == Item.byBlock(Blocks.GLOWSTONE)){
 				tar = 4;
 				out = stack.copy();
 				out.shrink(1);
-			}else if(stack.getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND)){
+			}else if(stack.getItem() == Item.byBlock(Blocks.SOUL_SAND)){
 				tar = 6;
 				out = stack.copy();
 				out.shrink(1);
@@ -109,14 +109,14 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 			*/
 
 			if(tar != 0){
-				world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, tar));
+				level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, tar));
 				return out;
 			}
 		}else{
 			switch(type){
 				case 1:
 					if(stack.getItem() == Items.BUCKET && stack.getCount() == 1){
-						world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, 0));
+						level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, 0));
 						return new ItemStack(Items.WATER_BUCKET);
 					}
 					/*
@@ -133,7 +133,7 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 					break;
 				case 2:
 					if(stack.getItem() == Items.BUCKET && stack.getCount() == 1){
-						world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, 0));
+						level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, 0));
 						return new ItemStack(Items.LAVA_BUCKET);
 					}
 					/*
@@ -149,19 +149,19 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 					break;
 				case 3:
 					if(stack.isEmpty()){
-						world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, 0));
+						level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, 0));
 						return new ItemStack(Blocks.COAL_BLOCK);
 					}
 					break;
 				case 4:
 					if(stack.isEmpty()){
-						world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, 0));
+						level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, 0));
 						return new ItemStack(Blocks.GLOWSTONE);
 					}
 					break;
 				case 6:
 					if(stack.isEmpty()){
-						world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, 0));
+						level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, 0));
 						return new ItemStack(Blocks.SOUL_SAND);
 					}
 					break;
@@ -198,7 +198,7 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 			if(slot != 0){
 				return ItemStack.EMPTY;
 			}
-			switch(world.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS)){
+			switch(level.getBlockState(worldPosition).getValue(ESProperties.BRAZIER_CONTENTS)){
 				case 3:
 					return new ItemStack(Blocks.COAL_BLOCK);
 				case 4:
@@ -212,19 +212,19 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
-			if(slot == 0 && world.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS) == 0){
+			if(slot == 0 && level.getBlockState(worldPosition).getValue(ESProperties.BRAZIER_CONTENTS) == 0){
 				int tar = 0;
-				if(stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK)){
+				if(stack.getItem() == Item.byBlock(Blocks.COAL_BLOCK)){
 					tar = 3;
-				}else if(stack.getItem() == Item.getItemFromBlock(Blocks.GLOWSTONE)){
+				}else if(stack.getItem() == Item.byBlock(Blocks.GLOWSTONE)){
 					tar = 4;
-				}else if(stack.getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND)){
+				}else if(stack.getItem() == Item.byBlock(Blocks.SOUL_SAND)){
 					tar = 6;
 				}
 
 				if(tar != 0){
 					if(!simulate){
-						world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, tar));
+						level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, tar));
 					}
 					ItemStack out = stack.copy();
 					out.shrink(1);
@@ -239,7 +239,7 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 			if(slot == 0){
 				ItemStack  out = getStackInSlot(0);
 				if(!simulate){
-					world.setBlockState(pos, world.getBlockState(pos).with(ESProperties.BRAZIER_CONTENTS, 0));
+					level.setBlockAndUpdate(worldPosition, level.getBlockState(worldPosition).setValue(ESProperties.BRAZIER_CONTENTS, 0));
 				}
 				return out;
 			}
@@ -253,7 +253,7 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
-			return slot == 0 && (stack.getItem() == Item.getItemFromBlock(Blocks.COAL_BLOCK) || stack.getItem() == Item.getItemFromBlock(Blocks.GLOWSTONE) || stack.getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND));
+			return slot == 0 && (stack.getItem() == Item.byBlock(Blocks.COAL_BLOCK) || stack.getItem() == Item.byBlock(Blocks.GLOWSTONE) || stack.getItem() == Item.byBlock(Blocks.SOUL_SAND));
 		}
 	}
 }

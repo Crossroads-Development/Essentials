@@ -65,7 +65,7 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 			int delay = RedstoneUtil.DELAY * settingDelay;
 			//We pretend ticks existed is an even number for delay, for consistancy with other time based circuits
 			queuedOutputs.add(Pair.of(input, delay + ticksExisted - (ticksExisted % RedstoneUtil.DELAY)));
-			markDirty();
+			setChanged();
 		}
 	}
 
@@ -73,7 +73,7 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 	public void tick(){
 		ticksExisted++;
 
-		if(!world.isRemote && !queuedOutputs.isEmpty()){
+		if(!level.isClientSide && !queuedOutputs.isEmpty()){
 			boolean didChange = false;
 			long removeTime;
 			//We loop this, because vanilla redstone dust de-powering behaviour may lead to multiple entries with the same timestamp, with only the final one being correct
@@ -90,14 +90,14 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 			if(didChange){
 				//Force circuits to recalculate when output changes
 				recalculateOutput();
-				markDirty();
+				setChanged();
 			}
 		}
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putInt("setting_d", settingDelay);
 		nbt.putString("setting_s_d", settingStrDelay);
 		nbt.putLong("existed", ticksExisted);
@@ -111,8 +111,8 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		settingDelay = nbt.getInt("setting_d");
 		settingStrDelay = nbt.getString("setting_s_d");
 		ticksExisted = nbt.getLong("existed");
@@ -138,7 +138,7 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
-		return new DelayCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), pos, settingStrDelay));
+		return new DelayCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrDelay));
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 			currentOutput = queuedOutputs.get(queuedOutputs.size() - 1).getLeft();
 			queuedOutputs.clear();
 		}
-		markDirty();
+		setChanged();
 		recalculateOutput();
 	}
 }

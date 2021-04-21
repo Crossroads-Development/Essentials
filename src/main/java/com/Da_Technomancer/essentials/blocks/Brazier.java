@@ -33,20 +33,20 @@ public class Brazier extends ContainerBlock{
 	private static final VoxelShape SHAPE;
 
 	static{
-		SHAPE = VoxelShapes.or(Block.makeCuboidShape(4, 0, 4, 12, 10, 12), Block.makeCuboidShape(1, 10, 1, 15, 14, 15));
+		SHAPE = VoxelShapes.or(Block.box(4, 0, 4, 12, 10, 12), Block.box(1, 10, 1, 15, 14, 15));
 	}
 
 	protected Brazier(){
-		super(Block.Properties.create(Material.ROCK).hardnessAndResistance(2));
+		super(AbstractBlock.Properties.of(Material.STONE).strength(2));
 		String name = "brazier";
 		setRegistryName(name);
-		setDefaultState(getDefaultState().with(ESProperties.BRAZIER_CONTENTS, 0));
+		registerDefaultState(defaultBlockState().setValue(ESProperties.BRAZIER_CONTENTS, 0));
 		ESBlocks.toRegister.add(this);
 		ESBlocks.blockAddQue(this);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new BrazierTileEntity();
 	}
 
@@ -56,7 +56,7 @@ public class Brazier extends ContainerBlock{
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state){
+	public BlockRenderType getRenderShape(BlockState state){
 		return BlockRenderType.MODEL;
 	}
 
@@ -66,7 +66,7 @@ public class Brazier extends ContainerBlock{
 		if(other.getBlock() != this){
 			return other.getLightValue(world, pos);
 		}
-		switch(state.get(ESProperties.BRAZIER_CONTENTS)){
+		switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
 			case 2:
 			case 4:
 				return 15;
@@ -80,22 +80,22 @@ public class Brazier extends ContainerBlock{
 	}
 
 	@Override
-	public void onEntityWalk(World worldIn, BlockPos pos, Entity entityIn){
-		int type = worldIn.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS);
+	public void stepOn(World worldIn, BlockPos pos, Entity entityIn){
+		int type = worldIn.getBlockState(pos).getValue(ESProperties.BRAZIER_CONTENTS);
 		if(type == 1){
-			entityIn.extinguish();
+			entityIn.clearFire();
 		}else if(type == 2){
-			entityIn.setFire(5);
+			entityIn.setSecondsOnFire(5);
 		}
 
-		super.onEntityWalk(worldIn, pos, entityIn);
+		super.stepOn(worldIn, pos, entityIn);
 	}
 
 	@Override
-	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance){
-		int type = worldIn.getBlockState(pos).get(ESProperties.BRAZIER_CONTENTS);
+	public void fallOn(World worldIn, BlockPos pos, Entity entityIn, float fallDistance){
+		int type = worldIn.getBlockState(pos).getValue(ESProperties.BRAZIER_CONTENTS);
 		if(type != 1 && type != 2){
-			super.onFallenUpon(worldIn, pos, entityIn, fallDistance);
+			super.fallOn(worldIn, pos, entityIn, fallDistance);
 		}
 		if(type == 2 && entityIn instanceof ItemEntity){
 			entityIn.remove();
@@ -103,13 +103,13 @@ public class Brazier extends ContainerBlock{
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		TileEntity te = worldIn.getTileEntity(pos);
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof BrazierTileEntity){
-			ItemStack out = ((BrazierTileEntity) te).useItem(playerIn.getHeldItem(hand));
-			if(!out.equals(playerIn.getHeldItem(hand))){
-				if(!worldIn.isRemote){
-					playerIn.setHeldItem(hand, out);
+			ItemStack out = ((BrazierTileEntity) te).useItem(playerIn.getItemInHand(hand));
+			if(!out.equals(playerIn.getItemInHand(hand))){
+				if(!worldIn.isClientSide){
+					playerIn.setItemInHand(hand, out);
 				}
 				return ActionResultType.CONSUME;
 			}
@@ -119,17 +119,17 @@ public class Brazier extends ContainerBlock{
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.BRAZIER_CONTENTS);
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getTileEntity(pos);
+			TileEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof BrazierTileEntity) {
 				ItemStack made = ItemStack.EMPTY;
-				switch(state.get(ESProperties.BRAZIER_CONTENTS)){
+				switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
 					case 3:
 						made = new ItemStack(Blocks.COAL_BLOCK);
 						break;
@@ -140,17 +140,17 @@ public class Brazier extends ContainerBlock{
 						made = new ItemStack(Blocks.SOUL_SAND);
 						break;
 				}
-				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), made);
-				worldIn.updateComparatorOutputLevel(pos, this);
+				InventoryHelper.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), made);
+				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
-			super.onReplaced(state, worldIn, pos, newState, isMoving);
+			super.onRemove(state, worldIn, pos, newState, isMoving);
 		}
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.brazier.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.brazier.purpose"));
 	}

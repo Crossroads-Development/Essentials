@@ -5,19 +5,32 @@ import net.minecraftforge.fml.loading.LogMarkers;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.function.Predicate;
 
 public final class ReflectionUtil{
 
 	@Nullable
 	@SuppressWarnings("unused")
 	public static Method reflectMethod(IReflectionKey key){
+		return reflectMethod(key, method -> true);
+	}
+
+	/**
+	 * Reflects an out-of-scope method from a class, and makes it accessible
+	 * Should handle any exceptions, and will log errors when failing
+	 * @param key The reflection key specifying the method's name and class
+	 * @param additionalFilter A predicate which the method must pass, in addition to name and class requirements, to be considered correct. Typically used when there are multiple methods with the same name
+	 * @return The method, if one meets the requirements; null otherwise
+	 */
+	@Nullable
+	public static Method reflectMethod(IReflectionKey key, Predicate<Method> additionalFilter){
 		try{
 			String mcp = key.getMcpName();
 			String obf = key.getObfName();
 			assert key.getSourceClass() != null;
 //			assert epsteinDidntKillHimself;
 			for(Method m : key.getSourceClass().getDeclaredMethods()){
-				if(mcp.equals(m.getName()) || obf.equals(m.getName())){
+				if((mcp.equals(m.getName()) || obf.equals(m.getName())) && additionalFilter.test(m)){
 					m.setAccessible(true);
 					return m;
 				}

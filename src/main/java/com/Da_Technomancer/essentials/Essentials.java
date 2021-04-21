@@ -81,8 +81,8 @@ public final class Essentials{
 	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new ESEventHandlerClient());
-		RenderTypeLookup.setRenderLayer(hopperFilter, RenderType.getCutout());
-		RenderTypeLookup.setRenderLayer(candleLilyPad, RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(hopperFilter, RenderType.cutout());
+		RenderTypeLookup.setRenderLayer(candleLilyPad, RenderType.cutout());
 	}
 
 	@SuppressWarnings("unused")
@@ -117,7 +117,7 @@ public final class Essentials{
 	@SubscribeEvent
 	public static void registerEnts(RegistryEvent.Register<EntityType<?>> e){
 		IForgeRegistry<EntityType<?>> registry = e.getRegistry();
-		registry.register(EntityType.Builder.create(WitherCannon.CannonSkull::new, EntityClassification.MISC).setShouldReceiveVelocityUpdates(true).size(0.3125F, 0.3125F).immuneToFire().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, World w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
+		registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, EntityClassification.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, World w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
 	}
 
 	@SuppressWarnings("unused")
@@ -148,7 +148,7 @@ public final class Essentials{
 	}
 
 	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
-		TileEntityType<?> teType = TileEntityType.Builder.create(cons, blocks).build(DSL.emptyPartType());
+		TileEntityType<?> teType = TileEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}
@@ -217,6 +217,6 @@ public final class Essentials{
 	@OnlyIn(Dist.CLIENT)
 	private static <T extends Container> void registerCon(IContainerFactory<T> cons, ScreenManager.IScreenFactory<T, ContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<ContainerType<?>> reg){
 		ContainerType<T> contType = registerConType(cons, id, reg);
-		ScreenManager.registerFactory(contType, screenFactory);
+		ScreenManager.register(contType, screenFactory);
 	}
 }

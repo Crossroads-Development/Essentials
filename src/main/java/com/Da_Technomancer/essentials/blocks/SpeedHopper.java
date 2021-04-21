@@ -15,10 +15,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class SpeedHopper extends SortingHopper{
 
 	protected SpeedHopper(){
-		super(Properties.create(Material.IRON).sound(SoundType.METAL).hardnessAndResistance(2));
+		super(Properties.of(Material.METAL).sound(SoundType.METAL).strength(2));
 		String name = "speed_hopper";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
@@ -26,13 +28,13 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new SpeedHopperTileEntity();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.speed_hopper.sort"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.speed_hopper.desc"));
 	}

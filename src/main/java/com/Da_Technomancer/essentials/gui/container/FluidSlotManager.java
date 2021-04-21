@@ -130,7 +130,7 @@ public class FluidSlotManager{
 				fluidItemInSlots.remove(index);
 				index--;
 			}else{
-				contents.onSlotChanged();
+				contents.setChanged();
 			}
 		}
 	}
@@ -153,7 +153,7 @@ public class FluidSlotManager{
 	public void render(MatrixStack matrix, float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer, List<ITextComponent> tooltip){
 		//Background
 		FluidStack clientState = getStack();
-		Minecraft.getInstance().getTextureManager().bindTexture(PlayerContainer.LOCATION_BLOCKS_TEXTURE);
+		Minecraft.getInstance().getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
 
 		Screen.fill(matrix, xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
 		//Screen.fill changes the color
@@ -161,7 +161,7 @@ public class FluidSlotManager{
 
 		FluidAttributes attr = clientState.getFluid().getAttributes();
 
-		TextureAtlasSprite sprite = Minecraft.getInstance().getAtlasSpriteGetter(PlayerContainer.LOCATION_BLOCKS_TEXTURE).apply(attr.getStillTexture());
+		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(PlayerContainer.BLOCK_ATLAS).apply(attr.getStillTexture());
 		int col = attr.getColor(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
 		RenderSystem.color3f((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F);
@@ -169,7 +169,7 @@ public class FluidSlotManager{
 		RenderSystem.color3f(1, 1, 1);
 
 		//Foreground
-		Minecraft.getInstance().getTextureManager().bindTexture(OVERLAY);
+		Minecraft.getInstance().getTextureManager().bind(OVERLAY);
 		Screen.blit(matrix, windowXStart + xPos, windowYStart + yPos - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
 
 		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
@@ -210,14 +210,14 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public boolean isItemValid(ItemStack stack){
+		public boolean mayPlace(ItemStack stack){
 			return false;
 		}
 
 		@Override
 		public ItemStack onTake(PlayerEntity player, ItemStack stack){
 			ItemStack s = super.onTake(player, stack);
-			inSlot.onSlotChanged();
+			inSlot.setChanged();
 			return s;
 		}
 	}
@@ -240,19 +240,19 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public boolean isItemValid(ItemStack stack){
+		public boolean mayPlace(ItemStack stack){
 			return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
 		}
 
 		@Override
-		public void onSlotChanged(){
-			super.onSlotChanged();
+		public void setChanged(){
+			super.setChanged();
 
-			ItemStack inSlot = getStack();
+			ItemStack inSlot = getItem();
 
-			if(!internalChange && te != null && isItemValid(inSlot)){
+			if(!internalChange && te != null && mayPlace(inSlot)){
 				internalChange = true;
-				ItemStack outSlot = inventory.getStackInSlot(outSlotIndex);
+				ItemStack outSlot = container.getItem(outSlotIndex);
 				ItemStack inSlotCopy = inSlot.copy();//We make a copy of the inSlot so we can restore in case this fails
 				inSlotCopy.setCount(1);//Size needs to be one or item fluid capabilities refuse to work
 				LazyOptional<IFluidHandlerItem> opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
@@ -278,10 +278,10 @@ public class FluidSlotManager{
 								drainQty = drained.getAmount();
 								if(drainQty > 0){
 									teHandler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
-									inventory.setInventorySlotContents(outSlotIndex, itemHandler.getContainer());
+									container.setItem(outSlotIndex, itemHandler.getContainer());
 									inSlot.shrink(1);
-									inventory.setInventorySlotContents(getSlotIndex(), inSlot);
-									inventory.markDirty();
+									container.setItem(getSlotIndex(), inSlot);
+									container.setChanged();
 
 									internalChange = false;
 									return;
@@ -297,9 +297,9 @@ public class FluidSlotManager{
 							if(filledQty > 0){
 								filled.setAmount(filledQty);
 								teHandler.drain(filled, IFluidHandler.FluidAction.EXECUTE);
-								inventory.setInventorySlotContents(outSlotIndex, itemHandler.getContainer());
+								container.setItem(outSlotIndex, itemHandler.getContainer());
 								inSlot.shrink(1);
-								inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+								container.setItem(getSlotIndex(), inSlot);
 
 								internalChange = false;
 								return;
@@ -324,10 +324,10 @@ public class FluidSlotManager{
 								if(drainQty > 0 && (containerResult.isEmpty() || BlockUtil.sameItem(containerResult, outSlot) && outSlot.getCount() + containerResult.getCount() <= containerResult.getMaxStackSize())){
 									teHandler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
 									outSlot.grow(containerResult.getCount());
-									inventory.setInventorySlotContents(outSlotIndex, outSlot);
+									container.setItem(outSlotIndex, outSlot);
 									inSlot.shrink(1);
-									inventory.setInventorySlotContents(getSlotIndex(), inSlot);
-									inventory.markDirty();
+									container.setItem(getSlotIndex(), inSlot);
+									container.setChanged();
 
 									internalChange = false;
 									return;
@@ -337,7 +337,7 @@ public class FluidSlotManager{
 									inSlotCopy.setCount(1);
 									opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 									itemHandler = opt.orElseThrow(NullPointerException::new);
-									inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+									container.setItem(getSlotIndex(), inSlot);
 									//no markDirty, as the final result is the same as the start state
 								}
 							}
@@ -353,9 +353,9 @@ public class FluidSlotManager{
 								filled.setAmount(filledQty);
 								teHandler.drain(filled, IFluidHandler.FluidAction.EXECUTE);
 								outSlot.grow(containerResult.getCount());
-								inventory.setInventorySlotContents(outSlotIndex, outSlot);
+								container.setItem(outSlotIndex, outSlot);
 								inSlot.shrink(1);
-								inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+								container.setItem(getSlotIndex(), inSlot);
 
 								internalChange = false;
 								return;
@@ -365,7 +365,7 @@ public class FluidSlotManager{
 								inSlotCopy.setCount(1);
 								opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
 								itemHandler = opt.orElseThrow(NullPointerException::new);
-								inventory.setInventorySlotContents(getSlotIndex(), inSlot);
+								container.setItem(getSlotIndex(), inSlot);
 								//no markDirty, as the final result is the same as the start state
 							}
 						}
@@ -388,7 +388,7 @@ public class FluidSlotManager{
 		private final ItemStack[] stacks = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 
 		@Override
-		public int getSizeInventory(){
+		public int getContainerSize(){
 			return 2;
 		}
 
@@ -398,55 +398,55 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public ItemStack getStackInSlot(int index){
+		public ItemStack getItem(int index){
 			return stacks[index];
 		}
 
 		@Override
-		public ItemStack decrStackSize(int index, int count){
-			markDirty();
+		public ItemStack removeItem(int index, int count){
+			setChanged();
 			return stacks[index].split(count);
 		}
 
 		@Override
-		public ItemStack removeStackFromSlot(int index){
+		public ItemStack removeItemNoUpdate(int index){
 			ItemStack stack = stacks[index];
 			stacks[index] = ItemStack.EMPTY;
-			markDirty();
+			setChanged();
 			return stack;
 		}
 
 		@Override
-		public void setInventorySlotContents(int index, ItemStack stack){
+		public void setItem(int index, ItemStack stack){
 			stacks[index] = stack;
-			markDirty();
+			setChanged();
 		}
 
 		@Override
-		public int getInventoryStackLimit(){
+		public int getMaxStackSize(){
 			return 64;
 		}
 
 		@Override
-		public void markDirty(){
-			container.detectAndSendChanges();
+		public void setChanged(){
+			container.broadcastChanges();
 		}
 
 		@Override
-		public boolean isUsableByPlayer(PlayerEntity player){
+		public boolean stillValid(PlayerEntity player){
 			return true;
 		}
 
 		@Override
-		public boolean isItemValidForSlot(int index, ItemStack stack){
+		public boolean canPlaceItem(int index, ItemStack stack){
 			return index == 0 && stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
 		}
 
 		@Override
-		public void clear(){
+		public void clearContent(){
 			stacks[0] = ItemStack.EMPTY;
 			stacks[1] = ItemStack.EMPTY;
-			markDirty();
+			setChanged();
 		}
 	}
 }

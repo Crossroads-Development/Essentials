@@ -20,6 +20,8 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public abstract class AbstractSplitter extends ContainerBlock{
 
 	protected AbstractSplitter(String name, Properties prop){
@@ -33,7 +35,7 @@ public abstract class AbstractSplitter extends ContainerBlock{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
-		TileEntity te = worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof AbstractSplitterTE){
 			((AbstractSplitterTE) te).refreshCache();
 		}
@@ -42,17 +44,17 @@ public abstract class AbstractSplitter extends ContainerBlock{
 	protected abstract ITextComponent getModeComponent(AbstractSplitterTE te, int newMode);
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
-		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-			if(!worldIn.isRemote){
-				if(isBasic() && playerIn.isSneaking()){
-					TileEntity te = worldIn.getTileEntity(pos);
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult trace){
+		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+			if(!worldIn.isClientSide){
+				if(isBasic() && playerIn.isShiftKeyDown()){
+					TileEntity te = worldIn.getBlockEntity(pos);
 					if(te instanceof AbstractSplitterTE){
 						int mode = ((AbstractSplitterTE) te).increaseMode();
-						playerIn.sendMessage(getModeComponent((AbstractSplitterTE) te, mode), playerIn.getUniqueID());
+						playerIn.sendMessage(getModeComponent((AbstractSplitterTE) te, mode), playerIn.getUUID());
 					}
 				}else{
-					worldIn.setBlockState(pos, state.func_235896_a_(ESProperties.FACING));//MCP note: cycle
+					worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.FACING));//MCP note: cycle
 				}
 			}
 			return ActionResultType.SUCCESS;
@@ -64,16 +66,16 @@ public abstract class AbstractSplitter extends ContainerBlock{
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(ESProperties.FACING, (context.getPlayer() == null) ? Direction.NORTH : context.getNearestLookingDirection());
+		return defaultBlockState().setValue(ESProperties.FACING, (context.getPlayer() == null) ? Direction.NORTH : context.getNearestLookingDirection());
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.FACING);
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state){
+	public BlockRenderType getRenderShape(BlockState state){
 		return BlockRenderType.MODEL;
 	}
 }

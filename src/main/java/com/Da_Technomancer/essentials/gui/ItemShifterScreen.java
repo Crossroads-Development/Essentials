@@ -20,15 +20,15 @@ public class ItemShifterScreen extends ContainerScreen<ItemShifterContainer>{
 	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
-		renderHoveredTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
+		renderTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
 	}
 
 	//MCP note: render screen
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
-		minecraft.getTextureManager().bindTexture(GUI_TEXTURE);
+		minecraft.getTextureManager().bind(GUI_TEXTURE);
 		//drawTexturedModelRectangle
-		blit(matrix, guiLeft, guiTop, 0, 0, xSize, ySize);
+		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 	}
 }

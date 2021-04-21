@@ -18,7 +18,7 @@ import java.util.List;
 public class LinkingTool extends Item{
 
 	public LinkingTool(){
-		super(new Item.Properties().maxStackSize(1).group(ESItems.TAB_ESSENTIALS));
+		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS));
 		String name = "linking_tool";
 		setRegistryName(name);
 		ESItems.toRegister.add(this);
@@ -31,10 +31,10 @@ public class LinkingTool extends Item{
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		CompoundNBT nbt = stack.getTag();
 		if(nbt != null && nbt.contains(LinkHelper.POS_NBT)){
-			BlockPos linked = BlockPos.fromLong(stack.getTag().getLong(LinkHelper.POS_NBT));
+			BlockPos linked = BlockPos.of(stack.getTag().getLong(LinkHelper.POS_NBT));
 			String dim = stack.getTag().getString(LinkHelper.DIM_NBT);
 			tooltip.add(new TranslationTextComponent("tt.essentials.linking.info", linked.getX(), linked.getY(), linked.getZ(), dim));
 		}else{

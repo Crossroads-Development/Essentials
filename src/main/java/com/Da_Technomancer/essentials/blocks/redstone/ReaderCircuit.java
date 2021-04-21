@@ -34,26 +34,26 @@ public class ReaderCircuit extends AbstractCircuit{
 
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		World world = te.getWorld();
-		Direction back = CircuitTileEntity.Orient.BACK.getFacing(te.getBlockState().get(ESProperties.HORIZ_FACING));
-		BlockPos readPos = te.getPos().offset(back);
+		World world = te.getLevel();
+		Direction back = CircuitTileEntity.Orient.BACK.getFacing(te.getBlockState().getValue(ESProperties.HORIZ_FACING));
+		BlockPos readPos = te.getBlockPos().relative(back);
 		float output;
 		BlockState state = world.getBlockState(readPos);
 		Block block = state.getBlock();
 		IReadable readable = RedstoneUtil.getReadable(block);
 		if(readable != null){
 			output = readable.read(world, readPos, state);
-		}else if(state.hasComparatorInputOverride()){
-			output = state.getComparatorInputOverride(world, readPos);
-		}else if(state.isNormalCube(world, readPos)){
-			readPos = readPos.offset(back);
+		}else if(state.hasAnalogOutputSignal()){
+			output = state.getAnalogOutputSignal(world, readPos);
+		}else if(state.isRedstoneConductor(world, readPos)){
+			readPos = readPos.relative(back);
 			state = world.getBlockState(readPos);
 			block = state.getBlock();
 			readable = RedstoneUtil.getReadable(block);
 			if(readable != null){
 				output = readable.read(world, readPos, state);
-			}else if(state.hasComparatorInputOverride()){
-				output = state.getComparatorInputOverride(world, readPos);
+			}else if(state.hasAnalogOutputSignal()){
+				output = state.getAnalogOutputSignal(world, readPos);
 			}else{
 				output = 0;
 			}

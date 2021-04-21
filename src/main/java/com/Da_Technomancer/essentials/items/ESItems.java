@@ -12,7 +12,7 @@ public class ESItems{
 
 	public static final ItemGroup TAB_ESSENTIALS = new ItemGroup(Essentials.MODID){
 		@Override
-		public ItemStack createIcon(){
+		public ItemStack makeIcon(){
 			return new ItemStack(itemCandleLilypad, 1);
 		}
 	};

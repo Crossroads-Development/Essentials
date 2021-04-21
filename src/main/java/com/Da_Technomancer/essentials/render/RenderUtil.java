@@ -28,7 +28,7 @@ public class RenderUtil{
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, int light){
-		builder.pos(matrix.getLast().getMatrix(), x, y, z).color(1F, 1F, 1F, 1F).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), normalX, normalY, normalZ).endVertex();
+		builder.vertex(matrix.last().pose(), x, y, z).color(1F, 1F, 1F, 1F).uv(u, v).uv2(light).normal(matrix.last().normal(), normalX, normalY, normalZ).endVertex();
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class RenderUtil{
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, IPosition pos, float u, float v, IPosition normal, float alpha, int light){
-		builder.pos(matrix.getLast().getMatrix(), (float) pos.getX(), (float) pos.getY(), (float) pos.getZ()).color(1F, 1F, 1F, alpha).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), (float) normal.getX(), (float) normal.getY(), (float) normal.getZ()).endVertex();
+		builder.vertex(matrix.last().pose(), (float) pos.x(), (float) pos.y(), (float) pos.z()).color(1F, 1F, 1F, alpha).uv(u, v).uv2(light).normal(matrix.last().normal(), (float) normal.x(), (float) normal.y(), (float) normal.z()).endVertex();
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class RenderUtil{
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, IPosition pos, float u, float v, IPosition normal, int light, int[] col){
-		builder.pos(matrix.getLast().getMatrix(), (float) pos.getX(), (float) pos.getY(), (float) pos.getZ()).color(col[0], col[1], col[2], col[3]).tex(u, v).lightmap(light).normal(matrix.getLast().getNormal(), (float) normal.getX(), (float) normal.getY(), (float) normal.getZ()).endVertex();
+		builder.vertex(matrix.last().pose(), (float) pos.x(), (float) pos.y(), (float) pos.z()).color(col[0], col[1], col[2], col[3]).uv(u, v).uv2(light).normal(matrix.last().normal(), (float) normal.x(), (float) normal.y(), (float) normal.z()).endVertex();
 	}
 
 	/**
@@ -78,11 +78,11 @@ public class RenderUtil{
 	 */
 	@OnlyIn(Dist.CLIENT)
 	public static Vector3d findRayWidth(Vector3d rayStPos, Vector3d ray, float width){
-		Vector3d cameraPos = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+		Vector3d cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 		Vector3d relStPos = rayStPos.subtract(cameraPos);//Where the ray starts, relative to the camera
 		ray = ray.normalize();
-		Vector3d widthVec = relStPos.subtract(ray.scale(ray.dotProduct(relStPos)));//Vector from the camera to the closest point on the ray (were it extended infinitely)
-		widthVec = widthVec.crossProduct(ray);//Cross the ray direction with the vector from camera to ray, resulting in a vector orthogonal to the field of vision and the ray
+		Vector3d widthVec = relStPos.subtract(ray.scale(ray.dot(relStPos)));//Vector from the camera to the closest point on the ray (were it extended infinitely)
+		widthVec = widthVec.cross(ray);//Cross the ray direction with the vector from camera to ray, resulting in a vector orthogonal to the field of vision and the ray
 		return widthVec.scale(width / 2 / widthVec.length());
 	}
 }

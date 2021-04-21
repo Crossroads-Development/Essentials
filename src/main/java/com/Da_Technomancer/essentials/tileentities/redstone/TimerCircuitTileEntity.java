@@ -61,15 +61,15 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 		ticksExisted++;
 
 		int clockTime = (int) (ticksExisted / RedstoneUtil.DELAY) % settingPeriod;
-		if(!world.isRemote && ticksExisted % RedstoneUtil.DELAY == 0 && (clockTime == 0 || clockTime == settingDuration)){
+		if(!level.isClientSide && ticksExisted % RedstoneUtil.DELAY == 0 && (clockTime == 0 || clockTime == settingDuration)){
 			//Force circuits to recalculate when output changes
 			recalculateOutput();
 		}
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 		nbt.putInt("setting_p", settingPeriod);
 		nbt.putString("setting_s_p", settingStrPeriod);
 		nbt.putInt("setting_d", settingDuration);
@@ -90,8 +90,8 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		settingPeriod = nbt.getInt("setting_p");
 		settingStrPeriod = nbt.getString("setting_s_p");
 		settingDuration = nbt.getInt("setting_d");
@@ -107,7 +107,7 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
-		return new TimerCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), pos, settingStrPeriod, settingStrDuration));
+		return new TimerCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrPeriod, settingStrDuration));
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 		settingStrPeriod = nbt.getString("text_0");
 		settingDuration = Math.max(MIN_DURATION, Math.round(nbt.getFloat("value_1")));
 		settingStrDuration = nbt.getString("text_1");
-		markDirty();
+		setChanged();
 		recalculateOutput();
 	}
 }

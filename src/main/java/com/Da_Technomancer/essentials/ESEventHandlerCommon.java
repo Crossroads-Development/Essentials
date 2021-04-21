@@ -26,11 +26,11 @@ public class ESEventHandlerCommon{
 		//Prevents witch spawning if a nearby brazier has soulsand
 		if(e.getEntity() instanceof WitchEntity && e.getWorld() instanceof World){
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
-			for(TileEntity te : ((World) e.getWorld()).tickableTileEntities){
+			for(TileEntity te : ((World) e.getWorld()).tickableBlockEntities){
 				World w;
-				if(te instanceof BrazierTileEntity && te.getPos().distanceSq(e.getX(), e.getY(), e.getZ(), true) <= RANGE_SQUARED && (w = te.getWorld()) != null){
-					BlockState state = w.getBlockState(te.getPos());
-					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
+				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(e.getX(), e.getY(), e.getZ(), true) <= RANGE_SQUARED && (w = te.getLevel()) != null){
+					BlockState state = w.getBlockState(te.getBlockPos());
+					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setResult(Event.Result.DENY);
 						return;
 					}
@@ -44,11 +44,11 @@ public class ESEventHandlerCommon{
 	public void preventTeleport(EnderTeleportEvent e){
 		if(e.getEntity() instanceof EndermanEntity){
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
-			for(TileEntity te : e.getEntity().getEntityWorld().tickableTileEntities){
-				Vector3d entPos = e.getEntity().getPositionVec();
-				if(te instanceof BrazierTileEntity && te.getPos().distanceSq(entPos, true) <= RANGE_SQUARED && te.getWorld() != null){
+			for(TileEntity te : e.getEntity().getCommandSenderWorld().tickableBlockEntities){
+				Vector3d entPos = e.getEntity().position();
+				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(entPos, true) <= RANGE_SQUARED && te.getLevel() != null){
 					BlockState state = te.getBlockState();
-					if(state.getBlock() == ESBlocks.brazier && state.get(ESProperties.BRAZIER_CONTENTS) == 6){
+					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setCanceled(true);
 						return;
 					}
@@ -60,11 +60,11 @@ public class ESEventHandlerCommon{
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void feedAnimal(PlayerInteractEvent.EntityInteract e){
-		if(e.getTarget() instanceof AnimalEntity && e.getItemStack().getItem() == ESItems.animalFeed && (!(e.getTarget() instanceof TameableEntity) || ((TameableEntity) e.getTarget()).isTamed())){
+		if(e.getTarget() instanceof AnimalEntity && e.getItemStack().getItem() == ESItems.animalFeed && (!(e.getTarget() instanceof TameableEntity) || ((TameableEntity) e.getTarget()).isTame())){
 			e.setResult(Event.Result.DENY);
 			e.setCanceled(true);
 			AnimalEntity an = (AnimalEntity) e.getTarget();
-			if(!e.getWorld().isRemote && an.getGrowingAge() == 0){
+			if(!e.getWorld().isClientSide && an.getAge() == 0){
 				an.setInLove(e.getPlayer());
 				if(!e.getPlayer().isCreative()){
 					e.getItemStack().shrink(1);

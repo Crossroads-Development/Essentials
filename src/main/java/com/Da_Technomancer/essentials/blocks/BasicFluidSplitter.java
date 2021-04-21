@@ -15,6 +15,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class BasicFluidSplitter extends AbstractSplitter{
 
 	protected BasicFluidSplitter(String name, Properties prop){
@@ -22,7 +24,7 @@ public class BasicFluidSplitter extends AbstractSplitter{
 	}
 
 	public BasicFluidSplitter(){
-		super("basic_fluid_splitter", Properties.create(Material.IRON).hardnessAndResistance(3));
+		super("basic_fluid_splitter", Properties.of(Material.METAL).strength(3));
 	}
 
 	@Override
@@ -31,13 +33,13 @@ public class BasicFluidSplitter extends AbstractSplitter{
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader world){
+	public TileEntity newBlockEntity(IBlockReader world){
 		return new BasicFluidSplitterTileEntity();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_splitter_basic"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.basic_fluid_splitter_formula"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_splitter_chute"));

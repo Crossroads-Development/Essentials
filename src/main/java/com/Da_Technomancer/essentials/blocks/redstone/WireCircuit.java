@@ -24,12 +24,12 @@ public class WireCircuit extends AbstractTile{
 
 	public WireCircuit(){
 		super("wire_circuit");
-		setDefaultState(getDefaultState().with(ESProperties.CONNECTIONS, 0));
+		registerDefaultState(defaultBlockState().setValue(ESProperties.CONNECTIONS, 0));
 		ESBlocks.blockAddQue(this);//Register an item form only for the actual wire circuit
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.CONNECTIONS);
 	}
 
@@ -38,20 +38,20 @@ public class WireCircuit extends AbstractTile{
 		//Adjust blockstate visual
 		int meta = 0;
 		for(int i = 2; i < 6; i++){
-			Direction dir = Direction.byIndex(i);
-			BlockState otherState = worldIn.getBlockState(pos.offset(dir));
+			Direction dir = Direction.from3DDataValue(i);
+			BlockState otherState = worldIn.getBlockState(pos.relative(dir));
 			Block otherBlock = otherState.getBlock();
 			if(otherBlock instanceof IWireConnect && ((IWireConnect) otherBlock).canConnect(dir.getOpposite(), otherState)){
 				meta |= 1 << (i - 2);
 			}
 		}
 
-		if(meta != state.get(ESProperties.CONNECTIONS)){
-			worldIn.setBlockState(pos, state.with(ESProperties.CONNECTIONS, meta), 2);
+		if(meta != state.getValue(ESProperties.CONNECTIONS)){
+			worldIn.setBlock(pos, state.setValue(ESProperties.CONNECTIONS, meta), 2);
 		}
 
 		//Wires propogate block updates in all horizontal directions to make sure any attached circuit can update when a new connection is made/broken
-		TileEntity te = worldIn.getTileEntity(pos);
+		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof WireTileEntity){
 			WireTileEntity wte = (WireTileEntity) te;
 
@@ -64,7 +64,7 @@ public class WireCircuit extends AbstractTile{
 			wte.lastUpdateTime = worldTime;
 
 			for(Direction dir : Direction.Plane.HORIZONTAL){
-				worldIn.neighborChanged(pos.offset(dir), this, pos);
+				worldIn.neighborChanged(pos.relative(dir), this, pos);
 			}
 		}
 
@@ -73,17 +73,17 @@ public class WireCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader worldIn){
+	public TileEntity newBlockEntity(IBlockReader worldIn){
 		return new WireTileEntity();
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 		worldIn.neighborChanged(pos, this, pos);
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.wire_circuit"));
 	}
 }

@@ -38,7 +38,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 	@Override
 	public void tick(){
-		if(world.isRemote){
+		if(level.isClientSide){
 			return;
 		}
 
@@ -52,13 +52,13 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 		//We use a cache for the output, which the ejectItem method will use instead of checking for the TE independently
 		if(!outputOptionalCache.isPresent()){
-			TileEntity endTE = world.getTileEntity(endPos);
+			TileEntity endTE = level.getBlockEntity(endPos);
 			if(endTE != null){
 				outputOptionalCache = endTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getFacing().getOpposite());
 			}
 		}
 
-		inventory = ejectItem(world, endPos, getFacing(), inventory, outputOptionalCache);
+		inventory = ejectItem(level, endPos, getFacing(), inventory, outputOptionalCache);
 	}
 
 	@Override
@@ -68,27 +68,27 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 
 		if(!inventory.isEmpty()){
-			nbt.put("inv", inventory.write(new CompoundNBT()));
+			nbt.put("inv", inventory.save(new CompoundNBT()));
 		}
 		return nbt;
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 
 		if(nbt.contains("inv")){
-			inventory = ItemStack.read(nbt.getCompound("inv"));
+			inventory = ItemStack.of(nbt.getCompound("inv"));
 		}
 	}
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		invOptional.invalidate();
 	}
 
@@ -129,7 +129,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
-			if(slot != 0 || stack.isEmpty() || !inventory.isEmpty() && (!inventory.isItemEqual(stack) || !ItemStack.areItemStackTagsEqual(inventory, stack))){
+			if(slot != 0 || stack.isEmpty() || !inventory.isEmpty() && (!inventory.sameItem(stack) || !ItemStack.tagMatches(inventory, stack))){
 				return stack;
 			}
 
@@ -142,7 +142,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 				}else{
 					inventory.grow(moved);
 				}
-				markDirty();
+				setChanged();
 			}
 
 			ItemStack remain = stack.copy();
@@ -161,7 +161,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 			if(!simulate){
 				inventory.shrink(removed.getCount());
-				markDirty();
+				setChanged();
 			}
 
 			return removed;
@@ -179,7 +179,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public int getSizeInventory(){
+	public int getContainerSize(){
 		return 1;
 	}
 
@@ -189,53 +189,53 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int index){
+	public ItemStack getItem(int index){
 		return index == 0 ? inventory : ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack decrStackSize(int index, int count){
-		markDirty();
+	public ItemStack removeItem(int index, int count){
+		setChanged();
 		return index == 0 ? inventory.split(count) : ItemStack.EMPTY;
 	}
 
 	@Override
-	public ItemStack removeStackFromSlot(int index){
+	public ItemStack removeItemNoUpdate(int index){
 		if(index == 0){
 			ItemStack removed = inventory;
 			inventory = ItemStack.EMPTY;
-			markDirty();
+			setChanged();
 			return removed;
 		}
 		return ItemStack.EMPTY;
 	}
 
 	@Override
-	public void setInventorySlotContents(int index, ItemStack stack){
+	public void setItem(int index, ItemStack stack){
 		if(index == 0){
 			inventory = stack;
-			markDirty();
+			setChanged();
 		}
 	}
 
 	@Override
-	public int getInventoryStackLimit(){
+	public int getMaxStackSize(){
 		return 64;
 	}
 
 	@Override
-	public boolean isUsableByPlayer(PlayerEntity player){
-		return pos.distanceSq(player.getPositionVec(), true) < 64;
+	public boolean stillValid(PlayerEntity player){
+		return worldPosition.distSqr(player.position(), true) < 64;
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int index, ItemStack stack){
+	public boolean canPlaceItem(int index, ItemStack stack){
 		return index == 0;
 	}
 
 	@Override
-	public void clear(){
+	public void clearContent(){
 		inventory = ItemStack.EMPTY;
-		markDirty();
+		setChanged();
 	}
 }

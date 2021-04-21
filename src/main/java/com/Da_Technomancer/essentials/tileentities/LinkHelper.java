@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class LinkHelper{
 
-	public static final ITag<Item> LINKING_TOOLS = ItemTags.makeWrapperTag(new ResourceLocation(Essentials.MODID, "linking_tool").toString());
+	public static final ITag<Item> LINKING_TOOLS = ItemTags.bind(new ResourceLocation(Essentials.MODID, "linking_tool").toString());
 	public static final String POS_NBT = "c_link";
 	public static final String DIM_NBT = "c_link_dim";
 	public static final byte LINK_PACKET_ID = 8;//Used to add a link with position encoded into the message
@@ -49,14 +49,14 @@ public class LinkHelper{
 	}
 
 	public Iterable<BlockPos> getLinksAbsolute(){
-		BlockPos selfPos = te.getTE().getPos();
-		return linked.stream().map(relPos -> relPos.add(selfPos)).collect(Collectors.toList());
+		BlockPos selfPos = te.getTE().getBlockPos();
+		return linked.stream().map(relPos -> relPos.offset(selfPos)).collect(Collectors.toList());
 	}
 
 	public void readNBT(CompoundNBT nbt){
 		int i = 0;
 		while(nbt.contains("link_" + i)){
-			linked.add(BlockPos.fromLong(nbt.getLong("link_" + i)));
+			linked.add(BlockPos.of(nbt.getLong("link_" + i)));
 			i++;
 		}
 	}
@@ -68,7 +68,7 @@ public class LinkHelper{
 	public void writeNBT(CompoundNBT nbt){
 		int count = 0;
 		for(BlockPos relPos : linked){
-			nbt.putLong("link_" + count++, relPos.toLong());
+			nbt.putLong("link_" + count++, relPos.asLong());
 		}
 	}
 
@@ -82,11 +82,11 @@ public class LinkHelper{
 		if(linked.size() >= te.getMaxLinks()){
 			return false;
 		}
-		BlockPos tePos = te.getTE().getPos();
-		BlockPos linkPos = endpoint.getTE().getPos().subtract(tePos);
+		BlockPos tePos = te.getTE().getBlockPos();
+		BlockPos linkPos = endpoint.getTE().getBlockPos().subtract(tePos);
 		linked.add(linkPos);
-		BlockUtil.sendClientPacketAround(te.getTE().getWorld(), tePos, new SendLongToClient(LinkHelper.LINK_PACKET_ID, linkPos.toLong(), tePos));
-		te.getTE().markDirty();
+		BlockUtil.sendClientPacketAround(te.getTE().getLevel(), tePos, new SendLongToClient(LinkHelper.LINK_PACKET_ID, linkPos.asLong(), tePos));
+		te.getTE().setChanged();
 		return true;
 	}
 
@@ -95,18 +95,18 @@ public class LinkHelper{
 	 * @param endpoint Relative position of endpoint
 	 */
 	public void removeLink(BlockPos endpoint){
-		BlockPos tePos = te.getTE().getPos();
+		BlockPos tePos = te.getTE().getBlockPos();
 		linked.remove(endpoint);
-		BlockUtil.sendClientPacketAround(te.getTE().getWorld(), tePos, new SendLongToClient(LinkHelper.REMOVE_PACKET_ID, endpoint.toLong(), tePos));
-		te.getTE().markDirty();
+		BlockUtil.sendClientPacketAround(te.getTE().getLevel(), tePos, new SendLongToClient(LinkHelper.REMOVE_PACKET_ID, endpoint.asLong(), tePos));
+		te.getTE().setChanged();
 	}
 
 	public void unlinkAllEndpoints(){
-		BlockPos selfPos = te.getTE().getPos();
-		World world = te.getTE().getWorld();
+		BlockPos selfPos = te.getTE().getBlockPos();
+		World world = te.getTE().getLevel();
 		for(BlockPos relPos : linked){
-			BlockPos endPos = relPos.add(selfPos);
-			TileEntity endTe = world.getTileEntity(endPos);
+			BlockPos endPos = relPos.offset(selfPos);
+			TileEntity endTe = world.getBlockEntity(endPos);
 			if(endTe instanceof ILinkTE){
 				((ILinkTE) endTe).removeLinkEnd(selfPos);
 			}
@@ -121,10 +121,10 @@ public class LinkHelper{
 	 */
 	public boolean handleIncomingPacket(byte discriminator, long message){
 		if(discriminator == LINK_PACKET_ID){
-			linked.add(BlockPos.fromLong(message));
+			linked.add(BlockPos.of(message));
 			return true;
 		}else if(discriminator == REMOVE_PACKET_ID){
-			linked.remove(BlockPos.fromLong(message));
+			linked.remove(BlockPos.of(message));
 			return true;
 		}
 		return false;
@@ -136,7 +136,7 @@ public class LinkHelper{
 	 */
 	public AxisAlignedBB frustrum(){
 		//Expands the frustrum box to include linked positions
-		BlockPos pos = te.getTE().getPos();
+		BlockPos pos = te.getTE().getBlockPos();
 		int[] min = new int[3];
 		int[] max = new int[3];
 		for(BlockPos link : te.getLinks()){
@@ -163,13 +163,13 @@ public class LinkHelper{
 	 */
 	public static ItemStack wrench(ILinkTE linkTE, ItemStack wrench, PlayerEntity player){
 		if(player.isCrouching()){
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.clear"), player.getUniqueID());
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.clear"), player.getUUID());
 			ArrayList<BlockPos> links = new ArrayList<>(linkTE.getLinks());
-			World world = linkTE.getTE().getWorld();
-			BlockPos srcPos = linkTE.getTE().getPos();
+			World world = linkTE.getTE().getLevel();
+			BlockPos srcPos = linkTE.getTE().getBlockPos();
 			for(BlockPos link : links){
 				linkTE.removeLinkSource(link);
-				TileEntity endTE = world.getTileEntity(srcPos.add(link));
+				TileEntity endTE = world.getBlockEntity(srcPos.offset(link));
 				if(endTE instanceof ILinkTE){
 					((ILinkTE) endTE).removeLinkEnd(srcPos);
 				}
@@ -179,40 +179,40 @@ public class LinkHelper{
 		}
 
 		Pair<String, BlockPos> wrenchData = readLinkNBT(wrench);
-		if(wrenchData != null && wrenchData.getLeft().equals(getWorldString(player.world))){
-			TileEntity prevTE = player.world.getTileEntity(wrenchData.getRight());
+		if(wrenchData != null && wrenchData.getLeft().equals(getWorldString(player.level))){
+			TileEntity prevTE = player.level.getBlockEntity(wrenchData.getRight());
 			if(prevTE instanceof ILinkTE && ((ILinkTE) prevTE).canLink(linkTE) && prevTE != linkTE){
 				int range = ((ILinkTE) prevTE).getRange();
-				if(wrenchData.getRight().distanceSq(linkTE.getTE().getPos()) <= range * range){
+				if(wrenchData.getRight().distSqr(linkTE.getTE().getBlockPos()) <= range * range){
 					ILinkTE prevLinkTe = (ILinkTE) prevTE;
 					//If the link already exists, remove it
-					BlockPos relLinkPos = linkTE.getTE().getPos().subtract(prevTE.getPos());
+					BlockPos relLinkPos = linkTE.getTE().getBlockPos().subtract(prevTE.getBlockPos());
 					if(prevLinkTe.getLinks().contains(relLinkPos)){
 						prevLinkTe.removeLinkSource(relLinkPos);
-						linkTE.removeLinkEnd(prevTE.getPos());
-						player.sendMessage(new TranslationTextComponent("tt.essentials.linking.remove", prevTE.getPos(), linkTE.getTE().getPos()), player.getUniqueID());
+						linkTE.removeLinkEnd(prevTE.getBlockPos());
+						player.sendMessage(new TranslationTextComponent("tt.essentials.linking.remove", prevTE.getBlockPos(), linkTE.getTE().getBlockPos()), player.getUUID());
 					}else{
 						//Otherwise, create it
 						if(prevLinkTe.getLinks().size() < prevLinkTe.getMaxLinks()){
 							if(prevLinkTe.createLinkSource(linkTE, player)){
 								linkTE.createLinkEnd(prevLinkTe);
-								player.sendMessage(new TranslationTextComponent("tt.essentials.linking.success", prevTE.getPos(), linkTE.getTE().getPos()), player.getUniqueID());
+								player.sendMessage(new TranslationTextComponent("tt.essentials.linking.success", prevTE.getBlockPos(), linkTE.getTE().getBlockPos()), player.getUUID());
 							}
 						}else{
-							player.sendMessage(new TranslationTextComponent("tt.essentials.linking.full", prevLinkTe.getMaxLinks()), player.getUniqueID());
+							player.sendMessage(new TranslationTextComponent("tt.essentials.linking.full", prevLinkTe.getMaxLinks()), player.getUUID());
 						}
 					}
 				}else{
-					player.sendMessage(new TranslationTextComponent("tt.essentials.linking.range"), player.getUniqueID());
+					player.sendMessage(new TranslationTextComponent("tt.essentials.linking.range"), player.getUUID());
 				}
 				clearLinkNBT(wrench);
 				return wrench;
 			}else{
-				player.sendMessage(new TranslationTextComponent("tt.essentials.linking.invalid"), player.getUniqueID());
+				player.sendMessage(new TranslationTextComponent("tt.essentials.linking.invalid"), player.getUUID());
 			}
 		}else if(linkTE.canBeginLinking()){
-			setLinkNBT(wrench, linkTE.getTE().getPos(), getWorldString(linkTE.getTE().getWorld()));
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.start"), player.getUniqueID());
+			setLinkNBT(wrench, linkTE.getTE().getBlockPos(), getWorldString(linkTE.getTE().getLevel()));
+			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.start"), player.getUUID());
 			return wrench;
 		}
 
@@ -221,12 +221,12 @@ public class LinkHelper{
 	}
 
 	private static String getWorldString(World world){
-		return world.getDimensionKey().getLocation().toString();
+		return world.dimension().location().toString();
 	}
 
 	private static void setLinkNBT(ItemStack linkingTool, BlockPos targetPos, String targetWorld){
 		CompoundNBT itemNBT = linkingTool.getOrCreateTag();
-		itemNBT.putLong(POS_NBT, targetPos.toLong());
+		itemNBT.putLong(POS_NBT, targetPos.asLong());
 		itemNBT.putString(DIM_NBT, targetWorld);
 	}
 
@@ -245,7 +245,7 @@ public class LinkHelper{
 			return null;
 		}
 		if(itemNBT.contains(POS_NBT) && itemNBT.contains(DIM_NBT)){
-			return Pair.of(itemNBT.getString(DIM_NBT), BlockPos.fromLong(itemNBT.getLong(POS_NBT)));
+			return Pair.of(itemNBT.getString(DIM_NBT), BlockPos.of(itemNBT.getLong(POS_NBT)));
 		}
 		return null;
 	}

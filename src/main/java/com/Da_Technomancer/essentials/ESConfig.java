@@ -23,7 +23,7 @@ public class ESConfig{
 	/**
 	 * A common style applied to "quip" lines in tooltips
 	 */
-	public static final Style TT_QUIP = Style.EMPTY.applyFormatting(TextFormatting.AQUA).setItalic(true);
+	public static final Style TT_QUIP = Style.EMPTY.applyFormat(TextFormatting.AQUA).withItalic(true);
 
 	public static ForgeConfigSpec.BooleanValue addWrench;
 
@@ -70,7 +70,7 @@ public class ESConfig{
 		serverSpec.setConfig(serverConfig);
 	}
 
-	private static final ITag<Item> WRENCH = ItemTags.makeWrapperTag("forge:wrench");
+	private static final ITag<Item> WRENCH = ItemTags.bind("forge:wrench");
 
 	/**
 	 * @param stack The stack to test

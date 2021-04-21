@@ -37,7 +37,7 @@ public class SendLongToClient extends ClientPacket{
 
 	@Override
 	protected void run(){
-		TileEntity te = Minecraft.getInstance().world.getTileEntity(pos);
+		TileEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
 
 		if(te instanceof ILongReceiver){
 			((ILongReceiver) te).receiveLong(id, val, null);

@@ -19,30 +19,32 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.item.Item.Properties;
+
 public class AnimalFeed extends Item{
 
 	protected AnimalFeed(){
-		super(new Properties().group(ESItems.TAB_ESSENTIALS));
+		super(new Properties().tab(ESItems.TAB_ESSENTIALS));
 		String name = "animal_feed";
 		setRegistryName(name);
 		ESItems.toRegister.add(this);
-		DispenserBlock.registerDispenseBehavior(this, new Dispense());
+		DispenserBlock.registerBehavior(this, new Dispense());
 	}
 
 	private static class Dispense extends OptionalDispenseBehavior{
 
 		@Override
-		protected ItemStack dispenseStack(IBlockSource source, ItemStack stack){
-			World world = source.getWorld();
-			if(!world.isRemote()){
-				setSuccessful(false);
-				BlockPos blockpos = source.getBlockPos().offset(source.getBlockState().get(DispenserBlock.FACING));
+		protected ItemStack execute(IBlockSource source, ItemStack stack){
+			World world = source.getLevel();
+			if(!world.isClientSide()){
+				setSuccess(false);
+				BlockPos blockpos = source.getPos().relative(source.getBlockState().getValue(DispenserBlock.FACING));
 
-				for(AnimalEntity e : world.getEntitiesWithinAABB(AnimalEntity.class, new AxisAlignedBB(blockpos))){
-					if(!stack.isEmpty() && e.getGrowingAge() == 0 && (!(e instanceof TameableEntity) || ((TameableEntity) e).isTamed())){
+				for(AnimalEntity e : world.getEntitiesOfClass(AnimalEntity.class, new AxisAlignedBB(blockpos))){
+					if(!stack.isEmpty() && e.getAge() == 0 && (!(e instanceof TameableEntity) || ((TameableEntity) e).isTame())){
 						e.setInLove(null);
 						stack.shrink(1);
-						setSuccessful(true);
+						setSuccess(true);
 					}
 				}
 			}
@@ -53,7 +55,7 @@ public class AnimalFeed extends Item{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.animal_feed"));
 	}
 }

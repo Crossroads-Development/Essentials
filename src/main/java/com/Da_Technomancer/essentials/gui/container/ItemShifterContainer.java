@@ -41,28 +41,28 @@ public class ItemShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean canInteractWith(PlayerEntity playerIn){
-		return inv.isUsableByPlayer(playerIn);
+	public boolean stillValid(PlayerEntity playerIn){
+		return inv.stillValid(playerIn);
 	}
 
 	@Override
-	public ItemStack transferStackInSlot(PlayerEntity playerIn, int fromSlot){
+	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
-		Slot slot = inventorySlots.get(fromSlot);
+		Slot slot = slots.get(fromSlot);
 
-		if(slot != null && slot.getHasStack()){
-			ItemStack current = slot.getStack();
+		if(slot != null && slot.hasItem()){
+			ItemStack current = slot.getItem();
 			previous = current.copy();
 
 			//fromSlot == 0 means TE -> Player, else Player -> TE input slots
-			if(fromSlot == 0 ? !mergeItemStack(current, 1, 37, true) : !mergeItemStack(current, 0, 1, false)){
+			if(fromSlot == 0 ? !moveItemStackTo(current, 1, 37, true) : !moveItemStackTo(current, 0, 1, false)){
 				return ItemStack.EMPTY;
 			}
 
 			if(current.isEmpty()){
-				slot.putStack(ItemStack.EMPTY);
+				slot.set(ItemStack.EMPTY);
 			}else{
-				slot.onSlotChanged();
+				slot.setChanged();
 			}
 
 			if(current.getCount() == previous.getCount()){

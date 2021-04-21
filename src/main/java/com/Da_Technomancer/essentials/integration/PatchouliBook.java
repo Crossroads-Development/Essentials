@@ -21,9 +21,9 @@ public class PatchouliBook extends ItemModBook{
 	}
 
 	@Override
-	public void fillItemGroup(ItemGroup tab, NonNullList<ItemStack> items){
+	public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items){
 		BookRegistry.INSTANCE.books.values().forEach((b) -> {
-			if(b.getBookItem().getItem() == this && !b.isExtension && (tab == ItemGroup.SEARCH || ESIntegration.bookTabs.contains(tab))){
+			if(b.getBookItem().getItem() == this && !b.isExtension && (tab == ItemGroup.TAB_SEARCH || ESIntegration.bookTabs.contains(tab))){
 				ItemStack stack = new ItemStack(this);
 				CompoundNBT cmp = new CompoundNBT();
 				cmp.putString("patchouli:book", b.id.toString());
@@ -34,8 +34,8 @@ public class PatchouliBook extends ItemModBook{
 	}
 
 	@Override
-	public ITextComponent getDisplayName(ItemStack stack){
+	public ITextComponent getName(ItemStack stack){
 		Book book = getBook(stack);
-		return book != null ? new TranslationTextComponent(ESIntegration.bookName) : super.getDisplayName(stack);
+		return book != null ? new TranslationTextComponent(ESIntegration.bookName) : super.getName(stack);
 	}
 }

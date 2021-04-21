@@ -23,35 +23,35 @@ public class ESEventHandlerClient{
 	public void renderRedsOutput(RenderWorldLastEvent e){
 		ClientPlayerEntity player = Minecraft.getInstance().player;
 		//If the player is holding a CircuitWrench (or subclass for addons)
-		if(player != null && (player.getHeldItemMainhand().getItem() instanceof CircuitWrench || player.getHeldItemOffhand().getItem() instanceof CircuitWrench)){
-			Vector3d eyePos = Minecraft.getInstance().gameRenderer.getActiveRenderInfo().getProjectedView();
+		if(player != null && (player.getMainHandItem().getItem() instanceof CircuitWrench || player.getOffhandItem().getItem() instanceof CircuitWrench)){
+			Vector3d eyePos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 			MatrixStack matrix = e.getMatrixStack();
-			matrix.push();
-			IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().getRenderTypeBuffers().getBufferSource();
+			matrix.pushPose();
+			IRenderTypeBuffer.Impl buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 			matrix.translate(-eyePos.x, -eyePos.y, -eyePos.z);
-			for(TileEntity te : player.world.loadedTileEntityList){
+			for(TileEntity te : player.level.blockEntityList){
 				if(te instanceof CircuitTileEntity){
 					float output = ((CircuitTileEntity) te).getOutput();
-					float[] relPos = {te.getPos().getX() + 0.5F, te.getPos().getY() + 0.5F, te.getPos().getZ() + 0.5F};
-					if(64 * 64 > Minecraft.getInstance().getRenderManager().getDistanceToCamera(relPos[0], relPos[1], relPos[2])){
+					float[] relPos = {te.getBlockPos().getX() + 0.5F, te.getBlockPos().getY() + 0.5F, te.getBlockPos().getZ() + 0.5F};
+					if(64 * 64 > Minecraft.getInstance().getEntityRenderDispatcher().distanceToSqr(relPos[0], relPos[1], relPos[2])){
 						renderNameplate(e.getMatrixStack(), buffer, relPos, ESConfig.formatFloat(output, null));
 					}
 				}
 			}
-			matrix.pop();
+			matrix.popPose();
 		}
 	}
 
 	private static void renderNameplate(MatrixStack matrix, IRenderTypeBuffer.Impl buffer, float[] relPos, String nameplate){
-		matrix.push();
+		matrix.pushPose();
 		matrix.translate(relPos[0], relPos[1], relPos[2]);
-		matrix.rotate(Minecraft.getInstance().getRenderManager().getCameraOrientation());
+		matrix.mulPose(Minecraft.getInstance().getEntityRenderDispatcher().cameraOrientation());
 		matrix.scale(-0.025F, -0.025F, 0.025F);
-		Matrix4f matrix4f = matrix.getLast().getMatrix();
-		FontRenderer fontrenderer = Minecraft.getInstance().fontRenderer;
-		float xSt = -fontrenderer.getStringWidth(nameplate) / 2F;
-		fontrenderer.renderString(nameplate, xSt, 0, -1, false, matrix4f, buffer, false, 0, 0xf000f0);
-		buffer.finish();
-		matrix.pop();
+		Matrix4f matrix4f = matrix.last().pose();
+		FontRenderer fontrenderer = Minecraft.getInstance().font;
+		float xSt = -fontrenderer.width(nameplate) / 2F;
+		fontrenderer.drawInBatch(nameplate, xSt, 0, -1, false, matrix4f, buffer, false, 0, 0xf000f0);
+		buffer.endBatch();
+		matrix.popPose();
 	}
 }

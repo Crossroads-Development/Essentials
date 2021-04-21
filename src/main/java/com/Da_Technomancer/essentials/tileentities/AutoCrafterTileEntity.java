@@ -78,10 +78,10 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	 */
 	public RecipeManager getRecipeManager(){
 		if(recipeManager == null){
-			if(world.isRemote){
+			if(level.isClientSide){
 				recipeManager = Minecraft.getInstance().getConnection().getRecipeManager();
 			}else{
-				recipeManager = world.getServer().getRecipeManager();
+				recipeManager = level.getServer().getRecipeManager();
 			}
 		}
 
@@ -90,7 +90,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 	@Nullable
 	public static IRecipe<?> lookupRecipe(RecipeManager manager, ResourceLocation recipe){
-		return recipe == null ? null : manager.getRecipe(recipe).orElse(null);
+		return recipe == null ? null : manager.byKey(recipe).orElse(null);
 	}
 
 	/**
@@ -101,12 +101,12 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	public static CraftingInventory prepareCraftingInv(ItemStack[] inv){
 		CraftingInventory craftInv = new CraftingInventory(new Container(null, 0){
 			@Override
-			public boolean canInteractWith(PlayerEntity playerIn){
+			public boolean stillValid(PlayerEntity playerIn){
 				return false;
 			}
 		}, 3, 3);
 		for(int i = 0; i < 9; i++){
-			craftInv.setInventorySlotContents(i, inv[i + 10]);
+			craftInv.setItem(i, inv[i + 10]);
 		}
 		return craftInv;
 	}
@@ -124,7 +124,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		if(recipe == null){
 			//No recipe has been directly set via recipe book/JEI. Pick a recipe based on manually configured inputs, if applicable
 			//Use the recipe manager to find a recipe matching the inputs
-			Optional<ICraftingRecipe> recipeOptional = getRecipeManager().getRecipe(IRecipeType.CRAFTING, fakeInv, world);
+			Optional<ICraftingRecipe> recipeOptional = getRecipeManager().getRecipeFor(IRecipeType.CRAFTING, fakeInv, level);
 			iRecipe = validateRecipe(recipeOptional.orElse(null), container);
 		}else{
 			//Recipe set via recipe book/JEI
@@ -142,7 +142,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	@Nullable
 	@SuppressWarnings("unchecked")
 	public IRecipe<CraftingInventory> validateRecipe(IRecipe<?> rec, @Nullable AutoCrafterContainer container){
-		if(rec == null || rec.getType() != IRecipeType.CRAFTING || !rec.canFit(3, 3)){
+		if(rec == null || rec.getType() != IRecipeType.CRAFTING || !rec.canCraftInDimensions(3, 3)){
 			return null;
 		}
 		return (IRecipe<CraftingInventory>) rec;
@@ -151,8 +151,8 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	public void redstoneUpdate(boolean newReds){
 		if(newReds != redstone){
 			redstone = newReds;
-			markDirty();
-			if(redstone && world != null && !world.isRemote){
+			setChanged();
+			if(redstone && level != null && !level.isClientSide){
 				//Create a fake inventory with the manually configured inputs for finding a matching recipe
 				CraftingInventory fakeInv = prepareCraftingInv(inv);
 
@@ -163,9 +163,9 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 					ItemStack output;
 					if(recipe != null){
 						//If the recipe ID is nonnull, then the fake crafting inv was made with the empty manual input slots, and we should use the generic output
-						output = iRecipe.getRecipeOutput();
+						output = iRecipe.getResultItem();
 					}else{
-						output = iRecipe.getCraftingResult(fakeInv);
+						output = iRecipe.assemble(fakeInv);
 					}
 
 					//Check if the output can fit
@@ -177,7 +177,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 							ingredients = new ArrayList<>(9);
 							for(int i = 10; i < 19; i++){
 								if(!inv[i].isEmpty()){
-									ingredients.add(Ingredient.fromStacks(inv[i]));
+									ingredients.add(Ingredient.of(inv[i]));
 								}
 							}
 						}else{
@@ -188,7 +188,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 						ingredient:
 						for(Ingredient ingr : ingredients){
-							if(ingr.hasNoMatchingItems()){
+							if(ingr.isEmpty()){
 								continue;
 							}
 							//Count index down instead of up to use the last slots first
@@ -232,7 +232,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 							}
 							if(slot == -1){
 								//Item can't fit in the input slots- eject
-								InventoryHelper.spawnItemStack(world, pos.getX() + Math.random(), pos.getY() + Math.random(), pos.getZ() + Math.random(), s);
+								InventoryHelper.dropItemStack(level, worldPosition.getX() + Math.random(), worldPosition.getY() + Math.random(), worldPosition.getZ() + Math.random(), s);
 							}else if(inv[slot].isEmpty()){
 								inv[slot] = s;
 							}else{
@@ -247,13 +247,13 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 	public void dropItems(){
 		for(int i = 0; i < 10; i++){
-			InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), inv[i]);
+			InventoryHelper.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inv[i]);
 		}
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 
 		String recPath = nbt.getString("recipe");
 		if(recPath.isEmpty()){
@@ -264,7 +264,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 		for(int i = 0; i < inv.length; ++i){
 			if(nbt.contains("slot_" + i)){
-				inv[i] = ItemStack.read(nbt.getCompound("slot_" + i));
+				inv[i] = ItemStack.of(nbt.getCompound("slot_" + i));
 			}
 		}
 
@@ -272,12 +272,12 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 
 		for(int i = 0; i < inv.length; ++i){
 			if(!inv[i].isEmpty()){
-				nbt.put("slot_" + i, inv[i].write(new CompoundNBT()));
+				nbt.put("slot_" + i, inv[i].save(new CompoundNBT()));
 			}
 		}
 
@@ -304,7 +304,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		if(recipe == null){
 			//If recipe was set via ghost items, use the manual config
 			for(int i = 10; i < 19; i++){//10-18 are the ghost recipe input
-				if(inv.getStackInSlot(i).getItem() == item){
+				if(inv.getItem(i).getItem() == item){
 					count++;
 				}
 			}
@@ -325,7 +325,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	public int getUsedSlots(Item item, IInventory inv){
 		int count = 0;
 		for(int i = 0; i < 9; i++){
-			if(inv.getStackInSlot(i).getItem() == item){
+			if(inv.getItem(i).getItem() == item){
 				count++;
 			}
 		}
@@ -335,8 +335,8 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	private final LazyOptional<IItemHandler> hanOptional = LazyOptional.of(InventoryHandler::new);
 
 	@Override
-	public void remove(){
-		super.remove();
+	public void setRemoved(){
+		super.setRemoved();
 		hanOptional.invalidate();
 	}
 
@@ -359,10 +359,10 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			recipe = null;
 		}
 
-		if(!world.isRemote){
+		if(!level.isClientSide){
 			setRecipe(lookupRecipe(getRecipeManager(), recipe));
 		}
-		markDirty();
+		setChanged();
 	}
 
 	/**
@@ -375,12 +375,12 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		if(recipe != null){
 			for(int i = 10; i < 19; i++){
 				inv[i] = ItemStack.EMPTY;
-				markDirty();
+				setChanged();
 			}
 		}
 		CompoundNBT nbt = new CompoundNBT();
 		nbt.putString("recipe", recipe == null ? "" : recipe.toString());
-		BlockUtil.sendClientPacketAround(world, pos, new SendNBTToClient(nbt, pos));
+		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(nbt, worldPosition));
 	}
 
 	@Override
@@ -391,7 +391,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	@Nullable
 	@Override
 	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
-		return new AutoCrafterContainer(id, playerInventory, iInv, pos);
+		return new AutoCrafterContainer(id, playerInventory, iInv, worldPosition);
 	}
 
 	private class InventoryHandler implements IItemHandler{
@@ -493,17 +493,17 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		}
 
 		@Override
-		public int getSizeInventory(){
+		public int getContainerSize(){
 			return inv.length;
 		}
 
 		@Override
-		public ItemStack getStackInSlot(int index){
+		public ItemStack getItem(int index){
 			return index >= inv.length ? ItemStack.EMPTY : inv[index];
 		}
 
 		@Override
-		public ItemStack decrStackSize(int index, int count){
+		public ItemStack removeItem(int index, int count){
 			if(index >= inv.length || inv[index].isEmpty()){
 				return ItemStack.EMPTY;
 			}
@@ -512,7 +512,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		}
 
 		@Override
-		public ItemStack removeStackFromSlot(int index){
+		public ItemStack removeItemNoUpdate(int index){
 			if(index >= inv.length){
 				return ItemStack.EMPTY;
 			}
@@ -523,36 +523,36 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		}
 
 		@Override
-		public void setInventorySlotContents(int index, ItemStack stack){
+		public void setItem(int index, ItemStack stack){
 			if(index < inv.length){
 				inv[index] = stack;
 			}
 		}
 
 		@Override
-		public int getInventoryStackLimit(){
+		public int getMaxStackSize(){
 			return 64;
 		}
 
 		@Override
-		public void markDirty(){
+		public void setChanged(){
 			if(te != null){
-				te.markDirty();
+				te.setChanged();
 			}
 		}
 
 		@Override
-		public boolean isUsableByPlayer(PlayerEntity playerEntity){
+		public boolean stillValid(PlayerEntity playerEntity){
 			return true;
 		}
 
 		@Override
-		public boolean isItemValidForSlot(int index, ItemStack stack){
+		public boolean canPlaceItem(int index, ItemStack stack){
 			return index < inv.length - 1;
 		}
 
 		@Override
-		public void clear(){
+		public void clearContent(){
 			Arrays.fill(inv, ItemStack.EMPTY);
 		}
 

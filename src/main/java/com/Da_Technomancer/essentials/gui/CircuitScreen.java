@@ -22,12 +22,12 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 	protected static final ResourceLocation SEARCH_BAR_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/search_bar.png");
 	protected static final ResourceLocation UI_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/circuit_filler_back.png");
 
-	protected TextFieldWidget[] inputBars = new TextFieldWidget[container.inputBars()];
+	protected TextFieldWidget[] inputBars = new TextFieldWidget[menu.inputBars()];
 
 	public CircuitScreen(T screenContainer, PlayerInventory inv, ITextComponent titleIn){
 		super(screenContainer, inv, titleIn);
-		xSize = 176;
-		ySize = 90;
+		imageWidth = 176;
+		imageHeight = 90;
 	}
 
 	private static final Predicate<String> validator = s -> {
@@ -42,15 +42,15 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 	};
 
 	protected void createTextBar(int id, int x, int y, ITextComponent text){
-		inputBars[id] = new TextFieldWidget(font, guiLeft + x, guiTop + y, 144 - 4, 18, text);
+		inputBars[id] = new TextFieldWidget(font, leftPos + x, topPos + y, 144 - 4, 18, text);
 		inputBars[id].setCanLoseFocus(true);
 		inputBars[id].setTextColor(-1);
-		inputBars[id].setDisabledTextColour(-1);
-		inputBars[id].setEnableBackgroundDrawing(false);
-		inputBars[id].setMaxStringLength(20);
-		inputBars[id].setText(container.inputs[id]);
+		inputBars[id].setTextColorUneditable(-1);
+		inputBars[id].setBordered(false);
+		inputBars[id].setMaxLength(20);
+		inputBars[id].setValue(menu.inputs[id]);
 		inputBars[id].setResponder(this::entryChanged);
-		inputBars[id].setValidator(validator);
+		inputBars[id].setFilter(validator);
 		children.add(inputBars[id]);
 //		setFocusedDefault(inputBars[id]);
 	}
@@ -59,22 +59,22 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 	public void resize(Minecraft minecraft, int width, int height){
 		String[] text = new String[inputBars.length];
 		for(int i = 0; i < inputBars.length; i++){
-			text[i] = inputBars[i].getText();
+			text[i] = inputBars[i].getValue();
 		}
 		init(minecraft, width, height);
 		for(int i = 0; i < inputBars.length; i++){
-			inputBars[i].setText(text[i]);
+			inputBars[i].setValue(text[i]);
 		}
 	}
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers){
 		if(keyCode == 256){
-			minecraft.player.closeScreen();
+			minecraft.player.closeContainer();
 		}
 
 		for(TextFieldWidget bar : inputBars){
-			if(bar.keyPressed(keyCode, scanCode, modifiers) || bar.canWrite()){
+			if(bar.keyPressed(keyCode, scanCode, modifiers) || bar.canConsumeInput()){
 				return true;
 			}
 		}
@@ -93,25 +93,25 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(MatrixStack matrix, float partialTicks, int x, int y){
+	protected void renderBg(MatrixStack matrix, float partialTicks, int x, int y){
 		//background
-		minecraft.getTextureManager().bindTexture(UI_TEXTURE);
-		blit(matrix, guiLeft, guiTop, 0, 0, xSize, 90);
+		minecraft.getTextureManager().bind(UI_TEXTURE);
+		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 90);
 
 		//Text bars
-		minecraft.getTextureManager().bindTexture(SEARCH_BAR_TEXTURE);
+		minecraft.getTextureManager().bind(SEARCH_BAR_TEXTURE);
 		for(TextFieldWidget bar : inputBars){
 			blit(matrix, bar.x - 2, bar.y - 8, 0, 0, 144, 18, 144, 18);
 		}
 
 		//Text labelling input bars
 		for(TextFieldWidget inputBar : inputBars){
-			font.func_243248_b(matrix, inputBar.getMessage(), inputBar.x - 2, inputBar.y - 16, 0x404040);
+			font.draw(matrix, inputBar.getMessage(), inputBar.x - 2, inputBar.y - 16, 0x404040);
 		}
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(MatrixStack matrix, int x, int y){
+	protected void renderLabels(MatrixStack matrix, int x, int y){
 		//Don't render text overlays
 	}
 
@@ -119,14 +119,14 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 		CompoundNBT nbt = new CompoundNBT();
 
 		for(int i = 0; i < inputBars.length; i++){
-			float output = RedstoneUtil.interpretFormulaString(inputBars[i].getText());
-			container.inputs[i] = inputBars[i].getText();
+			float output = RedstoneUtil.interpretFormulaString(inputBars[i].getValue());
+			menu.inputs[i] = inputBars[i].getValue();
 			nbt.putFloat("value_" + i, output);
-			nbt.putString("text_" + i, container.inputs[i]);
+			nbt.putString("text_" + i, menu.inputs[i]);
 		}
 
-		if(container.pos != null){
-			EssentialsPackets.channel.sendToServer(new SendNBTToServer(nbt, container.pos));
+		if(menu.pos != null){
+			EssentialsPackets.channel.sendToServer(new SendNBTToServer(nbt, menu.pos));
 		}
 	}
 }

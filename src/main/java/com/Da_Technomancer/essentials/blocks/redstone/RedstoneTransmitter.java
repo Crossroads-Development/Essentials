@@ -37,21 +37,21 @@ import java.util.Random;
 public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 
 	public RedstoneTransmitter(){
-		super(Block.Properties.create(Material.ROCK).hardnessAndResistance(0.5F).sound(SoundType.STONE));
+		super(AbstractBlock.Properties.of(Material.STONE).strength(0.5F).sound(SoundType.STONE));
 		String name = "redstone_transmitter";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
 		ESBlocks.blockAddQue(this);
-		setDefaultState(getDefaultState().with(ESProperties.COLOR, DyeColor.WHITE));
+		registerDefaultState(defaultBlockState().setValue(ESProperties.COLOR, DyeColor.WHITE));
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		worldIn.getPendingBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
+		worldIn.getBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
 
 		if(blockIn != Blocks.REDSTONE_WIRE && !(blockIn instanceof RedstoneDiodeBlock)){
 			//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
-			TileEntity te = worldIn.getTileEntity(pos);
+			TileEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof RedstoneTransmitterTileEntity){
 				((RedstoneTransmitterTileEntity) te).buildConnections();
 			}
@@ -65,31 +65,31 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 	}
 
 	@Override
-	public void onBlockPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		neighborChanged(state, worldIn, pos, this, pos, false);
 	}
 
 	@Override
 	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand){
-		TileEntity rawTE = worldIn.getTileEntity(pos);
+		TileEntity rawTE = worldIn.getBlockEntity(pos);
 		if(rawTE instanceof RedstoneTransmitterTileEntity){
 			((RedstoneTransmitterTileEntity) rawTE).refreshOutput();
 		}
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		//Handle linking and dyeing
-		ItemStack heldItem = playerIn.getHeldItem(hand);
-		TileEntity te = worldIn.getTileEntity(pos);
+		ItemStack heldItem = playerIn.getItemInHand(hand);
+		TileEntity te = worldIn.getBlockEntity(pos);
 		Item item;
 		if(LinkHelper.isLinkTool(heldItem) && te instanceof RedstoneTransmitterTileEntity){
-			if(!worldIn.isRemote){
+			if(!worldIn.isClientSide){
 				LinkHelper.wrench((ILinkTE) te, heldItem, playerIn);
 			}
 			return ActionResultType.SUCCESS;
 		}else if((item = heldItem.getItem()) instanceof DyeItem && te instanceof RedstoneTransmitterTileEntity){
-			if(!worldIn.isRemote){
+			if(!worldIn.isClientSide){
 				((RedstoneTransmitterTileEntity) te).dye(((DyeItem) item).getDyeColor());
 			}
 			return ActionResultType.SUCCESS;
@@ -99,7 +99,7 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.reds_trans.desc"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.reds_trans.linking"));
 		tooltip.add(new TranslationTextComponent("tt.essentials.reds_trans.dyes"));
@@ -107,17 +107,17 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 
 	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(IBlockReader worldIn){
+	public TileEntity newBlockEntity(IBlockReader worldIn){
 		return new RedstoneTransmitterTileEntity();
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state){
+	public BlockRenderType getRenderShape(BlockState state){
 		return BlockRenderType.MODEL;
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> container){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> container){
 		container.add(ESProperties.COLOR);
 	}
 
@@ -127,9 +127,9 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 	}
 
 	@Override
-	public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving){
 		if(state.getBlock() != newState.getBlock()){
-			TileEntity te = worldIn.getTileEntity(pos);
+			TileEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof RedstoneTransmitterTileEntity){
 				((RedstoneTransmitterTileEntity) te).linkHelper.unlinkAllEndpoints();
 			}

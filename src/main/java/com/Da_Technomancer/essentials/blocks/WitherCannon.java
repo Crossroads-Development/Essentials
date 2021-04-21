@@ -44,6 +44,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 @ObjectHolder(Essentials.MODID)
 public class WitherCannon extends Block{
 
@@ -51,31 +53,31 @@ public class WitherCannon extends Block{
 	public static EntityType<CannonSkull> ENT_TYPE;
 
 	protected WitherCannon(){
-		super(Properties.create(Material.ROCK, MaterialColor.BLACK).hardnessAndResistance(50F, 1200F).sound(SoundType.STONE));
+		super(Properties.of(Material.STONE, MaterialColor.COLOR_BLACK).strength(50F, 1200F).sound(SoundType.STONE));
 		String name = "wither_cannon";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
 		ESBlocks.blockAddQue(this);
-		setDefaultState(getDefaultState().with(ESProperties.REDSTONE_BOOL, false));
+		registerDefaultState(defaultBlockState().setValue(ESProperties.REDSTONE_BOOL, false));
 	}
 
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context){
-		return getDefaultState().with(ESProperties.FACING, context.getNearestLookingDirection());
+		return defaultBlockState().setValue(ESProperties.FACING, context.getNearestLookingDirection());
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.FACING).add(ESProperties.REDSTONE_BOOL);
 	}
 
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		if(ESConfig.isWrench(playerIn.getHeldItem(hand))){
-			if(!worldIn.isRemote){
-				BlockState endState = state.func_235896_a_(ESProperties.FACING);//MCP note: cycle
-				worldIn.setBlockState(pos, endState);
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+			if(!worldIn.isClientSide){
+				BlockState endState = state.cycle(ESProperties.FACING);//MCP note: cycle
+				worldIn.setBlockAndUpdate(pos, endState);
 			}
 			return ActionResultType.SUCCESS;
 		}
@@ -84,33 +86,33 @@ public class WitherCannon extends Block{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
+	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
 		tooltip.add(new TranslationTextComponent("tt.essentials.wither_cannon"));
 	}
 
 	@Override
 	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
-		boolean powered = world.isBlockPowered(pos) || world.isBlockPowered(pos.up());
-		boolean wasActive = state.get(ESProperties.REDSTONE_BOOL);
+		boolean powered = world.hasNeighborSignal(pos) || world.hasNeighborSignal(pos.above());
+		boolean wasActive = state.getValue(ESProperties.REDSTONE_BOOL);
 		if(powered && !wasActive){
-			world.getPendingBlockTicks().scheduleTick(pos, this, 4);
-			world.setBlockState(pos, state.with(ESProperties.REDSTONE_BOOL, true), 4);
+			world.getBlockTicks().scheduleTick(pos, this, 4);
+			world.setBlock(pos, state.setValue(ESProperties.REDSTONE_BOOL, true), 4);
 		}else if(!powered && wasActive){
-			world.setBlockState(pos, state.with(ESProperties.REDSTONE_BOOL, false), 4);
+			world.setBlock(pos, state.setValue(ESProperties.REDSTONE_BOOL, false), 4);
 		}
 	}
 
 	@Override
 	public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand){
-		Direction dir = state.get(ESProperties.FACING);
-		BlockPos spawnPos = pos.offset(dir);
+		Direction dir = state.getValue(ESProperties.FACING);
+		BlockPos spawnPos = pos.relative(dir);
 		WitherSkullEntity skull = new CannonSkull(ENT_TYPE, world);
-		skull.setLocationAndAngles(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.getHorizontalAngle() + 180, dir.getYOffset() * -90);
-		skull.setMotion(dir.getXOffset() / 5F, dir.getYOffset() / 5F, dir.getZOffset() / 5F);
-		skull.accelerationX = dir.getXOffset() / 20D;
-		skull.accelerationY = dir.getYOffset() / 20D;
-		skull.accelerationZ = dir.getZOffset() / 20D;
-		world.addEntity(skull);
+		skull.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.toYRot() + 180, dir.getStepY() * -90);
+		skull.setDeltaMovement(dir.getStepX() / 5F, dir.getStepY() / 5F, dir.getStepZ() / 5F);
+		skull.xPower = dir.getStepX() / 20D;
+		skull.yPower = dir.getStepY() / 20D;
+		skull.zPower = dir.getStepZ() / 20D;
+		world.addFreshEntity(skull);
 	}
 
 	public static class CannonSkull extends WitherSkullEntity{
@@ -124,44 +126,44 @@ public class WitherCannon extends Block{
 		@Override
 		public void tick(){
 			super.tick();
-			if(!world.isRemote && lifespan-- <= 0){
-				world.addOptionalParticle(ParticleTypes.SMOKE, getPosX(), getPosY(), getPosZ(), 0, 0, 0);
+			if(!level.isClientSide && lifespan-- <= 0){
+				level.addAlwaysVisibleParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), 0, 0, 0);
 				remove();
 			}
 		}
 
 		@Override
-		public void writeAdditional(CompoundNBT nbt){
-			super.writeAdditional(nbt);
+		public void addAdditionalSaveData(CompoundNBT nbt){
+			super.addAdditionalSaveData(nbt);
 			nbt.putInt("lifetime", lifespan);
 		}
 
 		@Override
-		public void readAdditional(CompoundNBT nbt){
-			super.readAdditional(nbt);
+		public void readAdditionalSaveData(CompoundNBT nbt){
+			super.readAdditionalSaveData(nbt);
 			lifespan = nbt.getInt("lifetime");
 		}
 
 		@Override
-		protected void onImpact(RayTraceResult result){
-			if(!world.isRemote){
+		protected void onHit(RayTraceResult result){
+			if(!level.isClientSide){
 				if(result.getType() == RayTraceResult.Type.ENTITY){
 					Entity entity = ((EntityRayTraceResult) result).getEntity();
-					entity.attackEntityFrom(DamageSource.MAGIC, 5F);
+					entity.hurt(DamageSource.MAGIC, 5F);
 
 					if(entity instanceof LivingEntity){
 						//Locked at normal difficulty duration, because this is a redstone component meant to be precise and utilized and not an evil monster that exists to stab you
-						((LivingEntity) entity).addPotionEffect(new EffectInstance(Effects.WITHER, 200, 1));
+						((LivingEntity) entity).addEffect(new EffectInstance(Effects.WITHER, 200, 1));
 					}
 				}
 				//Ignore mob griefing- always use Explosion.Mode.DESTROY
-				world.createExplosion(this, getPosX(), getPosY(), getPosZ(), 2F, false, Explosion.Mode.BREAK);
+				level.explode(this, getX(), getY(), getZ(), 2F, false, Explosion.Mode.BREAK);
 				remove();
 			}
 		}
 
 		@Override
-		public IPacket<?> createSpawnPacket(){
+		public IPacket<?> getAddEntityPacket(){
 			return NetworkHooks.getEntitySpawningPacket(this);
 		}
 	}

@@ -28,7 +28,7 @@ public abstract class AbstractSplitterTE extends TileEntity implements ITickable
 		if(!state.hasProperty(ESProperties.FACING)){
 			return Direction.DOWN;
 		}
-		return state.get(ESProperties.FACING);
+		return state.getValue(ESProperties.FACING);
 	}
 
 	public int getMode(){
@@ -38,7 +38,7 @@ public abstract class AbstractSplitterTE extends TileEntity implements ITickable
 	public int increaseMode(){
 		mode++;
 		mode %= getDistribution().maxMode();
-		markDirty();
+		setChanged();
 		return mode;
 	}
 
@@ -50,13 +50,13 @@ public abstract class AbstractSplitterTE extends TileEntity implements ITickable
 			int extension;
 
 			for(extension = 1; extension <= maxChutes; extension++){
-				BlockState target = world.getBlockState(pos.offset(dir, extension));
-				if(target.getBlock() != ESBlocks.itemChute || target.get(ESProperties.AXIS) != dir.getAxis()){
+				BlockState target = level.getBlockState(worldPosition.relative(dir, extension));
+				if(target.getBlock() != ESBlocks.itemChute || target.getValue(ESProperties.AXIS) != dir.getAxis()){
 					break;
 				}
 			}
 
-			endPos[i] = pos.offset(dir, extension);
+			endPos[i] = worldPosition.relative(dir, extension);
 			dir = dir.getOpposite();
 		}
 	}

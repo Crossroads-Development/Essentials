@@ -68,17 +68,17 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 			if(!(state.getBlock() instanceof SortingHopper)){
 				return Direction.DOWN;
 			}
-			dir = state.get(SortingHopper.FACING);
+			dir = state.getValue(SortingHopper.FACING);
 		}
 		return dir;
 	}
 
 	@Override
 	public void tick(){
-		if(!world.isRemote && --transferCooldown <= 0){
+		if(!level.isClientSide && --transferCooldown <= 0){
 			transferCooldown = 0;
-			BlockState state = world.getBlockState(pos);
-			if(state.getBlock() instanceof SortingHopper && state.get(SortingHopper.ENABLED)){
+			BlockState state = level.getBlockState(worldPosition);
+			if(state.getBlock() instanceof SortingHopper && state.getValue(SortingHopper.ENABLED)){
 				boolean flag = false;
 
 				if(!isFull()){
@@ -91,31 +91,31 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 				if(flag){
 					transferCooldown = 8;
-					markDirty();
+					setChanged();
 				}
 			}
 		}
 	}
 
 	@Override
-	public void read(BlockState state, CompoundNBT nbt){
-		super.read(state, nbt);
+	public void load(BlockState state, CompoundNBT nbt){
+		super.load(state, nbt);
 		transferCooldown = nbt.getInt("trans_cooldown");
 
 		for(int i = 0; i < 5; i++){
 			CompoundNBT stackNBT = nbt.getCompound("inv_" + i);
-			inventory[i] = ItemStack.read(stackNBT);
+			inventory[i] = ItemStack.of(stackNBT);
 		}
 	}
 
 	@Override
-	public CompoundNBT write(CompoundNBT nbt){
-		super.write(nbt);
+	public CompoundNBT save(CompoundNBT nbt){
+		super.save(nbt);
 
 		for(int i = 0; i < 5; i++){
 			if(!inventory[i].isEmpty()){
 				CompoundNBT stackNBT = new CompoundNBT();
-				inventory[i].write(stackNBT);
+				inventory[i].save(stackNBT);
 				nbt.put("inv_" + i, stackNBT);
 			}
 		}
@@ -129,7 +129,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * Returns the number of slots in the inventory.
 	 */
 	@Override
-	public int getSizeInventory(){
+	public int getContainerSize(){
 		return 5;
 	}
 
@@ -137,7 +137,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * Returns the stack in the given slot.
 	 */
 	@Override
-	public ItemStack getStackInSlot(int index){
+	public ItemStack getItem(int index){
 		return index > 4 ? ItemStack.EMPTY : inventory[index];
 	}
 
@@ -146,11 +146,11 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * returns them in a new stack.
 	 */
 	@Override
-	public ItemStack decrStackSize(int index, int count){
+	public ItemStack removeItem(int index, int count){
 		if(index > 4 || inventory[index].isEmpty()){
 			return ItemStack.EMPTY;
 		}
-		markDirty();
+		setChanged();
 		return inventory[index].split(count);
 	}
 
@@ -158,13 +158,13 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * Removes a stack from the given slot and returns it.
 	 */
 	@Override
-	public ItemStack removeStackFromSlot(int index){
+	public ItemStack removeItemNoUpdate(int index){
 		if(index > 4){
 			return ItemStack.EMPTY;
 		}
 		ItemStack copy = inventory[index];
 		inventory[index] = ItemStack.EMPTY;
-		markDirty();
+		setChanged();
 		return copy;
 	}
 
@@ -173,12 +173,12 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * crafting or armor sections).
 	 */
 	@Override
-	public void setInventorySlotContents(int index, ItemStack stack){
+	public void setItem(int index, ItemStack stack){
 		if(index > 4){
 			return;
 		}
 		inventory[index] = stack;
-		markDirty();
+		setChanged();
 
 		if(!stack.isEmpty() && stack.getCount() > stack.getMaxStackSize()){
 			stack.setCount(stack.getMaxStackSize());
@@ -190,7 +190,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * 64, possibly will be extended.
 	 */
 	@Override
-	public int getInventoryStackLimit(){
+	public int getMaxStackSize(){
 		return 64;
 	}
 
@@ -199,22 +199,22 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * with Container
 	 */
 	@Override
-	public boolean isUsableByPlayer(PlayerEntity player){
-		return world.getTileEntity(pos) == this && player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
+	public boolean stillValid(PlayerEntity player){
+		return level.getBlockEntity(worldPosition) == this && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64D;
 	}
 
 	@Override
-	public void openInventory(PlayerEntity player){
-
-	}
-
-	@Override
-	public void closeInventory(PlayerEntity player){
+	public void startOpen(PlayerEntity player){
 
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int index, ItemStack stack){
+	public void stopOpen(PlayerEntity player){
+
+	}
+
+	@Override
+	public boolean canPlaceItem(int index, ItemStack stack){
 		return index < 5;
 	}
 
@@ -245,19 +245,19 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 	protected boolean transferItemsOut(){
 		Direction facing = getDir();
-		final IItemHandler otherHandler = getHandlerAtPosition(world, pos.offset(facing), facing.getOpposite(), null);
+		final IItemHandler otherHandler = getHandlerAtPosition(level, worldPosition.relative(facing), facing.getOpposite(), null);
 
 		//Insertion via IItemHandler
 		if(otherHandler != null){
-			for(int i = 0; i < getSizeInventory(); i++){
-				ItemStack stackInSlot = getStackInSlot(i);
+			for(int i = 0; i < getContainerSize(); i++){
+				ItemStack stackInSlot = getItem(i);
 				if(!stackInSlot.isEmpty()){
 					ItemStack insert = stackInSlot.copy();
 					insert.setCount(Math.min(insert.getCount(), transferQuantity()));
 					ItemStack newStack = ItemHandlerHelper.insertItem(otherHandler, insert, true);
 					if(newStack.getCount() < insert.getCount()){
-						ItemHandlerHelper.insertItem(otherHandler, decrStackSize(i, insert.getCount() - newStack.getCount()), false);
-						markDirty();
+						ItemHandlerHelper.insertItem(otherHandler, removeItem(i, insert.getCount() - newStack.getCount()), false);
+						setChanged();
 						return true;
 					}
 				}
@@ -268,16 +268,16 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	}
 
 	protected boolean transferItemsIn(){
-		BlockPos upPos = pos.up();
-		TileEntity aboveTE = world.getTileEntity(upPos);
-		final IItemHandler otherHandler = getHandlerAtPosition(world, upPos, Direction.DOWN, aboveTE);
+		BlockPos upPos = worldPosition.above();
+		TileEntity aboveTE = level.getBlockEntity(upPos);
+		final IItemHandler otherHandler = getHandlerAtPosition(level, upPos, Direction.DOWN, aboveTE);
 
 		//Transfer from IItemHandler
 		if(otherHandler != null){
 			for(int i = 0; i < otherHandler.getSlots(); i++){
 				ItemStack extractItem = otherHandler.extractItem(i, transferQuantity(), true);
 				if(!extractItem.isEmpty()){
-					for(int j = 0; j < getSizeInventory(); j++){
+					for(int j = 0; j < getContainerSize(); j++){
 						ItemStack uninserted = handler.insertItem(j, extractItem, false);
 						if(uninserted.getCount() < extractItem.getCount()){
 							otherHandler.extractItem(i, extractItem.getCount() - uninserted.getCount(), false);
@@ -297,9 +297,9 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 			//If the block above is a Hopper Filter, we can pick up items through the filter, but only if they match the filter
 			if(aboveTE instanceof HopperFilterTileEntity){
 				ItemStack filter = ((HopperFilterTileEntity) aboveTE).getFilter();
-				itemEntities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.getX(), pos.getY() + 0.5D, pos.getZ(), pos.getX() + 1, pos.getY() + 3D, pos.getZ() + 1), entity -> entity.isAlive() && HopperFilterTileEntity.matchFilter(entity.getItem(), filter));
+				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 3D, worldPosition.getZ() + 1), entity -> entity.isAlive() && HopperFilterTileEntity.matchFilter(entity.getItem(), filter));
 			}else{
-				itemEntities = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos.getX(), pos.getY() + 0.5D, pos.getZ(), pos.getX() + 1, pos.getY() + 2D, pos.getZ() + 1), EntityPredicates.IS_ALIVE);
+				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 2D, worldPosition.getZ() + 1), EntityPredicates.ENTITY_STILL_ALIVE);
 			}
 
 			for(ItemEntity entityitem : itemEntities){
@@ -330,7 +330,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	}
 
 	protected static IItemHandler getHandlerAtPosition(World world, BlockPos otherPos, Direction direction, @Nullable TileEntity aboveTE){
-		final TileEntity te = aboveTE == null ? world.getTileEntity(otherPos) : aboveTE;
+		final TileEntity te = aboveTE == null ? world.getBlockEntity(otherPos) : aboveTE;
 
 		if(te != null){
 			final LazyOptional<IItemHandler> capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
@@ -346,28 +346,28 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 		//In vanilla, this is literally just composters
 		BlockState state = world.getBlockState(otherPos);
 		if(state.getBlock() instanceof ISidedInventoryProvider){
-			ISidedInventory inv = ((ISidedInventoryProvider) state.getBlock()).createInventory(state, world, otherPos);
+			ISidedInventory inv = ((ISidedInventoryProvider) state.getBlock()).getContainer(state, world, otherPos);
 			return new InvWrapper(inv);
 		}
 
-		List<Entity> list = world.getEntitiesInAABBexcluding(null, new AxisAlignedBB(otherPos), EntityPredicates.HAS_INVENTORY);
+		List<Entity> list = world.getEntities((Entity) null, new AxisAlignedBB(otherPos), EntityPredicates.CONTAINER_ENTITY_SELECTOR);
 		if(!list.isEmpty()){
-			return new InvWrapper((IInventory) list.get(world.rand.nextInt(list.size())));
+			return new InvWrapper((IInventory) list.get(world.random.nextInt(list.size())));
 		}
 
 		return null;
 	}
 
 	protected static boolean canCombine(ItemStack stack1, ItemStack stack2){
-		return stack1.getItem() == stack2.getItem() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2);
+		return stack1.getItem() == stack2.getItem() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.tagMatches(stack1, stack2);
 	}
 
 	@Override
-	public void clear(){
+	public void clearContent(){
 		for(int i = 0; i < 5; ++i){
 			inventory[i] = ItemStack.EMPTY;
 		}
-		markDirty();
+		setChanged();
 	}
 
 	protected ItemHandler handler = new ItemHandler();
@@ -396,13 +396,13 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 		@Override
 		public int getSlots(){
-			return getSizeInventory();
+			return getContainerSize();
 		}
 
 		@Nonnull
 		@Override
 		public ItemStack getStackInSlot(int slot){
-			return SortingHopperTileEntity.this.getStackInSlot(slot);
+			return SortingHopperTileEntity.this.getItem(slot);
 		}
 
 		@Override
@@ -426,7 +426,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 					if(transferCooldown < 1){
 						transferCooldown = 8;
 					}
-					markDirty();
+					setChanged();
 				}
 
 				return remain;
@@ -444,7 +444,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 			Direction facing = getDir();
 
-			TileEntity te = world.getTileEntity(pos.offset(facing));
+			TileEntity te = level.getBlockEntity(worldPosition.relative(facing));
 			LazyOptional<IItemHandler> otherCap;
 			if(te != null && (otherCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
 				IItemHandler otherHandler = otherCap.orElseThrow(NullPointerException::new);
@@ -459,7 +459,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 			int removed = Math.min(amount, inventory[slot].getCount());
 
 			if(!simulate){
-				markDirty();
+				setChanged();
 				return inventory[slot].split(removed);
 			}
 
@@ -470,7 +470,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 		@Override
 		public int getSlotLimit(int slot){
-			return getInventoryStackLimit();
+			return getMaxStackSize();
 		}
 
 		@Override
