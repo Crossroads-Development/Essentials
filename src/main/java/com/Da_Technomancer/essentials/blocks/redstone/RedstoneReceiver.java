@@ -137,5 +137,7 @@ public class RedstoneReceiver extends ContainerBlock implements IWireConnect{
 				((RedstoneReceiverTileEntity) te).createLinkEnd(null);
 			}
 		}
+
+		super.onRemove(state, worldIn, pos, newState, isMoving);
 	}
 }
