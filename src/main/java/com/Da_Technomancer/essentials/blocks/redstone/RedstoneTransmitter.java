@@ -134,5 +134,7 @@ public class RedstoneTransmitter extends ContainerBlock implements IWireConnect{
 				((RedstoneTransmitterTileEntity) te).linkHelper.unlinkAllEndpoints();
 			}
 		}
+
+		super.onRemove(state, worldIn, pos, newState, isMoving);
 	}
 }

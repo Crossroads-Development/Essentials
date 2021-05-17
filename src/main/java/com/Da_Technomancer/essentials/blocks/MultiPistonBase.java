@@ -36,8 +36,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 /**
  * Notable differences from a normal piston include:
  * DIST_LIMIT blocks head range, distance controlled by signal strength,
@@ -99,15 +97,22 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){	BlockState otherState;
-	//An internal change- due to this piston being in the process of extending/retracting (changing world) or due to this piston entering/leaving shifting state should not trigger the breaking of the extension
-	if(!changingWorld && (newState.getBlock() != this || state.setValue(ESProperties.SHIFTING, false) != newState.setValue(ESProperties.SHIFTING, false))){
+	public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){
+		BlockState otherState;
+		//An internal change- due to this piston being in the process of extending/retracting (changing world) or due to this piston entering/leaving shifting state should not trigger the breaking of the extension
+		if(!changingWorld && (newState.getBlock() != this || state.setValue(ESProperties.SHIFTING, false)
+				!= newState.setValue(ESProperties.SHIFTING, false))){
 			//Sanity check included to make sure the adjacent blocks is actually an extension- unlike vanilla pistons, multi pistons are supposed to actually work and not break bedrock
-			if(state.getValue(ESProperties.EXTENDED) && (otherState = world.getBlockState(pos.relative(state.getValue(ESProperties.FACING)))).getBlock() == (sticky ? ESBlocks.multiPistonExtendSticky : ESBlocks.multiPistonExtend) && otherState.getValue(ESProperties.AXIS) == state.getValue(ESProperties.FACING).getAxis()){
+			if(state.getValue(ESProperties.EXTENDED) &&
+					(otherState = world.getBlockState(pos.relative(state.getValue(ESProperties.FACING)))).getBlock() ==
+							(sticky ? ESBlocks.multiPistonExtendSticky : ESBlocks.multiPistonExtend) &&
+					otherState.getValue(ESProperties.AXIS) == state.getValue(ESProperties.FACING).getAxis()){
 				//Break the multipiston head along this
 				world.destroyBlock(pos.relative(state.getValue(ESProperties.FACING)), false);
 			}
 		}
+
+		super.onRemove(state, world, pos, newState, isMoving);
 	}
 
 	@Override
