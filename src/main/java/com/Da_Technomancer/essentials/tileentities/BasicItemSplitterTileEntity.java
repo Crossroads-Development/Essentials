@@ -41,6 +41,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 		primaryOpt = LazyOptional.of(() -> new OutItemHandler(1));
 		secondaryOpt = LazyOptional.of(() -> new OutItemHandler(0));
 		inOpt = LazyOptional.of(InHandler::new);
+		endPos[0] = endPos[1] = null;
 	}
 
 	@Override
@@ -126,7 +127,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 				return stack;
 			}
 
-			int numerator = mode;
+			int numerator = getMode();
 			AbstractSplitterTE.SplitDistribution distribution = getDistribution();
 			int denominator = distribution.base;
 

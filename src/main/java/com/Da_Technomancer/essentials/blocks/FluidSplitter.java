@@ -19,8 +19,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.block.AbstractBlock.Properties;
-
 public class FluidSplitter extends BasicFluidSplitter{
 
 	public FluidSplitter(){
@@ -39,6 +37,7 @@ public class FluidSplitter extends BasicFluidSplitter{
 
 	@Override
 	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
+		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, flag);
 		int i = RedstoneUtil.getRedstoneAtPos(worldIn, pos);
 		TileEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof FluidSplitterTileEntity && ((FluidSplitterTileEntity) te).redstone != i){

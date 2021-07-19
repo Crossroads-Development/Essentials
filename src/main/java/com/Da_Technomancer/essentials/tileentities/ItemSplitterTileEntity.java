@@ -6,8 +6,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
-import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE.SplitDistribution;
-
 @ObjectHolder(Essentials.MODID)
 public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 

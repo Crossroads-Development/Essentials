@@ -15,9 +15,6 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
-import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE.SplitDistribution;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 @ObjectHolder(Essentials.MODID)
 public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
@@ -44,6 +41,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 		primaryOpt = LazyOptional.of(() -> new OutFluidHandler(1));
 		secondaryOpt = LazyOptional.of(() -> new OutFluidHandler(0));
 		inOpt = LazyOptional.of(InHandler::new);
+		endPos[0] = endPos[1] = null;
 	}
 
 	@Override
