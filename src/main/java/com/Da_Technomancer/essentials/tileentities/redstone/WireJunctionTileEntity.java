@@ -3,8 +3,8 @@ package com.Da_Technomancer.essentials.tileentities.redstone;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.LazyOptional;
@@ -13,14 +13,14 @@ import net.minecraftforge.registries.ObjectHolder;
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 
-import com.Da_Technomancer.essentials.tileentities.redstone.WireTileEntity.RedsHandler;
+import com.Da_Technomancer.essentials.tileentities.redstone.WireBlockEntity.RedsHandler;
 
-public class WireJunctionTileEntity extends WireTileEntity{
+public class WireJunctionBlockEntity extends WireBlockEntity{
 
 	@ObjectHolder(Essentials.MODID + ":wire_junction")
-	private static TileEntityType<WireJunctionTileEntity> TYPE = null;
+	private static BlockEntityType<WireJunctionBlockEntity> TYPE = null;
 
-	public WireJunctionTileEntity(){
+	public WireJunctionBlockEntity(){
 		super(TYPE);
 	}
 
@@ -46,7 +46,7 @@ public class WireJunctionTileEntity extends WireTileEntity{
 			visited.add(worldPosition);
 
 			Direction dir = fromSide.getOpposite();
-			TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
+			BlockEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 			IRedstoneHandler handler;
 			if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, fromSide))) != null){
 				if(handler instanceof RedsHandler){
@@ -64,7 +64,7 @@ public class WireJunctionTileEntity extends WireTileEntity{
 			}
 
 			Direction dir = fromSide.getOpposite();
-			TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
+			BlockEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 			IRedstoneHandler handler;
 			if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, fromSide))) != null){
 				if(handler instanceof RedsHandler){
@@ -83,7 +83,7 @@ public class WireJunctionTileEntity extends WireTileEntity{
 			HashSet<BlockPos> visited = new HashSet<>();
 			visited.add(worldPosition);
 			Direction dir = toSide.getOpposite();
-			TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
+			BlockEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 			IRedstoneHandler handler;
 			if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, toSide))) != null){
 				if(handler instanceof RedsHandler){
@@ -101,7 +101,7 @@ public class WireJunctionTileEntity extends WireTileEntity{
 			}
 
 			Direction dir = toSide.getOpposite();
-			TileEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
+			BlockEntity neighbor = level.getBlockEntity(worldPosition.relative(dir));
 			IRedstoneHandler handler;
 			if(neighbor != null && (handler = RedstoneUtil.get(neighbor.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, toSide))) != null){
 				if(handler instanceof RedsHandler){

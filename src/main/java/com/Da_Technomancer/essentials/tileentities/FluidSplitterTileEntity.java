@@ -3,20 +3,20 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
 import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE.SplitDistribution;
 
 @ObjectHolder(Essentials.MODID)
-public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
+public class FluidSplitterBlockEntity extends BasicFluidSplitterBlockEntity{
 
 	@ObjectHolder("fluid_splitter")
-	private static TileEntityType<FluidSplitterTileEntity> TYPE = null;
+	private static BlockEntityType<FluidSplitterBlockEntity> TYPE = null;
 
 	public int redstone;
 
-	public FluidSplitterTileEntity(){
+	public FluidSplitterBlockEntity(){
 		super(TYPE);
 	}
 

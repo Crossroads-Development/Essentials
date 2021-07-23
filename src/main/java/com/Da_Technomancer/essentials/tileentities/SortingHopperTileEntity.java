@@ -5,7 +5,7 @@ import com.Da_Technomancer.essentials.blocks.SortingHopper;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -15,16 +15,16 @@ import net.minecraft.inventory.container.HopperContainer;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.ITickableBlockEntity;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -38,23 +38,23 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @ObjectHolder(Essentials.MODID)
-public class SortingHopperTileEntity extends TileEntity implements ITickableTileEntity, IInventory, INamedContainerProvider{
+public class SortingHopperBlockEntity extends BlockEntity implements ITickableBlockEntity, IInventory, INamedContainerProvider{
 
 	@ObjectHolder("sorting_hopper")
-	private static TileEntityType<SortingHopperTileEntity> TYPE = null;
+	private static BlockEntityType<SortingHopperBlockEntity> TYPE = null;
 
 	protected final ItemStack[] inventory = new ItemStack[5];
 	private int transferCooldown = -1;
 	private Direction dir = null;
 
-	protected SortingHopperTileEntity(TileEntityType<?> type){
+	protected SortingHopperBlockEntity(BlockEntityType<?> type){
 		super(type);
 		for(int i = 0; i < 5; i++){
 			inventory[i] = ItemStack.EMPTY;
 		}
 	}
 
-	public SortingHopperTileEntity(){
+	public SortingHopperBlockEntity(){
 		this(TYPE);
 	}
 
@@ -199,17 +199,17 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 	 * with Container
 	 */
 	@Override
-	public boolean stillValid(PlayerEntity player){
+	public boolean stillValid(Player player){
 		return level.getBlockEntity(worldPosition) == this && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64D;
 	}
 
 	@Override
-	public void startOpen(PlayerEntity player){
+	public void startOpen(Player player){
 
 	}
 
 	@Override
-	public void stopOpen(PlayerEntity player){
+	public void stopOpen(Player player){
 
 	}
 
@@ -269,7 +269,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 	protected boolean transferItemsIn(){
 		BlockPos upPos = worldPosition.above();
-		TileEntity aboveTE = level.getBlockEntity(upPos);
+		BlockEntity aboveTE = level.getBlockEntity(upPos);
 		final IItemHandler otherHandler = getHandlerAtPosition(level, upPos, Direction.DOWN, aboveTE);
 
 		//Transfer from IItemHandler
@@ -295,9 +295,9 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 			List<ItemEntity> itemEntities;
 
 			//If the block above is a Hopper Filter, we can pick up items through the filter, but only if they match the filter
-			if(aboveTE instanceof HopperFilterTileEntity){
-				ItemStack filter = ((HopperFilterTileEntity) aboveTE).getFilter();
-				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 3D, worldPosition.getZ() + 1), entity -> entity.isAlive() && HopperFilterTileEntity.matchFilter(entity.getItem(), filter));
+			if(aboveTE instanceof HopperFilterBlockEntity){
+				ItemStack filter = ((HopperFilterBlockEntity) aboveTE).getFilter();
+				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 3D, worldPosition.getZ() + 1), entity -> entity.isAlive() && HopperFilterBlockEntity.matchFilter(entity.getItem(), filter));
 			}else{
 				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 2D, worldPosition.getZ() + 1), EntityPredicates.ENTITY_STILL_ALIVE);
 			}
@@ -329,8 +329,8 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 		}
 	}
 
-	protected static IItemHandler getHandlerAtPosition(World world, BlockPos otherPos, Direction direction, @Nullable TileEntity aboveTE){
-		final TileEntity te = aboveTE == null ? world.getBlockEntity(otherPos) : aboveTE;
+	protected static IItemHandler getHandlerAtPosition(Level world, BlockPos otherPos, Direction direction, @Nullable BlockEntity aboveTE){
+		final BlockEntity te = aboveTE == null ? world.getBlockEntity(otherPos) : aboveTE;
 
 		if(te != null){
 			final LazyOptional<IItemHandler> capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
@@ -388,7 +388,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+	public Container createMenu(int id, PlayerInventory playerInventory, Player player){
 		return new HopperContainer(id, playerInventory, this);
 	}
 
@@ -402,7 +402,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 		@Nonnull
 		@Override
 		public ItemStack getStackInSlot(int slot){
-			return SortingHopperTileEntity.this.getItem(slot);
+			return SortingHopperBlockEntity.this.getItem(slot);
 		}
 
 		@Override
@@ -444,7 +444,7 @@ public class SortingHopperTileEntity extends TileEntity implements ITickableTile
 
 			Direction facing = getDir();
 
-			TileEntity te = level.getBlockEntity(worldPosition.relative(facing));
+			BlockEntity te = level.getBlockEntity(worldPosition.relative(facing));
 			LazyOptional<IItemHandler> otherCap;
 			if(te != null && (otherCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
 				IItemHandler otherHandler = otherCap.orElseThrow(NullPointerException::new);

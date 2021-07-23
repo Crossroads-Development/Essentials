@@ -11,30 +11,30 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.entity.projectile.WitherSkullEntity;
-import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.BlockPlaceContext ;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.state.StateDefinition;
+import net.minecraft.util.InteractionResult;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.BlockHitResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.Level;
+import net.minecraft.world.server.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -63,25 +63,25 @@ public class WitherCannon extends Block{
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext  context){
 		return defaultBlockState().setValue(ESProperties.FACING, context.getNearestLookingDirection());
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.FACING).add(ESProperties.REDSTONE_BOOL);
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			if(!worldIn.isClientSide){
 				BlockState endState = state.cycle(ESProperties.FACING);//MCP note: cycle
 				worldIn.setBlockAndUpdate(pos, endState);
 			}
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class WitherCannon extends Block{
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
+	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
 		boolean powered = world.hasNeighborSignal(pos) || world.hasNeighborSignal(pos.above());
 		boolean wasActive = state.getValue(ESProperties.REDSTONE_BOOL);
 		if(powered && !wasActive){
@@ -103,7 +103,7 @@ public class WitherCannon extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand){
+	public void tick(BlockState state, ServerLevel world, BlockPos pos, Random rand){
 		Direction dir = state.getValue(ESProperties.FACING);
 		BlockPos spawnPos = pos.relative(dir);
 		WitherSkullEntity skull = new CannonSkull(ENT_TYPE, world);
@@ -119,7 +119,7 @@ public class WitherCannon extends Block{
 
 		private int lifespan = 60;
 
-		public CannonSkull(EntityType<CannonSkull> type, World world){
+		public CannonSkull(EntityType<CannonSkull> type, Level world){
 			super(type, world);
 		}
 

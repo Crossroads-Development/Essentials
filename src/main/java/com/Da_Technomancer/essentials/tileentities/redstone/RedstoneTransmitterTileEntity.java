@@ -10,12 +10,12 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.item.DyeColor;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -33,10 +33,10 @@ import java.util.ArrayList;
 import java.util.Set;
 
 @ObjectHolder(Essentials.MODID)
-public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE{
+public class RedstoneTransmitterBlockEntity extends BlockEntity implements ILinkTE{
 
 	@ObjectHolder("redstone_transmitter")
-	public static TileEntityType<RedstoneTransmitterTileEntity> TYPE = null;
+	public static BlockEntityType<RedstoneTransmitterBlockEntity> TYPE = null;
 
 	public final LinkHelper linkHelper = new LinkHelper(this);
 
@@ -44,7 +44,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	//The current output, regardless of a pending update
 	private float output;
 
-	public RedstoneTransmitterTileEntity(){
+	public RedstoneTransmitterBlockEntity(){
 		super(TYPE);
 	}
 
@@ -94,7 +94,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 			sources.clear();
 
 			for(Direction checkDir : Direction.values()){
-				TileEntity te = level.getBlockEntity(worldPosition.relative(checkDir));
+				BlockEntity te = level.getBlockEntity(worldPosition.relative(checkDir));
 				IRedstoneHandler otherHandler;
 				if(te != null && (otherHandler = BlockUtil.get(te.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, checkDir.getOpposite()))) != null){
 					otherHandler.requestSrc(circRef, 0, checkDir.getOpposite(), checkDir);
@@ -144,9 +144,9 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 		if(RedstoneUtil.didChange(output, input)){
 			output = input;
 			for(BlockPos link : linkHelper.getLinksAbsolute()){
-				TileEntity te = level.getBlockEntity(link);
-				if(te instanceof RedstoneReceiverTileEntity){
-					((RedstoneReceiverTileEntity) te).notifyOutputChange();
+				BlockEntity te = level.getBlockEntity(link);
+				if(te instanceof RedstoneReceiverBlockEntity){
+					((RedstoneReceiverBlockEntity) te).notifyOutputChange();
 				}
 			}
 			setChanged();
@@ -176,7 +176,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public TileEntity getTE(){
+	public BlockEntity getTE(){
 		return this;
 	}
 
@@ -187,7 +187,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 
 	@Override
 	public boolean canLink(ILinkTE otherTE){
-		return otherTE instanceof RedstoneReceiverTileEntity;
+		return otherTE instanceof RedstoneReceiverBlockEntity;
 	}
 
 	@Override
@@ -206,12 +206,12 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public boolean createLinkSource(ILinkTE endpoint, @Nullable PlayerEntity player){
+	public boolean createLinkSource(ILinkTE endpoint, @Nullable Player player){
 		return linkHelper.addLink(endpoint, player);
 	}
 
 	@Override
-	public void receiveLong(byte identifier, long message, @Nullable ServerPlayerEntity sendingPlayer){
+	public void receiveLong(byte identifier, long message, @Nullable ServerPlayer sendingPlayer){
 		linkHelper.handleIncomingPacket(identifier, message);
 	}
 

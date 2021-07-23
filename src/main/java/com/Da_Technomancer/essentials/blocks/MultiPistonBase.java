@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.WorldBuffer;
+import com.Da_Technomancer.essentials.LevelBuffer;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -9,15 +9,15 @@ import net.minecraft.block.material.PushReaction;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.entity.player.Player;
+import net.minecraft.item.BlockPlaceContext ;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.state.StateContainer;
+import net.minecraft.state.StateDefinition;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.BlockHitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -25,11 +25,11 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.ILevelReader;
 import net.minecraft.world.TickPriority;
-import net.minecraft.world.World;
+import net.minecraft.world.Level;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -56,7 +56,7 @@ public class MultiPistonBase extends Block{
 	 * Dirty shared field to prevent infinite loops from block updates triggering more block updates
 	 * While true, a multipiston is actively changing the world around it and should ignore incoming blocks updates
 	 */
-	protected static boolean changingWorld = false;
+	protected static boolean changingLevel = false;
 
 	protected MultiPistonBase(boolean sticky){
 		super(Properties.of(Material.PISTON).strength(0.5F).sound(SoundType.METAL));
@@ -69,13 +69,13 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.FACING, ESProperties.EXTENDED, ESProperties.SHIFTING);
 	}
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext  context){
 		//Place with player orientation
 		return defaultBlockState().setValue(ESProperties.FACING, context.getNearestLookingDirection().getOpposite());
 	}
@@ -97,10 +97,10 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){
+	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving){
 		BlockState otherState;
 		//An internal change- due to this piston being in the process of extending/retracting (changing world) or due to this piston entering/leaving shifting state should not trigger the breaking of the extension
-		if(!changingWorld && (newState.getBlock() != this || state.setValue(ESProperties.SHIFTING, false)
+		if(!changingLevel && (newState.getBlock() != this || state.setValue(ESProperties.SHIFTING, false)
 				!= newState.setValue(ESProperties.SHIFTING, false))){
 			//Sanity check included to make sure the adjacent blocks is actually an extension- unlike vanilla pistons, multi pistons are supposed to actually work and not break bedrock
 			if(state.getValue(ESProperties.EXTENDED) &&
@@ -116,16 +116,16 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		//Rotate with a wrench
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand)) && !state.getValue(ESProperties.EXTENDED) && !state.getValue(ESProperties.SHIFTING)){
 			if(!worldIn.isClientSide){
 				BlockState endState = state.cycle(ESProperties.FACING);//MCP note: cycle
 				worldIn.setBlockAndUpdate(pos, endState);
 			}
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState state, World worldIn, BlockPos pos, Random rand){
+	public void animateTick(BlockState state, Level worldIn, BlockPos pos, Random rand){
 		if(state.getValue(ESProperties.SHIFTING)){
 			double particleRad = 0.75D;
 			for(int i = 0; i < 4; i++){
@@ -146,18 +146,18 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		neighborChanged(world.getBlockState(pos), world, pos, this, pos, false);
 	}
 
 	@Override
-	public boolean shouldCheckWeakPower(BlockState state, IWorldReader world, BlockPos pos, Direction side){
+	public boolean shouldCheckWeakPower(BlockState state, ILevelReader world, BlockPos pos, Direction side){
 		return true;
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
-		if(worldIn.isClientSide || changingWorld || state.getValue(ESProperties.SHIFTING)){
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
+		if(worldIn.isClientSide || changingLevel || state.getValue(ESProperties.SHIFTING)){
 			return;
 		}
 
@@ -174,11 +174,11 @@ public class MultiPistonBase extends Block{
 			playSound(worldIn, pos, false, true);
 		}else{
 			//Retraction happens instantly
-			tick(state, (ServerWorld) worldIn, pos, worldIn.random);
+			tick(state, (ServerLevel) worldIn, pos, worldIn.random);
 		}
 	}
 
-	private int getRedstoneInput(World world, BlockPos pos, BlockState state, Direction facing){
+	private int getRedstoneInput(Level world, BlockPos pos, BlockState state, Direction facing){
 		int target = 0;
 
 		for(Direction dir : Direction.values()){
@@ -205,7 +205,7 @@ public class MultiPistonBase extends Block{
 	 * @param moving Whether this is the sound of actually moving
 	 * @param extension Whether this is part of an extension (vs a retraction)
 	 */
-	private void playSound(World world, BlockPos pos, boolean moving, boolean extension){
+	private void playSound(Level world, BlockPos pos, boolean moving, boolean extension){
 		if(moving){
 			world.playSound(null, pos, extension ? SoundEvents.PISTON_EXTEND : SoundEvents.PISTON_CONTRACT, SoundCategory.BLOCKS, 1, 1);
 		}else{
@@ -213,7 +213,7 @@ public class MultiPistonBase extends Block{
 		}
 	}
 
-	private int getCurrentExtension(World world, BlockPos pos, BlockState state, Direction facing){
+	private int getCurrentExtension(Level world, BlockPos pos, BlockState state, Direction facing){
 		int currentExtension = 0;
 
 		if(state.getValue(ESProperties.EXTENDED)){
@@ -251,7 +251,7 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand){
+	public void tick(BlockState state, ServerLevel world, BlockPos pos, Random rand){
 		//We re-check everything as the world could have changed in the previous 2 ticks
 		Direction facing = state.getValue(ESProperties.FACING);
 		int redstone = getRedstoneInput(world, pos, state, facing);
@@ -264,8 +264,8 @@ public class MultiPistonBase extends Block{
 			return;//No change needed
 		}
 
-		changingWorld = true;
-		WorldBuffer wBuf = new WorldBuffer(world);
+		changingLevel = true;
+		LevelBuffer wBuf = new LevelBuffer(world);
 
 		if(currExtend < redstone){
 			//If we're extending, we do one block at a time, with a delay in between
@@ -310,19 +310,19 @@ public class MultiPistonBase extends Block{
 			world.setBlock(pos, state, 2);
 		}
 
-		changingWorld = false;
+		changingLevel = false;
 	}
 
 	/**
-	 * Adjusts the extension of the multipiston by one blocks in a WorldBuffer, and moves entities in the path
-	 * @param world The WorldBuffer to read/write changes from
+	 * Adjusts the extension of the multipiston by one blocks in a LevelBuffer, and moves entities in the path
+	 * @param world The LevelBuffer to read/write changes from
 	 * @param pos The multipiston position
 	 * @param facing The multipiston facing
-	 * @param currentExtension The current extension of the multipiston (in the WorldBuffer)
+	 * @param currentExtension The current extension of the multipiston (in the LevelBuffer)
 	 * @param out Increase the extension if true, decrease otherwise
 	 * @return true if this action was blocked
 	 */
-	private boolean shiftExtension(WorldBuffer world, BlockPos pos, Direction facing, int currentExtension, boolean out){
+	private boolean shiftExtension(LevelBuffer world, BlockPos pos, Direction facing, int currentExtension, boolean out){
 		Direction moveDir = out ? facing : facing.getOpposite();
 		LinkedHashSet<BlockPos> movedBlocks = new LinkedHashSet<>(PUSH_LIMIT + 1);
 		BlockPos prevHeadPos = pos.relative(facing, currentExtension);
@@ -356,7 +356,7 @@ public class MultiPistonBase extends Block{
 			//Move blocks forward
 			BlockState prevState = world.getBlockState(changePos);
 			if(prevState.getPistonPushReaction() == PushReaction.DESTROY){
-				world.getWorld().destroyBlock(changePos, true);//Destroy the blocks in the actual world to drop items
+				world.getLevel().destroyBlock(changePos, true);//Destroy the blocks in the actual world to drop items
 			}else{
 				world.addChange(changePos.relative(moveDir), prevState);
 			}
@@ -364,11 +364,11 @@ public class MultiPistonBase extends Block{
 
 			//Find and move entities
 			//We use isSlimeBlock over isSticky as honey blocks aren't bouncy
-			moveEnts(world.getWorld(), changePos, moveDir, prevState.isSlimeBlock());
+			moveEnts(world.getLevel(), changePos, moveDir, prevState.isSlimeBlock());
 		}
 
 		//Find and move entities at the piston head itself
-		moveEnts(world.getWorld(), prevHeadPos, moveDir, false);
+		moveEnts(world.getLevel(), prevHeadPos, moveDir, false);
 
 		if(out){
 			//Add the extended head
@@ -381,7 +381,7 @@ public class MultiPistonBase extends Block{
 		return false;
 	}
 
-	private void moveEnts(World world, BlockPos activePos, Direction moveDir, boolean sticky){
+	private void moveEnts(Level world, BlockPos activePos, Direction moveDir, boolean sticky){
 		AxisAlignedBB BB = new AxisAlignedBB(activePos.relative(moveDir));
 		ArrayList<Entity> movingEnts = new ArrayList<>(4);
 		getEntitiesMultiChunk(BB, world, movingEnts);
@@ -402,14 +402,14 @@ public class MultiPistonBase extends Block{
 	 * This method recursively builds a list of all blocks to be moved by the piston, and returns true if there is an obstacle blocking movement
 	 *
 	 * @param pistonPos Position of the piston
-	 * @param world The WorldBuffer to read from
+	 * @param world The LevelBuffer to read from
 	 * @param curPos The currently active checking position
 	 * @param moveDir The direction the piston is trying to move
 	 * @param movedBlocks The current (in progress) movement set
 	 * @param dragging Whether this blocks would be "dragged" instead of pushed
 	 * @return If the movement has to be aborted
 	 */
-	private boolean buildMoveset(BlockPos pistonPos, WorldBuffer world, BlockPos curPos, Direction moveDir, LinkedHashSet<BlockPos> movedBlocks, boolean dragging){
+	private boolean buildMoveset(BlockPos pistonPos, LevelBuffer world, BlockPos curPos, Direction moveDir, LinkedHashSet<BlockPos> movedBlocks, boolean dragging){
 		if(movedBlocks.contains(curPos)){
 			return false;
 		}
@@ -417,9 +417,9 @@ public class MultiPistonBase extends Block{
 
 		//While vanilla has this very good and logical system for blocks exposing how they react to pistons, there is for no necessary reason a large number of exceptions
 		PushReaction reaction = state.getPistonPushReaction();
-		if(state.getBlock().isAir(state, world.getWorld(), curPos)){
+		if(state.getBlock().isAir(state, world.getLevel(), curPos)){
 			reaction = PushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
-		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock().hasTileEntity(state) || pistonPos.equals(curPos)){
+		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock().hasBlockEntity(state) || pistonPos.equals(curPos)){
 			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
 		}else if(state.getDestroySpeed(world, curPos) < 0){
 			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
@@ -436,7 +436,7 @@ public class MultiPistonBase extends Block{
 				//else treat push-only as normal
 			case NORMAL:
 				//Check for world height
-				if(moveDir == Direction.UP && curPos.getY() == world.getWorld().getMaxBuildHeight() || moveDir == Direction.DOWN && curPos.getY() == 0){
+				if(moveDir == Direction.UP && curPos.getY() == world.getLevel().getMaxBuildHeight() || moveDir == Direction.DOWN && curPos.getY() == 0){
 					blocked = true;
 					break;
 				}
@@ -480,10 +480,10 @@ public class MultiPistonBase extends Block{
 	}
 
 	/**
-	 * An alternate version of World#getEntitiesWithinAABBExcludingEntity that checks a 3x3x3 cube of mini chunks (16x16x16 cubes within chunks) for entities.
+	 * An alternate version of Level#getEntitiesWithinAABBExcludingEntity that checks a 3x3x3 cube of mini chunks (16x16x16 cubes within chunks) for entities.
 	 * This is less efficient than the standard method, but necessary to fix a vanilla bug whereby repeated getEntity calls break if entities were moved between chunks in the same tick.
 	 */
-	private static void getEntitiesMultiChunk(AxisAlignedBB checkBox, World worldIn, ArrayList<Entity> entList){
+	private static void getEntitiesMultiChunk(AxisAlignedBB checkBox, Level worldIn, ArrayList<Entity> entList){
 		final double maxEntityRad = worldIn.getMaxEntityRadius();
 		int i = MathHelper.floor((checkBox.minX - maxEntityRad) / 16.0D) - 1;
 		int j = MathHelper.floor((checkBox.maxX + maxEntityRad) / 16.0D) + 1;

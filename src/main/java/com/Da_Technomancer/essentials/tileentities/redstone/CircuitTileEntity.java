@@ -11,10 +11,10 @@ import com.Da_Technomancer.essentials.packets.IFloatReceiver;
 import com.Da_Technomancer.essentials.packets.SendFloatToClient;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.world.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,10 +27,10 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
+public class CircuitBlockEntity extends BlockEntity implements IFloatReceiver{
 
 	@ObjectHolder(Essentials.MODID + ":circuit")
-	private static TileEntityType<CircuitTileEntity> TYPE = null;
+	private static BlockEntityType<CircuitBlockEntity> TYPE = null;
 
 	public boolean builtConnections = false;
 	private final ArrayList<WeakReference<LazyOptional<IRedstoneHandler>>> dependents = new ArrayList<>(1);
@@ -41,11 +41,11 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 
 	private float output = 0;
 
-	public CircuitTileEntity(){
+	public CircuitBlockEntity(){
 		this(TYPE);
 	}
 
-	protected CircuitTileEntity(TileEntityType<?> type){
+	protected CircuitBlockEntity(BlockEntityType<?> type){
 		super(type);
 	}
 
@@ -188,7 +188,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 			for(Orient or : Orient.INPUTS){
 				if(own.useInput(or)){
 					Direction checkDir = or.getFacing(dir);
-					TileEntity te = level.getBlockEntity(worldPosition.relative(checkDir));
+					BlockEntity te = level.getBlockEntity(worldPosition.relative(checkDir));
 					IRedstoneHandler otherHandler;
 					if(te != null && (otherHandler = BlockUtil.get(te.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, checkDir.getOpposite()))) != null){
 						otherHandler.requestSrc(hanReference, 0, checkDir.getOpposite(), checkDir);
@@ -196,7 +196,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 				}
 			}
 
-			TileEntity te = level.getBlockEntity(worldPosition.relative(dir));
+			BlockEntity te = level.getBlockEntity(worldPosition.relative(dir));
 			IRedstoneHandler otherHandler;
 			if(te != null && (otherHandler = BlockUtil.get(te.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, dir.getOpposite()))) != null){
 				otherHandler.findDependents(hanReference, 0, dir.getOpposite(), dir);
@@ -231,7 +231,7 @@ public class CircuitTileEntity extends TileEntity implements IFloatReceiver{
 	}
 
 	@Override
-	public void receiveFloat(byte id, float value, @Nullable ServerPlayerEntity sender){
+	public void receiveFloat(byte id, float value, @Nullable ServerPlayer sender){
 		if(id == 0 && level.isClientSide){
 			output = value;
 		}

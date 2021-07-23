@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
+import com.Da_Technomancer.essentials.tileentities.FluidShifterBlockEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -21,8 +21,8 @@ public class FluidShifter extends AbstractShifter{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
-		return new FluidShifterTileEntity();
+	public BlockEntity newBlockEntity(IBlockReader world){
+		return new FluidShifterBlockEntity();
 	}
 
 	@Override

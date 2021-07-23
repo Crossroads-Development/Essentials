@@ -7,15 +7,15 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.EntityType;
-import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.BlockPlaceContext ;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
+import net.minecraft.state.StateDefinition;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.Level;
+import net.minecraft.world.server.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -41,7 +41,7 @@ public class AnalogLamp extends Block{
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext  context){
 		return defaultBlockState().setValue(ESProperties.REDSTONE, RedstoneUtil.getRedstoneAtPos(context.getLevel(), context.getClickedPos()));
 	}
 
@@ -52,12 +52,12 @@ public class AnalogLamp extends Block{
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.REDSTONE);
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
 		if(!worldIn.isClientSide) {
 			int current = state.getValue(ESProperties.REDSTONE);
 			int worldReds = RedstoneUtil.getRedstoneAtPos(worldIn, pos);
@@ -75,7 +75,7 @@ public class AnalogLamp extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random rand){
+	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand){
 		int current = state.getValue(ESProperties.REDSTONE);
 		int worldReds = RedstoneUtil.getRedstoneAtPos(worldIn, pos);
 		if(current != worldReds){

@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
-import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
+import com.Da_Technomancer.essentials.tileentities.AutoCrafterBlockEntity;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -148,7 +148,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		for(int i = 10; i < inv.length; i++){
 			inv[i] = menu.getSlot(i).getItem();
 		}
-		IRecipe<CraftingInventory> iRecipe = menu.te.findRecipe(AutoCrafterTileEntity.prepareCraftingInv(inv), menu);
+		IRecipe<CraftingInventory> iRecipe = menu.te.findRecipe(AutoCrafterBlockEntity.prepareCraftingInv(inv), menu);
 
 		if(iRecipe != null){
 			RenderSystem.enableRescaleNormal();

@@ -3,22 +3,22 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.items.ESItems;
-import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.PulseCircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitBlockEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.PulseCircuitBlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.util.InteractionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.BlockHitResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -34,38 +34,38 @@ public class PulseCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public boolean useInput(CircuitTileEntity.Orient or){
-		return or == CircuitTileEntity.Orient.BACK;
+	public boolean useInput(CircuitBlockEntity.Orient or){
+		return or == CircuitBlockEntity.Orient.BACK;
 	}
 
 	@Override
-	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		if(te instanceof PulseCircuitTileEntity){
-			return ((PulseCircuitTileEntity) te).currentOutput(0);
+	public float getOutput(float in0, float in1, float in2, CircuitBlockEntity te){
+		if(te instanceof PulseCircuitBlockEntity){
+			return ((PulseCircuitBlockEntity) te).currentOutput(0);
 		}
 
 		return 0;
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		TileEntity te;
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
+		BlockEntity te;
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			super.use(state, worldIn, pos, playerIn, hand, hit);
 		}else if(playerIn.getItemInHand(hand).getItem() == ESItems.circuitWrench){
-			return ActionResultType.PASS;
-		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof PulseCircuitTileEntity){
-			PulseCircuitTileEntity tte = (PulseCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrDuration));
+			return InteractionResult.PASS;
+		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof PulseCircuitBlockEntity){
+			PulseCircuitBlockEntity tte = (PulseCircuitBlockEntity) te;
+			NetworkHooks.openGui((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrDuration));
 		}
 
-		return ActionResultType.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Nullable
 	@Override
-	public TileEntity newBlockEntity(IBlockReader worldIn){
-		return new PulseCircuitTileEntity();
+	public BlockEntity newBlockEntity(IBlockReader worldIn){
+		return new PulseCircuitBlockEntity();
 	}
 
 	@Override

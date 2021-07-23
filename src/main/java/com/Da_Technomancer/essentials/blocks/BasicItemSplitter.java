@@ -1,12 +1,12 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE;
-import com.Da_Technomancer.essentials.tileentities.BasicItemSplitterTileEntity;
+import com.Da_Technomancer.essentials.tileentities.BasicItemSplitterBlockEntity;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -32,8 +32,8 @@ public class BasicItemSplitter extends AbstractSplitter{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
-		return new BasicItemSplitterTileEntity();
+	public BlockEntity newBlockEntity(IBlockReader world){
+		return new BasicItemSplitterBlockEntity();
 	}
 
 	@Override

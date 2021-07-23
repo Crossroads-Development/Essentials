@@ -5,7 +5,7 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -16,19 +16,19 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 
 @ObjectHolder(Essentials.MODID)
-public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
+public class BasicItemSplitterBlockEntity extends AbstractSplitterTE{
 
 	@ObjectHolder("basic_item_splitter")
-	private static TileEntityType<BasicItemSplitterTileEntity> TYPE = null;
+	private static BlockEntityType<BasicItemSplitterBlockEntity> TYPE = null;
 
 	private final ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 	private int transferred = 0;//Tracks how many items have been transferred in one batch of 12/15
 
-	public BasicItemSplitterTileEntity(TileEntityType<? extends AbstractSplitterTE> type){
+	public BasicItemSplitterBlockEntity(BlockEntityType<? extends AbstractSplitterTE> type){
 		super(type);
 	}
 
-	public BasicItemSplitterTileEntity(){
+	public BasicItemSplitterBlockEntity(){
 		this(TYPE);
 	}
 
@@ -52,7 +52,7 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 		Direction dir = getFacing();
 		for(int i = 0; i < 2; i++){
-			inventory[i] = AbstractShifterTileEntity.ejectItem(level, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i], null);
+			inventory[i] = AbstractShifterBlockEntity.ejectItem(level, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i], null);
 		}
 		setChanged();
 	}

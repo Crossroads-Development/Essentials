@@ -3,7 +3,7 @@ package com.Da_Technomancer.essentials.packets;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
 import com.Da_Technomancer.essentials.items.ESItems;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 
@@ -32,12 +32,12 @@ public class ConfigureWrenchOnServer extends ServerPacket{
 	}
 
 	@Override
-	protected void run(@Nullable ServerPlayerEntity player){
+	protected void run(@Nullable ServerPlayer player){
 		if(player == null){
 			Essentials.logger.warn("Player was null on packet arrival");
 			return;
 		}
-		Hand hand = null;
+		InteractionHand hand = null;
 		if(player.getMainHandItem().getItem() == ESItems.circuitWrench){
 			hand = Hand.MAIN_HAND;
 		}else if(player.getOffhandItem().getItem() == ESItems.circuitWrench){

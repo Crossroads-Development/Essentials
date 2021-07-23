@@ -11,7 +11,7 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -124,7 +124,7 @@ public class RedstoneUtil extends BlockUtil{
 	 * @param dir The side of the blocks the redstone signal is coming in
 	 * @return The strength of the redstone signal a blocks is receiving on a given side
 	 */
-	public static int getRedstoneOnSide(World w, BlockPos pos, Direction dir){
+	public static int getRedstoneOnSide(Level w, BlockPos pos, Direction dir){
 		BlockPos offsetPos = pos.relative(dir);
 		BlockState state = w.getBlockState(offsetPos);
 		return Math.min(15, state.getBlock() == Blocks.REDSTONE_WIRE ? state.getValue(RedstoneWireBlock.POWER) : w.getSignal(offsetPos, dir));
@@ -136,7 +136,7 @@ public class RedstoneUtil extends BlockUtil{
 	 * @param pos The position to test
 	 * @return The redstone strength at the passed position
 	 */
-	public static int getRedstoneAtPos(World w, BlockPos pos){
+	public static int getRedstoneAtPos(Level w, BlockPos pos){
 		int val = 0;
 		for(Direction dir : Direction.values()){
 			val = Math.max(val, getRedstoneOnSide(w, pos, dir));

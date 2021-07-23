@@ -1,13 +1,13 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitBlockEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.ILevelReader;
+import net.minecraft.world.Level;
 
 public class ReaderCircuit extends AbstractCircuit{
 
@@ -16,26 +16,26 @@ public class ReaderCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public boolean useInput(CircuitTileEntity.Orient or){
+	public boolean useInput(CircuitBlockEntity.Orient or){
 		return false;
 	}
 
 	@Override
-	public boolean getWeakChanges(BlockState state, IWorldReader world, BlockPos pos){
+	public boolean getWeakChanges(BlockState state, ILevelReader world, BlockPos pos){
 		return true;
 	}
 
 	@Override
-	public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor){
-		if(world instanceof World){
-			neighborChanged(state, (World) world, pos, this, neighbor, false);
+	public void onNeighborChange(BlockState state, ILevelReader world, BlockPos pos, BlockPos neighbor){
+		if(world instanceof Level){
+			neighborChanged(state, (Level) world, pos, this, neighbor, false);
 		}
 	}
 
 	@Override
-	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		World world = te.getLevel();
-		Direction back = CircuitTileEntity.Orient.BACK.getFacing(te.getBlockState().getValue(ESProperties.HORIZ_FACING));
+	public float getOutput(float in0, float in1, float in2, CircuitBlockEntity te){
+		Level world = te.getLevel();
+		Direction back = CircuitBlockEntity.Orient.BACK.getFacing(te.getBlockState().getValue(ESProperties.HORIZ_FACING));
 		BlockPos readPos = te.getBlockPos().relative(back);
 		float output;
 		BlockState state = world.getBlockState(readPos);

@@ -9,11 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderState;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.tileentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.tileentity.BlockEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -21,12 +21,12 @@ import net.minecraft.util.math.vector.Vector3d;
 
 import java.awt.*;
 
-public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntityRenderer<T>{
+public class LinkLineRenderer<T extends BlockEntity & ILinkTE> extends BlockEntityRenderer<T>{
 
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Essentials.MODID, "textures/model/link_line.png");
 	protected static RenderType LINK_TYPE = DummyRenderType.initType();
 
-	public LinkLineRenderer(TileEntityRendererDispatcher dispatcher){
+	public LinkLineRenderer(BlockEntityRendererDispatcher dispatcher){
 		super(dispatcher);
 	}
 

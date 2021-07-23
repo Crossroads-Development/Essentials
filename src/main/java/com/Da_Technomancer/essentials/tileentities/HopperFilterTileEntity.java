@@ -8,15 +8,15 @@ import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ISidedInventoryProvider;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -31,12 +31,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
+public class HopperFilterBlockEntity extends BlockEntity implements INBTReceiver{
 
 	@ObjectHolder("hopper_filter")
-	public static TileEntityType<HopperFilterTileEntity> TYPE = null;
+	public static BlockEntityType<HopperFilterBlockEntity> TYPE = null;
 
-	public HopperFilterTileEntity(){
+	public HopperFilterBlockEntity(){
 		super(TYPE);
 	}
 
@@ -94,7 +94,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayer sender){
 		filter = ItemStack.of(nbt);
 	}
 
@@ -163,7 +163,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 				return src.orElseThrow(NullPointerException::new);
 			}else{
 				BlockPos checkPos = worldPosition.relative(side.getOpposite());
-				TileEntity checkTE = level.getBlockEntity(checkPos);
+				BlockEntity checkTE = level.getBlockEntity(checkPos);
 
 				if(checkTE != null){
 					src = checkTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);

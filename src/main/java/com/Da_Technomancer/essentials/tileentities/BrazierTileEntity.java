@@ -9,11 +9,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.ITickableBlockEntity;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.ServerLevel;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
@@ -24,12 +24,12 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 
 @ObjectHolder(Essentials.MODID)
-public class BrazierTileEntity extends TileEntity implements ITickableTileEntity{
+public class BrazierBlockEntity extends BlockEntity implements ITickableBlockEntity{
 
 	@ObjectHolder("brazier")
-	private static TileEntityType<BrazierTileEntity> TYPE = null;
+	private static BlockEntityType<BrazierBlockEntity> TYPE = null;
 
-	public BrazierTileEntity(){
+	public BrazierBlockEntity(){
 		super(TYPE);
 	}
 
@@ -40,7 +40,7 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 		}
 
 		if(level.getGameTime() % 10 == 0){
-			ServerWorld server = (ServerWorld) level;
+			ServerLevel server = (ServerLevel) level;
 
 			BlockState state = level.getBlockState(worldPosition);
 			if(state.getBlock() != ESBlocks.brazier){

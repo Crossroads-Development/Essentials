@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.inventory.IInventory;
@@ -215,7 +215,7 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public ItemStack onTake(PlayerEntity player, ItemStack stack){
+		public ItemStack onTake(Player player, ItemStack stack){
 			ItemStack s = super.onTake(player, stack);
 			inSlot.setChanged();
 			return s;
@@ -433,7 +433,7 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public boolean stillValid(PlayerEntity player){
+		public boolean stillValid(Player player){
 			return true;
 		}
 

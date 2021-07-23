@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitBlockEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
@@ -30,12 +30,12 @@ public class GenericACircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public boolean useInput(CircuitTileEntity.Orient or){
-		return or == CircuitTileEntity.Orient.BACK;
+	public boolean useInput(CircuitBlockEntity.Orient or){
+		return or == CircuitBlockEntity.Orient.BACK;
 	}
 
 	@Override
-	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
+	public float getOutput(float in0, float in1, float in2, CircuitBlockEntity te){
 		return function.apply(in1);
 	}
 

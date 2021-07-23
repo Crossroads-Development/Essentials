@@ -3,18 +3,18 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
-public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
+public class ItemSplitterBlockEntity extends BasicItemSplitterBlockEntity{
 
 	@ObjectHolder("item_splitter")
-	private static TileEntityType<ItemSplitterTileEntity> TYPE = null;
+	private static BlockEntityType<ItemSplitterBlockEntity> TYPE = null;
 
 	public int redstone;
 
-	public ItemSplitterTileEntity(){
+	public ItemSplitterBlockEntity(){
 		super(TYPE);
 	}
 

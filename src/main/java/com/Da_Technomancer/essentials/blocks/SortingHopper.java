@@ -2,24 +2,24 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
-import com.Da_Technomancer.essentials.tileentities.SortingHopperTileEntity;
+import com.Da_Technomancer.essentials.tileentities.SortingHopperBlockEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.BlockPlaceContext ;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.BooleanProperty;
 import net.minecraft.state.DirectionProperty;
-import net.minecraft.state.StateContainer;
+import net.minecraft.state.StateDefinition;
 import net.minecraft.tileentity.IHopper;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.BlockHitResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -27,7 +27,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -36,7 +36,7 @@ import java.util.List;
 
 import net.minecraft.block.AbstractBlock.Properties;
 
-public class SortingHopper extends ContainerBlock implements IReadable{
+public class SortingHopper extends BaseEntityBlock implements IReadable{
 
 	public static final DirectionProperty FACING = HopperBlock.FACING;
 	public static final BooleanProperty ENABLED = HopperBlock.ENABLED;
@@ -109,7 +109,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext  context){
 		Direction enumfacing = context.getClickedFace().getOpposite();
 		if(enumfacing == Direction.UP){
 			enumfacing = Direction.DOWN;
@@ -119,32 +119,32 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
-		return new SortingHopperTileEntity();
+	public BlockEntity newBlockEntity(IBlockReader world){
+		return new SortingHopperBlockEntity();
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(!worldIn.isClientSide){
-			TileEntity te = worldIn.getBlockEntity(pos);
+			BlockEntity te = worldIn.getBlockEntity(pos);
 			if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 				worldIn.setBlockAndUpdate(pos, state.cycle(FACING));//MCP note: cycle
-				if(te instanceof SortingHopperTileEntity){
-					((SortingHopperTileEntity) te).resetCache();
+				if(te instanceof SortingHopperBlockEntity){
+					((SortingHopperBlockEntity) te).resetCache();
 				}
-				return ActionResultType.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 
-			if(te instanceof SortingHopperTileEntity){
-				playerIn.openMenu((SortingHopperTileEntity) te);
+			if(te instanceof SortingHopperBlockEntity){
+				playerIn.openMenu((SortingHopperBlockEntity) te);
 //				playerIn.addStat(Stats.INSPECT_HOPPER);
 			}
 		}
-		return ActionResultType.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
 		boolean block = !worldIn.hasNeighborSignal(pos);
 
 		if(block != state.getValue(ENABLED)){
@@ -153,11 +153,11 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof SortingHopperTileEntity) {
-				InventoryHelper.dropContents(worldIn, pos, (SortingHopperTileEntity) te);
+			BlockEntity te = worldIn.getBlockEntity(pos);
+			if (te instanceof SortingHopperBlockEntity) {
+				InventoryHelper.dropContents(worldIn, pos, (SortingHopperBlockEntity) te);
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
@@ -166,8 +166,8 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public BlockRenderType getRenderShape(BlockState state){
-		return BlockRenderType.MODEL;
+	public RenderShape getRenderShape(BlockState state){
+		return RenderShape.MODEL;
 	}
 
 	@Override
@@ -176,13 +176,13 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public int getAnalogOutputSignal(BlockState blockState, World worldIn, BlockPos pos){
+	public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos){
 		return Container.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
 	}
 
 	@Override
-	public float read(World world, BlockPos pos, BlockState state){
-		TileEntity te = world.getBlockEntity(pos);
+	public float read(Level world, BlockPos pos, BlockState state){
+		BlockEntity te = world.getBlockEntity(pos);
 		if(te instanceof IInventory){
 			IInventory inv = (IInventory) te;
 			float f = 0.0F;
@@ -218,7 +218,7 @@ public class SortingHopper extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(FACING, ENABLED);
 	}
 

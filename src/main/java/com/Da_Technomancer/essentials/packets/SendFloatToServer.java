@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.packets;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -37,9 +37,9 @@ public class SendFloatToServer extends ServerPacket{
 	}
 
 	@Override
-	protected void run(@Nullable ServerPlayerEntity player){
+	protected void run(@Nullable ServerPlayer player){
 		if(player != null){
-			TileEntity te = player.getCommandSenderWorld().getBlockEntity(pos);
+			BlockEntity te = player.getCommandSenderLevel().getBlockEntity(pos);
 
 			if(te instanceof IFloatReceiver){
 				((IFloatReceiver) te).receiveFloat(id, val, player);

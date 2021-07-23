@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.integration;
 
 import com.Da_Technomancer.essentials.items.ESItems;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.item.CreativeModeTab;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
@@ -21,9 +21,9 @@ public class PatchouliBook extends ItemModBook{
 	}
 
 	@Override
-	public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items){
+	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> items){
 		BookRegistry.INSTANCE.books.values().forEach((b) -> {
-			if(b.getBookItem().getItem() == this && !b.isExtension && (tab == ItemGroup.TAB_SEARCH || ESIntegration.bookTabs.contains(tab))){
+			if(b.getBookItem().getItem() == this && !b.isExtension && (tab == CreativeModeTab.TAB_SEARCH || ESIntegration.bookTabs.contains(tab))){
 				ItemStack stack = new ItemStack(this);
 				CompoundNBT cmp = new CompoundNBT();
 				cmp.putString("patchouli:book", b.id.toString());

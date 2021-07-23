@@ -6,11 +6,11 @@ import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import com.Da_Technomancer.essentials.gui.container.FluidSlotManager;
 import com.Da_Technomancer.essentials.gui.container.IFluidSlotTE;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -27,10 +27,10 @@ import javax.annotation.Nullable;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 @ObjectHolder(Essentials.MODID)
-public class FluidShifterTileEntity extends AbstractShifterTileEntity implements IFluidSlotTE{
+public class FluidShifterBlockEntity extends AbstractShifterBlockEntity implements IFluidSlotTE{
 
 	@ObjectHolder("fluid_shifter")
-	private static TileEntityType<FluidShifterTileEntity> TYPE = null;
+	private static BlockEntityType<FluidShifterBlockEntity> TYPE = null;
 	private static final int CAPACITY = 4_000;
 
 	private FluidSlotManager fluidManager;
@@ -44,7 +44,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 		return fluidManager;
 	}
 
-	public FluidShifterTileEntity(){
+	public FluidShifterBlockEntity(){
 		super(TYPE);
 	}
 
@@ -58,7 +58,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 			refreshCache();
 		}
 
-		FluidStack remaining = AbstractShifterTileEntity.ejectFluid(level, endPos, getFacing(), fluid);
+		FluidStack remaining = AbstractShifterBlockEntity.ejectFluid(level, endPos, getFacing(), fluid);
 		if(remaining.getAmount() != fluid.getAmount()){
 			fluid = remaining;
 			getFluidManager().updateState(fluid);
@@ -109,7 +109,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+	public Container createMenu(int id, PlayerInventory playerInventory, Player player){
 		return new FluidShifterContainer(id, playerInventory, worldPosition);
 	}
 
@@ -119,7 +119,7 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	}
 
 //	@Override
-//	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+//	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayer sender){
 //		getFluidManager().handlePacket(nbt);
 //		fluid = getFluidManager().getStack();
 //	}

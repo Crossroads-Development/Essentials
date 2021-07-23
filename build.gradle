@@ -1,11 +1,11 @@
 buildscript {
 	repositories {
 		maven { url = 'https://files.minecraftforge.net/maven' }
-		jcenter()
+//		jcenter()
 		mavenCentral()
 	}
 	dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
 	}
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -17,8 +17,10 @@ version = "$mc_version-$mod_version"
 group = "mod.technomancer.essentials"
 archivesBaseName = "essentials"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+// Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+//sourceCompatibility = 1.8
+//targetCompatibility = 1.8
 //compileJava.options.encoding = 'UTF-8'
 //Exclude python scripts from the build
 sourceSets.main.java.exclude('**/python/**')
@@ -27,7 +29,7 @@ sourceSets.main.java.exclude('**/python/**')
 //	options.encoding = 'UTF-8'
 //}
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+//sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
 	mappings channel: "$mcp_channel", version: "$mcp_version"
@@ -75,7 +77,7 @@ minecraft {
 }
 
 repositories {
-	maven { url "http://dvs1.progwml6.com/files/maven" } //JEI
+	maven { url "https://dvs1.progwml6.com/files/maven" } //JEI
 	maven { url "https://maven.blamejared.com" } //Patchouli
 
 }
@@ -83,13 +85,14 @@ repositories {
 dependencies {
 	minecraft "net.minecraftforge:forge:$mc_version-$fg_version"
 
-	//JEI
-	//Compile against APIs
-	compileOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version:api")
-	//Run with the full versions
-	runtimeOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version")
-
-	compile(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+//	TODO Disabled until updated
+//	//JEI
+//	//Compile against APIs
+//	compileOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version:api")
+//	//Run with the full versions
+//	runtimeOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version")
+//
+//	compile(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -110,33 +113,12 @@ jar {
 //Compile the sources into a jar- useful for addon development
 task jarSources(type: Jar){
 	from sourceSets.main.allSource
-	classifier = 'source'
+	archiveClassifier.set('source')
+//	classifier = 'source'
 }
 
 task jarDev(type: Jar) {
 	from sourceSets.main.output
-	classifier = 'dev'
-}
-
-
-// Example configuration to allow publishing using the maven-publish task
-// we define a custom artifact that is sourced from the reobfJar output task
-// and then declare that to be published
-// Note you'll need to add a repository here
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile) {
-	type 'jar'
-	builtBy 'reobfJar'
-}
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact reobfArtifact
-		}
-	}
-	repositories {
-		maven {
-			url "file:///${project.projectDir}/mcmodsrepo"
-		}
-	}
+	archiveClassifier.set('dev')
+//	classifier = 'dev'
 }

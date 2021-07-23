@@ -8,14 +8,14 @@ import com.Da_Technomancer.essentials.gui.container.PulseCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.ITickableBlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.TickPriority;
@@ -24,10 +24,10 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver, ITickableTileEntity{
+public class PulseCircuitBlockEntity extends CircuitBlockEntity implements INamedContainerProvider, INBTReceiver, ITickableBlockEntity{
 
 	@ObjectHolder("pulse_circuit")
-	private static TileEntityType<PulseCircuitTileEntity> TYPE = null;
+	private static BlockEntityType<PulseCircuitBlockEntity> TYPE = null;
 
 	private static final int MIN_DURATION = 1;
 
@@ -38,7 +38,7 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 	private long pulseStTime = -10;//Negative value means no pulse in progress
 	private boolean hadInput = false;
 
-	public PulseCircuitTileEntity(){
+	public PulseCircuitBlockEntity(){
 		super(TYPE);
 	}
 
@@ -117,12 +117,12 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
+	public Container createMenu(int id, PlayerInventory playerInv, Player player){
 		return new PulseCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrDuration));
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayer sender){
 		settingDuration = Math.max(Math.round(nbt.getFloat("value_0")), MIN_DURATION);
 		settingStrDuration = nbt.getString("text_0");
 		setChanged();

@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
@@ -38,7 +38,7 @@ public abstract class CircuitContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity playerIn){
+	public boolean stillValid(Player playerIn){
 		return pos != null && pos.distSqr(playerIn.position(), true) <= 64;
 	}
 

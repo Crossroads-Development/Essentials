@@ -3,11 +3,11 @@ package com.Da_Technomancer.essentials.gui.container;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.AutoCrafterScreen;
-import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
+import com.Da_Technomancer.essentials.tileentities.AutoCrafterBlockEntity;
 import net.minecraft.client.util.RecipeBookCategories;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.entity.player.ServerPlayer;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
@@ -21,7 +21,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.RecipeBookCategory;
 import net.minecraft.item.crafting.RecipeItemHelper;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,7 +38,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	private static ContainerType<AutoCrafterContainer> TYPE = null;
 
 	@Nullable
-	public final AutoCrafterTileEntity te;
+	public final AutoCrafterBlockEntity te;
 	private final IInventory inv;
 	private final PlayerInventory playerInv;
 
@@ -57,9 +57,9 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	protected AutoCrafterContainer(ContainerType<? extends AutoCrafterContainer> type, int id, PlayerInventory playerInventory, IInventory inv, BlockPos pos){
 		super(type, id);
 		playerInv = playerInventory;
-		TileEntity getTe = playerInventory.player.level.getBlockEntity(pos);
-		if(getTe instanceof AutoCrafterTileEntity){
-			te = (AutoCrafterTileEntity) getTe;
+		BlockEntity getTe = playerInventory.player.level.getBlockEntity(pos);
+		if(getTe instanceof AutoCrafterBlockEntity){
+			te = (AutoCrafterBlockEntity) getTe;
 		}else{
 			//This should never happen, but we need to account for the possibility of time delay/network weirdness
 			te = null;
@@ -108,12 +108,12 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity playerIn){
+	public boolean stillValid(Player playerIn){
 		return inv.stillValid(playerIn);
 	}
 
 	@Override
-	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
+	public ItemStack quickMoveStack(Player playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
 		Slot slot = slots.get(fromSlot);
 
@@ -142,7 +142,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	@Override
-	public void handlePlacement(boolean p_217056_1_, IRecipe<?> rec, ServerPlayerEntity player){
+	public void handlePlacement(boolean p_217056_1_, IRecipe<?> rec, ServerPlayer player){
 		//Called on the server side to set recipe on the clients
 		if(te != null){
 			te.setRecipe(rec);
@@ -150,12 +150,12 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 	}
 
 	@Override
-	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
+	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
 		if(slotId > 9 && slotId < 19 && player != null && te != null){
 			if(playerInv.getCarried().isEmpty()){
 				//Click on a recipe slot with an empty cursor
 
-				IRecipe<CraftingInventory> rec = te.validateRecipe(AutoCrafterTileEntity.lookupRecipe(te.getRecipeManager(), te.recipe), this);
+				IRecipe<CraftingInventory> rec = te.validateRecipe(AutoCrafterBlockEntity.lookupRecipe(te.getRecipeManager(), te.recipe), this);
 				if(rec == null){
 					inv.removeItemNoUpdate(slotId);
 				}else{
@@ -244,7 +244,7 @@ public class AutoCrafterContainer extends RecipeBookContainer<CraftingInventory>
 		}
 
 		@Override
-		public boolean mayPickup(PlayerEntity playerIn){
+		public boolean mayPickup(Player playerIn){
 			return false;
 		}
 

@@ -3,14 +3,14 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -24,15 +24,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class ItemShifterTileEntity extends AbstractShifterTileEntity implements IInventory{
+public class ItemShifterBlockEntity extends AbstractShifterBlockEntity implements IInventory{
 
 	@ObjectHolder("item_shifter")
-	private static TileEntityType<ItemShifterTileEntity> TYPE = null;
+	private static BlockEntityType<ItemShifterBlockEntity> TYPE = null;
 
 	private ItemStack inventory = ItemStack.EMPTY;
 	private LazyOptional<IItemHandler> outputOptionalCache = LazyOptional.empty();
 
-	public ItemShifterTileEntity(){
+	public ItemShifterBlockEntity(){
 		super(TYPE);
 	}
 
@@ -52,7 +52,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 		//We use a cache for the output, which the ejectItem method will use instead of checking for the TE independently
 		if(!outputOptionalCache.isPresent()){
-			TileEntity endTE = level.getBlockEntity(endPos);
+			BlockEntity endTE = level.getBlockEntity(endPos);
 			if(endTE != null){
 				outputOptionalCache = endTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getFacing().getOpposite());
 			}
@@ -111,7 +111,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+	public Container createMenu(int id, PlayerInventory playerInventory, Player player){
 		return new ItemShifterContainer(id, playerInventory, this);
 	}
 
@@ -224,7 +224,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity player){
+	public boolean stillValid(Player player){
 		return worldPosition.distSqr(player.position(), true) < 64;
 	}
 

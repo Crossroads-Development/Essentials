@@ -22,10 +22,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.BlockEntityType;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -117,38 +117,38 @@ public final class Essentials{
 	@SubscribeEvent
 	public static void registerEnts(RegistryEvent.Register<EntityType<?>> e){
 		IForgeRegistry<EntityType<?>> registry = e.getRegistry();
-		registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, EntityClassification.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, World w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
+		registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, EntityClassification.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
 	}
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> e){
-		IForgeRegistry<TileEntityType<?>> reg = e.getRegistry();
-		registerTE(BrazierTileEntity::new, "brazier", reg, brazier);
-		registerTE(SlottedChestTileEntity::new, "slotted_chest", reg, slottedChest);
-		registerTE(SortingHopperTileEntity::new, "sorting_hopper", reg, sortingHopper);
-		registerTE(SpeedHopperTileEntity::new, "speed_hopper", reg, speedHopper);
-		registerTE(ItemShifterTileEntity::new, "item_shifter", reg, itemShifter);
-		registerTE(FluidShifterTileEntity::new, "fluid_shifter", reg, fluidShifter);
-		registerTE(HopperFilterTileEntity::new, "hopper_filter", reg, hopperFilter);
-		registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, basicItemSplitter);
-		registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
-		registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", reg, basicFluidSplitter);
-		registerTE(FluidSplitterTileEntity::new, "fluid_splitter", reg, fluidSplitter);
-		registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
-		registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
-		registerTE(TimerCircuitTileEntity::new, "timer_circuit", reg, timerCircuit);
-		registerTE(DelayCircuitTileEntity::new, "delay_circuit", reg, delayCircuit);
-		registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
-		registerTE(WireJunctionTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
-		registerTE(AutoCrafterTileEntity::new, "auto_crafter", reg, autoCrafter);
-		registerTE(RedstoneTransmitterTileEntity::new, "redstone_transmitter", reg, redstoneTransmitter);
-		registerTE(RedstoneReceiverTileEntity::new, "redstone_receiver", reg, redstoneReceiver);
-		registerTE(PulseCircuitTileEntity::new, "pulse_circuit", reg, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
+	public static void registerTileEntities(RegistryEvent.Register<BlockEntityType<?>> e){
+		IForgeRegistry<BlockEntityType<?>> reg = e.getRegistry();
+		registerTE(BrazierBlockEntity::new, "brazier", reg, brazier);
+		registerTE(SlottedChestBlockEntity::new, "slotted_chest", reg, slottedChest);
+		registerTE(SortingHopperBlockEntity::new, "sorting_hopper", reg, sortingHopper);
+		registerTE(SpeedHopperBlockEntity::new, "speed_hopper", reg, speedHopper);
+		registerTE(ItemShifterBlockEntity::new, "item_shifter", reg, itemShifter);
+		registerTE(FluidShifterBlockEntity::new, "fluid_shifter", reg, fluidShifter);
+		registerTE(HopperFilterBlockEntity::new, "hopper_filter", reg, hopperFilter);
+		registerTE(BasicItemSplitterBlockEntity::new, "basic_item_splitter", reg, basicItemSplitter);
+		registerTE(ItemSplitterBlockEntity::new, "item_splitter", reg, itemSplitter);
+		registerTE(BasicFluidSplitterBlockEntity::new, "basic_fluid_splitter", reg, basicFluidSplitter);
+		registerTE(FluidSplitterBlockEntity::new, "fluid_splitter", reg, fluidSplitter);
+		registerTE(CircuitBlockEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
+		registerTE(ConstantCircuitBlockEntity::new, "cons_circuit", reg, consCircuit);
+		registerTE(TimerCircuitBlockEntity::new, "timer_circuit", reg, timerCircuit);
+		registerTE(DelayCircuitBlockEntity::new, "delay_circuit", reg, delayCircuit);
+		registerTE(WireBlockEntity::new, "wire", reg, wireCircuit);
+		registerTE(WireJunctionBlockEntity::new, "wire_junction", reg, wireJunctionCircuit);
+		registerTE(AutoCrafterBlockEntity::new, "auto_crafter", reg, autoCrafter);
+		registerTE(RedstoneTransmitterBlockEntity::new, "redstone_transmitter", reg, redstoneTransmitter);
+		registerTE(RedstoneReceiverBlockEntity::new, "redstone_receiver", reg, redstoneReceiver);
+		registerTE(PulseCircuitBlockEntity::new, "pulse_circuit", reg, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
 	}
 
-	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
-		TileEntityType<?> teType = TileEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
+	private static void registerTE(Supplier<? extends BlockEntity> cons, String id, IForgeRegistry<BlockEntityType<?>> reg, Block... blocks){
+		BlockEntityType<?> teType = BlockEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}

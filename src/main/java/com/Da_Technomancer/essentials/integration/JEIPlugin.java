@@ -13,7 +13,7 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.Player;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
@@ -55,12 +55,12 @@ public class JEIPlugin implements IModPlugin{
 
 		@Nullable
 		@Override
-		public IRecipeTransferError transferRecipe(AutoCrafterContainer c, IRecipeLayout iRecipeLayout, PlayerEntity playerEntity, boolean maxTransfer, boolean doTransfer){
+		public IRecipeTransferError transferRecipe(AutoCrafterContainer c, IRecipeLayout iRecipeLayout, Player playerEntity, boolean maxTransfer, boolean doTransfer){
 			try{
 				if(doTransfer){
 					CraftingInventory craftInv = new CraftingInventory(new Container(null, 0){
 						@Override
-						public boolean stillValid(PlayerEntity playerIn){
+						public boolean stillValid(Player playerIn){
 							return false;
 						}
 					}, 3, 3);
