@@ -8,14 +8,14 @@ import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.TimerCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableBlockEntity;
-import net.minecraft.tileentity.BlockEntityType;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ObjectHolder;
@@ -23,10 +23,10 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class TimerCircuitBlockEntity extends CircuitBlockEntity implements INamedContainerProvider, INBTReceiver, ITickableBlockEntity{
+public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver, ITickableTileEntity{
 
 	@ObjectHolder("timer_circuit")
-	private static BlockEntityType<TimerCircuitBlockEntity> TYPE = null;
+	private static TileEntityType<TimerCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_PERIOD = 1;
 	private static final int MIN_DURATION = 0;
@@ -38,7 +38,7 @@ public class TimerCircuitBlockEntity extends CircuitBlockEntity implements IName
 
 	private long ticksExisted = 0;
 
-	public TimerCircuitBlockEntity(){
+	public TimerCircuitTileEntity(){
 		super(TYPE);
 	}
 
@@ -106,12 +106,12 @@ public class TimerCircuitBlockEntity extends CircuitBlockEntity implements IName
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInv, Player player){
+	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
 		return new TimerCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrPeriod, settingStrDuration));
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayer sender){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		settingPeriod = Math.max(MIN_PERIOD, Math.round(nbt.getFloat("value_0")));
 		settingStrPeriod = nbt.getString("text_0");
 		settingDuration = Math.max(MIN_DURATION, Math.round(nbt.getFloat("value_1")));

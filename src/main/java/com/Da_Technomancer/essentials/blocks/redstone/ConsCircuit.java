@@ -3,23 +3,23 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.items.ESItems;
-import com.Da_Technomancer.essentials.tileentities.redstone.CircuitBlockEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.ConstantCircuitBlockEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.ConstantCircuitTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.Player;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.util.InteractionResult;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockHitResult;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -32,37 +32,37 @@ public class ConsCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public boolean useInput(CircuitBlockEntity.Orient or){
+	public boolean useInput(CircuitTileEntity.Orient or){
 		return false;
 	}
 
 	@Override
-	public float getOutput(float in0, float in1, float in2, CircuitBlockEntity te){
-		if(te instanceof ConstantCircuitBlockEntity){
-			return ((ConstantCircuitBlockEntity) te).setting;
+	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
+		if(te instanceof ConstantCircuitTileEntity){
+			return ((ConstantCircuitTileEntity) te).setting;
 		}
 
 		return 0;
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
-		BlockEntity te;
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		TileEntity te;
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			super.use(state, worldIn, pos, playerIn, hand, hit);
 		}else if(playerIn.getItemInHand(hand).getItem() == ESItems.circuitWrench){
-			return InteractionResult.PASS;
-		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof ConstantCircuitBlockEntity){
-			NetworkHooks.openGui((ServerPlayer) playerIn, (INamedContainerProvider) te, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), ((ConstantCircuitBlockEntity) te).settingStr));
+			return ActionResultType.PASS;
+		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof ConstantCircuitTileEntity){
+			NetworkHooks.openGui((ServerPlayerEntity) playerIn, (INamedContainerProvider) te, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), ((ConstantCircuitTileEntity) te).settingStr));
 		}
 
-		return InteractionResult.SUCCESS;
+		return ActionResultType.SUCCESS;
 	}
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(IBlockReader worldIn){
-		return new ConstantCircuitBlockEntity();
+	public TileEntity newBlockEntity(IBlockReader worldIn){
+		return new ConstantCircuitTileEntity();
 	}
 
 	@Override

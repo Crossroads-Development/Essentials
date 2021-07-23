@@ -1,34 +1,34 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.tileentities.BrazierBlockEntity;
+import com.Da_Technomancer.essentials.tileentities.BrazierTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateDefinition;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.util.InteractionResult;
+import net.minecraft.state.StateContainer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockHitResult;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class Brazier extends BaseEntityBlock{
+public class Brazier extends ContainerBlock{
 
 	private static final VoxelShape SHAPE;
 
@@ -46,8 +46,8 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(IBlockReader world){
-		return new BrazierBlockEntity();
+	public TileEntity newBlockEntity(IBlockReader world){
+		return new BrazierTileEntity();
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState state){
-		return RenderShape.MODEL;
+	public BlockRenderType getRenderShape(BlockState state){
+		return BlockRenderType.MODEL;
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public void stepOn(Level worldIn, BlockPos pos, Entity entityIn){
+	public void stepOn(World worldIn, BlockPos pos, Entity entityIn){
 		int type = worldIn.getBlockState(pos).getValue(ESProperties.BRAZIER_CONTENTS);
 		if(type == 1){
 			entityIn.clearFire();
@@ -92,7 +92,7 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public void fallOn(Level worldIn, BlockPos pos, Entity entityIn, float fallDistance){
+	public void fallOn(World worldIn, BlockPos pos, Entity entityIn, float fallDistance){
 		int type = worldIn.getBlockState(pos).getValue(ESProperties.BRAZIER_CONTENTS);
 		if(type != 1 && type != 2){
 			super.fallOn(worldIn, pos, entityIn, fallDistance);
@@ -103,31 +103,31 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
-		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof BrazierBlockEntity){
-			ItemStack out = ((BrazierBlockEntity) te).useItem(playerIn.getItemInHand(hand));
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+		TileEntity te = worldIn.getBlockEntity(pos);
+		if(te instanceof BrazierTileEntity){
+			ItemStack out = ((BrazierTileEntity) te).useItem(playerIn.getItemInHand(hand));
 			if(!out.equals(playerIn.getItemInHand(hand))){
 				if(!worldIn.isClientSide){
 					playerIn.setItemInHand(hand, out);
 				}
-				return InteractionResult.CONSUME;
+				return ActionResultType.CONSUME;
 			}
 		}
 
-		return InteractionResult.FAIL;
+		return ActionResultType.FAIL;
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.BRAZIER_CONTENTS);
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			BlockEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof BrazierBlockEntity) {
+			TileEntity te = worldIn.getBlockEntity(pos);
+			if (te instanceof BrazierTileEntity) {
 				ItemStack made = ItemStack.EMPTY;
 				switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
 					case 3:

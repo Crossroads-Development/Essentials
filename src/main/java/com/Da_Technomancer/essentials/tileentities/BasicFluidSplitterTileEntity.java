@@ -4,7 +4,7 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.BlockEntityType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -16,19 +16,19 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 
 @ObjectHolder(Essentials.MODID)
-public class BasicFluidSplitterBlockEntity extends AbstractSplitterTE{
+public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
 	@ObjectHolder("basic_fluid_splitter")
-	private static BlockEntityType<BasicFluidSplitterBlockEntity> TYPE = null;
+	private static TileEntityType<BasicFluidSplitterTileEntity> TYPE = null;
 
 	private final FluidStack[] inventory = new FluidStack[] {FluidStack.EMPTY, FluidStack.EMPTY};
 	private static final int CAPACITY = 4000;
 
-	public BasicFluidSplitterBlockEntity(BlockEntityType<? extends AbstractSplitterTE> type){
+	public BasicFluidSplitterTileEntity(TileEntityType<? extends AbstractSplitterTE> type){
 		super(type);
 	}
 
-	public BasicFluidSplitterBlockEntity(){
+	public BasicFluidSplitterTileEntity(){
 		this(TYPE);
 	}
 
@@ -52,7 +52,7 @@ public class BasicFluidSplitterBlockEntity extends AbstractSplitterTE{
 
 		Direction dir = getFacing();
 		for(int i = 0; i < 2; i++){
-			inventory[i] = AbstractShifterBlockEntity.ejectFluid(level, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i]);
+			inventory[i] = AbstractShifterTileEntity.ejectFluid(level, endPos[i], i == 0 ? dir : dir.getOpposite(), inventory[i]);
 		}
 		setChanged();
 	}

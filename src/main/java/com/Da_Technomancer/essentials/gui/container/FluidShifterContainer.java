@@ -1,17 +1,17 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.tileentities.FluidShifterBlockEntity;
-import net.minecraft.entity.player.Player;
+import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
@@ -24,7 +24,7 @@ public class FluidShifterContainer extends Container{
 
 	private final IInventory inv;
 	private final BlockPos pos;
-	public final FluidShifterBlockEntity te;
+	public final FluidShifterTileEntity te;
 
 	public final IntDeferredRef fluidIdRef;
 	public final IntDeferredRef fluidQtyRef;
@@ -37,9 +37,9 @@ public class FluidShifterContainer extends Container{
 		super(TYPE, id);
 		this.inv = new FluidSlotManager.FakeInventory(this);
 		this.pos = pos;
-		BlockEntity t = playerInventory.player.level.getBlockEntity(pos);
-		if(t instanceof FluidShifterBlockEntity){
-			this.te = (FluidShifterBlockEntity) t;
+		TileEntity t = playerInventory.player.level.getBlockEntity(pos);
+		if(t instanceof FluidShifterTileEntity){
+			this.te = (FluidShifterTileEntity) t;
 			//Track fluid fields
 			boolean remote = te.getLevel().isClientSide;
 			fluidIdRef = new IntDeferredRef(te.getFluidManager()::getFluidId, remote);
@@ -70,7 +70,7 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public ItemStack quickMoveStack(Player playerIn, int fromSlot){
+	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
 		Slot slot = slots.get(fromSlot);
 
@@ -99,16 +99,16 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(Player playerIn){
+	public boolean stillValid(PlayerEntity playerIn){
 		return pos.distSqr(playerIn.position(), true) <= 64;
 	}
 
 	@Override
-	public void removed(Player playerIn){
+	public void removed(PlayerEntity playerIn){
 		super.removed(playerIn);
 
 		if(te != null && !te.getLevel().isClientSide){
-			if(playerIn.isAlive() && !(playerIn instanceof ServerPlayer && ((ServerPlayer) playerIn).hasDisconnected())){
+			if(playerIn.isAlive() && !(playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected())){
 				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(0).getStack());
 				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(1).getStack());
 			}else{

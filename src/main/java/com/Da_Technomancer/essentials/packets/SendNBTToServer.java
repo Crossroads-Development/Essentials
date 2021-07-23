@@ -1,9 +1,9 @@
 package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -35,9 +35,9 @@ public class SendNBTToServer extends ServerPacket{
 	}
 
 	@Override
-	protected void run(@Nullable ServerPlayer player){
+	protected void run(@Nullable ServerPlayerEntity player){
 		if(player != null){
-			BlockEntity te = player.getCommandSenderLevel().getBlockEntity(pos);
+			TileEntity te = player.getCommandSenderWorld().getBlockEntity(pos);
 
 			if(te instanceof INBTReceiver){
 				((INBTReceiver) te).receiveNBT(nbt, player);

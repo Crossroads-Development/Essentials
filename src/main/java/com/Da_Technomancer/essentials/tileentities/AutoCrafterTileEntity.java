@@ -7,9 +7,9 @@ import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -19,8 +19,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.*;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.tileentity.BlockEntityType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -39,10 +39,10 @@ import java.util.List;
 import java.util.Optional;
 
 @ObjectHolder(Essentials.MODID)
-public class AutoCrafterBlockEntity extends BlockEntity implements INBTReceiver, INamedContainerProvider{
+public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, INamedContainerProvider{
 
 	@ObjectHolder("auto_crafter")
-	private static BlockEntityType<AutoCrafterBlockEntity> TYPE = null;
+	private static TileEntityType<AutoCrafterTileEntity> TYPE = null;
 
 	/**
 	 * Inventory. Slots 0-8 are inputs, Slot 9 is output, slots 10-18 are recipe inputs
@@ -59,11 +59,11 @@ public class AutoCrafterBlockEntity extends BlockEntity implements INBTReceiver,
 	@Nullable
 	public ResourceLocation recipe;
 
-	public AutoCrafterBlockEntity(){
+	public AutoCrafterTileEntity(){
 		this(TYPE);
 	}
 
-	protected AutoCrafterBlockEntity(BlockEntityType<? extends AutoCrafterBlockEntity> type){
+	protected AutoCrafterTileEntity(TileEntityType<? extends AutoCrafterTileEntity> type){
 		super(type);
 		Arrays.fill(inv, ItemStack.EMPTY);
 	}
@@ -101,7 +101,7 @@ public class AutoCrafterBlockEntity extends BlockEntity implements INBTReceiver,
 	public static CraftingInventory prepareCraftingInv(ItemStack[] inv){
 		CraftingInventory craftInv = new CraftingInventory(new Container(null, 0){
 			@Override
-			public boolean stillValid(Player playerIn){
+			public boolean stillValid(PlayerEntity playerIn){
 				return false;
 			}
 		}, 3, 3);
@@ -351,7 +351,7 @@ public class AutoCrafterBlockEntity extends BlockEntity implements INBTReceiver,
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayer sender){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		String str = nbt.getString("recipe");
 		if(!str.isEmpty()){
 			recipe = new ResourceLocation(str);
@@ -390,7 +390,7 @@ public class AutoCrafterBlockEntity extends BlockEntity implements INBTReceiver,
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, Player player){
+	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
 		return new AutoCrafterContainer(id, playerInventory, iInv, worldPosition);
 	}
 
@@ -485,9 +485,9 @@ public class AutoCrafterBlockEntity extends BlockEntity implements INBTReceiver,
 
 		private final ItemStack[] inv;
 		@Nullable
-		private final AutoCrafterBlockEntity te;
+		private final AutoCrafterTileEntity te;
 
-		private Inventory(ItemStack[] inv, @Nullable AutoCrafterBlockEntity te){
+		private Inventory(ItemStack[] inv, @Nullable AutoCrafterTileEntity te){
 			this.inv = inv;
 			this.te = te;
 		}
@@ -542,7 +542,7 @@ public class AutoCrafterBlockEntity extends BlockEntity implements INBTReceiver,
 		}
 
 		@Override
-		public boolean stillValid(Player playerEntity){
+		public boolean stillValid(PlayerEntity playerEntity){
 			return true;
 		}
 

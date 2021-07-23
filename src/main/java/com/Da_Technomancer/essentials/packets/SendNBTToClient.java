@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials.packets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public class SendNBTToClient extends ClientPacket{
 
 	@Override
 	protected void run(){
-		BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
+		TileEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
 
 		if(te instanceof INBTReceiver){
 			((INBTReceiver) te).receiveNBT(nbt, null);

@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 
 /**
  * Any block can implement this interface to be readable by Reader Circuits (Circuit version of a comparator)
@@ -11,10 +11,10 @@ import net.minecraft.world.Level;
 public interface IReadable{
 
 	/**
-	 * @param world Level
+	 * @param world World
 	 * @param pos The position of the block
 	 * @param state The current state of this block in the world
 	 * @return The value to be read by a Reader Circuit. Return value will be rejected if negative
 	 */
-	float read(Level world, BlockPos pos, BlockState state);
+	float read(World world, BlockPos pos, BlockState state);
 }

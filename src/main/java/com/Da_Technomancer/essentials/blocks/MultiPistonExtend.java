@@ -4,11 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.material.PushReaction;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateDefinition;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.state.StateContainer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -17,7 +17,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
@@ -45,8 +45,8 @@ public class MultiPistonExtend extends Block{
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving){
-		if(!MultiPistonBase.changingLevel){
+	public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean isMoving){
+		if(!MultiPistonBase.changingWorld){
 			Direction.Axis axis = state.getValue(ESProperties.AXIS);
 			Direction.AxisDirection dir = getDirFromHead(state.getValue(ESProperties.HEAD));
 
@@ -69,13 +69,13 @@ public class MultiPistonExtend extends Block{
 	}
 
 	@Override
-	public void playerDestroy(Level worldIn, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity te, ItemStack stack){
+	public void playerDestroy(World worldIn, PlayerEntity player, BlockPos pos, BlockState state, @Nullable TileEntity te, ItemStack stack){
 		InventoryHelper.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), getPickBlock(state, null, worldIn, pos, player));
 		super.playerDestroy(worldIn, player, pos, state, te, stack);
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.AXIS, ESProperties.HEAD);
 	}
 
@@ -99,7 +99,7 @@ public class MultiPistonExtend extends Block{
 	}
 
 	@Override
-	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, Player player){
+	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player){
 		return sticky ? new ItemStack(ESBlocks.multiPistonSticky, 1) : new ItemStack(ESBlocks.multiPiston, 1);
 	}
 }

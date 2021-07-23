@@ -9,13 +9,13 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.ISidedInventoryProvider;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ITickableBlockEntity;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.tileentity.BlockEntityType;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -26,12 +26,12 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractShifterBlockEntity extends BlockEntity implements ITickableBlockEntity, INamedContainerProvider{
+public abstract class AbstractShifterTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider{
 
 	private Direction facing = null;
 	protected BlockPos endPos = null;
 
-	protected <T extends AbstractShifterBlockEntity> AbstractShifterBlockEntity(BlockEntityType<T> type){
+	protected <T extends AbstractShifterTileEntity> AbstractShifterTileEntity(TileEntityType<T> type){
 		super(type);
 	}
 
@@ -68,7 +68,7 @@ public abstract class AbstractShifterBlockEntity extends BlockEntity implements 
 		endPos = worldPosition.relative(dir, extension);
 	}
 	
-	public static ItemStack ejectItem(Level world, BlockPos outputPos, Direction fromSide, ItemStack stack, @Nullable LazyOptional<IItemHandler> outputHandlerCache){
+	public static ItemStack ejectItem(World world, BlockPos outputPos, Direction fromSide, ItemStack stack, @Nullable LazyOptional<IItemHandler> outputHandlerCache){
 		if(stack.isEmpty()){
 			return ItemStack.EMPTY;
 		}
@@ -78,7 +78,7 @@ public abstract class AbstractShifterBlockEntity extends BlockEntity implements 
 		//Capability item handlers
 		//Null means no cache, check independently
 		if(outputHandlerCache == null){
-			BlockEntity outputTE = world.getBlockEntity(outputPos);
+			TileEntity outputTE = world.getBlockEntity(outputPos);
 			LazyOptional<IItemHandler> outputCap;
 			if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
 				handler = outputCap.orElseThrow(NullPointerException::new);
@@ -113,12 +113,12 @@ public abstract class AbstractShifterBlockEntity extends BlockEntity implements 
 		return ItemStack.EMPTY;
 	}
 
-	public static FluidStack ejectFluid(Level world, BlockPos pos, Direction fromSide, FluidStack stack){
+	public static FluidStack ejectFluid(World world, BlockPos pos, Direction fromSide, FluidStack stack){
 		if(stack.isEmpty()){
 			return FluidStack.EMPTY;
 		}
 
-		BlockEntity outputTE = world.getBlockEntity(pos);
+		TileEntity outputTE = world.getBlockEntity(pos);
 		LazyOptional<IFluidHandler> outHandlerCon;
 		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
 			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);

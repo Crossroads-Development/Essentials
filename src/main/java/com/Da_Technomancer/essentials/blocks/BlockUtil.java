@@ -4,7 +4,7 @@ import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.Packet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.network.PacketDistributor;
@@ -30,7 +30,7 @@ public class BlockUtil{
 	 * @param pos The target position the packet reception area is centered around
 	 * @param packet The server->client packet to be send. Essentials channel packets only.
 	 */
-	public static void sendClientPacketAround(Level world, BlockPos pos, Packet packet){
+	public static void sendClientPacketAround(World world, BlockPos pos, Packet packet){
 		EssentialsPackets.channel.send(PacketDistributor.NEAR.with(PacketDistributor.TargetPoint.p(pos.getX(), pos.getY(), pos.getZ(), 512, world.dimension())), packet);
 	}
 

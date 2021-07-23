@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.packets;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -41,5 +41,5 @@ public abstract class ServerPacket extends Packet{
 	 * @param player The player who sent the packet, or null if n/a
 	 */
 
-	protected abstract void run(@Nullable ServerPlayer player);
+	protected abstract void run(@Nullable ServerPlayerEntity player);
 }

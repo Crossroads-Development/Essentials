@@ -6,21 +6,21 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.Player;
-import net.minecraft.item.BlockPlaceContext ;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateDefinition;
-import net.minecraft.util.InteractionResult;
+import net.minecraft.state.StateContainer;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockHitResult;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -43,19 +43,19 @@ public class ItemChute extends Block{
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext  context){
+	public BlockState getStateForPlacement(BlockItemUseContext context){
 		return defaultBlockState().setValue(ESProperties.AXIS, context.getClickedFace().getAxis());
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			if(!worldIn.isClientSide){
 				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.AXIS));//MCP note: cycle
 			}
-			return InteractionResult.SUCCESS;
+			return ActionResultType.SUCCESS;
 		}
-		return InteractionResult.PASS;
+		return ActionResultType.PASS;
 	}
 
 	@Override
@@ -71,12 +71,12 @@ public class ItemChute extends Block{
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.AXIS);
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
+	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
 		//Block updates are propagated down lines of Item Chutes, allowing caching of target positions for Item Shifters
 		if(fromPos != null){
 			Direction.Axis axis = state.getValue(ESProperties.AXIS);

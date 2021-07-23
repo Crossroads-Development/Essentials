@@ -1,11 +1,11 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.tileentities.SpeedHopperBlockEntity;
+import com.Da_Technomancer.essentials.tileentities.SpeedHopperTileEntity;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -28,8 +28,8 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(IBlockReader world){
-		return new SpeedHopperBlockEntity();
+	public TileEntity newBlockEntity(IBlockReader world){
+		return new SpeedHopperTileEntity();
 	}
 
 	@Override

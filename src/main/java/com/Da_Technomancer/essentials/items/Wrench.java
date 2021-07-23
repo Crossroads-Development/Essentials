@@ -3,15 +3,15 @@ package com.Da_Technomancer.essentials.items;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.CreativeModeTab;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.ILevelReader;
-import net.minecraft.world.Level;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nullable;
@@ -29,7 +29,7 @@ public class Wrench extends Item{
 	}
 
 	@Override
-	public Collection<CreativeModeTab> getCreativeTabs(){
+	public Collection<ItemGroup> getCreativeTabs(){
 		if(ESConfig.addWrench.get()){
 			return super.getCreativeTabs();
 		}
@@ -37,12 +37,12 @@ public class Wrench extends Item{
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(ItemStack stack, ILevelReader world, BlockPos pos, Player player){
+	public boolean doesSneakBypassUse(ItemStack stack, IWorldReader world, BlockPos pos, PlayerEntity player){
 		return true;
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		tooltip.add(new TranslationTextComponent("tt.essentials.wrench"));
 	}
 }

@@ -1,20 +1,20 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.tileentities.HopperFilterBlockEntity;
+import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.BlockPlaceContext ;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateDefinition;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.util.InteractionResult;
+import net.minecraft.state.StateContainer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockHitResult;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -22,7 +22,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -31,7 +31,7 @@ import java.util.List;
 
 import net.minecraft.block.AbstractBlock.Properties;
 
-public class HopperFilter extends BaseEntityBlock{
+public class HopperFilter extends ContainerBlock{
 
 	protected HopperFilter(){
 		super(Properties.of(Material.STONE).sound(SoundType.STONE).strength(2));
@@ -42,8 +42,8 @@ public class HopperFilter extends BaseEntityBlock{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(IBlockReader world){
-		return new HopperFilterBlockEntity();
+	public TileEntity newBlockEntity(IBlockReader world){
+		return new HopperFilterTileEntity();
 	}
 
 //	@Override
@@ -73,16 +73,16 @@ public class HopperFilter extends BaseEntityBlock{
 	}
 
 	@Override
-	public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
+	public void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.AXIS);
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			BlockEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof HopperFilterBlockEntity) {
-				InventoryHelper.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), ((HopperFilterBlockEntity) te).getFilter());
+			TileEntity te = worldIn.getBlockEntity(pos);
+			if (te instanceof HopperFilterTileEntity) {
+				InventoryHelper.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), ((HopperFilterTileEntity) te).getFilter());
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
@@ -91,17 +91,17 @@ public class HopperFilter extends BaseEntityBlock{
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
+	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			if(!worldIn.isClientSide){
 				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.AXIS));//MCP note: cycle
 			}
-			return InteractionResult.SUCCESS;
+			return ActionResultType.SUCCESS;
 		}else{
-			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(te instanceof HopperFilterBlockEntity){
+			TileEntity te = worldIn.getBlockEntity(pos);
+			if(te instanceof HopperFilterTileEntity){
 				if(!worldIn.isClientSide){
-					HopperFilterBlockEntity fte = (HopperFilterBlockEntity) te;
+					HopperFilterTileEntity fte = (HopperFilterTileEntity) te;
 					ItemStack held = playerIn.getItemInHand(hand);
 					if(fte.getFilter().isEmpty() && !held.isEmpty()){
 						fte.setFilter(held.split(1));
@@ -111,19 +111,19 @@ public class HopperFilter extends BaseEntityBlock{
 						fte.setFilter(ItemStack.EMPTY);
 					}
 				}
-				return InteractionResult.SUCCESS;
+				return ActionResultType.SUCCESS;
 			}
 		}
-		return InteractionResult.FAIL;
+		return ActionResultType.FAIL;
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext  context){
+	public BlockState getStateForPlacement(BlockItemUseContext context){
 		return defaultBlockState().setValue(ESProperties.AXIS, context.getClickedFace().getAxis());
 	}
 
 	@Override
-	public RenderShape getRenderShape(BlockState state){
-		return RenderShape.MODEL;
+	public BlockRenderType getRenderShape(BlockState state){
+		return BlockRenderType.MODEL;
 	}
 }

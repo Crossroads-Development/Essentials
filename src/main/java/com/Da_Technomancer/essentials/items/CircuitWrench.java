@@ -7,9 +7,9 @@ import com.Da_Technomancer.essentials.blocks.redstone.AbstractTile;
 import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
@@ -18,14 +18,14 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.InteractionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
@@ -110,20 +110,20 @@ public class CircuitWrench extends Item{
 	}
 
 	@Override
-	public ActionResult<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
+	public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn){
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if(playerIn.isCrouching()){
 			if(!worldIn.isClientSide){
-				NetworkHooks.openGui((ServerPlayer) playerIn, UIProvider.INSTANCE);
+				NetworkHooks.openGui((ServerPlayerEntity) playerIn, UIProvider.INSTANCE);
 			}
-			return new ActionResult<>(InteractionResult.SUCCESS, stack);
+			return new ActionResult<>(ActionResultType.SUCCESS, stack);
 		}
 
-		return new ActionResult<>(InteractionResult.SUCCESS, stack);
+		return new ActionResult<>(ActionResultType.SUCCESS, stack);
 	}
 
 	@Override
-	public InteractionResult useOn(ItemUseContext context){
+	public ActionResultType useOn(ItemUseContext context){
 		BlockState state = context.getLevel().getBlockState(context.getClickedPos());
 		BlockState toPlace = MODES.get(context.getItemInHand().getOrCreateTag().getInt(NBT_KEY) % MODES.size()).defaultBlockState();
 
@@ -134,7 +134,7 @@ public class CircuitWrench extends Item{
 				AbstractTile placeTile = (AbstractTile) toPlace.getBlock();
 
 				if(worldTile == placeTile){
-					return InteractionResult.SUCCESS;
+					return ActionResultType.SUCCESS;
 				}
 
 				boolean allowed = false;
@@ -180,28 +180,28 @@ public class CircuitWrench extends Item{
 						}
 					}
 					context.getLevel().setBlockAndUpdate(context.getClickedPos(), toPlace);
-					return InteractionResult.SUCCESS;
+					return ActionResultType.SUCCESS;
 				}else{
 					//Print a message saying quartz is needed
 					context.getPlayer().displayClientMessage(new TranslationTextComponent("tt.essentials.circuit_wrench.quartz"), true);
-					return InteractionResult.FAIL;
+					return ActionResultType.FAIL;
 				}
 			}else{
 				//Rotate circuit
 				if(state.hasProperty(ESProperties.HORIZ_FACING)){
 					context.getLevel().setBlockAndUpdate(context.getClickedPos(), state.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING).getClockWise()));
-					return InteractionResult.SUCCESS;
+					return ActionResultType.SUCCESS;
 				}
 			}
 		}
 
-		return InteractionResult.PASS;
+		return ActionResultType.PASS;
 	}
 
 	private static final Style style = Style.EMPTY.applyFormat(TextFormatting.DARK_RED);
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
+	public void appendHoverText(ItemStack stack, @Nullable World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
 		int mode = stack.getOrCreateTag().getInt(NBT_KEY) % MODES.size();
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(MODES.get(mode).getDescriptionId())));
 		tooltip.add(new TranslationTextComponent("tt.essentials.circuit_wrench_info"));
@@ -214,7 +214,7 @@ public class CircuitWrench extends Item{
 
 		@Nullable
 		@Override
-		public Container createMenu(int menuId, PlayerInventory playerInv, Player player){
+		public Container createMenu(int menuId, PlayerInventory playerInv, PlayerEntity player){
 			return new CircuitWrenchContainer(menuId, playerInv, null);
 		}
 

@@ -1,11 +1,11 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import net.minecraft.core.Direction;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.item.DyeColor;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.EnumProperty;
+import net.minecraft.state.IntegerProperty;
+import net.minecraft.util.Direction;
 
 public class ESProperties{
 

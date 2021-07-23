@@ -1,18 +1,18 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.tileentity.BlockEntityType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
-public class SpeedHopperBlockEntity extends SortingHopperBlockEntity{
+public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
 	@ObjectHolder("speed_hopper")
-	private static BlockEntityType<SpeedHopperBlockEntity> TYPE = null;
+	private static TileEntityType<SpeedHopperTileEntity> TYPE = null;
 
-	public SpeedHopperBlockEntity(){
+	public SpeedHopperTileEntity(){
 		super(TYPE);
 		//handler = new SpeedItemHandler();
 	}
@@ -40,7 +40,7 @@ public class SpeedHopperBlockEntity extends SortingHopperBlockEntity{
 
 			Direction facing = getDir();
 
-			BlockEntity te = world.getBlockEntity(pos.offset(facing));
+			TileEntity te = world.getTileEntity(pos.offset(facing));
 			LazyOptional<IItemHandler> otherCap;
 			if(te != null && (otherCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
 				IItemHandler otherHandler = otherCap.orElseThrow(NullPointerException::new);

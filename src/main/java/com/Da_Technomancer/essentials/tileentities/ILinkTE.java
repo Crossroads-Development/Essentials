@@ -1,8 +1,8 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.packets.ILongReceiver;
-import net.minecraft.entity.player.Player;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -38,7 +38,7 @@ public interface ILinkTE extends ILongReceiver{
 	 * @param player The calling player, for sending chat messages
 	 * @return Whether the operation succeeded; returning false will cancel the link
 	 */
-	boolean createLinkSource(ILinkTE endpoint, @Nullable Player player);
+	boolean createLinkSource(ILinkTE endpoint, @Nullable PlayerEntity player);
 
 	/**
 	 * Called on the endpoint when a link is created
@@ -67,8 +67,8 @@ public interface ILinkTE extends ILongReceiver{
 	/**
 	 * @return This TE
 	 */
-	default BlockEntity getTE(){
-		return (BlockEntity) this;
+	default TileEntity getTE(){
+		return (TileEntity) this;
 	}
 
 	default int getRange(){

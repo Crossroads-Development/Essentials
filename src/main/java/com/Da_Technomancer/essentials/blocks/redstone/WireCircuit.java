@@ -2,20 +2,20 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import com.Da_Technomancer.essentials.tileentities.redstone.WireBlockEntity;
+import com.Da_Technomancer.essentials.tileentities.redstone.WireTileEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateDefinition;
-import net.minecraft.tileentity.BlockEntity;
+import net.minecraft.state.StateContainer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.Level;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -29,12 +29,12 @@ public class WireCircuit extends AbstractTile{
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.CONNECTIONS);
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		//Adjust blockstate visual
 		int meta = 0;
 		for(int i = 2; i < 6; i++){
@@ -51,9 +51,9 @@ public class WireCircuit extends AbstractTile{
 		}
 
 		//Wires propogate block updates in all horizontal directions to make sure any attached circuit can update when a new connection is made/broken
-		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof WireBlockEntity){
-			WireBlockEntity wte = (WireBlockEntity) te;
+		TileEntity te = worldIn.getBlockEntity(pos);
+		if(te instanceof WireTileEntity){
+			WireTileEntity wte = (WireTileEntity) te;
 
 			//Prevent the repeated updating of the same wire within a gametick
 			long worldTime = worldIn.getGameTime();
@@ -73,12 +73,12 @@ public class WireCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(IBlockReader worldIn){
-		return new WireBlockEntity();
+	public TileEntity newBlockEntity(IBlockReader worldIn){
+		return new WireTileEntity();
 	}
 
 	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 		worldIn.neighborChanged(pos, this, pos);
 	}
 

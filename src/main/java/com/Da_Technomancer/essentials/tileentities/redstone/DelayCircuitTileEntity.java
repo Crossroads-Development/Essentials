@@ -8,14 +8,14 @@ import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableBlockEntity;
-import net.minecraft.tileentity.BlockEntityType;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.TickPriority;
@@ -26,10 +26,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 @ObjectHolder(Essentials.MODID)
-public class DelayCircuitBlockEntity extends CircuitBlockEntity implements INamedContainerProvider, INBTReceiver, ITickableBlockEntity{
+public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver, ITickableTileEntity{
 
 	@ObjectHolder("delay_circuit")
-	private static BlockEntityType<DelayCircuitBlockEntity> TYPE = null;
+	private static TileEntityType<DelayCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_DELAY = 1;
 
@@ -41,7 +41,7 @@ public class DelayCircuitBlockEntity extends CircuitBlockEntity implements IName
 	private float currentOutput = 0;//The current output of the circuit
 	private final ArrayList<Pair<Float, Long>> queuedOutputs = new ArrayList<>();//A list of each output that will be emitted, paired with the timestamp to start using that output, in chronological order
 
-	public DelayCircuitBlockEntity(){
+	public DelayCircuitTileEntity(){
 		super(TYPE);
 	}
 
@@ -137,12 +137,12 @@ public class DelayCircuitBlockEntity extends CircuitBlockEntity implements IName
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInv, Player player){
+	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
 		return new DelayCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrDelay));
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayer sender){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		settingDelay = Math.max(MIN_DELAY, Math.round(nbt.getFloat("value_0")));
 		settingStrDelay = nbt.getString("text_0");
 		if(!queuedOutputs.isEmpty()){

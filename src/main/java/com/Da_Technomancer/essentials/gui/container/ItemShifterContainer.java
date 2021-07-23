@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
@@ -41,12 +41,12 @@ public class ItemShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(Player playerIn){
+	public boolean stillValid(PlayerEntity playerIn){
 		return inv.stillValid(playerIn);
 	}
 
 	@Override
-	public ItemStack quickMoveStack(Player playerIn, int fromSlot){
+	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
 		Slot slot = slots.get(fromSlot);
 

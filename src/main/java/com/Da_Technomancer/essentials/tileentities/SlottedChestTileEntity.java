@@ -6,16 +6,16 @@ import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.Player;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayer;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.BlockEntity;
-import net.minecraft.tileentity.BlockEntityType;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -29,12 +29,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class SlottedChestBlockEntity extends BlockEntity implements INBTReceiver, INamedContainerProvider{
+public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, INamedContainerProvider{
 
 	@ObjectHolder("slotted_chest")
-	private static BlockEntityType<SlottedChestBlockEntity> TYPE = null;
+	private static TileEntityType<SlottedChestTileEntity> TYPE = null;
 
-	public SlottedChestBlockEntity(){
+	public SlottedChestTileEntity(){
 		super(TYPE);
 		for(int i = 0; i < 54; i++){
 			inv[i] = ItemStack.EMPTY;
@@ -127,7 +127,7 @@ public class SlottedChestBlockEntity extends BlockEntity implements INBTReceiver
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayer sender){
+	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
 		for(int i = 0; i < 54; i++){
 			if(nbt.contains("lock" + i)){
 				lockedInv[i] = ItemStack.of(nbt.getCompound("lock" + i));
@@ -144,7 +144,7 @@ public class SlottedChestBlockEntity extends BlockEntity implements INBTReceiver
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, Player player){
+	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
 		return new SlottedChestContainer(id, playerInventory, iInv, lockedInv);
 	}
 
@@ -214,9 +214,9 @@ public class SlottedChestBlockEntity extends BlockEntity implements INBTReceiver
 		private final ItemStack[] inv;
 		private final ItemStack[] lockedInv;
 		@Nullable
-		private final SlottedChestBlockEntity te;
+		private final SlottedChestTileEntity te;
 
-		public Inventory(ItemStack[] inv, ItemStack[] filter, @Nullable SlottedChestBlockEntity te){
+		public Inventory(ItemStack[] inv, ItemStack[] filter, @Nullable SlottedChestTileEntity te){
 			this.inv = inv;
 			lockedInv = filter;
 			this.te = te;
@@ -281,7 +281,7 @@ public class SlottedChestBlockEntity extends BlockEntity implements INBTReceiver
 		}
 
 		@Override
-		public boolean stillValid(Player playerEntity){
+		public boolean stillValid(PlayerEntity playerEntity){
 			return true;
 		}
 
