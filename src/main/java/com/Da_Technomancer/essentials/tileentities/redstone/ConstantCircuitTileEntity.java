@@ -6,25 +6,25 @@ import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class ConstantCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver{
+public class ConstantCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver{
 
 	@ObjectHolder("cons_circuit")
-	private static TileEntityType<ConstantCircuitTileEntity> TYPE = null;
+	private static BlockEntityType<ConstantCircuitTileEntity> TYPE = null;
 
 	public float setting = 0;
 	public String settingStr = "0";
@@ -39,7 +39,7 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 		nbt.putFloat("setting", setting);
 		nbt.putString("setting_s", settingStr);
@@ -47,33 +47,33 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements INam
 	}
 
 	@Override
-	public CompoundNBT getUpdateTag(){
-		CompoundNBT nbt = super.getUpdateTag();
+	public CompoundTag getUpdateTag(){
+		CompoundTag nbt = super.getUpdateTag();
 		nbt.putFloat("setting", setting);
 		nbt.putString("setting_s", settingStr);
 		return nbt;
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 		setting = nbt.getFloat("setting");
 		settingStr = nbt.getString("setting_s");
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.cons_circuit");
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.cons_circuit");
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInv, Player player){
 		return new ConstantCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStr));
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		setting = nbt.getFloat("value_0");
 		settingStr = nbt.getString("text_0");
 		setChanged();

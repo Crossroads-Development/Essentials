@@ -3,18 +3,18 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.packets.SendLongToClient;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class LinkHelper{
 
-	public static final ITag<Item> LINKING_TOOLS = ItemTags.bind(new ResourceLocation(Essentials.MODID, "linking_tool").toString());
+	public static final Tag<Item> LINKING_TOOLS = ItemTags.bind(new ResourceLocation(Essentials.MODID, "linking_tool").toString());
 	public static final String POS_NBT = "c_link";
 	public static final String DIM_NBT = "c_link_dim";
 	public static final byte LINK_PACKET_ID = 8;//Used to add a link with position encoded into the message
@@ -53,7 +53,7 @@ public class LinkHelper{
 		return linked.stream().map(relPos -> relPos.offset(selfPos)).collect(Collectors.toList());
 	}
 
-	public void readNBT(CompoundNBT nbt){
+	public void readNBT(CompoundTag nbt){
 		int i = 0;
 		while(nbt.contains("link_" + i)){
 			linked.add(BlockPos.of(nbt.getLong("link_" + i)));
@@ -65,7 +65,7 @@ public class LinkHelper{
 	 * Writex this link helper to nbt. Should be used in write() and getUpdatePacket()
 	 * @param nbt The nbt compound being written to
 	 */
-	public void writeNBT(CompoundNBT nbt){
+	public void writeNBT(CompoundTag nbt){
 		int count = 0;
 		for(BlockPos relPos : linked){
 			nbt.putLong("link_" + count++, relPos.asLong());
@@ -78,7 +78,7 @@ public class LinkHelper{
 	 * @param player Player to send chat messages to
 	 * @return Whether this linking succeeded
 	 */
-	public boolean addLink(ILinkTE endpoint, @Nullable PlayerEntity player){
+	public boolean addLink(ILinkTE endpoint, @Nullable Player player){
 		if(linked.size() >= te.getMaxLinks()){
 			return false;
 		}
@@ -103,10 +103,10 @@ public class LinkHelper{
 
 	public void unlinkAllEndpoints(){
 		BlockPos selfPos = te.getTE().getBlockPos();
-		World world = te.getTE().getLevel();
+		Level world = te.getTE().getLevel();
 		for(BlockPos relPos : linked){
 			BlockPos endPos = relPos.offset(selfPos);
-			TileEntity endTe = world.getBlockEntity(endPos);
+			BlockEntity endTe = world.getBlockEntity(endPos);
 			if(endTe instanceof ILinkTE){
 				((ILinkTE) endTe).removeLinkEnd(selfPos);
 			}
@@ -134,7 +134,7 @@ public class LinkHelper{
 	 * Helper method to build a rendering frustrum box with all links
 	 * @return A BB for returning to TileEntity::getRenderBoundingBox
 	 */
-	public AxisAlignedBB frustrum(){
+	public AABB frustrum(){
 		//Expands the frustrum box to include linked positions
 		BlockPos pos = te.getTE().getBlockPos();
 		int[] min = new int[3];
@@ -147,7 +147,7 @@ public class LinkHelper{
 			max[1] = Math.max(max[1], link.getY());
 			max[2] = Math.max(max[2], link.getZ());
 		}
-		return new AxisAlignedBB(min[0] + pos.getX(), min[1] + pos.getY(), min[2] + pos.getZ(), max[0] + pos.getX() + 1, max[1] + pos.getY() + 1, max[2] + pos.getZ() + 1);
+		return new AABB(min[0] + pos.getX(), min[1] + pos.getY(), min[2] + pos.getZ(), max[0] + pos.getX() + 1, max[1] + pos.getY() + 1, max[2] + pos.getZ() + 1);
 	}
 
 	public static boolean isLinkTool(ItemStack stack){
@@ -161,15 +161,15 @@ public class LinkHelper{
 	 * @param player The current player
 	 * @return The possibly modified wrench
 	 */
-	public static ItemStack wrench(ILinkTE linkTE, ItemStack wrench, PlayerEntity player){
+	public static ItemStack wrench(ILinkTE linkTE, ItemStack wrench, Player player){
 		if(player.isCrouching()){
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.clear"), player.getUUID());
+			player.sendMessage(new TranslatableComponent("tt.essentials.linking.clear"), player.getUUID());
 			ArrayList<BlockPos> links = new ArrayList<>(linkTE.getLinks());
-			World world = linkTE.getTE().getLevel();
+			Level world = linkTE.getTE().getLevel();
 			BlockPos srcPos = linkTE.getTE().getBlockPos();
 			for(BlockPos link : links){
 				linkTE.removeLinkSource(link);
-				TileEntity endTE = world.getBlockEntity(srcPos.offset(link));
+				BlockEntity endTE = world.getBlockEntity(srcPos.offset(link));
 				if(endTE instanceof ILinkTE){
 					((ILinkTE) endTE).removeLinkEnd(srcPos);
 				}
@@ -180,7 +180,7 @@ public class LinkHelper{
 
 		Pair<String, BlockPos> wrenchData = readLinkNBT(wrench);
 		if(wrenchData != null && wrenchData.getLeft().equals(getWorldString(player.level))){
-			TileEntity prevTE = player.level.getBlockEntity(wrenchData.getRight());
+			BlockEntity prevTE = player.level.getBlockEntity(wrenchData.getRight());
 			if(prevTE instanceof ILinkTE && ((ILinkTE) prevTE).canLink(linkTE) && prevTE != linkTE){
 				int range = ((ILinkTE) prevTE).getRange();
 				if(wrenchData.getRight().distSqr(linkTE.getTE().getBlockPos()) <= range * range){
@@ -190,29 +190,29 @@ public class LinkHelper{
 					if(prevLinkTe.getLinks().contains(relLinkPos)){
 						prevLinkTe.removeLinkSource(relLinkPos);
 						linkTE.removeLinkEnd(prevTE.getBlockPos());
-						player.sendMessage(new TranslationTextComponent("tt.essentials.linking.remove", prevTE.getBlockPos(), linkTE.getTE().getBlockPos()), player.getUUID());
+						player.sendMessage(new TranslatableComponent("tt.essentials.linking.remove", prevTE.getBlockPos(), linkTE.getTE().getBlockPos()), player.getUUID());
 					}else{
 						//Otherwise, create it
 						if(prevLinkTe.getLinks().size() < prevLinkTe.getMaxLinks()){
 							if(prevLinkTe.createLinkSource(linkTE, player)){
 								linkTE.createLinkEnd(prevLinkTe);
-								player.sendMessage(new TranslationTextComponent("tt.essentials.linking.success", prevTE.getBlockPos(), linkTE.getTE().getBlockPos()), player.getUUID());
+								player.sendMessage(new TranslatableComponent("tt.essentials.linking.success", prevTE.getBlockPos(), linkTE.getTE().getBlockPos()), player.getUUID());
 							}
 						}else{
-							player.sendMessage(new TranslationTextComponent("tt.essentials.linking.full", prevLinkTe.getMaxLinks()), player.getUUID());
+							player.sendMessage(new TranslatableComponent("tt.essentials.linking.full", prevLinkTe.getMaxLinks()), player.getUUID());
 						}
 					}
 				}else{
-					player.sendMessage(new TranslationTextComponent("tt.essentials.linking.range"), player.getUUID());
+					player.sendMessage(new TranslatableComponent("tt.essentials.linking.range"), player.getUUID());
 				}
 				clearLinkNBT(wrench);
 				return wrench;
 			}else{
-				player.sendMessage(new TranslationTextComponent("tt.essentials.linking.invalid"), player.getUUID());
+				player.sendMessage(new TranslatableComponent("tt.essentials.linking.invalid"), player.getUUID());
 			}
 		}else if(linkTE.canBeginLinking()){
 			setLinkNBT(wrench, linkTE.getTE().getBlockPos(), getWorldString(linkTE.getTE().getLevel()));
-			player.sendMessage(new TranslationTextComponent("tt.essentials.linking.start"), player.getUUID());
+			player.sendMessage(new TranslatableComponent("tt.essentials.linking.start"), player.getUUID());
 			return wrench;
 		}
 
@@ -220,18 +220,18 @@ public class LinkHelper{
 		return wrench;
 	}
 
-	private static String getWorldString(World world){
+	private static String getWorldString(Level world){
 		return world.dimension().location().toString();
 	}
 
 	private static void setLinkNBT(ItemStack linkingTool, BlockPos targetPos, String targetWorld){
-		CompoundNBT itemNBT = linkingTool.getOrCreateTag();
+		CompoundTag itemNBT = linkingTool.getOrCreateTag();
 		itemNBT.putLong(POS_NBT, targetPos.asLong());
 		itemNBT.putString(DIM_NBT, targetWorld);
 	}
 
 	private static void clearLinkNBT(ItemStack linkingTool){
-		CompoundNBT itemNBT = linkingTool.getTag();
+		CompoundTag itemNBT = linkingTool.getTag();
 		if(itemNBT != null){
 			itemNBT.remove(POS_NBT);
 			itemNBT.remove(DIM_NBT);
@@ -240,7 +240,7 @@ public class LinkHelper{
 
 	@Nullable
 	private static Pair<String, BlockPos> readLinkNBT(ItemStack linkingTool){
-		CompoundNBT itemNBT = linkingTool.getTag();
+		CompoundTag itemNBT = linkingTool.getTag();
 		if(itemNBT == null){
 			return null;
 		}

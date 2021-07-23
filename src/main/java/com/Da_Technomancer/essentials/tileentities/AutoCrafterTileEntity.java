@@ -5,26 +5,26 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.item.crafting.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -38,11 +38,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
+
 @ObjectHolder(Essentials.MODID)
-public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, INamedContainerProvider{
+public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, MenuProvider{
 
 	@ObjectHolder("auto_crafter")
-	private static TileEntityType<AutoCrafterTileEntity> TYPE = null;
+	private static BlockEntityType<AutoCrafterTileEntity> TYPE = null;
 
 	/**
 	 * Inventory. Slots 0-8 are inputs, Slot 9 is output, slots 10-18 are recipe inputs
@@ -63,7 +69,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		this(TYPE);
 	}
 
-	protected AutoCrafterTileEntity(TileEntityType<? extends AutoCrafterTileEntity> type){
+	protected AutoCrafterTileEntity(BlockEntityType<? extends AutoCrafterTileEntity> type){
 		super(type);
 		Arrays.fill(inv, ItemStack.EMPTY);
 	}
@@ -89,7 +95,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 	@Nullable
-	public static IRecipe<?> lookupRecipe(RecipeManager manager, ResourceLocation recipe){
+	public static Recipe<?> lookupRecipe(RecipeManager manager, ResourceLocation recipe){
 		return recipe == null ? null : manager.byKey(recipe).orElse(null);
 	}
 
@@ -98,10 +104,10 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	 * @param inv A size 19 or more array, uses indices [10, 19]
 	 * @return A crafting inventory
 	 */
-	public static CraftingInventory prepareCraftingInv(ItemStack[] inv){
-		CraftingInventory craftInv = new CraftingInventory(new Container(null, 0){
+	public static CraftingContainer prepareCraftingInv(ItemStack[] inv){
+		CraftingContainer craftInv = new CraftingContainer(new AbstractContainerMenu(null, 0){
 			@Override
-			public boolean stillValid(PlayerEntity playerIn){
+			public boolean stillValid(Player playerIn){
 				return false;
 			}
 		}, 3, 3);
@@ -118,13 +124,13 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	 * @return The current recipe if applicable, or null otherwise
 	 */
 	@Nullable
-	public IRecipe<CraftingInventory> findRecipe(CraftingInventory fakeInv, @Nullable AutoCrafterContainer container){
-		IRecipe<CraftingInventory> iRecipe;
+	public Recipe<CraftingContainer> findRecipe(CraftingContainer fakeInv, @Nullable AutoCrafterContainer container){
+		Recipe<CraftingContainer> iRecipe;
 
 		if(recipe == null){
 			//No recipe has been directly set via recipe book/JEI. Pick a recipe based on manually configured inputs, if applicable
 			//Use the recipe manager to find a recipe matching the inputs
-			Optional<ICraftingRecipe> recipeOptional = getRecipeManager().getRecipeFor(IRecipeType.CRAFTING, fakeInv, level);
+			Optional<CraftingRecipe> recipeOptional = getRecipeManager().getRecipeFor(RecipeType.CRAFTING, fakeInv, level);
 			iRecipe = validateRecipe(recipeOptional.orElse(null), container);
 		}else{
 			//Recipe set via recipe book/JEI
@@ -141,11 +147,11 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	 */
 	@Nullable
 	@SuppressWarnings("unchecked")
-	public IRecipe<CraftingInventory> validateRecipe(IRecipe<?> rec, @Nullable AutoCrafterContainer container){
-		if(rec == null || rec.getType() != IRecipeType.CRAFTING || !rec.canCraftInDimensions(3, 3)){
+	public Recipe<CraftingContainer> validateRecipe(Recipe<?> rec, @Nullable AutoCrafterContainer container){
+		if(rec == null || rec.getType() != RecipeType.CRAFTING || !rec.canCraftInDimensions(3, 3)){
 			return null;
 		}
-		return (IRecipe<CraftingInventory>) rec;
+		return (Recipe<CraftingContainer>) rec;
 	}
 
 	public void redstoneUpdate(boolean newReds){
@@ -154,10 +160,10 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 			setChanged();
 			if(redstone && level != null && !level.isClientSide){
 				//Create a fake inventory with the manually configured inputs for finding a matching recipe
-				CraftingInventory fakeInv = prepareCraftingInv(inv);
+				CraftingContainer fakeInv = prepareCraftingInv(inv);
 
 				//Re-use the newly created fakeInv to save having to re-create it
-				IRecipe<CraftingInventory> iRecipe = findRecipe(fakeInv, null);
+				Recipe<CraftingContainer> iRecipe = findRecipe(fakeInv, null);
 
 				if(iRecipe != null){
 					ItemStack output;
@@ -232,7 +238,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 							}
 							if(slot == -1){
 								//Item can't fit in the input slots- eject
-								InventoryHelper.dropItemStack(level, worldPosition.getX() + Math.random(), worldPosition.getY() + Math.random(), worldPosition.getZ() + Math.random(), s);
+								Containers.dropItemStack(level, worldPosition.getX() + Math.random(), worldPosition.getY() + Math.random(), worldPosition.getZ() + Math.random(), s);
 							}else if(inv[slot].isEmpty()){
 								inv[slot] = s;
 							}else{
@@ -247,12 +253,12 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 
 	public void dropItems(){
 		for(int i = 0; i < 10; i++){
-			InventoryHelper.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inv[i]);
+			Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inv[i]);
 		}
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 
 		String recPath = nbt.getString("recipe");
@@ -272,12 +278,12 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 
 		for(int i = 0; i < inv.length; ++i){
 			if(!inv[i].isEmpty()){
-				nbt.put("slot_" + i, inv[i].save(new CompoundNBT()));
+				nbt.put("slot_" + i, inv[i].save(new CompoundTag()));
 			}
 		}
 
@@ -290,15 +296,15 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 	@Override
-	public CompoundNBT getUpdateTag(){
-		CompoundNBT nbt = super.getUpdateTag();
+	public CompoundTag getUpdateTag(){
+		CompoundTag nbt = super.getUpdateTag();
 		if(recipe != null){
 			nbt.putString("recipe", recipe.toString());
 		}
 		return nbt;
 	}
 
-	public int getLegalSlots(Item item, IInventory inv, @Nullable AutoCrafterContainer container){
+	public int getLegalSlots(Item item, Container inv, @Nullable AutoCrafterContainer container){
 		//The maximum number of slots an item type can use is equal to the number of items in the recipe input
 		int count = 0;
 		if(recipe == null){
@@ -309,7 +315,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 				}
 			}
 		}else{
-			IRecipe<CraftingInventory> rec = validateRecipe(lookupRecipe(getRecipeManager(), recipe), container);
+			Recipe<CraftingContainer> rec = validateRecipe(lookupRecipe(getRecipeManager(), recipe), container);
 			if(rec != null){
 				ItemStack testStack = new ItemStack(item, 1);
 				for(Ingredient ingr : rec.getIngredients()){
@@ -322,7 +328,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		return count;
 	}
 
-	public int getUsedSlots(Item item, IInventory inv){
+	public int getUsedSlots(Item item, Container inv){
 		int count = 0;
 		for(int i = 0; i < 9; i++){
 			if(inv.getItem(i).getItem() == item){
@@ -351,7 +357,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		String str = nbt.getString("recipe");
 		if(!str.isEmpty()){
 			recipe = new ResourceLocation(str);
@@ -369,7 +375,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	 * For server side use only- sets the recipe and updates it on all clients
 	 * @param rec The recipe to set
 	 */
-	public void setRecipe(@Nullable IRecipe<?> rec){
+	public void setRecipe(@Nullable Recipe<?> rec){
 		recipe = rec == null ? null : rec.getId();
 		//When setting a recipe, overwrite the manually set recipe input slots
 		if(recipe != null){
@@ -378,19 +384,19 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 				setChanged();
 			}
 		}
-		CompoundNBT nbt = new CompoundNBT();
+		CompoundTag nbt = new CompoundTag();
 		nbt.putString("recipe", recipe == null ? "" : recipe.toString());
 		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(nbt, worldPosition));
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.auto_crafter");
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.auto_crafter");
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player){
 		return new AutoCrafterContainer(id, playerInventory, iInv, worldPosition);
 	}
 
@@ -481,7 +487,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 	}
 
 
-	public static class Inventory implements IInventory{
+	public static class Inventory implements Container{
 
 		private final ItemStack[] inv;
 		@Nullable
@@ -542,7 +548,7 @@ public class AutoCrafterTileEntity extends TileEntity implements INBTReceiver, I
 		}
 
 		@Override
-		public boolean stillValid(PlayerEntity playerEntity){
+		public boolean stillValid(Player playerEntity){
 			return true;
 		}
 

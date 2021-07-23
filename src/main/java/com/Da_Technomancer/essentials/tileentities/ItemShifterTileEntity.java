@@ -2,18 +2,18 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -24,10 +24,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class ItemShifterTileEntity extends AbstractShifterTileEntity implements IInventory{
+public class ItemShifterTileEntity extends AbstractShifterTileEntity implements Container{
 
 	@ObjectHolder("item_shifter")
-	private static TileEntityType<ItemShifterTileEntity> TYPE = null;
+	private static BlockEntityType<ItemShifterTileEntity> TYPE = null;
 
 	private ItemStack inventory = ItemStack.EMPTY;
 	private LazyOptional<IItemHandler> outputOptionalCache = LazyOptional.empty();
@@ -52,7 +52,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 		//We use a cache for the output, which the ejectItem method will use instead of checking for the TE independently
 		if(!outputOptionalCache.isPresent()){
-			TileEntity endTE = level.getBlockEntity(endPos);
+			BlockEntity endTE = level.getBlockEntity(endPos);
 			if(endTE != null){
 				outputOptionalCache = endTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getFacing().getOpposite());
 			}
@@ -68,17 +68,17 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 
 		if(!inventory.isEmpty()){
-			nbt.put("inv", inventory.save(new CompoundNBT()));
+			nbt.put("inv", inventory.save(new CompoundTag()));
 		}
 		return nbt;
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 
 		if(nbt.contains("inv")){
@@ -105,13 +105,13 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.item_shifter");
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.item_shifter");
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player){
 		return new ItemShifterContainer(id, playerInventory, this);
 	}
 
@@ -224,7 +224,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity player){
+	public boolean stillValid(Player player){
 		return worldPosition.distSqr(player.position(), true) < 64;
 	}
 

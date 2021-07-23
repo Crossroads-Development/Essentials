@@ -3,19 +3,19 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.ISidedInventoryProvider;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.WorldlyContainerHolder;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -26,12 +26,12 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractShifterTileEntity extends TileEntity implements ITickableTileEntity, INamedContainerProvider{
+public abstract class AbstractShifterTileEntity extends BlockEntity implements TickableBlockEntity, MenuProvider{
 
 	private Direction facing = null;
 	protected BlockPos endPos = null;
 
-	protected <T extends AbstractShifterTileEntity> AbstractShifterTileEntity(TileEntityType<T> type){
+	protected <T extends AbstractShifterTileEntity> AbstractShifterTileEntity(BlockEntityType<T> type){
 		super(type);
 	}
 
@@ -68,7 +68,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		endPos = worldPosition.relative(dir, extension);
 	}
 	
-	public static ItemStack ejectItem(World world, BlockPos outputPos, Direction fromSide, ItemStack stack, @Nullable LazyOptional<IItemHandler> outputHandlerCache){
+	public static ItemStack ejectItem(Level world, BlockPos outputPos, Direction fromSide, ItemStack stack, @Nullable LazyOptional<IItemHandler> outputHandlerCache){
 		if(stack.isEmpty()){
 			return ItemStack.EMPTY;
 		}
@@ -78,7 +78,7 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		//Capability item handlers
 		//Null means no cache, check independently
 		if(outputHandlerCache == null){
-			TileEntity outputTE = world.getBlockEntity(outputPos);
+			BlockEntity outputTE = world.getBlockEntity(outputPos);
 			LazyOptional<IItemHandler> outputCap;
 			if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
 				handler = outputCap.orElseThrow(NullPointerException::new);
@@ -90,8 +90,8 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 		//ISidedInventoryProvider
 		if(handler == null){
 			BlockState outputState = world.getBlockState(outputPos);
-			if(outputState.getBlock() instanceof ISidedInventoryProvider){
-				ISidedInventory inv = ((ISidedInventoryProvider) outputState.getBlock()).getContainer(outputState, world, outputPos);
+			if(outputState.getBlock() instanceof WorldlyContainerHolder){
+				WorldlyContainer inv = ((WorldlyContainerHolder) outputState.getBlock()).getContainer(outputState, world, outputPos);
 				handler = new InvWrapper(inv);
 			}
 		}
@@ -108,17 +108,17 @@ public abstract class AbstractShifterTileEntity extends TileEntity implements IT
 
 		//Drop the item in the world
 		ItemEntity ent = new ItemEntity(world, outputPos.getX() + 0.5D, outputPos.getY() + 0.5D, outputPos.getZ() + 0.5D, stack);
-		ent.setDeltaMovement(Vector3d.ZERO);
+		ent.setDeltaMovement(Vec3.ZERO);
 		world.addFreshEntity(ent);
 		return ItemStack.EMPTY;
 	}
 
-	public static FluidStack ejectFluid(World world, BlockPos pos, Direction fromSide, FluidStack stack){
+	public static FluidStack ejectFluid(Level world, BlockPos pos, Direction fromSide, FluidStack stack){
 		if(stack.isEmpty()){
 			return FluidStack.EMPTY;
 		}
 
-		TileEntity outputTE = world.getBlockEntity(pos);
+		BlockEntity outputTE = world.getBlockEntity(pos);
 		LazyOptional<IFluidHandler> outHandlerCon;
 		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
 			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);

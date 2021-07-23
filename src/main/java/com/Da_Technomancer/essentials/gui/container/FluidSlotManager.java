@@ -4,24 +4,24 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.PlayerContainer;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IntReferenceHolder;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
@@ -77,8 +77,8 @@ public class FluidSlotManager{
 	private int windowYStart;
 	private int xPos;
 	private int yPos;
-	private IntReferenceHolder idRef;
-	private IntReferenceHolder qtyRef;
+	private DataSlot idRef;
+	private DataSlot qtyRef;
 
 
 	private static final int MAX_HEIGHT = 48;
@@ -96,7 +96,7 @@ public class FluidSlotManager{
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos, IntReferenceHolder idRef, IntReferenceHolder qtyRef){
+	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos, DataSlot idRef, DataSlot qtyRef){
 		this.windowXStart = windowXStart;
 		this.windowYStart = windowYStart;
 		this.xPos = xPos;
@@ -150,10 +150,10 @@ public class FluidSlotManager{
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void render(MatrixStack matrix, float partialTicks, int mouseX, int mouseY, FontRenderer fontRenderer, List<ITextComponent> tooltip){
+	public void render(PoseStack matrix, float partialTicks, int mouseX, int mouseY, Font fontRenderer, List<Component> tooltip){
 		//Background
 		FluidStack clientState = getStack();
-		Minecraft.getInstance().getTextureManager().bind(PlayerContainer.BLOCK_ATLAS);
+		Minecraft.getInstance().getTextureManager().bind(InventoryMenu.BLOCK_ATLAS);
 
 		Screen.fill(matrix, xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
 		//Screen.fill changes the color
@@ -161,7 +161,7 @@ public class FluidSlotManager{
 
 		FluidAttributes attr = clientState.getFluid().getAttributes();
 
-		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(PlayerContainer.BLOCK_ATLAS).apply(attr.getStillTexture());
+		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
 		int col = attr.getColor(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
 		RenderSystem.color3f((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F);
@@ -174,11 +174,11 @@ public class FluidSlotManager{
 
 		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
 			if(clientState.isEmpty()){
-				tooltip.add(new TranslationTextComponent("tt.essentials.fluid_contents.empty"));
+				tooltip.add(new TranslatableComponent("tt.essentials.fluid_contents.empty"));
 			}else{
 				tooltip.add(clientState.getDisplayName());
 			}
-			tooltip.add(new TranslationTextComponent("tt.essentials.fluid_contents", clientState.getAmount(), capacity));
+			tooltip.add(new TranslatableComponent("tt.essentials.fluid_contents", clientState.getAmount(), capacity));
 		}
 	}
 
@@ -194,7 +194,7 @@ public class FluidSlotManager{
 	 * @param fluidIndex The indices of the fluid handler returned by the TE to interact with
 	 * @return A pair containing the output slot followed by the input slot, to be added to the container in that order
 	 */
-	public static Pair<Slot, Slot> createFluidSlots(IInventory inv, int startIndex, int inXPos, int inYPos, int outXPos, int outYPos, @Nullable IFluidSlotTE te, int[] fluidIndex){
+	public static Pair<Slot, Slot> createFluidSlots(Container inv, int startIndex, int inXPos, int inYPos, int outXPos, int outYPos, @Nullable IFluidSlotTE te, int[] fluidIndex){
 		InSlot in = new InSlot(inv, startIndex + 1, inXPos, inYPos, startIndex, te, fluidIndex);
 		OutSlot out = new OutSlot(inv, startIndex, outXPos, outYPos, in);
 		return Pair.of(out, in);
@@ -204,7 +204,7 @@ public class FluidSlotManager{
 
 		private final InSlot inSlot;
 
-		private OutSlot(IInventory inventoryIn, int index, int xPosition, int yPosition, InSlot inSlot){
+		private OutSlot(Container inventoryIn, int index, int xPosition, int yPosition, InSlot inSlot){
 			super(inventoryIn, index, xPosition, yPosition);
 			this.inSlot = inSlot;
 		}
@@ -215,7 +215,7 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public ItemStack onTake(PlayerEntity player, ItemStack stack){
+		public ItemStack onTake(Player player, ItemStack stack){
 			ItemStack s = super.onTake(player, stack);
 			inSlot.setChanged();
 			return s;
@@ -232,7 +232,7 @@ public class FluidSlotManager{
 		private boolean internalChange = false;//Used to prevent infinite recursive loops with onSlotChanged
 
 
-		private InSlot(IInventory inventoryIn, int index, int xPosition, int yPosition, int outSlotIndex, @Nullable IFluidSlotTE te, int[] fluidIndices){
+		private InSlot(Container inventoryIn, int index, int xPosition, int yPosition, int outSlotIndex, @Nullable IFluidSlotTE te, int[] fluidIndices){
 			super(inventoryIn, index, xPosition, yPosition);
 			this.outSlotIndex = outSlotIndex;
 			this.te = te;
@@ -377,11 +377,11 @@ public class FluidSlotManager{
 		}
 	}
 
-	public static class FakeInventory implements IInventory{
+	public static class FakeInventory implements Container{
 
-		private final Container container;
+		private final AbstractContainerMenu container;
 
-		public FakeInventory(Container cont){
+		public FakeInventory(AbstractContainerMenu cont){
 			container = cont;
 		}
 
@@ -433,7 +433,7 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public boolean stillValid(PlayerEntity player){
+		public boolean stillValid(Player player){
 			return true;
 		}
 

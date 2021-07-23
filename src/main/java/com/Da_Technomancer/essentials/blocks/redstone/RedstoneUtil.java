@@ -3,15 +3,15 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.RedstoneWireBlock;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RedStoneWireBlock;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -124,10 +124,10 @@ public class RedstoneUtil extends BlockUtil{
 	 * @param dir The side of the blocks the redstone signal is coming in
 	 * @return The strength of the redstone signal a blocks is receiving on a given side
 	 */
-	public static int getRedstoneOnSide(World w, BlockPos pos, Direction dir){
+	public static int getRedstoneOnSide(Level w, BlockPos pos, Direction dir){
 		BlockPos offsetPos = pos.relative(dir);
 		BlockState state = w.getBlockState(offsetPos);
-		return Math.min(15, state.getBlock() == Blocks.REDSTONE_WIRE ? state.getValue(RedstoneWireBlock.POWER) : w.getSignal(offsetPos, dir));
+		return Math.min(15, state.getBlock() == Blocks.REDSTONE_WIRE ? state.getValue(RedStoneWireBlock.POWER) : w.getSignal(offsetPos, dir));
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class RedstoneUtil extends BlockUtil{
 	 * @param pos The position to test
 	 * @return The redstone strength at the passed position
 	 */
-	public static int getRedstoneAtPos(World w, BlockPos pos){
+	public static int getRedstoneAtPos(Level w, BlockPos pos){
 		int val = 0;
 		for(Direction dir : Direction.values()){
 			val = Math.max(val, getRedstoneOnSide(w, pos, dir));
@@ -328,12 +328,12 @@ public class RedstoneUtil extends BlockUtil{
 
 		@Nullable
 		@Override
-		public INBT writeNBT(Capability<IRedstoneHandler> capability, IRedstoneHandler instance, Direction side){
+		public Tag writeNBT(Capability<IRedstoneHandler> capability, IRedstoneHandler instance, Direction side){
 			return null;
 		}
 
 		@Override
-		public void readNBT(Capability<IRedstoneHandler> capability, IRedstoneHandler instance, Direction side, INBT nbt){
+		public void readNBT(Capability<IRedstoneHandler> capability, IRedstoneHandler instance, Direction side, Tag nbt){
 
 		}
 	}

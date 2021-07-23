@@ -1,38 +1,38 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.LilyPadBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.WaterlilyBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.common.PlantType;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.block.AbstractBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
-public class CandleLilyPad extends LilyPadBlock{
+public class CandleLilyPad extends WaterlilyBlock{
 
 	protected CandleLilyPad(){
-		super(AbstractBlock.Properties.of(Material.PLANT).strength(0).sound(SoundType.GRASS).lightLevel(s -> 14));
+		super(BlockBehaviour.Properties.of(Material.PLANT).strength(0).sound(SoundType.GRASS).lightLevel(s -> 14));
 		String name = "candle_lilypad";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
 	}
 
 	@Override
-	public PlantType getPlantType(IBlockReader world, BlockPos pos){
+	public PlantType getPlantType(BlockGetter world, BlockPos pos){
 		return PlantType.WATER;
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new TranslationTextComponent("tt.essentials.candle_lilypad.desc"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
+		tooltip.add(new TranslatableComponent("tt.essentials.candle_lilypad.desc"));
 	}
 }

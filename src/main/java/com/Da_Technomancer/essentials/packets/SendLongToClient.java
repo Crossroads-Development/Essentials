@@ -1,8 +1,8 @@
 package com.Da_Technomancer.essentials.packets;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
@@ -37,7 +37,7 @@ public class SendLongToClient extends ClientPacket{
 
 	@Override
 	protected void run(){
-		TileEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
+		BlockEntity te = Minecraft.getInstance().level.getBlockEntity(pos);
 
 		if(te instanceof ILongReceiver){
 			((ILongReceiver) te).receiveLong(id, val, null);

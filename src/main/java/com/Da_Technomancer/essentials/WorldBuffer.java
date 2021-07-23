@@ -1,11 +1,11 @@
 package com.Da_Technomancer.essentials;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -17,16 +17,16 @@ import java.util.Set;
  * It is able to return the blockstate for a given position as if these changes actually happened. Finally it can do all the saved changes. 
  * This is for making large changes to the world step by step without a huge number of unnecessary intermediate blocks updates.
  */
-public class WorldBuffer implements IBlockReader{
+public class WorldBuffer implements BlockGetter{
 	
-	private final World world;
+	private final Level world;
 	private final HashMap<BlockPos, BlockState> memory = new HashMap<>();
 	
-	public WorldBuffer(World worldObj){
+	public WorldBuffer(Level worldObj){
 		this.world = worldObj;
 	}
 	
-	public World getWorld(){
+	public Level getWorld(){
 		return world;
 	}
 	
@@ -40,7 +40,7 @@ public class WorldBuffer implements IBlockReader{
 
 	@Nullable
 	@Override
-	public TileEntity getBlockEntity(BlockPos pos){
+	public BlockEntity getBlockEntity(BlockPos pos){
 		return null;
 	}
 

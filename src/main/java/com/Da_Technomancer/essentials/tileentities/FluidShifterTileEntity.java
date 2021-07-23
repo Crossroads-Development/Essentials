@@ -5,15 +5,15 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import com.Da_Technomancer.essentials.gui.container.FluidSlotManager;
 import com.Da_Technomancer.essentials.gui.container.IFluidSlotTE;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -30,7 +30,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 public class FluidShifterTileEntity extends AbstractShifterTileEntity implements IFluidSlotTE{
 
 	@ObjectHolder("fluid_shifter")
-	private static TileEntityType<FluidShifterTileEntity> TYPE = null;
+	private static BlockEntityType<FluidShifterTileEntity> TYPE = null;
 	private static final int CAPACITY = 4_000;
 
 	private FluidSlotManager fluidManager;
@@ -67,20 +67,20 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
-		nbt.put("fluid", fluid.writeToNBT(new CompoundNBT()));
+		nbt.put("fluid", fluid.writeToNBT(new CompoundTag()));
 		return nbt;
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 		fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("fluid"));
 	}
 
 	@Override
-	public CompoundNBT getUpdateTag(){
+	public CompoundTag getUpdateTag(){
 		return save(super.getUpdateTag());
 	}
 
@@ -103,13 +103,13 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.fluid_shifter");
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.fluid_shifter");
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player){
 		return new FluidShifterContainer(id, playerInventory, worldPosition);
 	}
 

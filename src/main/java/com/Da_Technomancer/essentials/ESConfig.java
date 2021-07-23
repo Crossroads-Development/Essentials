@@ -2,12 +2,12 @@ package com.Da_Technomancer.essentials;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -23,7 +23,7 @@ public class ESConfig{
 	/**
 	 * A common style applied to "quip" lines in tooltips
 	 */
-	public static final Style TT_QUIP = Style.EMPTY.applyFormat(TextFormatting.AQUA).withItalic(true);
+	public static final Style TT_QUIP = Style.EMPTY.applyFormat(ChatFormatting.AQUA).withItalic(true);
 
 	public static ForgeConfigSpec.BooleanValue addWrench;
 
@@ -70,7 +70,7 @@ public class ESConfig{
 		serverSpec.setConfig(serverConfig);
 	}
 
-	private static final ITag<Item> WRENCH = ItemTags.bind("forge:wrench");
+	private static final Tag<Item> WRENCH = ItemTags.bind("forge:wrench");
 
 	/**
 	 * @param stack The stack to test

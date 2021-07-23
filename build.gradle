@@ -1,6 +1,7 @@
 buildscript {
 	repositories {
-		maven { url = 'https://files.minecraftforge.net/maven' }
+//		maven { url = 'https://files.minecraftforge.net/maven' }
+		maven { url = 'https://maven.minecraftforge.net/' }
 //		jcenter()
 		mavenCentral()
 	}
@@ -12,15 +13,13 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+//Magic 1.17 port plugin
+//apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = "$mc_version-$mod_version"
 group = "mod.technomancer.essentials"
 archivesBaseName = "essentials"
 
-// Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
-//sourceCompatibility = 1.8
-//targetCompatibility = 1.8
 //compileJava.options.encoding = 'UTF-8'
 //Exclude python scripts from the build
 sourceSets.main.java.exclude('**/python/**')
@@ -29,13 +28,10 @@ sourceSets.main.java.exclude('**/python/**')
 //	options.encoding = 'UTF-8'
 //}
 
-//sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '16' // Need this here so eclipse task generates correctly.
 
 minecraft {
-//	Live mappings
-//	mappings channel: "$mcp_channel", version: "$mcp_version"
-//	For updating mappings
-	mappings channel: "$mcp_channel", version: "1.16.5"
+	mappings channel: "$mcp_channel", version: "$mcp_version"
 
 	runs {
 		client {
@@ -88,7 +84,7 @@ repositories {
 dependencies {
 	minecraft "net.minecraftforge:forge:$mc_version-$fg_version"
 
-//	TODO Disabled until updated
+//	TODO disabled until updated
 //	//JEI
 //	//Compile against APIs
 //	compileOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version:api")
@@ -116,12 +112,35 @@ jar {
 //Compile the sources into a jar- useful for addon development
 task jarSources(type: Jar){
 	from sourceSets.main.allSource
-	archiveClassifier.set('source')
 //	classifier = 'source'
+	archiveClassifier.set('source')
 }
 
 task jarDev(type: Jar) {
 	from sourceSets.main.output
-	archiveClassifier.set('dev')
 //	classifier = 'dev'
+	archiveClassifier.set('dev')
 }
+
+
+//// Example configuration to allow publishing using the maven-publish task
+//// we define a custom artifact that is sourced from the reobfJar output task
+//// and then declare that to be published
+//// Note you'll need to add a repository here
+//def reobfFile = file("$buildDir/reobfJar/output.jar")
+//def reobfArtifact = artifacts.add('default', reobfFile) {
+//	type 'jar'
+//	builtBy 'reobfJar'
+//}
+//publishing {
+//	publications {
+//		mavenJava(MavenPublication) {
+//			artifact reobfArtifact
+//		}
+//	}
+//	repositories {
+//		maven {
+//			url "file:///${project.projectDir}/mcmodsrepo"
+//		}
+//	}
+//}

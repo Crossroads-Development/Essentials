@@ -2,39 +2,39 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialColor;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.WitherSkullEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.IPacket;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
-import net.minecraft.state.StateContainer;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.Explosion;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.WitherSkull;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 @ObjectHolder(Essentials.MODID)
 public class WitherCannon extends Block{
@@ -63,35 +63,35 @@ public class WitherCannon extends Block{
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext context){
 		return defaultBlockState().setValue(ESProperties.FACING, context.getNearestLookingDirection());
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.FACING).add(ESProperties.REDSTONE_BOOL);
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			if(!worldIn.isClientSide){
 				BlockState endState = state.cycle(ESProperties.FACING);//MCP note: cycle
 				worldIn.setBlockAndUpdate(pos, endState);
 			}
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.wither_cannon"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.wither_cannon"));
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
+	public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos srcPos, boolean flag){
 		boolean powered = world.hasNeighborSignal(pos) || world.hasNeighborSignal(pos.above());
 		boolean wasActive = state.getValue(ESProperties.REDSTONE_BOOL);
 		if(powered && !wasActive){
@@ -103,10 +103,10 @@ public class WitherCannon extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld world, BlockPos pos, Random rand){
+	public void tick(BlockState state, ServerLevel world, BlockPos pos, Random rand){
 		Direction dir = state.getValue(ESProperties.FACING);
 		BlockPos spawnPos = pos.relative(dir);
-		WitherSkullEntity skull = new CannonSkull(ENT_TYPE, world);
+		WitherSkull skull = new CannonSkull(ENT_TYPE, world);
 		skull.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.toYRot() + 180, dir.getStepY() * -90);
 		skull.setDeltaMovement(dir.getStepX() / 5F, dir.getStepY() / 5F, dir.getStepZ() / 5F);
 		skull.xPower = dir.getStepX() / 20D;
@@ -115,11 +115,11 @@ public class WitherCannon extends Block{
 		world.addFreshEntity(skull);
 	}
 
-	public static class CannonSkull extends WitherSkullEntity{
+	public static class CannonSkull extends WitherSkull{
 
 		private int lifespan = 60;
 
-		public CannonSkull(EntityType<CannonSkull> type, World world){
+		public CannonSkull(EntityType<CannonSkull> type, Level world){
 			super(type, world);
 		}
 
@@ -133,37 +133,37 @@ public class WitherCannon extends Block{
 		}
 
 		@Override
-		public void addAdditionalSaveData(CompoundNBT nbt){
+		public void addAdditionalSaveData(CompoundTag nbt){
 			super.addAdditionalSaveData(nbt);
 			nbt.putInt("lifetime", lifespan);
 		}
 
 		@Override
-		public void readAdditionalSaveData(CompoundNBT nbt){
+		public void readAdditionalSaveData(CompoundTag nbt){
 			super.readAdditionalSaveData(nbt);
 			lifespan = nbt.getInt("lifetime");
 		}
 
 		@Override
-		protected void onHit(RayTraceResult result){
+		protected void onHit(HitResult result){
 			if(!level.isClientSide){
-				if(result.getType() == RayTraceResult.Type.ENTITY){
-					Entity entity = ((EntityRayTraceResult) result).getEntity();
+				if(result.getType() == HitResult.Type.ENTITY){
+					Entity entity = ((EntityHitResult) result).getEntity();
 					entity.hurt(DamageSource.MAGIC, 5F);
 
 					if(entity instanceof LivingEntity){
 						//Locked at normal difficulty duration, because this is a redstone component meant to be precise and utilized and not an evil monster that exists to stab you
-						((LivingEntity) entity).addEffect(new EffectInstance(Effects.WITHER, 200, 1));
+						((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 1));
 					}
 				}
 				//Ignore mob griefing- always use Explosion.Mode.DESTROY
-				level.explode(this, getX(), getY(), getZ(), 2F, false, Explosion.Mode.BREAK);
+				level.explode(this, getX(), getY(), getZ(), 2F, false, Explosion.BlockInteraction.BREAK);
 				remove();
 			}
 		}
 
 		@Override
-		public IPacket<?> getAddEntityPacket(){
+		public Packet<?> getAddEntityPacket(){
 			return NetworkHooks.getEntitySpawningPacket(this);
 		}
 	}

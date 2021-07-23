@@ -2,42 +2,42 @@ package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
 @ObjectHolder(Essentials.MODID)
-public class FluidShifterContainer extends Container{
+public class FluidShifterContainer extends AbstractContainerMenu{
 
 	@ObjectHolder("fluid_shifter")
-	private static ContainerType<FluidShifterContainer> TYPE = null;
+	private static MenuType<FluidShifterContainer> TYPE = null;
 
-	private final IInventory inv;
+	private final Container inv;
 	private final BlockPos pos;
 	public final FluidShifterTileEntity te;
 
 	public final IntDeferredRef fluidIdRef;
 	public final IntDeferredRef fluidQtyRef;
 
-	public FluidShifterContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
+	public FluidShifterContainer(int id, Inventory playerInventory, FriendlyByteBuf data){
 		this(id, playerInventory, data.readBlockPos());
 	}
 
-	public FluidShifterContainer(int id, PlayerInventory playerInventory, BlockPos pos){
+	public FluidShifterContainer(int id, Inventory playerInventory, BlockPos pos){
 		super(TYPE, id);
 		this.inv = new FluidSlotManager.FakeInventory(this);
 		this.pos = pos;
-		TileEntity t = playerInventory.player.level.getBlockEntity(pos);
+		BlockEntity t = playerInventory.player.level.getBlockEntity(pos);
 		if(t instanceof FluidShifterTileEntity){
 			this.te = (FluidShifterTileEntity) t;
 			//Track fluid fields
@@ -70,7 +70,7 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
+	public ItemStack quickMoveStack(Player playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
 		Slot slot = slots.get(fromSlot);
 
@@ -99,16 +99,16 @@ public class FluidShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity playerIn){
+	public boolean stillValid(Player playerIn){
 		return pos.distSqr(playerIn.position(), true) <= 64;
 	}
 
 	@Override
-	public void removed(PlayerEntity playerIn){
+	public void removed(Player playerIn){
 		super.removed(playerIn);
 
 		if(te != null && !te.getLevel().isClientSide){
-			if(playerIn.isAlive() && !(playerIn instanceof ServerPlayerEntity && ((ServerPlayerEntity) playerIn).hasDisconnected())){
+			if(playerIn.isAlive() && !(playerIn instanceof ServerPlayer && ((ServerPlayer) playerIn).hasDisconnected())){
 				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(0).getStack());
 				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(1).getStack());
 			}else{

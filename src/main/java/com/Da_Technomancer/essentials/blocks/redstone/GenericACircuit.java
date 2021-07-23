@@ -2,11 +2,11 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -40,8 +40,8 @@ public class GenericACircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new TranslationTextComponent(ttName));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
+		tooltip.add(new TranslatableComponent(ttName));
 	}
 
 	@Override

@@ -13,14 +13,14 @@ import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.ICraftingRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -55,12 +55,12 @@ public class JEIPlugin implements IModPlugin{
 
 		@Nullable
 		@Override
-		public IRecipeTransferError transferRecipe(AutoCrafterContainer c, IRecipeLayout iRecipeLayout, PlayerEntity playerEntity, boolean maxTransfer, boolean doTransfer){
+		public IRecipeTransferError transferRecipe(AutoCrafterContainer c, IRecipeLayout iRecipeLayout, Player playerEntity, boolean maxTransfer, boolean doTransfer){
 			try{
 				if(doTransfer){
-					CraftingInventory craftInv = new CraftingInventory(new Container(null, 0){
+					CraftingContainer craftInv = new CraftingContainer(new AbstractContainerMenu(null, 0){
 						@Override
-						public boolean stillValid(PlayerEntity playerIn){
+						public boolean stillValid(Player playerIn){
 							return false;
 						}
 					}, 3, 3);
@@ -75,11 +75,11 @@ public class JEIPlugin implements IModPlugin{
 						craftInv.setItem(entry.getKey() - 1, ingr == null ? ItemStack.EMPTY : ingr);
 					}
 
-					Optional<ICraftingRecipe> recipeOptional = Minecraft.getInstance().getConnection().getRecipeManager().getRecipeFor(IRecipeType.CRAFTING, craftInv, playerEntity.level);
+					Optional<CraftingRecipe> recipeOptional = Minecraft.getInstance().getConnection().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftInv, playerEntity.level);
 
 					if(recipeOptional.isPresent() && c.te != null){
 						c.te.recipe = recipeOptional.orElse(null).getId();
-						CompoundNBT nbt = new CompoundNBT();
+						CompoundTag nbt = new CompoundTag();
 						nbt.putString("recipe", c.te.recipe.toString());
 						EssentialsPackets.channel.sendToServer(new SendNBTToServer(nbt, c.te.getBlockPos()));
 					}

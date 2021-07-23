@@ -2,16 +2,16 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
@@ -21,13 +21,18 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+
 public class FertileSoil extends Block{
 
 	private final BlockState plant;
 	private final SeedCategory category;
 
 	protected FertileSoil(String plantName, BlockState plant, SeedCategory category){
-		super(AbstractBlock.Properties.of(category == SeedCategory.HELL_CROP ? Material.SAND : Material.DIRT).strength(0.5F).sound(SoundType.GRAVEL).randomTicks());
+		super(BlockBehaviour.Properties.of(category == SeedCategory.HELL_CROP ? Material.SAND : Material.DIRT).strength(0.5F).sound(SoundType.GRAVEL).randomTicks());
 		this.plant = plant;
 		this.category = category;
 		String name = "fertile_soil_" + plantName;
@@ -48,16 +53,16 @@ public class FertileSoil extends Block{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.benefits"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.desc"));
+		tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.benefits"));
 		if(category == SeedCategory.HELL_CROP){
-			tooltip.add(new TranslationTextComponent("tt.essentials.fertile_soil.quip").setStyle(ESConfig.TT_QUIP));//MCP note: setStyle
+			tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.quip").setStyle(ESConfig.TT_QUIP));//MCP note: setStyle
 		}
 	}
 
 	@Override
-	public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction direction, IPlantable plantable){
+	public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction direction, IPlantable plantable){
 		//No longer needed as of MC1.16 due to large spruce trees using the dirt tag
 //		//As it turns out, the same method determines whether a block is a valid soil for a plant type, and whether it should be turned into podzol by large spruce trees
 //		//We do want to act as a soil, we don't want to become podzol
@@ -75,12 +80,12 @@ public class FertileSoil extends Block{
 	}
 
 	@Override
-	public boolean isFertile(BlockState state, IBlockReader world, BlockPos pos){
+	public boolean isFertile(BlockState state, BlockGetter world, BlockPos pos){
 		return true;
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random){
+	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random){
 		if(ESConfig.fertileSoilRate.get() < 100D * Math.random()){
 			return;
 		}

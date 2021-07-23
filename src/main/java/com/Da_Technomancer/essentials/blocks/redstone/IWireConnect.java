@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.Direction;
 
 /**
  * Wires will connect to any block extending this interface if canConnect returns true

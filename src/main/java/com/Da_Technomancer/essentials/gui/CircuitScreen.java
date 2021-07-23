@@ -5,26 +5,26 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.SendNBTToServer;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Predicate;
 
-public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T>{
+public class CircuitScreen<T extends CircuitContainer> extends AbstractContainerScreen<T>{
 
 	protected static final ResourceLocation SEARCH_BAR_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/search_bar.png");
 	protected static final ResourceLocation UI_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/circuit_filler_back.png");
 
-	protected TextFieldWidget[] inputBars = new TextFieldWidget[menu.inputBars()];
+	protected EditBox[] inputBars = new EditBox[menu.inputBars()];
 
-	public CircuitScreen(T screenContainer, PlayerInventory inv, ITextComponent titleIn){
+	public CircuitScreen(T screenContainer, Inventory inv, Component titleIn){
 		super(screenContainer, inv, titleIn);
 		imageWidth = 176;
 		imageHeight = 90;
@@ -41,8 +41,8 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 		return true;
 	};
 
-	protected void createTextBar(int id, int x, int y, ITextComponent text){
-		inputBars[id] = new TextFieldWidget(font, leftPos + x, topPos + y, 144 - 4, 18, text);
+	protected void createTextBar(int id, int x, int y, Component text){
+		inputBars[id] = new EditBox(font, leftPos + x, topPos + y, 144 - 4, 18, text);
 		inputBars[id].setCanLoseFocus(true);
 		inputBars[id].setTextColor(-1);
 		inputBars[id].setTextColorUneditable(-1);
@@ -73,7 +73,7 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 			minecraft.player.closeContainer();
 		}
 
-		for(TextFieldWidget bar : inputBars){
+		for(EditBox bar : inputBars){
 			if(bar.keyPressed(keyCode, scanCode, modifiers) || bar.canConsumeInput()){
 				return true;
 			}
@@ -82,41 +82,41 @@ public class CircuitScreen<T extends CircuitContainer> extends ContainerScreen<T
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		RenderSystem.disableLighting();
 		RenderSystem.disableBlend();
-		for(TextFieldWidget bar : inputBars){
+		for(EditBox bar : inputBars){
 			bar.render(matrix, mouseX, mouseY, partialTicks);
 		}
 	}
 
 	@Override
-	protected void renderBg(MatrixStack matrix, float partialTicks, int x, int y){
+	protected void renderBg(PoseStack matrix, float partialTicks, int x, int y){
 		//background
 		minecraft.getTextureManager().bind(UI_TEXTURE);
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 90);
 
 		//Text bars
 		minecraft.getTextureManager().bind(SEARCH_BAR_TEXTURE);
-		for(TextFieldWidget bar : inputBars){
+		for(EditBox bar : inputBars){
 			blit(matrix, bar.x - 2, bar.y - 8, 0, 0, 144, 18, 144, 18);
 		}
 
 		//Text labelling input bars
-		for(TextFieldWidget inputBar : inputBars){
+		for(EditBox inputBar : inputBars){
 			font.draw(matrix, inputBar.getMessage(), inputBar.x - 2, inputBar.y - 16, 0x404040);
 		}
 	}
 
 	@Override
-	protected void renderLabels(MatrixStack matrix, int x, int y){
+	protected void renderLabels(PoseStack matrix, int x, int y){
 		//Don't render text overlays
 	}
 
 	protected void entryChanged(String newFilter){
-		CompoundNBT nbt = new CompoundNBT();
+		CompoundTag nbt = new CompoundTag();
 
 		for(int i = 0; i < inputBars.length; i++){
 			float output = RedstoneUtil.interpretFormulaString(inputBars[i].getValue());

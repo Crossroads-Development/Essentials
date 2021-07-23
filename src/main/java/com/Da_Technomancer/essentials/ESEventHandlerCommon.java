@@ -4,14 +4,14 @@ import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.tileentities.BrazierTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.monster.EndermanEntity;
-import net.minecraft.entity.monster.WitchEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -24,10 +24,10 @@ public class ESEventHandlerCommon{
 	@SubscribeEvent
 	public void blockWitchSpawns(LivingSpawnEvent.CheckSpawn e){
 		//Prevents witch spawning if a nearby brazier has soulsand
-		if(e.getEntity() instanceof WitchEntity && e.getWorld() instanceof World){
+		if(e.getEntity() instanceof Witch && e.getWorld() instanceof Level){
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
-			for(TileEntity te : ((World) e.getWorld()).tickableBlockEntities){
-				World w;
+			for(BlockEntity te : ((Level) e.getWorld()).tickableBlockEntities){
+				Level w;
 				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(e.getX(), e.getY(), e.getZ(), true) <= RANGE_SQUARED && (w = te.getLevel()) != null){
 					BlockState state = w.getBlockState(te.getBlockPos());
 					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
@@ -42,10 +42,10 @@ public class ESEventHandlerCommon{
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void preventTeleport(EnderTeleportEvent e){
-		if(e.getEntity() instanceof EndermanEntity){
+		if(e.getEntity() instanceof EnderMan){
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
-			for(TileEntity te : e.getEntity().getCommandSenderWorld().tickableBlockEntities){
-				Vector3d entPos = e.getEntity().position();
+			for(BlockEntity te : e.getEntity().getCommandSenderWorld().tickableBlockEntities){
+				Vec3 entPos = e.getEntity().position();
 				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(entPos, true) <= RANGE_SQUARED && te.getLevel() != null){
 					BlockState state = te.getBlockState();
 					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
@@ -60,10 +60,10 @@ public class ESEventHandlerCommon{
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void feedAnimal(PlayerInteractEvent.EntityInteract e){
-		if(e.getTarget() instanceof AnimalEntity && e.getItemStack().getItem() == ESItems.animalFeed && (!(e.getTarget() instanceof TameableEntity) || ((TameableEntity) e.getTarget()).isTame())){
+		if(e.getTarget() instanceof Animal && e.getItemStack().getItem() == ESItems.animalFeed && (!(e.getTarget() instanceof TamableAnimal) || ((TamableAnimal) e.getTarget()).isTame())){
 			e.setResult(Event.Result.DENY);
 			e.setCanceled(true);
-			AnimalEntity an = (AnimalEntity) e.getTarget();
+			Animal an = (Animal) e.getTarget();
 			if(!e.getWorld().isClientSide && an.getAge() == 0){
 				an.setInLove(e.getPlayer());
 				if(!e.getPlayer().isCreative()){

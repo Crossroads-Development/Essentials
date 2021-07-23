@@ -3,26 +3,26 @@ package com.Da_Technomancer.essentials.blocks;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.util.Mth;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -30,9 +30,9 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class SlottedChest extends ContainerBlock implements IReadable{
+public class SlottedChest extends BaseEntityBlock implements IReadable{
 
 	protected SlottedChest(){
 		super(Properties.of(Material.WOOD).strength(2).sound(SoundType.WOOD));
@@ -43,16 +43,16 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
+	public BlockEntity newBlockEntity(BlockGetter world){
 		return new SlottedChestTileEntity();
 	}
 
 	@Override
-	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if(state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getBlockEntity(pos);
+			BlockEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof SlottedChestTileEntity) {
-				InventoryHelper.dropContents(worldIn, pos, ((SlottedChestTileEntity) te).iInv);
+				Containers.dropContents(worldIn, pos, ((SlottedChestTileEntity) te).iInv);
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
@@ -61,31 +61,31 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public BlockRenderType getRenderShape(BlockState state){
-		return BlockRenderType.MODEL;
+	public RenderShape getRenderShape(BlockState state){
+		return RenderShape.MODEL;
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(!worldIn.isClientSide){
-			TileEntity te = worldIn.getBlockEntity(pos);
+			BlockEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof SlottedChestTileEntity){
 				ItemStack[] filter = ((SlottedChestTileEntity) te).lockedInv;
-				NetworkHooks.openGui((ServerPlayerEntity) playerIn, (SlottedChestTileEntity) te, (buf) -> {
+				NetworkHooks.openGui((ServerPlayer) playerIn, (SlottedChestTileEntity) te, (buf) -> {
 					for(ItemStack lock : filter){
 						buf.writeItem(lock);
 					}
 				});
 			}
 		}
-		return ActionResultType.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.slotted_chest.quip").setStyle(ESConfig.TT_QUIP));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.slotted_chest.desc"));
+		tooltip.add(new TranslatableComponent("tt.essentials.slotted_chest.quip").setStyle(ESConfig.TT_QUIP));
 	}
 
 	@Override
@@ -94,11 +94,11 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public int getAnalogOutputSignal(BlockState state, World world, BlockPos pos){
-		TileEntity te = world.getBlockEntity(pos);
+	public int getAnalogOutputSignal(BlockState state, Level world, BlockPos pos){
+		BlockEntity te = world.getBlockEntity(pos);
 		if(te instanceof SlottedChestTileEntity){
 			float val = ((SlottedChestTileEntity) te).calcComparator() * 15F;
-			val = MathHelper.floor(val * 14.0F) + (val > 0 ? 1 : 0);
+			val = Mth.floor(val * 14.0F) + (val > 0 ? 1 : 0);
 			return (int) val;
 		}
 		return 0;
@@ -106,8 +106,8 @@ public class SlottedChest extends ContainerBlock implements IReadable{
 	}
 
 	@Override
-	public float read(World world, BlockPos pos, BlockState state){
-		TileEntity te = world.getBlockEntity(pos);
+	public float read(Level world, BlockPos pos, BlockState state){
+		BlockEntity te = world.getBlockEntity(pos);
 		if(te instanceof SlottedChestTileEntity){
 			return ((SlottedChestTileEntity) te).calcComparator() * 15F;
 		}

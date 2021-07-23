@@ -7,18 +7,18 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.TickPriority;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.TickPriority;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -26,10 +26,10 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 @ObjectHolder(Essentials.MODID)
-public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver, ITickableTileEntity{
+public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, TickableBlockEntity{
 
 	@ObjectHolder("delay_circuit")
-	private static TileEntityType<DelayCircuitTileEntity> TYPE = null;
+	private static BlockEntityType<DelayCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_DELAY = 1;
 
@@ -96,7 +96,7 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 		nbt.putInt("setting_d", settingDelay);
 		nbt.putString("setting_s_d", settingStrDelay);
@@ -111,7 +111,7 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 		settingDelay = nbt.getInt("setting_d");
 		settingStrDelay = nbt.getString("setting_s_d");
@@ -131,18 +131,18 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.delay_circuit");
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.delay_circuit");
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInv, Player player){
 		return new DelayCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrDelay));
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		settingDelay = Math.max(MIN_DELAY, Math.round(nbt.getFloat("value_0")));
 		settingStrDelay = nbt.getString("text_0");
 		if(!queuedOutputs.isEmpty()){

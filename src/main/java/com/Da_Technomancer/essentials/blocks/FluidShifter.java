@@ -2,12 +2,12 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -21,14 +21,14 @@ public class FluidShifter extends AbstractShifter{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
+	public BlockEntity newBlockEntity(BlockGetter world){
 		return new FluidShifterTileEntity();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_shifter_info"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.fluid_shifter_range", ESConfig.itemChuteRange.get()));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.fluid_shifter_info"));
+		tooltip.add(new TranslatableComponent("tt.essentials.fluid_shifter_range", ESConfig.itemChuteRange.get()));
 	}
 }

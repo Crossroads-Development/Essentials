@@ -3,10 +3,16 @@ package com.Da_Technomancer.essentials.blocks;
 import com.Da_Technomancer.essentials.blocks.redstone.*;
 import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.block.*;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 
 import java.util.ArrayList;
+
+import net.minecraft.world.level.block.BeetrootBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.NetherWartBlock;
 
 public class ESBlocks{
 
@@ -107,9 +113,9 @@ public class ESBlocks{
 		sortingHopper = new SortingHopper();
 		speedHopper = new SpeedHopper();
 		candleLilyPad = new CandleLilyPad();
-		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.defaultBlockState().setValue(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
-		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.defaultBlockState().setValue(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
-		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.defaultBlockState().setValue(CropsBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
+		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
+		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.defaultBlockState().setValue(CropBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
+		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.defaultBlockState().setValue(CropBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
 		fertileSoilBeetroot = new FertileSoil("beetroot", Blocks.BEETROOTS.defaultBlockState().setValue(BeetrootBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
 		fertileSoilNetherWart = new FertileSoil("netherwart", Blocks.NETHER_WART.defaultBlockState().setValue(NetherWartBlock.AGE, 0), FertileSoil.SeedCategory.HELL_CROP);
 		fertileSoilOak = new FertileSoil("oak", Blocks.OAK_SAPLING.defaultBlockState(), FertileSoil.SeedCategory.TREE);

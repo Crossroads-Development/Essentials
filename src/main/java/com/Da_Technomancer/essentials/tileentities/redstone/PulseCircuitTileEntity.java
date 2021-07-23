@@ -6,28 +6,28 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.PulseCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.TickPriority;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.TickPriority;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver, ITickableTileEntity{
+public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, TickableBlockEntity{
 
 	@ObjectHolder("pulse_circuit")
-	private static TileEntityType<PulseCircuitTileEntity> TYPE = null;
+	private static BlockEntityType<PulseCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_DURATION = 1;
 
@@ -90,7 +90,7 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 		nbt.putInt("setting_d", settingDuration);
 		nbt.putString("setting_s_d", settingStrDuration);
@@ -101,7 +101,7 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 		settingDuration = nbt.getInt("setting_d");
 		settingStrDuration = nbt.getString("setting_s_d");
@@ -111,18 +111,18 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.pulse_circuit_" + getEdge().name);
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.pulse_circuit_" + getEdge().name);
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInv, Player player){
 		return new PulseCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrDuration));
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		settingDuration = Math.max(Math.round(nbt.getFloat("value_0")), MIN_DURATION);
 		settingStrDuration = nbt.getString("text_0");
 		setChanged();

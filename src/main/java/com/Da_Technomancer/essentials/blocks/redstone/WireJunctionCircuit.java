@@ -2,18 +2,18 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.tileentities.redstone.WireJunctionTileEntity;
 import com.Da_Technomancer.essentials.tileentities.redstone.WireTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -25,9 +25,9 @@ public class WireJunctionCircuit extends AbstractTile{
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		//Wire junctions propagate block updates horizontally to make sure any attached circuit can update when a new connection is made/broken
-		TileEntity te = worldIn.getBlockEntity(pos);
+		BlockEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof WireTileEntity){
 			WireTileEntity wte = (WireTileEntity) te;
 
@@ -57,17 +57,17 @@ public class WireJunctionCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public TileEntity newBlockEntity(IBlockReader worldIn){
+	public BlockEntity newBlockEntity(BlockGetter worldIn){
 		return new WireJunctionTileEntity();
 	}
 
 	@Override
-	public void setPlacedBy(World worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
+	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
 		worldIn.neighborChanged(pos, this, pos);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new TranslationTextComponent("tt.essentials.wire_junction_circuit"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
+		tooltip.add(new TranslatableComponent("tt.essentials.wire_junction_circuit"));
 	}
 }

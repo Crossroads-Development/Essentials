@@ -2,16 +2,16 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.tileentities.ItemShifterTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -25,16 +25,16 @@ public class ItemShifter extends AbstractShifter{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
+	public BlockEntity newBlockEntity(BlockGetter world){
 		return new ItemShifterTileEntity();
 	}
 
 	@Override
-	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getBlockEntity(pos);
+			BlockEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof ItemShifterTileEntity) {
-				InventoryHelper.dropContents(worldIn, pos, (ItemShifterTileEntity) te);
+				Containers.dropContents(worldIn, pos, (ItemShifterTileEntity) te);
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
@@ -44,8 +44,8 @@ public class ItemShifter extends AbstractShifter{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.item_shifter.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.item_shifter.range", ESConfig.itemChuteRange.get()));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.item_shifter.desc"));
+		tooltip.add(new TranslatableComponent("tt.essentials.item_shifter.range", ESConfig.itemChuteRange.get()));
 	}
 }

@@ -1,21 +1,21 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.tileentities.SpeedHopperTileEntity;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class SpeedHopper extends SortingHopper{
 
@@ -28,14 +28,14 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
+	public BlockEntity newBlockEntity(BlockGetter world){
 		return new SpeedHopperTileEntity();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.speed_hopper.sort"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.speed_hopper.desc"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.speed_hopper.sort"));
+		tooltip.add(new TranslatableComponent("tt.essentials.speed_hopper.desc"));
 	}
 }

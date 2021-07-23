@@ -5,20 +5,20 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -29,10 +29,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, INamedContainerProvider{
+public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver, MenuProvider{
 
 	@ObjectHolder("slotted_chest")
-	private static TileEntityType<SlottedChestTileEntity> TYPE = null;
+	private static BlockEntityType<SlottedChestTileEntity> TYPE = null;
 
 	public SlottedChestTileEntity(){
 		super(TYPE);
@@ -62,17 +62,17 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		if(level.isClientSide){
 			return;
 		}
-		CompoundNBT slotNBT = new CompoundNBT();
+		CompoundTag slotNBT = new CompoundTag();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				slotNBT.put("lock" + i, lockedInv[i].save(new CompoundNBT()));
+				slotNBT.put("lock" + i, lockedInv[i].save(new CompoundTag()));
 			}
 		}
 		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(slotNBT, worldPosition));
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 
 		for(int i = 0; i < 54; ++i){
@@ -88,15 +88,15 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(!inv[i].isEmpty()){
-				nbt.put("slot" + i, inv[i].save(new CompoundNBT()));
+				nbt.put("slot" + i, inv[i].save(new CompoundTag()));
 			}
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].save(new CompoundNBT()));
+				nbt.put("lockSlot" + i, lockedInv[i].save(new CompoundTag()));
 			}
 		}
 
@@ -104,11 +104,11 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public CompoundNBT getUpdateTag(){
-		CompoundNBT nbt = super.getUpdateTag();
+	public CompoundTag getUpdateTag(){
+		CompoundTag nbt = super.getUpdateTag();
 		for(int i = 0; i < 54; ++i){
 			if(!lockedInv[i].isEmpty()){
-				nbt.put("lockSlot" + i, lockedInv[i].save(new CompoundNBT()));
+				nbt.put("lockSlot" + i, lockedInv[i].save(new CompoundTag()));
 			}
 		}
 		return nbt;
@@ -127,7 +127,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		for(int i = 0; i < 54; i++){
 			if(nbt.contains("lock" + i)){
 				lockedInv[i] = ItemStack.of(nbt.getCompound("lock" + i));
@@ -138,13 +138,13 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.slotted_chest");
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.slotted_chest");
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInventory, Player player){
 		return new SlottedChestContainer(id, playerInventory, iInv, lockedInv);
 	}
 
@@ -209,7 +209,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		}
 	}
 
-	public static class Inventory implements IInventory{
+	public static class Inventory implements Container{
 
 		private final ItemStack[] inv;
 		private final ItemStack[] lockedInv;
@@ -281,7 +281,7 @@ public class SlottedChestTileEntity extends TileEntity implements INBTReceiver, 
 		}
 
 		@Override
-		public boolean stillValid(PlayerEntity playerEntity){
+		public boolean stillValid(Player playerEntity){
 			return true;
 		}
 

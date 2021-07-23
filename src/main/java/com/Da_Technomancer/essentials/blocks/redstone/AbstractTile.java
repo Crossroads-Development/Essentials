@@ -2,21 +2,27 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public abstract class AbstractTile extends ContainerBlock implements IWireConnect{
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+
+public abstract class AbstractTile extends BaseEntityBlock implements IWireConnect{
 
 	private static final Properties PROP = Properties.of(Material.DECORATION).strength(0, 0).sound(SoundType.WOOD);
 
@@ -30,27 +36,27 @@ public abstract class AbstractTile extends ContainerBlock implements IWireConnec
 	private static final VoxelShape BB = box(0, 0, 0, 16, 2, 16);
 
 	@Override
-	public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player){
+	public ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player){
 		return new ItemStack(ESBlocks.wireCircuit, 1);
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
 		return BB;
 	}
 
 	@Override
-	public BlockRenderType getRenderShape(BlockState state){
-		return BlockRenderType.MODEL;
+	public RenderShape getRenderShape(BlockState state){
+		return RenderShape.MODEL;
 	}
 
 	@Override
-	public boolean canSurvive(BlockState state, IWorldReader worldIn, BlockPos pos){
+	public boolean canSurvive(BlockState state, LevelReader worldIn, BlockPos pos){
 		return canSupportCenter(worldIn, pos.below(), Direction.UP);
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		if(!state.canSurvive(worldIn, pos)){
 			worldIn.destroyBlock(pos, true);
 		}

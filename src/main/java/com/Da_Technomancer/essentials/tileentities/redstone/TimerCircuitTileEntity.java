@@ -7,26 +7,26 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.TimerCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedContainerProvider, INBTReceiver, ITickableTileEntity{
+public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, TickableBlockEntity{
 
 	@ObjectHolder("timer_circuit")
-	private static TileEntityType<TimerCircuitTileEntity> TYPE = null;
+	private static BlockEntityType<TimerCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_PERIOD = 1;
 	private static final int MIN_DURATION = 0;
@@ -68,7 +68,7 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 		nbt.putInt("setting_p", settingPeriod);
 		nbt.putString("setting_s_p", settingStrPeriod);
@@ -79,8 +79,8 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public CompoundNBT getUpdateTag(){
-		CompoundNBT nbt = super.getUpdateTag();
+	public CompoundTag getUpdateTag(){
+		CompoundTag nbt = super.getUpdateTag();
 		nbt.putInt("setting_p", settingPeriod);
 		nbt.putString("setting_s_p", settingStrPeriod);
 		nbt.putInt("setting_d", settingDuration);
@@ -90,7 +90,7 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 		settingPeriod = nbt.getInt("setting_p");
 		settingStrPeriod = nbt.getString("setting_s_p");
@@ -100,18 +100,18 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements INamedC
 	}
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent("container.timer_circuit");
+	public Component getDisplayName(){
+		return new TranslatableComponent("container.timer_circuit");
 	}
 
 	@Nullable
 	@Override
-	public Container createMenu(int id, PlayerInventory playerInv, PlayerEntity player){
+	public AbstractContainerMenu createMenu(int id, Inventory playerInv, Player player){
 		return new TimerCircuitContainer(id, playerInv, CircuitContainer.encodeData(CircuitContainer.createEmptyBuf(), worldPosition, settingStrPeriod, settingStrDuration));
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		settingPeriod = Math.max(MIN_PERIOD, Math.round(nbt.getFloat("value_0")));
 		settingStrPeriod = nbt.getString("text_0");
 		settingDuration = Math.max(MIN_DURATION, Math.round(nbt.getFloat("value_1")));

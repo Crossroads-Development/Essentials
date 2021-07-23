@@ -2,10 +2,10 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -15,16 +15,18 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 @ObjectHolder(Essentials.MODID)
 public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
 	@ObjectHolder("basic_fluid_splitter")
-	private static TileEntityType<BasicFluidSplitterTileEntity> TYPE = null;
+	private static BlockEntityType<BasicFluidSplitterTileEntity> TYPE = null;
 
 	private final FluidStack[] inventory = new FluidStack[] {FluidStack.EMPTY, FluidStack.EMPTY};
 	private static final int CAPACITY = 4000;
 
-	public BasicFluidSplitterTileEntity(TileEntityType<? extends AbstractSplitterTE> type){
+	public BasicFluidSplitterTileEntity(BlockEntityType<? extends AbstractSplitterTE> type){
 		super(type);
 	}
 
@@ -82,14 +84,14 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
 		nbt.putInt("transferred", transferred);
 		for(int i = 0; i < 2; i++){
 			if(!inventory[i].isEmpty()){
-				CompoundNBT inner = new CompoundNBT();
+				CompoundTag inner = new CompoundTag();
 				inventory[i].writeToNBT(inner);
 				nbt.put("inv_" + i, inner);
 			}
@@ -98,7 +100,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 
 		//The way this block saves to nbt was changed in 2.2.0, and a "type" of 1 means the encoding is the new version, while 0 mean old version

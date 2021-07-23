@@ -3,24 +3,24 @@ package com.Da_Technomancer.essentials.gui.container;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import com.google.common.collect.Sets;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
 import java.util.Set;
 
 @ObjectHolder(Essentials.MODID)
-public class SlottedChestContainer extends Container{
+public class SlottedChestContainer extends AbstractContainerMenu{
 
 	@ObjectHolder("slotted_chest")
-	private static ContainerType<SlottedChestContainer> TYPE = null;
+	private static MenuType<SlottedChestContainer> TYPE = null;
 
 	public final SlottedChestTileEntity.Inventory inv;
 	/**
@@ -36,12 +36,12 @@ public class SlottedChestContainer extends Container{
 	@Nullable
 	private static ItemStack[] filtTrans;
 
-	public SlottedChestContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
+	public SlottedChestContainer(int id, Inventory playerInventory, FriendlyByteBuf data){
 		//the new ItemStack[54] is full of null entries, so in the SlottedChestTileEntity.Inventory constructor all null entries are set to ItemStack.EMPTY
 		this(id, playerInventory, new SlottedChestTileEntity.Inventory(new ItemStack[54], filtTrans = decodeBuffer(data), null), filtTrans);
 	}
 
-	private static ItemStack[] decodeBuffer(PacketBuffer buf){
+	private static ItemStack[] decodeBuffer(FriendlyByteBuf buf){
 		if(buf == null){
 			Essentials.logger.warn("Received empty data for SlottedChest! This is a bug!");
 			ItemStack[] filter = new ItemStack[54];
@@ -57,7 +57,7 @@ public class SlottedChestContainer extends Container{
 		return filter;
 	}
 
-	public SlottedChestContainer(int id, PlayerInventory playerInventory, SlottedChestTileEntity.Inventory inv, ItemStack[] filter){
+	public SlottedChestContainer(int id, Inventory playerInventory, SlottedChestTileEntity.Inventory inv, ItemStack[] filter){
 		super(TYPE, id);
 		this.filter = filter;
 		this.inv = inv;
@@ -82,7 +82,7 @@ public class SlottedChestContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity playerIn){
+	public boolean stillValid(Player playerIn){
 		return inv.stillValid(playerIn);
 	}
 
@@ -102,9 +102,9 @@ public class SlottedChestContainer extends Container{
 	 * It is slightly modified to set filters where necessary (and sometimes even when not, because I can't be bothered to reverse engineer this thing).
 	 */
 	@Override
-	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
+	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
 		ItemStack itemstack = ItemStack.EMPTY;
-		PlayerInventory inventoryplayer = player.inventory;
+		Inventory inventoryplayer = player.inventory;
 
 		if(clickTypeIn == ClickType.QUICK_CRAFT){
 			int i = this.dragEvent;
@@ -404,7 +404,7 @@ public class SlottedChestContainer extends Container{
 	 * for some reason I can't remember.
 	 */
 	@Override
-	public ItemStack quickMoveStack(PlayerEntity playerIn, int index){
+	public ItemStack quickMoveStack(Player playerIn, int index){
 		ItemStack outStack = ItemStack.EMPTY;
 		Slot slot = slots.get(index);
 

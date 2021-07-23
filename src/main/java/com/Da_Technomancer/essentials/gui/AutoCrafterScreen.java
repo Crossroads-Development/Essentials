@@ -4,38 +4,38 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.recipebook.IRecipeShownListener;
-import net.minecraft.client.gui.recipebook.RecipeBookGui;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.button.ImageButton;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.util.RecipeBookCategories;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.container.ClickType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.ImageButton;
+import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
 import java.util.List;
 
-public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> implements IRecipeShownListener{
+public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContainer> implements RecipeUpdateListener{
 
 	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/auto_crafter.png");
 	private static final ResourceLocation RECIPE_BUTTON_TEXTURE = new ResourceLocation("textures/gui/recipe_button.png");
 
-	private final RecipeBookGui recipeBook = new RecipeBookGui();
+	private final RecipeBookComponent recipeBook = new RecipeBookComponent();
 	private boolean widthTooNarrow;
 	private float time = 0;
 
-	public AutoCrafterScreen(AutoCrafterContainer cont, PlayerInventory playerInventory, ITextComponent text){
+	public AutoCrafterScreen(AutoCrafterContainer cont, Inventory playerInventory, Component text){
 		super(cont, playerInventory, text);
 		imageHeight = 186;
 		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
@@ -58,7 +58,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		time += partialTicks;
 		renderBackground(matrix);
 		if(recipeBook.isVisible() && widthTooNarrow){
@@ -116,7 +116,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 	}
 
 	@Override
-	public RecipeBookGui getRecipeBookComponent(){
+	public RecipeBookComponent getRecipeBookComponent(){
 		return recipeBook;
 	}
 
@@ -132,7 +132,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(MatrixStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
+	protected void renderBg(PoseStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		minecraft.getTextureManager().bind(getBackgroundTexture());
 		//draw background
@@ -148,19 +148,19 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 		for(int i = 10; i < inv.length; i++){
 			inv[i] = menu.getSlot(i).getItem();
 		}
-		IRecipe<CraftingInventory> iRecipe = menu.te.findRecipe(AutoCrafterTileEntity.prepareCraftingInv(inv), menu);
+		Recipe<CraftingContainer> iRecipe = menu.te.findRecipe(AutoCrafterTileEntity.prepareCraftingInv(inv), menu);
 
 		if(iRecipe != null){
 			RenderSystem.enableRescaleNormal();
 
-			RenderHelper.turnBackOn();
+			Lighting.turnBackOn();
 
 			//If the recipe was set via recipe book/JEI, render the ingredients manually (if it was set via input slots, the slots will render the items for us)
 			if(menu.te.recipe != null){
 				boolean shaped = iRecipe instanceof IShapedRecipe;
 				int width = 3;
 				if(shaped){
-					width = ((IShapedRecipe<CraftingInventory>) iRecipe).getRecipeWidth();
+					width = ((IShapedRecipe<CraftingContainer>) iRecipe).getRecipeWidth();
 				}
 
 				List<Ingredient> ingredients = iRecipe.getIngredients();
@@ -182,7 +182,7 @@ public class AutoCrafterScreen extends ContainerScreen<AutoCrafterContainer> imp
 			}
 
 			RenderSystem.disableRescaleNormal();
-			RenderHelper.turnOff();
+			Lighting.turnOff();
 		}
 	}
 

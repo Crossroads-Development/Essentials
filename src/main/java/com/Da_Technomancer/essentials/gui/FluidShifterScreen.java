@@ -2,21 +2,21 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.text.ITextProperties;
 
 import java.util.ArrayList;
 
-public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
+public class FluidShifterScreen extends AbstractContainerScreen<FluidShifterContainer>{
 
-	protected ArrayList<ITextComponent> tooltip = new ArrayList<>();
+	protected ArrayList<Component> tooltip = new ArrayList<>();
 	private static final ResourceLocation TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/fluid_shifter.png");
 
-	public FluidShifterScreen(FluidShifterContainer container, PlayerInventory playerInventory, ITextComponent text){
+	public FluidShifterScreen(FluidShifterContainer container, Inventory playerInventory, Component text){
 		super(container, playerInventory, text);
 	}
 
@@ -29,7 +29,7 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		renderTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
@@ -41,7 +41,7 @@ public class FluidShifterScreen extends ContainerScreen<FluidShifterContainer>{
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		minecraft.getTextureManager().bind(TEXTURE);
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);

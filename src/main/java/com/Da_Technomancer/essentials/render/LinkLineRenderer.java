@@ -3,45 +3,45 @@ package com.Da_Technomancer.essentials.render;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import com.Da_Technomancer.essentials.tileentities.LinkHelper;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 
 import java.awt.*;
 
-public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntityRenderer<T>{
+public class LinkLineRenderer<T extends BlockEntity & ILinkTE> extends BlockEntityRenderer<T>{
 
 	public static final ResourceLocation TEXTURE = new ResourceLocation(Essentials.MODID, "textures/model/link_line.png");
 	protected static RenderType LINK_TYPE = DummyRenderType.initType();
 
-	public LinkLineRenderer(TileEntityRendererDispatcher dispatcher){
+	public LinkLineRenderer(BlockEntityRenderDispatcher dispatcher){
 		super(dispatcher);
 	}
 
 	@Override
-	public void render(T te, float partialTicks, MatrixStack matrix, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay){
+	public void render(T te, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay){
 		//Only render link lines if the player is holding a linking tool
-		if(!LinkHelper.isLinkTool(Minecraft.getInstance().player.getItemInHand(Hand.MAIN_HAND)) && !LinkHelper.isLinkTool(Minecraft.getInstance().player.getItemInHand(Hand.OFF_HAND))){
+		if(!LinkHelper.isLinkTool(Minecraft.getInstance().player.getItemInHand(InteractionHand.MAIN_HAND)) && !LinkHelper.isLinkTool(Minecraft.getInstance().player.getItemInHand(InteractionHand.OFF_HAND))){
 			return;
 		}
 
-		Vector3d tePos = new Vector3d(te.getBlockPos().getX() + 0.5, te.getBlockPos().getY() + 0.5, te.getBlockPos().getZ() + 0.5);
+		Vec3 tePos = new Vec3(te.getBlockPos().getX() + 0.5, te.getBlockPos().getY() + 0.5, te.getBlockPos().getZ() + 0.5);
 
 		matrix.pushPose();
 		matrix.translate(0.5, 0.5, 0.5);
-		IVertexBuilder builder = buffer.getBuffer(LINK_TYPE);
+		VertexConsumer builder = buffer.getBuffer(LINK_TYPE);
 
 		Color linkCol = te.getColor();
 		float alpha = 0.7F;
@@ -50,9 +50,9 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 		float uWidth = 1F / 3F;
 
 		for(BlockPos link : te.getLinks()){
-			Vector3d line = Vector3d.atLowerCornerOf(link);//A ray pointing from this TE to the link
-			Vector3d widthVec = RenderUtil.findRayWidth(tePos, line, 0.3F);
-			Vector3d normal = line.cross(widthVec);
+			Vec3 line = Vec3.atLowerCornerOf(link);//A ray pointing from this TE to the link
+			Vec3 widthVec = RenderUtil.findRayWidth(tePos, line, 0.3F);
+			Vec3 normal = line.cross(widthVec);
 
 			float length = (float) line.length();
 
@@ -81,7 +81,7 @@ public class LinkLineRenderer<T extends TileEntity & ILinkTE> extends TileEntity
 		}
 
 		private static RenderType initType(){
-			return RenderType.create("link_line", DefaultVertexFormats.BLOCK, 7, 256, false, true, RenderType.State.builder().setTextureState(new RenderState.TextureState(TEXTURE, false, false)).setTransparencyState(RenderState.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
+			return RenderType.create("link_line", DefaultVertexFormat.BLOCK, 7, 256, false, true, RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(TEXTURE, false, false)).setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
 		}
 	}
 }

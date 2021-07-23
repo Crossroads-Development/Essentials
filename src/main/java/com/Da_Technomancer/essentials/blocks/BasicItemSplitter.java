@@ -2,19 +2,21 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE;
 import com.Da_Technomancer.essentials.tileentities.BasicItemSplitterTileEntity;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class BasicItemSplitter extends AbstractSplitter{
 
@@ -23,7 +25,7 @@ public class BasicItemSplitter extends AbstractSplitter{
 	}
 
 	public BasicItemSplitter(){
-		super("basic_item_splitter", AbstractBlock.Properties.of(Material.METAL).strength(3));
+		super("basic_item_splitter", BlockBehaviour.Properties.of(Material.METAL).strength(3));
 	}
 
 	@Override
@@ -32,20 +34,20 @@ public class BasicItemSplitter extends AbstractSplitter{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
+	public BlockEntity newBlockEntity(BlockGetter world){
 		return new BasicItemSplitterTileEntity();
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_basic"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.basic_item_splitter_formula"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.item_splitter_chute"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.item_splitter_basic"));
+		tooltip.add(new TranslatableComponent("tt.essentials.basic_item_splitter_formula"));
+		tooltip.add(new TranslatableComponent("tt.essentials.item_splitter_chute"));
 	}
 
 	@Override
-	protected ITextComponent getModeComponent(AbstractSplitterTE te, int newMode){
-		return new TranslationTextComponent("tt.essentials.basic_item_splitter.mode", newMode, te.getDistribution().base);
+	protected Component getModeComponent(AbstractSplitterTE te, int newMode){
+		return new TranslatableComponent("tt.essentials.basic_item_splitter.mode", newMode, te.getDistribution().base);
 	}
 }

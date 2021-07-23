@@ -3,35 +3,41 @@ package com.Da_Technomancer.essentials.blocks;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class HopperFilter extends ContainerBlock{
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+
+public class HopperFilter extends BaseEntityBlock{
 
 	protected HopperFilter(){
 		super(Properties.of(Material.STONE).sound(SoundType.STONE).strength(2));
@@ -42,7 +48,7 @@ public class HopperFilter extends ContainerBlock{
 	}
 
 	@Override
-	public TileEntity newBlockEntity(IBlockReader world){
+	public BlockEntity newBlockEntity(BlockGetter world){
 		return new HopperFilterTileEntity();
 	}
 
@@ -53,36 +59,36 @@ public class HopperFilter extends ContainerBlock{
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader world, List<ITextComponent> tooltip, ITooltipFlag advanced){
-		tooltip.add(new TranslationTextComponent("tt.essentials.hopper_filter.desc"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.hopper_filter.move"));
-		tooltip.add(new TranslationTextComponent("tt.essentials.hopper_filter.shulker"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
+		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.desc"));
+		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.move"));
+		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.shulker"));
 	}
 
 	private static final VoxelShape[] BB = new VoxelShape[3];
 
 	static{
-		BB[0] = VoxelShapes.joinUnoptimized(box(0, 0, 0, 4, 16, 16), VoxelShapes.joinUnoptimized(box(12, 0, 0, 16, 16, 16), box(4, 4, 4, 12, 12, 12), IBooleanFunction.OR), IBooleanFunction.OR);//X axis
-		BB[1] = VoxelShapes.joinUnoptimized(box(0, 0, 0, 16, 4, 16), VoxelShapes.joinUnoptimized(box(0, 12, 0, 16, 16, 16), box(4, 4, 4, 12, 12, 12), IBooleanFunction.OR), IBooleanFunction.OR);//Y axis
-		BB[2] = VoxelShapes.joinUnoptimized(box(0, 0, 0, 16, 16, 4), VoxelShapes.joinUnoptimized(box(0, 0, 12, 16, 16, 16), box(4, 4, 4, 12, 12, 12), IBooleanFunction.OR), IBooleanFunction.OR);//Z axis
+		BB[0] = Shapes.joinUnoptimized(box(0, 0, 0, 4, 16, 16), Shapes.joinUnoptimized(box(12, 0, 0, 16, 16, 16), box(4, 4, 4, 12, 12, 12), BooleanOp.OR), BooleanOp.OR);//X axis
+		BB[1] = Shapes.joinUnoptimized(box(0, 0, 0, 16, 4, 16), Shapes.joinUnoptimized(box(0, 12, 0, 16, 16, 16), box(4, 4, 4, 12, 12, 12), BooleanOp.OR), BooleanOp.OR);//Y axis
+		BB[2] = Shapes.joinUnoptimized(box(0, 0, 0, 16, 16, 4), Shapes.joinUnoptimized(box(0, 0, 12, 16, 16, 16), box(4, 4, 4, 12, 12, 12), BooleanOp.OR), BooleanOp.OR);//Z axis
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context){
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
 		return BB[state.getValue(ESProperties.AXIS).ordinal()];
 	}
 
 	@Override
-	public void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
+	public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.AXIS);
 	}
 
 	@Override
-	public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			TileEntity te = worldIn.getBlockEntity(pos);
+			BlockEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof HopperFilterTileEntity) {
-				InventoryHelper.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), ((HopperFilterTileEntity) te).getFilter());
+				Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), ((HopperFilterTileEntity) te).getFilter());
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
@@ -91,14 +97,14 @@ public class HopperFilter extends ContainerBlock{
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			if(!worldIn.isClientSide){
 				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.AXIS));//MCP note: cycle
 			}
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}else{
-			TileEntity te = worldIn.getBlockEntity(pos);
+			BlockEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof HopperFilterTileEntity){
 				if(!worldIn.isClientSide){
 					HopperFilterTileEntity fte = (HopperFilterTileEntity) te;
@@ -111,19 +117,19 @@ public class HopperFilter extends ContainerBlock{
 						fte.setFilter(ItemStack.EMPTY);
 					}
 				}
-				return ActionResultType.SUCCESS;
+				return InteractionResult.SUCCESS;
 			}
 		}
-		return ActionResultType.FAIL;
+		return InteractionResult.FAIL;
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext context){
 		return defaultBlockState().setValue(ESProperties.AXIS, context.getClickedFace().getAxis());
 	}
 
 	@Override
-	public BlockRenderType getRenderShape(BlockState state){
-		return BlockRenderType.MODEL;
+	public RenderShape getRenderShape(BlockState state){
+		return RenderShape.MODEL;
 	}
 }

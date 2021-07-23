@@ -3,23 +3,23 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.RedstoneDiodeBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.TickPriority;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DiodeBlock;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -32,36 +32,36 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext context){
 		return defaultBlockState().setValue(ESProperties.HORIZ_FACING, context.getHorizontalDirection());
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
 		builder.add(ESProperties.HORIZ_FACING);//.add(EssentialsProperties.REDSTONE_BOOL);
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			if(!worldIn.isClientSide){
 				worldIn.setBlockAndUpdate(pos, state.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING).getClockWise()));
 			}
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
-		return ActionResultType.PASS;
+		return InteractionResult.PASS;
 	}
 
 
 	@Nullable
 	@Override
-	public TileEntity newBlockEntity(IBlockReader worldIn){
+	public BlockEntity newBlockEntity(BlockGetter worldIn){
 		return new CircuitTileEntity();
 	}
 
 	@Override
-	public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
-		TileEntity te = worldIn.getBlockEntity(pos);
+	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
+		BlockEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof CircuitTileEntity && !worldIn.isClientSide){
 			CircuitTileEntity cte = (CircuitTileEntity) te;
 			cte.builtConnections = false;
@@ -72,12 +72,12 @@ public abstract class AbstractCircuit extends AbstractTile{
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		TileEntity te = worldIn.getBlockEntity(pos);
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+		BlockEntity te = worldIn.getBlockEntity(pos);
 
 		if(te instanceof CircuitTileEntity){
 			CircuitTileEntity cte = (CircuitTileEntity) te;
-			if(blockIn == Blocks.REDSTONE_WIRE || blockIn instanceof RedstoneDiodeBlock){
+			if(blockIn == Blocks.REDSTONE_WIRE || blockIn instanceof DiodeBlock){
 				//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
 				cte.handleInputChange(TickPriority.HIGH);
 			}else{
@@ -91,9 +91,9 @@ public abstract class AbstractCircuit extends AbstractTile{
 	}
 
 	@Override
-	public int getSignal(BlockState state, IBlockReader blockAccess, BlockPos pos, Direction side){
+	public int getSignal(BlockState state, BlockGetter blockAccess, BlockPos pos, Direction side){
 		if(side.getOpposite() == state.getValue(ESProperties.HORIZ_FACING)){
-			TileEntity te = blockAccess.getBlockEntity(pos);
+			BlockEntity te = blockAccess.getBlockEntity(pos);
 			if(te instanceof CircuitTileEntity){
 				return RedstoneUtil.clampToVanilla(((CircuitTileEntity) te).getOutput());
 			}
@@ -102,7 +102,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 	}
 
 	@Override
-	public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side){
+	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side){
 		return side != null && (side.getOpposite() == state.getValue(ESProperties.HORIZ_FACING) || useInput(CircuitTileEntity.Orient.getOrient(side.getOpposite(), state.getValue(ESProperties.HORIZ_FACING))));
 	}
 
@@ -112,8 +112,8 @@ public abstract class AbstractCircuit extends AbstractTile{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerWorld worldIn, BlockPos pos, Random random){
-		TileEntity te = worldIn.getBlockEntity(pos);
+	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random){
+		BlockEntity te = worldIn.getBlockEntity(pos);
 		if(te instanceof CircuitTileEntity){
 			((CircuitTileEntity) te).recalculateOutput();
 		}

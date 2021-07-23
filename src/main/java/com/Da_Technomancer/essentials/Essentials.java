@@ -11,21 +11,21 @@ import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.Da_Technomancer.essentials.tileentities.*;
 import com.Da_Technomancer.essentials.tileentities.redstone.*;
 import com.mojang.datafixers.DSL;
-import net.minecraft.block.Block;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.entity.WitherSkullRenderer;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -81,8 +81,8 @@ public final class Essentials{
 	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
 		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(new ESEventHandlerClient());
-		RenderTypeLookup.setRenderLayer(hopperFilter, RenderType.cutout());
-		RenderTypeLookup.setRenderLayer(candleLilyPad, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(hopperFilter, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(candleLilyPad, RenderType.cutout());
 	}
 
 	@SuppressWarnings("unused")
@@ -117,13 +117,13 @@ public final class Essentials{
 	@SubscribeEvent
 	public static void registerEnts(RegistryEvent.Register<EntityType<?>> e){
 		IForgeRegistry<EntityType<?>> registry = e.getRegistry();
-		registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, EntityClassification.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, World w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
+		registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, MobCategory.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
 	}
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> e){
-		IForgeRegistry<TileEntityType<?>> reg = e.getRegistry();
+	public static void registerTileEntities(RegistryEvent.Register<BlockEntityType<?>> e){
+		IForgeRegistry<BlockEntityType<?>> reg = e.getRegistry();
 		registerTE(BrazierTileEntity::new, "brazier", reg, brazier);
 		registerTE(SlottedChestTileEntity::new, "slotted_chest", reg, slottedChest);
 		registerTE(SortingHopperTileEntity::new, "sorting_hopper", reg, sortingHopper);
@@ -147,8 +147,8 @@ public final class Essentials{
 		registerTE(PulseCircuitTileEntity::new, "pulse_circuit", reg, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
 	}
 
-	private static void registerTE(Supplier<? extends TileEntity> cons, String id, IForgeRegistry<TileEntityType<?>> reg, Block... blocks){
-		TileEntityType<?> teType = TileEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
+	private static void registerTE(Supplier<? extends BlockEntity> cons, String id, IForgeRegistry<BlockEntityType<?>> reg, Block... blocks){
+		BlockEntityType<?> teType = BlockEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);
 	}
@@ -156,7 +156,7 @@ public final class Essentials{
 	@SubscribeEvent
 	@SuppressWarnings("unused")
 	@OnlyIn(Dist.CLIENT)
-	public static void registerContainers(RegistryEvent.Register<ContainerType<?>> e){
+	public static void registerContainers(RegistryEvent.Register<MenuType<?>> e){
 		registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
 		registerCon(FluidShifterContainer::new, FluidShifterScreen::new, "fluid_shifter", e);
 		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
@@ -171,7 +171,7 @@ public final class Essentials{
 	@SubscribeEvent
 	@SuppressWarnings("unused")
 	@OnlyIn(Dist.DEDICATED_SERVER)
-	public static void registerContainerTypes(RegistryEvent.Register<ContainerType<?>> e){
+	public static void registerContainerTypes(RegistryEvent.Register<MenuType<?>> e){
 		registerConType(ItemShifterContainer::new, "item_shifter", e);
 		registerConType(FluidShifterContainer::new, "fluid_shifter", e);
 		registerConType(SlottedChestContainer::new, "slotted_chest", e);
@@ -199,8 +199,8 @@ public final class Essentials{
 	 * @param <T> Container subclass
 	 * @return The newly created type
 	 */
-	private static <T extends Container> ContainerType<T> registerConType(IContainerFactory<T> cons, String id, RegistryEvent.Register<ContainerType<?>> reg){
-		ContainerType<T> contType = new ContainerType<>(cons);
+	private static <T extends AbstractContainerMenu> MenuType<T> registerConType(IContainerFactory<T> cons, String id, RegistryEvent.Register<MenuType<?>> reg){
+		MenuType<T> contType = new MenuType<>(cons);
 		contType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.getRegistry().register(contType);
 		return contType;
@@ -215,8 +215,8 @@ public final class Essentials{
 	 * @param <T> Container subclass
 	 */
 	@OnlyIn(Dist.CLIENT)
-	private static <T extends Container> void registerCon(IContainerFactory<T> cons, ScreenManager.IScreenFactory<T, ContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<ContainerType<?>> reg){
-		ContainerType<T> contType = registerConType(cons, id, reg);
-		ScreenManager.register(contType, screenFactory);
+	private static <T extends AbstractContainerMenu> void registerCon(IContainerFactory<T> cons, MenuScreens.ScreenConstructor<T, AbstractContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<MenuType<?>> reg){
+		MenuType<T> contType = registerConType(cons, id, reg);
+		MenuScreens.register(contType, screenFactory);
 	}
 }

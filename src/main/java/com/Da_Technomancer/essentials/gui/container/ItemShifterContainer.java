@@ -1,30 +1,30 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
-public class ItemShifterContainer extends Container{
+public class ItemShifterContainer extends AbstractContainerMenu{
 
 	@ObjectHolder("item_shifter")
-	private static ContainerType<ItemShifterContainer> TYPE = null;
+	private static MenuType<ItemShifterContainer> TYPE = null;
 
-	private final IInventory inv;
+	private final Container inv;
 
-	public ItemShifterContainer(int id, PlayerInventory playerInventory, PacketBuffer data){
-		this(id, playerInventory, new Inventory(1));
+	public ItemShifterContainer(int id, Inventory playerInventory, FriendlyByteBuf data){
+		this(id, playerInventory, new SimpleContainer(1));
 	}
 
-	public ItemShifterContainer(int id, PlayerInventory playerInventory, IInventory inv){
+	public ItemShifterContainer(int id, Inventory playerInventory, Container inv){
 		super(TYPE, id);
 		this.inv = inv;
 		addSlot(new Slot(inv, 0, 80, 32));
@@ -41,12 +41,12 @@ public class ItemShifterContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity playerIn){
+	public boolean stillValid(Player playerIn){
 		return inv.stillValid(playerIn);
 	}
 
 	@Override
-	public ItemStack quickMoveStack(PlayerEntity playerIn, int fromSlot){
+	public ItemStack quickMoveStack(Player playerIn, int fromSlot){
 		ItemStack previous = ItemStack.EMPTY;
 		Slot slot = slots.get(fromSlot);
 

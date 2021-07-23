@@ -5,20 +5,20 @@ import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
 import com.Da_Technomancer.essentials.tileentities.redstone.TimerCircuitTileEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -45,28 +45,28 @@ public class TimerCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity playerIn, Hand hand, BlockRayTraceResult hit){
-		TileEntity te;
+	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
+		BlockEntity te;
 		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
 			super.use(state, worldIn, pos, playerIn, hand, hit);
 		}else if(playerIn.getItemInHand(hand).getItem() == ESItems.circuitWrench){
-			return ActionResultType.PASS;
+			return InteractionResult.PASS;
 		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof TimerCircuitTileEntity){
 			TimerCircuitTileEntity tte = (TimerCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayerEntity) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrPeriod, tte.settingStrDuration));
+			NetworkHooks.openGui((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrPeriod, tte.settingStrDuration));
 		}
 
-		return ActionResultType.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Nullable
 	@Override
-	public TileEntity newBlockEntity(IBlockReader worldIn){
+	public BlockEntity newBlockEntity(BlockGetter worldIn){
 		return new TimerCircuitTileEntity();
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn){
-		tooltip.add(new TranslationTextComponent("tt.essentials.timer_circuit"));
+	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
+		tooltip.add(new TranslatableComponent("tt.essentials.timer_circuit"));
 	}
 }

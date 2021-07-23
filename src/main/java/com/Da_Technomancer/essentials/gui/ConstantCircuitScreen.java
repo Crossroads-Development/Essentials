@@ -1,13 +1,13 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 public class ConstantCircuitScreen extends CircuitScreen<ConstantCircuitContainer>{
 
-	public ConstantCircuitScreen(ConstantCircuitContainer cont, PlayerInventory playerInventory, ITextComponent text){
+	public ConstantCircuitScreen(ConstantCircuitContainer cont, Inventory playerInventory, Component text){
 		super(cont, playerInventory, text);
 	}
 
@@ -15,6 +15,6 @@ public class ConstantCircuitScreen extends CircuitScreen<ConstantCircuitContaine
 	protected void init(){
 		super.init();
 
-		createTextBar(0, 18, 28, new TranslationTextComponent("container.cons_circuit.bar"));
+		createTextBar(0, 18, 28, new TranslatableComponent("container.cons_circuit.bar"));
 	}
 }

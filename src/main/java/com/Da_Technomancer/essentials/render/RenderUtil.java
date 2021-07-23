@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.dispenser.IPosition;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.Position;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,7 +27,7 @@ public class RenderUtil{
 	 * @param light The light value
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, int light){
+	public static void addVertexBlock(VertexConsumer builder, PoseStack matrix, float x, float y, float z, float u, float v, float normalX, float normalY, float normalZ, int light){
 		builder.vertex(matrix.last().pose(), x, y, z).color(1F, 1F, 1F, 1F).uv(u, v).uv2(light).normal(matrix.last().normal(), normalX, normalY, normalZ).endVertex();
 	}
 
@@ -43,7 +43,7 @@ public class RenderUtil{
 	 * @param light The combined light coordinate
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, IPosition pos, float u, float v, IPosition normal, float alpha, int light){
+	public static void addVertexBlock(VertexConsumer builder, PoseStack matrix, Position pos, float u, float v, Position normal, float alpha, int light){
 		builder.vertex(matrix.last().pose(), (float) pos.x(), (float) pos.y(), (float) pos.z()).color(1F, 1F, 1F, alpha).uv(u, v).uv2(light).normal(matrix.last().normal(), (float) normal.x(), (float) normal.y(), (float) normal.z()).endVertex();
 	}
 
@@ -59,7 +59,7 @@ public class RenderUtil{
 	 * @param col A size 4 array (r, g, b, a) defining the color, scale [0, 255]
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static void addVertexBlock(IVertexBuilder builder, MatrixStack matrix, IPosition pos, float u, float v, IPosition normal, int light, int[] col){
+	public static void addVertexBlock(VertexConsumer builder, PoseStack matrix, Position pos, float u, float v, Position normal, int light, int[] col){
 		builder.vertex(matrix.last().pose(), (float) pos.x(), (float) pos.y(), (float) pos.z()).color(col[0], col[1], col[2], col[3]).uv(u, v).uv2(light).normal(matrix.last().normal(), (float) normal.x(), (float) normal.y(), (float) normal.z()).endVertex();
 	}
 
@@ -77,11 +77,11 @@ public class RenderUtil{
 	 * @return A vector of magnitude width/2 orthogonal to ray oriented to maximize viewable area by the player
 	 */
 	@OnlyIn(Dist.CLIENT)
-	public static Vector3d findRayWidth(Vector3d rayStPos, Vector3d ray, float width){
-		Vector3d cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-		Vector3d relStPos = rayStPos.subtract(cameraPos);//Where the ray starts, relative to the camera
+	public static Vec3 findRayWidth(Vec3 rayStPos, Vec3 ray, float width){
+		Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+		Vec3 relStPos = rayStPos.subtract(cameraPos);//Where the ray starts, relative to the camera
 		ray = ray.normalize();
-		Vector3d widthVec = relStPos.subtract(ray.scale(ray.dot(relStPos)));//Vector from the camera to the closest point on the ray (were it extended infinitely)
+		Vec3 widthVec = relStPos.subtract(ray.scale(ray.dot(relStPos)));//Vector from the camera to the closest point on the ray (were it extended infinitely)
 		widthVec = widthVec.cross(ray);//Cross the ray direction with the vector from camera to ray, resulting in a vector orthogonal to the field of vision and the ray
 		return widthVec.scale(width / 2 / widthVec.length());
 	}

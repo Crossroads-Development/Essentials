@@ -2,12 +2,12 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 
 public class ReaderCircuit extends AbstractCircuit{
 
@@ -21,20 +21,20 @@ public class ReaderCircuit extends AbstractCircuit{
 	}
 
 	@Override
-	public boolean getWeakChanges(BlockState state, IWorldReader world, BlockPos pos){
+	public boolean getWeakChanges(BlockState state, LevelReader world, BlockPos pos){
 		return true;
 	}
 
 	@Override
-	public void onNeighborChange(BlockState state, IWorldReader world, BlockPos pos, BlockPos neighbor){
-		if(world instanceof World){
-			neighborChanged(state, (World) world, pos, this, neighbor, false);
+	public void onNeighborChange(BlockState state, LevelReader world, BlockPos pos, BlockPos neighbor){
+		if(world instanceof Level){
+			neighborChanged(state, (Level) world, pos, this, neighbor, false);
 		}
 	}
 
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		World world = te.getLevel();
+		Level world = te.getLevel();
 		Direction back = CircuitTileEntity.Orient.BACK.getFacing(te.getBlockState().getValue(ESProperties.HORIZ_FACING));
 		BlockPos readPos = te.getBlockPos().relative(back);
 		float output;

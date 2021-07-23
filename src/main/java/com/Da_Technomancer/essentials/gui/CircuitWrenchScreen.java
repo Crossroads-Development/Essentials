@@ -6,24 +6,24 @@ import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
 import com.Da_Technomancer.essentials.packets.ConfigureWrenchOnServer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.ArrayList;
 
-public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>{
+public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchContainer>{
 
 	private static final ResourceLocation SEARCH_BAR_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/search_bar.png");
 	private static final ResourceLocation ROW_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/row.png");
@@ -31,14 +31,14 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	private static final int ROWS = 8;
 	private static final int COLUMNS = 8;
 
-	private TextFieldWidget searchBar;
+	private EditBox searchBar;
 
 	/**
 	 * A list of the indices of all AbstractTile modes that are currently displayed and match the filter
 	 */
 	private final ArrayList<Integer> options = new ArrayList<>();
 
-	public CircuitWrenchScreen(CircuitWrenchContainer cont, PlayerInventory playerInventory, ITextComponent text){
+	public CircuitWrenchScreen(CircuitWrenchContainer cont, Inventory playerInventory, Component text){
 		super(cont, playerInventory, text);
 		imageHeight = 18 * ROWS + 18;
 		imageWidth = 18 * COLUMNS;
@@ -51,7 +51,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	@Override
 	protected void init(){
 		super.init();
-		searchBar = new TextFieldWidget(font, leftPos + 4, topPos + 8, COLUMNS * 18 - 4, 18, new TranslationTextComponent("container.search_bar"));
+		searchBar = new EditBox(font, leftPos + 4, topPos + 8, COLUMNS * 18 - 4, 18, new TranslatableComponent("container.search_bar"));
 		searchBar.setCanLoseFocus(false);
 		searchBar.setTextColor(-1);
 		searchBar.setTextColorUneditable(-1);
@@ -99,17 +99,17 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 
 		//Tooltip
 		int index = getSelectedMode(mouseX, mouseY);
 		if(index >= 0){
-			ArrayList<ITextComponent> tt = new ArrayList<>();
-			tt.add(new TranslationTextComponent(CircuitWrench.MODES.get(index).getDescriptionId()));
+			ArrayList<Component> tt = new ArrayList<>();
+			tt.add(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId()));
 			AbstractTile block = CircuitWrench.MODES.get(index);
-			block.appendHoverText(ItemStack.EMPTY, null, tt, ITooltipFlag.TooltipFlags.NORMAL);
+			block.appendHoverText(ItemStack.EMPTY, null, tt, TooltipFlag.Default.NORMAL);
 			renderComponentTooltip(matrix, tt, mouseX, mouseY);//MCP note: renderTooltip
 		}
 
@@ -130,7 +130,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 		}
 	}
 
-	private static final Style style = Style.EMPTY.applyFormat(TextFormatting.DARK_RED);
+	private static final Style style = Style.EMPTY.applyFormat(ChatFormatting.DARK_RED);
 
 	@Override
 	public boolean mouseClicked(double xPos, double yPos, int button){
@@ -148,14 +148,14 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 
 		EssentialsPackets.channel.sendToServer(new ConfigureWrenchOnServer(index));
 		minecraft.player.closeContainer();
-		inventory.player.sendMessage(new TranslationTextComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslationTextComponent(CircuitWrench.MODES.get(index).getDescriptionId())), inventory.player.getUUID());//MCP note: setStyle, appendSibling
+		inventory.player.sendMessage(new TranslatableComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId())), inventory.player.getUUID());//MCP note: setStyle, appendSibling
 
 		return true;
 	}
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		//Search bar
 		minecraft.getTextureManager().bind(SEARCH_BAR_TEXTURE);
@@ -182,7 +182,7 @@ public class CircuitWrenchScreen extends ContainerScreen<CircuitWrenchContainer>
 
 	//MCP note: draw tooltip/foreground
 	@Override
-	protected void renderLabels(MatrixStack matrix, int p_230451_2_, int p_230451_3_){
+	protected void renderLabels(PoseStack matrix, int p_230451_2_, int p_230451_3_){
 		//Don't render text overlays
 	}
 }

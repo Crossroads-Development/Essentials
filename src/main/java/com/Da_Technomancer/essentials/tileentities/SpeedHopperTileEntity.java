@@ -1,16 +1,16 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
 public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
 	@ObjectHolder("speed_hopper")
-	private static TileEntityType<SpeedHopperTileEntity> TYPE = null;
+	private static BlockEntityType<SpeedHopperTileEntity> TYPE = null;
 
 	public SpeedHopperTileEntity(){
 		super(TYPE);
@@ -19,8 +19,8 @@ public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
 
 	@Override
-	public ITextComponent getDisplayName(){
-		return new TranslationTextComponent( "container.speed_hopper");
+	public Component getDisplayName(){
+		return new TranslatableComponent( "container.speed_hopper");
 	}
 
 	@Override

@@ -3,19 +3,19 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import net.minecraft.block.BlockState;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
 
-public abstract class AbstractSplitterTE extends TileEntity implements ITickableTileEntity{
+public abstract class AbstractSplitterTE extends BlockEntity implements TickableBlockEntity{
 
 	protected int mode = 6;
 	protected final BlockPos[] endPos = new BlockPos[2];
 
-	protected AbstractSplitterTE(TileEntityType<? extends AbstractSplitterTE> type){
+	protected AbstractSplitterTE(BlockEntityType<? extends AbstractSplitterTE> type){
 		super(type);
 	}
 

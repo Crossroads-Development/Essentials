@@ -1,21 +1,21 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
-public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
+public class SlottedChestScreen extends AbstractContainerScreen<SlottedChestContainer>{
 
 	private static final ResourceLocation CHEST_GUI_TEXTURE = new ResourceLocation("textures/gui/container/generic_54.png");
 
-	public SlottedChestScreen(SlottedChestContainer cont, PlayerInventory playerInventory, ITextComponent text){
+	public SlottedChestScreen(SlottedChestContainer cont, Inventory playerInventory, Component text){
 		super(cont, playerInventory, text);
 		imageHeight = 222;
 		//Fixes a vanilla UI bug- the field needs to be recalculated after changing ySize
@@ -23,7 +23,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 	}
 
 	@Override
-	public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		//We add the ability to render a tooltip for locked empty slots
@@ -40,7 +40,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(MatrixStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		RenderSystem.color3f(1, 1, 1);
 		minecraft.getTextureManager().bind(CHEST_GUI_TEXTURE);
@@ -50,7 +50,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 
 		//Foreground
 		RenderSystem.pushLightingAttributes();
-		RenderHelper.turnBackOn();
+		Lighting.turnBackOn();
 		RenderSystem.disableLighting();
 		for(int i = 0; i < 54; i++){
 			ItemStack filter = menu.filter[i];
@@ -61,7 +61,7 @@ public class SlottedChestScreen extends ContainerScreen<SlottedChestContainer>{
 			}
 		}
 		RenderSystem.enableLighting();
-		RenderHelper.turnOff();
+		Lighting.turnOff();
 		RenderSystem.popAttributes();
 	}
 }

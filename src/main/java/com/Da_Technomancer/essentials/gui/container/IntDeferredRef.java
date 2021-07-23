@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.gui.container;
 
-import net.minecraft.util.IntReferenceHolder;
+import net.minecraft.world.inventory.DataSlot;
 
 import java.util.function.Supplier;
 
@@ -8,7 +8,7 @@ import java.util.function.Supplier;
  * An int reference holder that uses a supplier to define the "true" value on the virtual server side
  * Typically used to reference a field
  */
-public class IntDeferredRef extends IntReferenceHolder{
+public class IntDeferredRef extends DataSlot{
 
 	private Integer setVal = null;//We use an Integer to allow a null value, which indicates that no value has been initialized or set yet
 	private final Supplier<Integer> src;

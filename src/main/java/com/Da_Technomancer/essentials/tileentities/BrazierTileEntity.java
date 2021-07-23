@@ -3,17 +3,17 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
@@ -24,10 +24,10 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 
 @ObjectHolder(Essentials.MODID)
-public class BrazierTileEntity extends TileEntity implements ITickableTileEntity{
+public class BrazierTileEntity extends BlockEntity implements TickableBlockEntity{
 
 	@ObjectHolder("brazier")
-	private static TileEntityType<BrazierTileEntity> TYPE = null;
+	private static BlockEntityType<BrazierTileEntity> TYPE = null;
 
 	public BrazierTileEntity(){
 		super(TYPE);
@@ -40,7 +40,7 @@ public class BrazierTileEntity extends TileEntity implements ITickableTileEntity
 		}
 
 		if(level.getGameTime() % 10 == 0){
-			ServerWorld server = (ServerWorld) level;
+			ServerLevel server = (ServerLevel) level;
 
 			BlockState state = level.getBlockState(worldPosition);
 			if(state.getBlock() != ESBlocks.brazier){

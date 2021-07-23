@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.packets;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
 
 public interface ILongReceiver{
 
-	public void receiveLong(byte id, long value, @Nullable ServerPlayerEntity sender);
+	public void receiveLong(byte id, long value, @Nullable ServerPlayer sender);
 }

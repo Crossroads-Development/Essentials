@@ -2,15 +2,15 @@ package com.Da_Technomancer.essentials.items;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.integration.ESIntegration;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 
 public class ESItems{
 
-	public static final ItemGroup TAB_ESSENTIALS = new ItemGroup(Essentials.MODID){
+	public static final CreativeModeTab TAB_ESSENTIALS = new CreativeModeTab(Essentials.MODID){
 		@Override
 		public ItemStack makeIcon(){
 			return new ItemStack(itemCandleLilypad, 1);

@@ -1,19 +1,19 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
 
-public abstract class CircuitContainer extends Container{
+public abstract class CircuitContainer extends AbstractContainerMenu{
 
 	public final BlockPos pos;
 	public final String[] inputs = new String[inputBars()];
 
-	protected CircuitContainer(ContainerType<? extends CircuitContainer> type, int id, PlayerInventory playerInventory, PacketBuffer data){
+	protected CircuitContainer(MenuType<? extends CircuitContainer> type, int id, Inventory playerInventory, FriendlyByteBuf data){
 		super(type, id);
 		if(data == null){
 			pos = null;
@@ -25,11 +25,11 @@ public abstract class CircuitContainer extends Container{
 		}
 	}
 
-	public static PacketBuffer createEmptyBuf(){
-		return new PacketBuffer(Unpooled.buffer());
+	public static FriendlyByteBuf createEmptyBuf(){
+		return new FriendlyByteBuf(Unpooled.buffer());
 	}
 
-	public static PacketBuffer encodeData(PacketBuffer buf, BlockPos pos, String... inputs){
+	public static FriendlyByteBuf encodeData(FriendlyByteBuf buf, BlockPos pos, String... inputs){
 		buf.writeBlockPos(pos);
 		for(String input : inputs){
 			buf.writeUtf(input);
@@ -38,7 +38,7 @@ public abstract class CircuitContainer extends Container{
 	}
 
 	@Override
-	public boolean stillValid(PlayerEntity playerIn){
+	public boolean stillValid(Player playerIn){
 		return pos != null && pos.distSqr(playerIn.position(), true) <= 64;
 	}
 

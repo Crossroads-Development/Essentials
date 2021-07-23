@@ -9,17 +9,17 @@ import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import com.Da_Technomancer.essentials.tileentities.LinkHelper;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.DyeColor;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.TickPriority;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ObjectHolder;
@@ -33,10 +33,10 @@ import java.util.ArrayList;
 import java.util.Set;
 
 @ObjectHolder(Essentials.MODID)
-public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE{
+public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkTE{
 
 	@ObjectHolder("redstone_transmitter")
-	public static TileEntityType<RedstoneTransmitterTileEntity> TYPE = null;
+	public static BlockEntityType<RedstoneTransmitterTileEntity> TYPE = null;
 
 	public final LinkHelper linkHelper = new LinkHelper(this);
 
@@ -49,7 +49,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public AxisAlignedBB getRenderBoundingBox(){
+	public AABB getRenderBoundingBox(){
 		return linkHelper.frustrum();
 	}
 
@@ -94,7 +94,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 			sources.clear();
 
 			for(Direction checkDir : Direction.values()){
-				TileEntity te = level.getBlockEntity(worldPosition.relative(checkDir));
+				BlockEntity te = level.getBlockEntity(worldPosition.relative(checkDir));
 				IRedstoneHandler otherHandler;
 				if(te != null && (otherHandler = BlockUtil.get(te.getCapability(RedstoneUtil.REDSTONE_CAPABILITY, checkDir.getOpposite()))) != null){
 					otherHandler.requestSrc(circRef, 0, checkDir.getOpposite(), checkDir);
@@ -144,7 +144,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 		if(RedstoneUtil.didChange(output, input)){
 			output = input;
 			for(BlockPos link : linkHelper.getLinksAbsolute()){
-				TileEntity te = level.getBlockEntity(link);
+				BlockEntity te = level.getBlockEntity(link);
 				if(te instanceof RedstoneReceiverTileEntity){
 					((RedstoneReceiverTileEntity) te).notifyOutputChange();
 				}
@@ -154,21 +154,21 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public CompoundNBT getUpdateTag(){
-		CompoundNBT nbt = super.getUpdateTag();
+	public CompoundTag getUpdateTag(){
+		CompoundTag nbt = super.getUpdateTag();
 		linkHelper.writeNBT(nbt);
 		return nbt;
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 		output = nbt.getFloat("out");
 		linkHelper.readNBT(nbt);
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
 		nbt.putFloat("out", output);
 		linkHelper.writeNBT(nbt);
@@ -176,7 +176,7 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public TileEntity getTE(){
+	public BlockEntity getTE(){
 		return this;
 	}
 
@@ -206,12 +206,12 @@ public class RedstoneTransmitterTileEntity extends TileEntity implements ILinkTE
 	}
 
 	@Override
-	public boolean createLinkSource(ILinkTE endpoint, @Nullable PlayerEntity player){
+	public boolean createLinkSource(ILinkTE endpoint, @Nullable Player player){
 		return linkHelper.addLink(endpoint, player);
 	}
 
 	@Override
-	public void receiveLong(byte identifier, long message, @Nullable ServerPlayerEntity sendingPlayer){
+	public void receiveLong(byte identifier, long message, @Nullable ServerPlayer sendingPlayer){
 		linkHelper.handleIncomingPacket(identifier, message);
 	}
 

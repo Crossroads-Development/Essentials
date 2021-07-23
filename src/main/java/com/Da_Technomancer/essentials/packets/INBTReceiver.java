@@ -1,11 +1,11 @@
 package com.Da_Technomancer.essentials.packets;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 
 public interface INBTReceiver{
 
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender);
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender);
 }

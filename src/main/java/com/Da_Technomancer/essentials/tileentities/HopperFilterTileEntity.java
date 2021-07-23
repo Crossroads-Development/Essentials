@@ -6,20 +6,20 @@ import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.ISidedInventoryProvider;
-import net.minecraft.inventory.ItemStackHelper;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.WorldlyContainerHolder;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -31,10 +31,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
+public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 
 	@ObjectHolder("hopper_filter")
-	public static TileEntityType<HopperFilterTileEntity> TYPE = null;
+	public static BlockEntityType<HopperFilterTileEntity> TYPE = null;
 
 	public HopperFilterTileEntity(){
 		super(TYPE);
@@ -49,7 +49,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 	public void setFilter(ItemStack filter){
 		this.filter = filter;
-		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(filter.save(new CompoundNBT()), worldPosition));
+		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(filter.save(new CompoundTag()), worldPosition));
 		setChanged();
 	}
 
@@ -76,25 +76,25 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 	}
 
 	@Override
-	public CompoundNBT save(CompoundNBT nbt){
+	public CompoundTag save(CompoundTag nbt){
 		super.save(nbt);
-		nbt.put("filter", filter.save(new CompoundNBT()));
+		nbt.put("filter", filter.save(new CompoundTag()));
 		return nbt;
 	}
 
 	@Override
-	public void load(BlockState state, CompoundNBT nbt){
+	public void load(BlockState state, CompoundTag nbt){
 		super.load(state, nbt);
 		filter = ItemStack.of(nbt.getCompound("filter"));
 	}
 
 	@Override
-	public CompoundNBT getUpdateTag(){
+	public CompoundTag getUpdateTag(){
 		return save(super.getUpdateTag());
 	}
 
 	@Override
-	public void receiveNBT(CompoundNBT nbt, @Nullable ServerPlayerEntity sender){
+	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		filter = ItemStack.of(nbt);
 	}
 
@@ -103,10 +103,10 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 			return false;
 		}
 
-		CompoundNBT nbt;
+		CompoundTag nbt;
 		if(filt.getItem() instanceof BlockItem && ((BlockItem) filt.getItem()).getBlock() instanceof ShulkerBoxBlock && (nbt = filt.getTag()) != null){
 			NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
-			ItemStackHelper.loadAllItems(nbt.getCompound("BlockEntityTag"), nonnulllist);
+			ContainerHelper.loadAllItems(nbt.getCompound("BlockEntityTag"), nonnulllist);
 
 			for(ItemStack singleFilt : nonnulllist){
 				if(matchFilter(query, singleFilt)){
@@ -163,7 +163,7 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 				return src.orElseThrow(NullPointerException::new);
 			}else{
 				BlockPos checkPos = worldPosition.relative(side.getOpposite());
-				TileEntity checkTE = level.getBlockEntity(checkPos);
+				BlockEntity checkTE = level.getBlockEntity(checkPos);
 
 				if(checkTE != null){
 					src = checkTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
@@ -174,9 +174,9 @@ public class HopperFilterTileEntity extends TileEntity implements INBTReceiver{
 
 				BlockState checkState = level.getBlockState(checkPos);
 
-				if(checkState.getBlock() instanceof ISidedInventoryProvider){
+				if(checkState.getBlock() instanceof WorldlyContainerHolder){
 					//As the contract for ISidedInventoryProvider is poorly defined (there being only 1 vanilla example), we can't safely cache the result
-					ISidedInventory inv = ((ISidedInventoryProvider) checkState.getBlock()).getContainer(checkState, level, checkPos);
+					WorldlyContainer inv = ((WorldlyContainerHolder) checkState.getBlock()).getContainer(checkState, level, checkPos);
 					return new InvWrapper(inv);
 				}
 
