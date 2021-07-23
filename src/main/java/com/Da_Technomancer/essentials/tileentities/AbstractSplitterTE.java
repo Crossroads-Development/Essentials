@@ -4,13 +4,13 @@ import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.ITickableTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 
-public abstract class AbstractSplitterTE extends BlockEntity implements TickableBlockEntity{
+public abstract class AbstractSplitterTE extends BlockEntity implements ITickableTileEntity{
 
 	protected int mode = 6;
 	protected final BlockPos[] endPos = new BlockPos[2];

@@ -5,20 +5,21 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -32,10 +33,10 @@ import javax.annotation.Nullable;
 public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver, MenuProvider{
 
 	@ObjectHolder("slotted_chest")
-	private static BlockEntityType<SlottedChestTileEntity> TYPE = null;
+	public static BlockEntityType<SlottedChestTileEntity> TYPE = null;
 
-	public SlottedChestTileEntity(){
-		super(TYPE);
+	public SlottedChestTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 		for(int i = 0; i < 54; i++){
 			inv[i] = ItemStack.EMPTY;
 			lockedInv[i] = ItemStack.EMPTY;
@@ -72,8 +73,8 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(nbt.contains("slot" + i)){
@@ -114,7 +115,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 		return nbt;
 	}
 
-	public final Inventory iInv = new Inventory(inv, lockedInv, this);
+	public final SlottedInv iInv = new SlottedInv(inv, lockedInv, this);
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -209,14 +210,14 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 		}
 	}
 
-	public static class Inventory implements Container{
+	public static class SlottedInv implements Container{
 
 		private final ItemStack[] inv;
 		private final ItemStack[] lockedInv;
 		@Nullable
 		private final SlottedChestTileEntity te;
 
-		public Inventory(ItemStack[] inv, ItemStack[] filter, @Nullable SlottedChestTileEntity te){
+		public SlottedInv(ItemStack[] inv, ItemStack[] filter, @Nullable SlottedChestTileEntity te){
 			this.inv = inv;
 			lockedInv = filter;
 			this.te = te;

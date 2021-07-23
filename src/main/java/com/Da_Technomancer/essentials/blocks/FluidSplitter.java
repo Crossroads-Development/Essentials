@@ -33,7 +33,7 @@ public class FluidSplitter extends BasicFluidSplitter{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter world){
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
 		return new FluidSplitterTileEntity();
 	}
 

@@ -158,11 +158,11 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		//Search bar
-		minecraft.getTextureManager().bind(SEARCH_BAR_TEXTURE);
+		RenderSystem.setShaderTexture(0, SEARCH_BAR_TEXTURE);
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 18, imageWidth, 18);
 
 		//Rows
-		minecraft.getTextureManager().bind(ROW_TEXTURE);
+		RenderSystem.setShaderTexture(0, ROW_TEXTURE);
 		for(int i = 1; i <= ROWS; i++){
 			blit(matrix, leftPos, topPos + i * 18, 0, 0, imageWidth, 18, imageWidth, 18);
 		}
@@ -175,7 +175,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 			if(sprite == null){
 				sprite = MISSING_TEXTURE;
 			}
-			minecraft.getTextureManager().bind(sprite);
+			RenderSystem.setShaderTexture(0, sprite);
 			blit(matrix, (i % COLUMNS) * 18 + 1 + leftPos, (i / COLUMNS) * 18 + 19 + topPos, 0, 0, 16, 16, 16, 16);
 		}
 	}

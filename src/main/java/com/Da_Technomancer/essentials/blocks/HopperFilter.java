@@ -48,7 +48,7 @@ public class HopperFilter extends BaseEntityBlock{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter world){
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
 		return new HopperFilterTileEntity();
 	}
 

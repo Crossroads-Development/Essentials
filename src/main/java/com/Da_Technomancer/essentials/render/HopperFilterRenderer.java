@@ -6,12 +6,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 
-public class HopperFilterRenderer extends BlockEntityRenderer<HopperFilterTileEntity>{
+public class HopperFilterRenderer implements BlockEntityRenderer<HopperFilterTileEntity>{
 
-	protected HopperFilterRenderer(BlockEntityRenderDispatcher dispatcher){
-		super(dispatcher);
+	protected HopperFilterRenderer(BlockEntityRendererProvider.Context context){
+
 	}
 
 	@Override
@@ -23,7 +23,8 @@ public class HopperFilterRenderer extends BlockEntityRenderer<HopperFilterTileEn
 		matrix.pushPose();
 		matrix.translate(0.5D, 0.5D, 0.5D);
 		matrix.scale(0.5F, 0.5F, 0.5F);
-		Minecraft.getInstance().getItemRenderer().renderStatic(te.getFilter(), ItemTransforms.TransformType.FIXED, combinedLight, combinedOverlay, matrix, renderBuf);
+		//The last param seems to be unused. The parameter name hasn't been mapped yet, but this is the value used by campfires
+		Minecraft.getInstance().getItemRenderer().renderStatic(te.getFilter(), ItemTransforms.TransformType.FIXED, combinedLight, combinedOverlay, matrix, renderBuf, (int) te.getBlockPos().asLong());
 		matrix.popPose();
 	}
 }

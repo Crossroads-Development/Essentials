@@ -14,7 +14,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.ITickableTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -24,7 +24,7 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nullable;
 
 @ObjectHolder(Essentials.MODID)
-public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, TickableBlockEntity{
+public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, ITickableTileEntity{
 
 	@ObjectHolder("pulse_circuit")
 	private static BlockEntityType<PulseCircuitTileEntity> TYPE = null;

@@ -70,4 +70,14 @@ public class WorldBuffer implements BlockGetter{
 	public Set<BlockPos> changedPositions(){
 		return memory.keySet();
 	}
+
+	@Override
+	public int getHeight(){
+		return world.getHeight();
+	}
+
+	@Override
+	public int getMinBuildHeight(){
+		return world.getMinBuildHeight();
+	}
 }

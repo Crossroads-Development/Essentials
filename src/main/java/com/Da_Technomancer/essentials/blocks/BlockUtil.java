@@ -2,12 +2,12 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.Packet;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 
 import javax.annotation.Nullable;
 
@@ -57,4 +57,6 @@ public class BlockUtil{
 		}
 		return a.getFluid() == b.getFluid() && FluidStack.areFluidStackTagsEqual(a, b);
 	}
+
+
 }

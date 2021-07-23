@@ -3,50 +3,45 @@ package com.Da_Technomancer.essentials.blocks;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.WorldBuffer;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
-import net.minecraft.block.*;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.PushReaction;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.util.*;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.TickPriority;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.piston.PistonBaseBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.*;
-
-import net.minecraft.core.Direction;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.piston.PistonBaseBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * Notable differences from a normal piston include:
@@ -177,7 +172,6 @@ public class MultiPistonBase extends Block{
 		Direction facing = state.getValue(ESProperties.FACING);
 		int redstone = getRedstoneInput(worldIn, pos, state, facing);
 		int currExtend = getCurrentExtension(worldIn, pos, state, facing);
-		//TODO should we check for obstructions?
 
 		if(redstone > currExtend){
 			//Extension has a delay of DELAY ticks
@@ -207,7 +201,7 @@ public class MultiPistonBase extends Block{
 			target = Math.min(target, world.getMaxBuildHeight() - pos.getY() - 1);
 		}else if(facing == Direction.DOWN){
 			//Check for world floor
-			target = Math.min(target, pos.getY());
+			target = Math.min(target, pos.getY() - world.getMinBuildHeight());
 		}
 		return target;
 	}
@@ -429,9 +423,9 @@ public class MultiPistonBase extends Block{
 
 		//While vanilla has this very good and logical system for blocks exposing how they react to pistons, there is for no necessary reason a large number of exceptions
 		PushReaction reaction = state.getPistonPushReaction();
-		if(state.getBlock().isAir(state, world.getWorld(), curPos)){
+		if(state.isAir()){
 			reaction = PushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
-		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock().hasTileEntity(state) || pistonPos.equals(curPos)){
+		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock() instanceof EntityBlock || pistonPos.equals(curPos)){
 			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
 		}else if(state.getDestroySpeed(world, curPos) < 0){
 			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
@@ -496,30 +490,34 @@ public class MultiPistonBase extends Block{
 	 * This is less efficient than the standard method, but necessary to fix a vanilla bug whereby repeated getEntity calls break if entities were moved between chunks in the same tick.
 	 */
 	private static void getEntitiesMultiChunk(AABB checkBox, Level worldIn, ArrayList<Entity> entList){
-		final double maxEntityRad = worldIn.getMaxEntityRadius();
-		int i = Mth.floor((checkBox.minX - maxEntityRad) / 16.0D) - 1;
-		int j = Mth.floor((checkBox.maxX + maxEntityRad) / 16.0D) + 1;
-		int k = Mth.floor((checkBox.minZ - maxEntityRad) / 16.0D) - 1;
-		int l = Mth.floor((checkBox.maxZ + maxEntityRad) / 16.0D) + 1;
-
-		int yMin = Mth.clamp(Mth.floor((checkBox.minY - maxEntityRad) / 16.0D) - 1, 0, 15);
-		int yMax = Mth.clamp(Mth.floor((checkBox.maxY + maxEntityRad) / 16.0D) + 1, 0, 15);
-
-		for(int iLoop = i; iLoop <= j; iLoop++){
-			for(int kLoop = k; kLoop <= l; kLoop++){
-				if(worldIn.hasChunk(iLoop, kLoop)){
-					LevelChunk chunk = worldIn.getChunkAt(new BlockPos(iLoop * 16, 100, kLoop * 16));
-					for(int yLoop = yMin; yLoop <= yMax; yLoop++){
-						if(!chunk.getEntitySections()[yLoop].isEmpty()){
-							for(Entity entity : chunk.getEntitySections()[yLoop]){
-								if(entity.getBoundingBox().intersects(checkBox)){
-									entList.add(entity);
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+		entList.addAll(worldIn.getEntities(null, checkBox));
+		//As of MC1.17, the way entities are fetched from the world has changed
+		//It may be that the underlying issue is fixed, and a simple method call is sufficient
+		//TODO test
+//		final double maxEntityRad = worldIn.getMaxEntityRadius();
+//		int i = Mth.floor((checkBox.minX - maxEntityRad) / 16.0D) - 1;
+//		int j = Mth.floor((checkBox.maxX + maxEntityRad) / 16.0D) + 1;
+//		int k = Mth.floor((checkBox.minZ - maxEntityRad) / 16.0D) - 1;
+//		int l = Mth.floor((checkBox.maxZ + maxEntityRad) / 16.0D) + 1;
+//
+//		int yMin = Mth.clamp(Mth.floor((checkBox.minY - maxEntityRad) / 16.0D) - 1, 0, 15);
+//		int yMax = Mth.clamp(Mth.floor((checkBox.maxY + maxEntityRad) / 16.0D) + 1, 0, 15);
+//
+//		for(int iLoop = i; iLoop <= j; iLoop++){
+//			for(int kLoop = k; kLoop <= l; kLoop++){
+//				if(worldIn.hasChunk(iLoop, kLoop)){
+//					LevelChunk chunk = worldIn.getChunkAt(new BlockPos(iLoop * 16, 100, kLoop * 16));
+//					for(int yLoop = yMin; yLoop <= yMax; yLoop++){
+//						if(!chunk.getEntitySections()[yLoop].isEmpty()){
+//							for(Entity entity : chunk.getEntitySections()[yLoop]){
+//								if(entity.getBoundingBox().intersects(checkBox)){
+//									entList.add(entity);
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 }

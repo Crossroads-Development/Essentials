@@ -34,7 +34,7 @@ public class BasicItemSplitter extends AbstractSplitter{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter world){
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
 		return new BasicItemSplitterTileEntity();
 	}
 

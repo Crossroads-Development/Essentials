@@ -7,25 +7,25 @@ import com.Da_Technomancer.essentials.gui.*;
 import com.Da_Technomancer.essentials.gui.container.*;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
+import com.Da_Technomancer.essentials.render.CannonSkullRenderer;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.Da_Technomancer.essentials.tileentities.*;
 import com.Da_Technomancer.essentials.tileentities.redstone.*;
 import com.mojang.datafixers.DSL;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.entity.WitherSkullRenderer;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -34,13 +34,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.FMLPlayMessages;
-import net.minecraftforge.fml.network.IContainerFactory;
+import net.minecraftforge.fmlclient.registry.RenderingRegistry;
+import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
+import net.minecraftforge.fmllegacy.network.IContainerFactory;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -88,7 +88,7 @@ public final class Essentials{
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void registerModels(ModelRegistryEvent e){
-		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, WitherSkullRenderer::new);
+		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
 	}
 
 	@SuppressWarnings("unused")
@@ -147,7 +147,7 @@ public final class Essentials{
 		registerTE(PulseCircuitTileEntity::new, "pulse_circuit", reg, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
 	}
 
-	private static void registerTE(Supplier<? extends BlockEntity> cons, String id, IForgeRegistry<BlockEntityType<?>> reg, Block... blocks){
+	private static void registerTE(BlockEntityType.BlockEntitySupplier<? extends BlockEntity> cons, String id, IForgeRegistry<BlockEntityType<?>> reg, Block... blocks){
 		BlockEntityType<?> teType = BlockEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
 		teType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.register(teType);

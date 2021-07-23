@@ -27,7 +27,7 @@ public class ItemShifterScreen extends AbstractContainerScreen<ItemShifterContai
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
-		minecraft.getTextureManager().bind(GUI_TEXTURE);
+		RenderSystem.setShaderTexture(0, GUI_TEXTURE);
 		//drawTexturedModelRectangle
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 	}

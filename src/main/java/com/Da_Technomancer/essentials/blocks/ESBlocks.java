@@ -2,17 +2,11 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.blocks.redstone.*;
 import com.Da_Technomancer.essentials.items.ESItems;
-import net.minecraft.block.*;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.*;
 
 import java.util.ArrayList;
-
-import net.minecraft.world.level.block.BeetrootBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
-import net.minecraft.world.level.block.NetherWartBlock;
 
 public class ESBlocks{
 

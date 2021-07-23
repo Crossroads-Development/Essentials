@@ -1,39 +1,40 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.tileentities.BrazierTileEntity;
-import net.minecraft.block.*;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.TooltipFlag;
+import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class Brazier extends BaseEntityBlock{
 
@@ -44,7 +45,15 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	protected Brazier(){
-		super(BlockBehaviour.Properties.of(Material.STONE).strength(2));
+		super(BlockBehaviour.Properties.of(Material.STONE).strength(2)
+				.lightLevel(state ->
+						switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
+							case 2, 4 -> 15;
+							case 3 -> 14;
+							case 7 -> 3;
+							default -> 0;
+						}
+				));
 		String name = "brazier";
 		setRegistryName(name);
 		registerDefaultState(defaultBlockState().setValue(ESProperties.BRAZIER_CONTENTS, 0));
@@ -53,8 +62,14 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter world){
-		return new BrazierTileEntity();
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
+		return new BrazierTileEntity(pos, state);
+	}
+
+	@Nullable
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type){
+		return ITickableTileEntity.createTicker(type, BrazierTileEntity.TYPE);
 	}
 
 	@Override
@@ -68,44 +83,25 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public int getLightValue(BlockState state, BlockGetter world, BlockPos pos){
-		BlockState other = world.getBlockState(pos);
-		if(other.getBlock() != this){
-			return other.getLightValue(world, pos);
-		}
-		switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
-			case 2:
-			case 4:
-				return 15;
-			case 3:
-				return 14;
-			case 7:
-				return 3;
-			default:
-				return 0;
-		}
-	}
-
-	@Override
-	public void stepOn(Level worldIn, BlockPos pos, Entity entityIn){
-		int type = worldIn.getBlockState(pos).getValue(ESProperties.BRAZIER_CONTENTS);
+	public void stepOn(Level worldIn, BlockPos pos, BlockState state, Entity entityIn){
+		int type = state.getValue(ESProperties.BRAZIER_CONTENTS);
 		if(type == 1){
 			entityIn.clearFire();
 		}else if(type == 2){
 			entityIn.setSecondsOnFire(5);
 		}
 
-		super.stepOn(worldIn, pos, entityIn);
+		super.stepOn(worldIn, pos, state, entityIn);
 	}
 
 	@Override
-	public void fallOn(Level worldIn, BlockPos pos, Entity entityIn, float fallDistance){
+	public void fallOn(Level worldIn, BlockState state, BlockPos pos, Entity entityIn, float fallDistance){
 		int type = worldIn.getBlockState(pos).getValue(ESProperties.BRAZIER_CONTENTS);
 		if(type != 1 && type != 2){
-			super.fallOn(worldIn, pos, entityIn, fallDistance);
+			super.fallOn(worldIn, state, pos, entityIn, fallDistance);
 		}
 		if(type == 2 && entityIn instanceof ItemEntity){
-			entityIn.remove();
+			entityIn.discard();
 		}
 	}
 
@@ -135,18 +131,12 @@ public class Brazier extends BaseEntityBlock{
 		if (state.getBlock() != newState.getBlock()) {
 			BlockEntity te = worldIn.getBlockEntity(pos);
 			if (te instanceof BrazierTileEntity) {
-				ItemStack made = ItemStack.EMPTY;
-				switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
-					case 3:
-						made = new ItemStack(Blocks.COAL_BLOCK);
-						break;
-					case 4:
-						made = new ItemStack(Blocks.GLOWSTONE);
-						break;
-					case 6:
-						made = new ItemStack(Blocks.SOUL_SAND);
-						break;
-				}
+				ItemStack made = switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
+					case 3 -> new ItemStack(Blocks.COAL_BLOCK);
+					case 4 -> new ItemStack(Blocks.GLOWSTONE);
+					case 6 -> new ItemStack(Blocks.SOUL_SAND);
+					default -> ItemStack.EMPTY;
+				};
 				Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), made);
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}

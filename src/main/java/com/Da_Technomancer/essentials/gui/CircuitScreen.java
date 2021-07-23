@@ -95,11 +95,11 @@ public class CircuitScreen<T extends CircuitContainer> extends AbstractContainer
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int x, int y){
 		//background
-		minecraft.getTextureManager().bind(UI_TEXTURE);
+		RenderSystem.setShaderTexture(0, UI_TEXTURE);
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 90);
 
 		//Text bars
-		minecraft.getTextureManager().bind(SEARCH_BAR_TEXTURE);
+		RenderSystem.setShaderTexture(0, SEARCH_BAR_TEXTURE);
 		for(EditBox bar : inputBars){
 			blit(matrix, bar.x - 2, bar.y - 8, 0, 0, 144, 18, 144, 18);
 		}

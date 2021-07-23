@@ -9,7 +9,7 @@ import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.WorldlyContainerHolder;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.ITickableTileEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
@@ -26,7 +26,7 @@ import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractShifterTileEntity extends BlockEntity implements TickableBlockEntity, MenuProvider{
+public abstract class AbstractShifterTileEntity extends BlockEntity implements ITickableTileEntity, MenuProvider{
 
 	private Direction facing = null;
 	protected BlockPos endPos = null;

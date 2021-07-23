@@ -134,7 +134,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 	@Override
 	protected void renderBg(PoseStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
 		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-		minecraft.getTextureManager().bind(getBackgroundTexture());
+		RenderSystem.setShaderTexture(0, getBackgroundTexture());
 		//draw background
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 

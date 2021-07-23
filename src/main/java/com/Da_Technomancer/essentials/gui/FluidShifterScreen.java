@@ -43,7 +43,7 @@ public class FluidShifterScreen extends AbstractContainerScreen<FluidShifterCont
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
-		minecraft.getTextureManager().bind(TEXTURE);
+		RenderSystem.setShaderTexture(0, TEXTURE);
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		if(menu.te != null){
 			menu.te.getFluidManager().render(matrix, partialTicks, mouseX, mouseY, font, tooltip);

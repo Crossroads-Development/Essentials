@@ -3,14 +3,18 @@ package com.Da_Technomancer.essentials.gui.container;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import com.google.common.collect.Sets;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.CrashReport;
+import net.minecraft.CrashReportCategory;
+import net.minecraft.ReportedException;
+import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
@@ -22,7 +26,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 	@ObjectHolder("slotted_chest")
 	private static MenuType<SlottedChestContainer> TYPE = null;
 
-	public final SlottedChestTileEntity.Inventory inv;
+	public final SlottedChestTileEntity.SlottedInv inv;
 	/**
 	 * Holds the locked filter for the slotted chest
 	 * On the virtual server side, this instance is shared with the TE, and changes will write back and be saved
@@ -38,7 +42,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 
 	public SlottedChestContainer(int id, Inventory playerInventory, FriendlyByteBuf data){
 		//the new ItemStack[54] is full of null entries, so in the SlottedChestTileEntity.Inventory constructor all null entries are set to ItemStack.EMPTY
-		this(id, playerInventory, new SlottedChestTileEntity.Inventory(new ItemStack[54], filtTrans = decodeBuffer(data), null), filtTrans);
+		this(id, playerInventory, new SlottedChestTileEntity.SlottedInv(new ItemStack[54], filtTrans = decodeBuffer(data), null), filtTrans);
 	}
 
 	private static ItemStack[] decodeBuffer(FriendlyByteBuf buf){
@@ -57,7 +61,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 		return filter;
 	}
 
-	public SlottedChestContainer(int id, Inventory playerInventory, SlottedChestTileEntity.Inventory inv, ItemStack[] filter){
+	public SlottedChestContainer(int id, Inventory playerInventory, SlottedChestTileEntity.SlottedInv inv, ItemStack[] filter){
 		super(TYPE, id);
 		this.filter = filter;
 		this.inv = inv;
@@ -101,10 +105,9 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 	 * This abomination of a method is copied from the minecraft source code.
 	 * It is slightly modified to set filters where necessary (and sometimes even when not, because I can't be bothered to reverse engineer this thing).
 	 */
-	@Override
-	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
+	private void doClick(int slotId, int dragType, ClickType clickTypeIn, Player player){
 		ItemStack itemstack = ItemStack.EMPTY;
-		Inventory inventoryplayer = player.inventory;
+		Inventory inventoryplayer = player.getInventory();
 
 		if(clickTypeIn == ClickType.QUICK_CRAFT){
 			int i = this.dragEvent;
@@ -112,7 +115,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 
 			if((i != 1 || this.dragEvent != 2) && i != this.dragEvent){
 				resetQuickCraft();
-			}else if(inventoryplayer.getCarried().isEmpty()){
+			}else if(getCarried().isEmpty()){
 				resetQuickCraft();
 			}else if(this.dragEvent == 0){
 				dragMode = getQuickcraftType(dragType);
@@ -125,18 +128,18 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 				}
 			}else if(this.dragEvent == 1){
 				Slot slot = slots.get(slotId);
-				ItemStack itemstack1 = inventoryplayer.getCarried();
+				ItemStack itemstack1 = getCarried();
 
 				if(slot != null && canAddItemToSlotLocked(slot, itemstack1, true) && slot.mayPlace(itemstack1) && (this.dragMode == 2 || itemstack1.getCount() > this.dragSlots.size()) && this.canDragTo(slot)){
 					dragSlots.add(slot);
 				}
 			}else if(dragEvent == 2){
 				if(!dragSlots.isEmpty()){
-					ItemStack itemstack5 = inventoryplayer.getCarried().copy();
-					int l = inventoryplayer.getCarried().getCount();
+					ItemStack itemstack5 = getCarried().copy();
+					int l = getCarried().getCount();
 
 					for(Slot slot1 : dragSlots){
-						ItemStack itemstack2 = inventoryplayer.getCarried();
+						ItemStack itemstack2 = getCarried();
 
 						if(slot1 != null && canAddItemToSlotLocked(slot1, itemstack2, true) && slot1.mayPlace(itemstack2) && (this.dragMode == 2 || itemstack2.getCount() >= dragSlots.size()) && canDragTo(slot1)){
 							ItemStack itemstack3 = itemstack5.copy();
@@ -150,7 +153,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 
 							l -= itemstack3.getCount() - j;
 							slot1.set(itemstack3);
-							if(slot1.container instanceof SlottedChestTileEntity.Inventory && filter[slot1.getSlotIndex()].isEmpty()){
+							if(slot1.container instanceof SlottedChestTileEntity.SlottedInv && filter[slot1.getSlotIndex()].isEmpty()){
 								filter[slot1.getSlotIndex()] = slot1.getItem().copy();
 								filter[slot1.getSlotIndex()].setCount(1);
 								inv.filterChanged();
@@ -159,7 +162,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 					}
 
 					itemstack5.setCount(l);
-					inventoryplayer.setCarried(itemstack5);
+					setCarried(itemstack5);
 				}
 
 				resetQuickCraft();
@@ -170,24 +173,24 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 			resetQuickCraft();
 		}else if((clickTypeIn == ClickType.PICKUP || clickTypeIn == ClickType.QUICK_MOVE) && (dragType == 0 || dragType == 1)){
 			if(slotId == -999){
-				if(!inventoryplayer.getCarried().isEmpty()){
+				if(!getCarried().isEmpty()){
 					if(dragType == 0){
-						player.drop(inventoryplayer.getCarried(), true);
-						inventoryplayer.setCarried(ItemStack.EMPTY);
+						player.drop(getCarried(), true);
+						setCarried(ItemStack.EMPTY);
 					}
 
 					if(dragType == 1){
-						player.drop(inventoryplayer.getCarried().split(1), true);
+						player.drop(getCarried().split(1), true);
 					}
 				}
 			}else if(clickTypeIn == ClickType.QUICK_MOVE){
 				if(slotId < 0){
-					return ItemStack.EMPTY;
+					return;
 				}
 
 				Slot slot6 = slots.get(slotId);
 				//Clear filter on shift left empty click
-				if(slot6.container instanceof SlottedChestTileEntity.Inventory && !slot6.hasItem()){
+				if(slot6.container instanceof SlottedChestTileEntity.SlottedInv && !slot6.hasItem()){
 					filter[slot6.getSlotIndex()] = ItemStack.EMPTY;
 					inv.filterChanged();
 				}
@@ -201,14 +204,14 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 				}
 			}else{
 				if(slotId < 0){
-					return ItemStack.EMPTY;
+					return;
 				}
 
 				Slot slot7 = slots.get(slotId);
 
 				if(slot7 != null){
 					ItemStack itemstack11 = slot7.getItem();
-					ItemStack itemstack13 = inventoryplayer.getCarried();
+					ItemStack itemstack13 = getCarried();
 
 					if(!itemstack11.isEmpty()){
 						itemstack = itemstack11.copy();
@@ -223,7 +226,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 							}
 
 							slot7.set(itemstack13.split(l2));
-							if(slot7.container instanceof SlottedChestTileEntity.Inventory && filter[slot7.getSlotIndex()].isEmpty()){
+							if(slot7.container instanceof SlottedChestTileEntity.SlottedInv && filter[slot7.getSlotIndex()].isEmpty()){
 								filter[slot7.getSlotIndex()] = slot7.getItem().copy();
 								filter[slot7.getSlotIndex()].setCount(1);
 								inv.filterChanged();
@@ -233,16 +236,16 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 						if(itemstack13.isEmpty()){
 							if(itemstack11.isEmpty()){
 								slot7.set(ItemStack.EMPTY);
-								inventoryplayer.setCarried(ItemStack.EMPTY);
+								setCarried(ItemStack.EMPTY);
 							}else{
 								int k2 = dragType == 0 ? itemstack11.getCount() : (itemstack11.getCount() + 1) / 2;
-								inventoryplayer.setCarried(slot7.remove(k2));
+								setCarried(slot7.remove(k2));
 
 								if(itemstack11.isEmpty()){
 									slot7.set(ItemStack.EMPTY);
 								}
 
-								slot7.onTake(player, inventoryplayer.getCarried());
+								slot7.onTake(player, getCarried());
 							}
 						}else if(slot7.mayPlace(itemstack13)){
 							if(itemstack11.getItem() == itemstack13.getItem() && ItemStack.tagMatches(itemstack11, itemstack13)){
@@ -260,12 +263,12 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 								itemstack11.grow(j2);
 							}else if(itemstack13.getCount() <= slot7.getMaxStackSize(itemstack13)){
 								slot7.set(itemstack13);
-								if(slot7.container instanceof SlottedChestTileEntity.Inventory && filter[slot7.getSlotIndex()].isEmpty()){
+								if(slot7.container instanceof SlottedChestTileEntity.SlottedInv && filter[slot7.getSlotIndex()].isEmpty()){
 									filter[slot7.getSlotIndex()] = slot7.getItem().copy();
 									filter[slot7.getSlotIndex()].setCount(1);
 									inv.filterChanged();
 								}
-								inventoryplayer.setCarried(itemstack11);
+								setCarried(itemstack11);
 							}
 						}else if(itemstack11.getItem() == itemstack13.getItem() && itemstack13.getMaxStackSize() > 1 && ItemStack.tagMatches(itemstack11, itemstack13) && !itemstack11.isEmpty()){
 							int i2 = itemstack11.getCount();
@@ -278,7 +281,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 									slot7.set(ItemStack.EMPTY);
 								}
 
-								slot7.onTake(player, inventoryplayer.getCarried());
+								slot7.onTake(player, getCarried());
 							}
 						}
 					}
@@ -304,14 +307,14 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 
 						if(itemstack9.getCount() > k1){
 							slot5.set(itemstack9.split(k1));
-							if(slot5.container instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+							if(slot5.container instanceof SlottedChestTileEntity.SlottedInv && filter[slot5.getSlotIndex()].isEmpty()){
 								filter[slot5.getSlotIndex()] = slot5.getItem().copy();
 								filter[slot5.getSlotIndex()].setCount(1);
 								inv.filterChanged();
 							}
 						}else{
 							slot5.set(itemstack9);
-							if(slot5.container instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+							if(slot5.container instanceof SlottedChestTileEntity.SlottedInv && filter[slot5.getSlotIndex()].isEmpty()){
 								filter[slot5.getSlotIndex()] = slot5.getItem().copy();
 								filter[slot5.getSlotIndex()].setCount(1);
 								inv.filterChanged();
@@ -325,7 +328,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 					if(itemstack9.getCount() > l1){
 						slot5.set(itemstack9.split(l1));
 						slot5.onTake(player, itemstack12);
-						if(slot5.container instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+						if(slot5.container instanceof SlottedChestTileEntity.SlottedInv && filter[slot5.getSlotIndex()].isEmpty()){
 							filter[slot5.getSlotIndex()] = slot5.getItem().copy();
 							filter[slot5.getSlotIndex()].setCount(1);
 							inv.filterChanged();
@@ -336,7 +339,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 						}
 					}else{
 						slot5.set(itemstack9);
-						if(slot5.container instanceof SlottedChestTileEntity.Inventory && filter[slot5.getSlotIndex()].isEmpty()){
+						if(slot5.container instanceof SlottedChestTileEntity.SlottedInv && filter[slot5.getSlotIndex()].isEmpty()){
 							filter[slot5.getSlotIndex()] = slot5.getItem().copy();
 							filter[slot5.getSlotIndex()].setCount(1);
 							inv.filterChanged();
@@ -346,15 +349,15 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 					}
 				}
 			}
-		}else if(clickTypeIn == ClickType.CLONE && player.isCreative() && inventoryplayer.getCarried().isEmpty() && slotId >= 0){
+		}else if(clickTypeIn == ClickType.CLONE && player.isCreative() && getCarried().isEmpty() && slotId >= 0){
 			Slot slot4 = this.slots.get(slotId);
 
 			if(slot4 != null && slot4.hasItem()){
 				ItemStack itemstack8 = slot4.getItem().copy();
 				itemstack8.setCount(itemstack8.getMaxStackSize());
-				inventoryplayer.setCarried(itemstack8);
+				setCarried(itemstack8);
 			}
-		}else if(clickTypeIn == ClickType.THROW && inventoryplayer.getCarried().isEmpty() && slotId >= 0){
+		}else if(clickTypeIn == ClickType.THROW && getCarried().isEmpty() && slotId >= 0){
 			Slot slot3 = this.slots.get(slotId);
 
 			if(slot3 != null && slot3.hasItem() && slot3.mayPickup(player)){
@@ -364,7 +367,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 			}
 		}else if(clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0){
 			Slot slot2 = this.slots.get(slotId);
-			ItemStack itemstack6 = inventoryplayer.getCarried();
+			ItemStack itemstack6 = getCarried();
 
 			if(!itemstack6.isEmpty() && (slot2 == null || !slot2.hasItem() || !slot2.mayPickup(player))){
 				int i1 = dragType == 0 ? 0 : this.slots.size() - 1;
@@ -396,7 +399,29 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 			broadcastChanges();
 		}
 
-		return itemstack;
+		return;
+	}
+
+	//Copied from the vanilla method, so we can use our doClick method (the vanilla one is private)
+	@Override
+	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
+		try{
+			doClick(slotId, dragType, clickTypeIn, player);
+		}catch(Exception exception){
+			CrashReport crashreport = CrashReport.forThrowable(exception, "Container click");
+			CrashReportCategory crashreportcategory = crashreport.addCategory("Click info");
+			crashreportcategory.setDetail("Menu Type", () -> {
+				return getType() != null ? Registry.MENU.getKey(getType()).toString() : "<no type>";
+			});
+			crashreportcategory.setDetail("Menu Class", () -> {
+				return getClass().getCanonicalName();
+			});
+			crashreportcategory.setDetail("Slot Count", this.slots.size());
+			crashreportcategory.setDetail("Slot", slotId);
+			crashreportcategory.setDetail("Button", dragType);
+			crashreportcategory.setDetail("Type", dragType);
+			throw new ReportedException(crashreport);
+		}
 	}
 
 	/** Take a stack from the specified inventory slot.
@@ -495,7 +520,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 	}
 
 	private boolean canAddItemToSlotLocked(@Nullable Slot slotIn, ItemStack stack, boolean stackSizeMatters){
-		if(slotIn != null && slotIn.container instanceof SlottedChestTileEntity.Inventory){
+		if(slotIn != null && slotIn.container instanceof SlottedChestTileEntity.SlottedInv){
 			return (filter[slotIn.getSlotIndex()].isEmpty() || doStackContentsMatch(filter[slotIn.getSlotIndex()], stack)) && (slotIn.getItem().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize());
 		}
 		boolean flag = slotIn == null || !slotIn.hasItem();

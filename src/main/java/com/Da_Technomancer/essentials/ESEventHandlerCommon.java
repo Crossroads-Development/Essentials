@@ -4,15 +4,15 @@ import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.tileentities.BrazierTileEntity;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Witch;
-import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -41,7 +41,7 @@ public class ESEventHandlerCommon{
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public void preventTeleport(EnderTeleportEvent e){
+	public void preventTeleport(EntityTeleportEvent e){
 		if(e.getEntity() instanceof EnderMan){
 			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
 			for(BlockEntity te : e.getEntity().getCommandSenderWorld().tickableBlockEntities){

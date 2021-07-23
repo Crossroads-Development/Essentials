@@ -28,7 +28,7 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter world){
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
 		return new SpeedHopperTileEntity();
 	}
 

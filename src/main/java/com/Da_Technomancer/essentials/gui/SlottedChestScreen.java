@@ -1,15 +1,15 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import com.mojang.blaze3d.platform.Lighting;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
 
 public class SlottedChestScreen extends AbstractContainerScreen<SlottedChestContainer>{
 
@@ -28,7 +28,7 @@ public class SlottedChestScreen extends AbstractContainerScreen<SlottedChestCont
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		//We add the ability to render a tooltip for locked empty slots
 //		renderHoveredTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
-		if(minecraft.player.inventory.getCarried().isEmpty() && hoveredSlot != null){
+		if(menu.getCarried().isEmpty() && hoveredSlot != null){
 			if(hoveredSlot.hasItem()){
 				renderTooltip(matrix, hoveredSlot.getItem(), mouseX, mouseY);
 			}else if(hoveredSlot.container == menu.inv && hoveredSlot.getSlotIndex() < menu.filter.length && !menu.filter[hoveredSlot.getSlotIndex()].isEmpty()){
@@ -42,26 +42,27 @@ public class SlottedChestScreen extends AbstractContainerScreen<SlottedChestCont
 	@Override
 	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
-		RenderSystem.color3f(1, 1, 1);
-		minecraft.getTextureManager().bind(CHEST_GUI_TEXTURE);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+		RenderSystem.setShaderTexture(0, CHEST_GUI_TEXTURE);
 		//drawTexturedModelRectangle
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 125);
 		blit(matrix, leftPos, topPos + 125, 0, 126, imageWidth, 96);
 
 		//Foreground
-		RenderSystem.pushLightingAttributes();
-		Lighting.turnBackOn();
-		RenderSystem.disableLighting();
+//		RenderSystem.pushLightingAttributes();
+//		Lighting.turnBackOn();
+//		RenderSystem.disableLighting();
 		for(int i = 0; i < 54; i++){
 			ItemStack filter = menu.filter[i];
 			Slot renderSlot = menu.slots.get(i);
 			if(!filter.isEmpty() && !renderSlot.hasItem()){
-				itemRenderer.renderAndDecorateItem(minecraft.player, filter, leftPos + renderSlot.x, topPos + renderSlot.y);
+				itemRenderer.renderAndDecorateItem(filter, leftPos + renderSlot.x, topPos + renderSlot.y);
 				itemRenderer.renderGuiItemDecorations(font, filter, leftPos + renderSlot.x, topPos + renderSlot.y, "0");
 			}
 		}
-		RenderSystem.enableLighting();
-		Lighting.turnOff();
-		RenderSystem.popAttributes();
+//		RenderSystem.enableLighting();
+//		Lighting.turnOff();
+//		RenderSystem.popAttributes();
 	}
 }

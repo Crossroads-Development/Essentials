@@ -2,12 +2,12 @@ package com.Da_Technomancer.essentials.render;
 
 import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
 import com.Da_Technomancer.essentials.tileentities.redstone.RedstoneTransmitterTileEntity;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 
 public class TESRRegistry{
 
 	public static void init(){
-		ClientRegistry.bindTileEntityRenderer(HopperFilterTileEntity.TYPE, HopperFilterRenderer::new);
-		ClientRegistry.bindTileEntityRenderer(RedstoneTransmitterTileEntity.TYPE, LinkLineRenderer::new);
+		BlockEntityRenderers.register(HopperFilterTileEntity.TYPE, HopperFilterRenderer::new);
+		BlockEntityRenderers.register(RedstoneTransmitterTileEntity.TYPE, LinkLineRenderer::new);
 	}
 }

@@ -147,7 +147,7 @@ public class CircuitWrench extends Item{
 						allowed = true;
 					}else{
 						//Have to pay for tile->circuit
-						List<ItemStack> playerInv = context.getPlayer().inventory.items;
+						List<ItemStack> playerInv = context.getPlayer().getInventory().items;
 						for(ItemStack stack : playerInv){
 							if(COMPONENT_TAG.contains(stack.getItem())){
 								if(!context.getLevel().isClientSide){

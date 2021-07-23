@@ -2,29 +2,29 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.SortingHopper;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.Container;
-import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.WorldlyContainerHolder;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.HopperMenu;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.WorldlyContainerHolder;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.HopperMenu;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -38,24 +38,24 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 @ObjectHolder(Essentials.MODID)
-public class SortingHopperTileEntity extends BlockEntity implements TickableBlockEntity, Container, MenuProvider{
+public class SortingHopperTileEntity extends BlockEntity implements ITickableTileEntity, Container, MenuProvider{
 
 	@ObjectHolder("sorting_hopper")
-	private static BlockEntityType<SortingHopperTileEntity> TYPE = null;
+	public static BlockEntityType<SortingHopperTileEntity> TYPE = null;
 
 	protected final ItemStack[] inventory = new ItemStack[5];
 	private int transferCooldown = -1;
 	private Direction dir = null;
 
-	protected SortingHopperTileEntity(BlockEntityType<?> type){
-		super(type);
+	protected SortingHopperTileEntity(BlockEntityType<?> type, BlockPos pos, BlockState state){
+		super(type, pos, state);
 		for(int i = 0; i < 5; i++){
 			inventory[i] = ItemStack.EMPTY;
 		}
 	}
 
-	public SortingHopperTileEntity(){
-		this(TYPE);
+	public SortingHopperTileEntity(BlockPos pos, BlockState state){
+		this(TYPE, pos, state);
 	}
 
 	public void resetCache(){
@@ -74,10 +74,10 @@ public class SortingHopperTileEntity extends BlockEntity implements TickableBloc
 	}
 
 	@Override
-	public void tick(){
-		if(!level.isClientSide && --transferCooldown <= 0){
+	public void serverTick(){
+		if(--transferCooldown <= 0){
 			transferCooldown = 0;
-			BlockState state = level.getBlockState(worldPosition);
+			BlockState state = getBlockState();
 			if(state.getBlock() instanceof SortingHopper && state.getValue(SortingHopper.ENABLED)){
 				boolean flag = false;
 
@@ -98,8 +98,8 @@ public class SortingHopperTileEntity extends BlockEntity implements TickableBloc
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		transferCooldown = nbt.getInt("trans_cooldown");
 
 		for(int i = 0; i < 5; i++){
@@ -200,7 +200,7 @@ public class SortingHopperTileEntity extends BlockEntity implements TickableBloc
 	 */
 	@Override
 	public boolean stillValid(Player player){
-		return level.getBlockEntity(worldPosition) == this && player.distanceToSqr(worldPosition.getX() + 0.5D, worldPosition.getY() + 0.5D, worldPosition.getZ() + 0.5D) <= 64D;
+		return level.getBlockEntity(worldPosition) == this && player.distanceToSqr(Vec3.atCenterOf(worldPosition)) <= 64D;
 	}
 
 	@Override
@@ -318,10 +318,10 @@ public class SortingHopperTileEntity extends BlockEntity implements TickableBloc
 				}
 
 				if(remain.isEmpty()){
-					entityitem.remove();
+					entityitem.remove(false);
 					changed = true;
 				}else if(remain.getCount() != stack.getCount()){
-					entityitem.setItem(remain);
+					entityitem.discard();
 					changed = true;
 				}
 			}
