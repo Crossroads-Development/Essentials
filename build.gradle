@@ -32,7 +32,10 @@ sourceSets.main.java.exclude('**/python/**')
 //sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-	mappings channel: "$mcp_channel", version: "$mcp_version"
+//	Live mappings
+//	mappings channel: "$mcp_channel", version: "$mcp_version"
+//	For updating mappings
+	mappings channel: "$mcp_channel", version: "1.16.5"
 
 	runs {
 		client {
