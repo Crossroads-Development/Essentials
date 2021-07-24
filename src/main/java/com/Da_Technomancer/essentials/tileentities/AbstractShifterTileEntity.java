@@ -3,19 +3,18 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.WorldlyContainerHolder;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.ITickableTileEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -31,8 +30,8 @@ public abstract class AbstractShifterTileEntity extends BlockEntity implements I
 	private Direction facing = null;
 	protected BlockPos endPos = null;
 
-	protected <T extends AbstractShifterTileEntity> AbstractShifterTileEntity(BlockEntityType<T> type){
-		super(type);
+	protected <T extends AbstractShifterTileEntity> AbstractShifterTileEntity(BlockEntityType<T> type, BlockPos pos, BlockState state){
+		super(type, pos, state);
 	}
 
 	protected Direction getFacing(){
@@ -47,8 +46,8 @@ public abstract class AbstractShifterTileEntity extends BlockEntity implements I
 	}
 
 	@Override
-	public void clearCache(){
-		super.clearCache();
+	public void setBlockState(BlockState state){
+		super.setBlockState(state);
 		facing = null;
 		refreshCache();
 	}

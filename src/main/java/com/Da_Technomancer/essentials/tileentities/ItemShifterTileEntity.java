@@ -2,18 +2,19 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -27,21 +28,17 @@ import javax.annotation.Nullable;
 public class ItemShifterTileEntity extends AbstractShifterTileEntity implements Container{
 
 	@ObjectHolder("item_shifter")
-	private static BlockEntityType<ItemShifterTileEntity> TYPE = null;
+	public static BlockEntityType<ItemShifterTileEntity> TYPE = null;
 
 	private ItemStack inventory = ItemStack.EMPTY;
 	private LazyOptional<IItemHandler> outputOptionalCache = LazyOptional.empty();
 
-	public ItemShifterTileEntity(){
-		super(TYPE);
+	public ItemShifterTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	@Override
-	public void tick(){
-		if(level.isClientSide){
-			return;
-		}
-
+	public void serverTick(){
 		if(endPos == null){
 			refreshCache();
 		}
@@ -78,8 +75,8 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 
 		if(nbt.contains("inv")){
 			inventory = ItemStack.of(nbt.getCompound("inv"));

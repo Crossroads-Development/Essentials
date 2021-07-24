@@ -36,8 +36,8 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	@ObjectHolder("hopper_filter")
 	public static BlockEntityType<HopperFilterTileEntity> TYPE = null;
 
-	public HopperFilterTileEntity(){
-		super(TYPE);
+	public HopperFilterTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	private Direction.Axis axisCache = null;
@@ -66,8 +66,8 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	}
 
 	@Override
-	public void clearCache(){
-		super.clearCache();
+	public void setBlockState(BlockState state){
+		super.setBlockState(state);
 		axisCache = null;
 		if(passedHandlerNeg != null){
 			passedHandlerNeg.invalidate();
@@ -83,8 +83,8 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		filter = ItemStack.of(nbt.getCompound("filter"));
 	}
 

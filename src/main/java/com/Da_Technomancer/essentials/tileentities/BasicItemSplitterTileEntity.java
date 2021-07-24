@@ -2,11 +2,12 @@ package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -19,22 +20,22 @@ import javax.annotation.Nonnull;
 public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
 	@ObjectHolder("basic_item_splitter")
-	private static BlockEntityType<BasicItemSplitterTileEntity> TYPE = null;
+	public static BlockEntityType<BasicItemSplitterTileEntity> TYPE = null;
 
 	private final ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 	private int transferred = 0;//Tracks how many items have been transferred in one batch of 12/15
 
-	public BasicItemSplitterTileEntity(BlockEntityType<? extends AbstractSplitterTE> type){
-		super(type);
+	public BasicItemSplitterTileEntity(BlockEntityType<? extends AbstractSplitterTE> type, BlockPos pos, BlockState state){
+		super(type, pos, state);
 	}
 
-	public BasicItemSplitterTileEntity(){
-		this(TYPE);
+	public BasicItemSplitterTileEntity(BlockPos pos, BlockState state){
+		this(TYPE, pos, state);
 	}
 
 	@Override
-	public void clearCache(){
-		super.clearCache();
+	public void setBlockState(BlockState state){
+		super.setBlockState(state);
 		primaryOpt.invalidate();
 		secondaryOpt.invalidate();
 		inOpt.invalidate();
@@ -98,8 +99,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 
 		//The way this block saves to nbt was changed in 2.2.0, and a "type" of 1 means the encoding is the new version, while 0 mean old version
 		if(nbt.getByte("type") == 1){

@@ -6,16 +6,17 @@ import com.Da_Technomancer.essentials.blocks.redstone.AbstractCircuit;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
@@ -29,8 +30,8 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements Menu
 	public float setting = 0;
 	public String settingStr = "0";
 
-	public ConstantCircuitTileEntity(){
-		super(TYPE);
+	public ConstantCircuitTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	@Override
@@ -55,8 +56,8 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements Menu
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		setting = nbt.getFloat("setting");
 		settingStr = nbt.getString("setting_s");
 	}

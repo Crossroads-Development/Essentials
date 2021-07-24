@@ -1,19 +1,21 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
 public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
 	@ObjectHolder("speed_hopper")
-	private static BlockEntityType<SpeedHopperTileEntity> TYPE = null;
+	public static BlockEntityType<SpeedHopperTileEntity> TYPE = null;
 
-	public SpeedHopperTileEntity(){
-		super(TYPE);
+	public SpeedHopperTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 		//handler = new SpeedItemHandler();
 	}
 

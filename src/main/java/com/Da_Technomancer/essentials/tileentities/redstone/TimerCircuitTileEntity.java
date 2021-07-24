@@ -7,17 +7,18 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.TimerCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
+import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.ITickableTileEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
@@ -26,7 +27,7 @@ import javax.annotation.Nullable;
 public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, ITickableTileEntity{
 
 	@ObjectHolder("timer_circuit")
-	private static BlockEntityType<TimerCircuitTileEntity> TYPE = null;
+	public static BlockEntityType<TimerCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_PERIOD = 1;
 	private static final int MIN_DURATION = 0;
@@ -38,8 +39,8 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 
 	private long ticksExisted = 0;
 
-	public TimerCircuitTileEntity(){
-		super(TYPE);
+	public TimerCircuitTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	@Override
@@ -90,8 +91,8 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		settingPeriod = nbt.getInt("setting_p");
 		settingStrPeriod = nbt.getString("setting_s_p");
 		settingDuration = nbt.getInt("setting_d");

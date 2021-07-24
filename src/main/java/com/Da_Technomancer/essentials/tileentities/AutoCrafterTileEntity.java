@@ -5,26 +5,27 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.CraftingContainer;
-import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.item.crafting.*;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -38,24 +39,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
-
 @ObjectHolder(Essentials.MODID)
 public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, MenuProvider{
 
 	@ObjectHolder("auto_crafter")
-	private static BlockEntityType<AutoCrafterTileEntity> TYPE = null;
+	public static BlockEntityType<AutoCrafterTileEntity> TYPE = null;
 
 	/**
 	 * Inventory. Slots 0-8 are inputs, Slot 9 is output, slots 10-18 are recipe inputs
 	 * Recipe input slots are not accessible by automation, and contain "ghost" items.
 	 */
 	protected final ItemStack[] inv = new ItemStack[invSize()];
-	protected final Inventory iInv = new Inventory(inv, this);
+	protected final CrafterInventory iInv = new CrafterInventory(inv, this);
 	protected boolean redstone = false;
 
 
@@ -65,12 +60,12 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 	@Nullable
 	public ResourceLocation recipe;
 
-	public AutoCrafterTileEntity(){
-		this(TYPE);
+	public AutoCrafterTileEntity(BlockPos pos, BlockState state){
+		this(TYPE, pos, state);
 	}
 
-	protected AutoCrafterTileEntity(BlockEntityType<? extends AutoCrafterTileEntity> type){
-		super(type);
+	protected AutoCrafterTileEntity(BlockEntityType<? extends AutoCrafterTileEntity> type, BlockPos pos, BlockState state){
+		super(type, pos, state);
 		Arrays.fill(inv, ItemStack.EMPTY);
 	}
 
@@ -258,8 +253,8 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 
 		String recPath = nbt.getString("recipe");
 		if(recPath.isEmpty()){
@@ -487,13 +482,13 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 	}
 
 
-	public static class Inventory implements Container{
+	public static class CrafterInventory implements Container{
 
 		private final ItemStack[] inv;
 		@Nullable
 		private final AutoCrafterTileEntity te;
 
-		private Inventory(ItemStack[] inv, @Nullable AutoCrafterTileEntity te){
+		private CrafterInventory(ItemStack[] inv, @Nullable AutoCrafterTileEntity te){
 			this.inv = inv;
 			this.te = te;
 		}

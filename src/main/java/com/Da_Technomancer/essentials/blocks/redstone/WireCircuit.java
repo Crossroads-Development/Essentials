@@ -73,8 +73,8 @@ public class WireCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter worldIn){
-		return new WireTileEntity();
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
+		return new WireTileEntity(pos, state);
 	}
 
 	@Override

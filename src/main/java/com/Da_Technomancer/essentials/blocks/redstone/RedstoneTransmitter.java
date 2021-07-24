@@ -5,7 +5,6 @@ import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import com.Da_Technomancer.essentials.tileentities.LinkHelper;
 import com.Da_Technomancer.essentials.tileentities.redstone.RedstoneTransmitterTileEntity;
-import net.minecraft.block.*;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.LivingEntity;
@@ -116,8 +115,8 @@ public class RedstoneTransmitter extends BaseEntityBlock implements IWireConnect
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter worldIn){
-		return new RedstoneTransmitterTileEntity();
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
+		return new RedstoneTransmitterTileEntity(pos, state);
 	}
 
 	@Override

@@ -1,21 +1,22 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
 
 @ObjectHolder(Essentials.MODID)
 public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 
 	@ObjectHolder("item_splitter")
-	private static BlockEntityType<ItemSplitterTileEntity> TYPE = null;
+	public static BlockEntityType<ItemSplitterTileEntity> TYPE = null;
 
 	public int redstone;
 
-	public ItemSplitterTileEntity(){
-		super(TYPE);
+	public ItemSplitterTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	@Override
@@ -26,8 +27,8 @@ public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		redstone = nbt.getInt("reds");
 	}
 

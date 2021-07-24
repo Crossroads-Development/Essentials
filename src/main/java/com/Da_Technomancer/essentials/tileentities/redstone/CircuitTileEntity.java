@@ -9,14 +9,15 @@ import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.packets.IFloatReceiver;
 import com.Da_Technomancer.essentials.packets.SendFloatToClient;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ObjectHolder;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 
 	@ObjectHolder(Essentials.MODID + ":circuit")
-	private static BlockEntityType<CircuitTileEntity> TYPE = null;
+	public static BlockEntityType<CircuitTileEntity> TYPE = null;
 
 	public boolean builtConnections = false;
 	private final ArrayList<WeakReference<LazyOptional<IRedstoneHandler>>> dependents = new ArrayList<>(1);
@@ -41,12 +42,12 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 
 	private float output = 0;
 
-	public CircuitTileEntity(){
-		this(TYPE);
+	public CircuitTileEntity(BlockPos pos, BlockState state){
+		this(TYPE, pos, state);
 	}
 
-	protected CircuitTileEntity(BlockEntityType<?> type){
-		super(type);
+	protected CircuitTileEntity(BlockEntityType<?> type, BlockPos pos, BlockState state){
+		super(type, pos, state);
 	}
 
 	/**
@@ -207,8 +208,8 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 	}
 
 	@Override
-	public void clearCache(){
-		super.clearCache();
+	public void setBlockState(BlockState state){
+		super.setBlockState(state);
 
 		output = 0;
 		builtConnections = false;
@@ -238,8 +239,8 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		output = nbt.getFloat("pow");
 	}
 

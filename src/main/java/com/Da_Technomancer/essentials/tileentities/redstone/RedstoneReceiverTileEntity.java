@@ -32,10 +32,10 @@ public class RedstoneReceiverTileEntity extends BlockEntity implements ILinkTE{
 	private BlockPos src = null;
 
 	@ObjectHolder("redstone_receiver")
-	private static BlockEntityType<RedstoneReceiverTileEntity> type = null;
+	public static BlockEntityType<RedstoneReceiverTileEntity> type = null;
 
-	public RedstoneReceiverTileEntity(){
-		super(type);
+	public RedstoneReceiverTileEntity(BlockPos pos, BlockState state){
+		super(type, pos, state);
 	}
 
 	@Override
@@ -139,8 +139,8 @@ public class RedstoneReceiverTileEntity extends BlockEntity implements ILinkTE{
 	}
 	
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		if(nbt.contains("src")){
 			src = BlockPos.of(nbt.getLong("src"));
 		}

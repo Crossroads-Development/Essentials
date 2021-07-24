@@ -3,20 +3,19 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.ESConfig;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.entity.ITickableTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class AbstractSplitterTE extends BlockEntity implements ITickableTileEntity{
 
 	protected int mode = 6;
 	protected final BlockPos[] endPos = new BlockPos[2];
 
-	protected AbstractSplitterTE(BlockEntityType<? extends AbstractSplitterTE> type){
-		super(type);
+	protected AbstractSplitterTE(BlockEntityType<? extends AbstractSplitterTE> type, BlockPos pos, BlockState state){
+		super(type, pos, state);
 	}
 
 	public SplitDistribution getDistribution(){

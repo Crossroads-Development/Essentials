@@ -1,23 +1,22 @@
 package com.Da_Technomancer.essentials.tileentities;
 
 import com.Da_Technomancer.essentials.Essentials;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
-
-import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE.SplitDistribution;
 
 @ObjectHolder(Essentials.MODID)
 public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 
 	@ObjectHolder("fluid_splitter")
-	private static BlockEntityType<FluidSplitterTileEntity> TYPE = null;
+	public static BlockEntityType<FluidSplitterTileEntity> TYPE = null;
 
 	public int redstone;
 
-	public FluidSplitterTileEntity(){
-		super(TYPE);
+	public FluidSplitterTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	@Override
@@ -28,8 +27,8 @@ public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		redstone = nbt.getInt("reds");
 	}
 

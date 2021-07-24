@@ -6,19 +6,20 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.PulseCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
+import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.ITickableTileEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
@@ -27,7 +28,7 @@ import javax.annotation.Nullable;
 public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, ITickableTileEntity{
 
 	@ObjectHolder("pulse_circuit")
-	private static BlockEntityType<PulseCircuitTileEntity> TYPE = null;
+	public static BlockEntityType<PulseCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_DURATION = 1;
 
@@ -38,8 +39,8 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	private long pulseStTime = -10;//Negative value means no pulse in progress
 	private boolean hadInput = false;
 
-	public PulseCircuitTileEntity(){
-		super(TYPE);
+	public PulseCircuitTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	public float currentOutput(int offset){
@@ -101,8 +102,8 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		settingDuration = nbt.getInt("setting_d");
 		settingStrDuration = nbt.getString("setting_s_d");
 		ticksExisted = nbt.getLong("existed");

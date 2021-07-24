@@ -5,15 +5,16 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import com.Da_Technomancer.essentials.gui.container.FluidSlotManager;
 import com.Da_Technomancer.essentials.gui.container.IFluidSlotTE;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
@@ -24,13 +25,11 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 @ObjectHolder(Essentials.MODID)
 public class FluidShifterTileEntity extends AbstractShifterTileEntity implements IFluidSlotTE{
 
 	@ObjectHolder("fluid_shifter")
-	private static BlockEntityType<FluidShifterTileEntity> TYPE = null;
+	public static BlockEntityType<FluidShifterTileEntity> TYPE = null;
 	private static final int CAPACITY = 4_000;
 
 	private FluidSlotManager fluidManager;
@@ -44,16 +43,12 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 		return fluidManager;
 	}
 
-	public FluidShifterTileEntity(){
-		super(TYPE);
+	public FluidShifterTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	@Override
-	public void tick(){
-		if(level.isClientSide){
-			return;
-		}
-
+	public void serverTick(){
 		if(endPos == null){
 			refreshCache();
 		}
@@ -74,8 +69,8 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		fluid = FluidStack.loadFluidStackFromNBT(nbt.getCompound("fluid"));
 	}
 

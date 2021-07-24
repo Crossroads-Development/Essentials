@@ -7,18 +7,19 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.MenuProvider;
+import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.ITickableTileEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, ITickableTileEntity{
 
 	@ObjectHolder("delay_circuit")
-	private static BlockEntityType<DelayCircuitTileEntity> TYPE = null;
+	public static BlockEntityType<DelayCircuitTileEntity> TYPE = null;
 
 	private static final int MIN_DELAY = 1;
 
@@ -41,8 +42,8 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	private float currentOutput = 0;//The current output of the circuit
 	private final ArrayList<Pair<Float, Long>> queuedOutputs = new ArrayList<>();//A list of each output that will be emitted, paired with the timestamp to start using that output, in chronological order
 
-	public DelayCircuitTileEntity(){
-		super(TYPE);
+	public DelayCircuitTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	public float currentOutput(){
@@ -111,8 +112,8 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		settingDelay = nbt.getInt("setting_d");
 		settingStrDelay = nbt.getString("setting_s_d");
 		ticksExisted = nbt.getLong("existed");

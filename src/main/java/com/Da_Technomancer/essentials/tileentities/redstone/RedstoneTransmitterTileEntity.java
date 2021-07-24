@@ -9,17 +9,17 @@ import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.tileentities.ILinkTE;
 import com.Da_Technomancer.essentials.tileentities.LinkHelper;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.DyeColor;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ObjectHolder;
@@ -44,8 +44,8 @@ public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkT
 	//The current output, regardless of a pending update
 	private float output;
 
-	public RedstoneTransmitterTileEntity(){
-		super(TYPE);
+	public RedstoneTransmitterTileEntity(BlockPos pos, BlockState state){
+		super(TYPE, pos, state);
 	}
 
 	@Override
@@ -161,8 +161,8 @@ public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkT
 	}
 
 	@Override
-	public void load(BlockState state, CompoundTag nbt){
-		super.load(state, nbt);
+	public void load(CompoundTag nbt){
+		super.load(nbt);
 		output = nbt.getFloat("out");
 		linkHelper.readNBT(nbt);
 	}
@@ -182,7 +182,7 @@ public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkT
 
 	@Override
 	public Color getColor(){
-		return new Color(getBlockState().getValue(ESProperties.COLOR).getColorValue());
+		return new Color(getBlockState().getValue(ESProperties.COLOR).getTextColor());
 	}
 
 	@Override

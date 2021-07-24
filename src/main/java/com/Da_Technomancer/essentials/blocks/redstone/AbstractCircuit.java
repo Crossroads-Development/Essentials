@@ -55,8 +55,8 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(BlockGetter worldIn){
-		return new CircuitTileEntity();
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
+		return new CircuitTileEntity(pos, state);
 	}
 
 	@Override
