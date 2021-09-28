@@ -1,16 +1,13 @@
 package com.Da_Technomancer.essentials.integration;
 
-import com.Da_Technomancer.essentials.items.ESItems;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import vazkii.patchouli.common.book.Book;
-import vazkii.patchouli.common.book.BookRegistry;
-import vazkii.patchouli.common.item.ItemModBook;
+//TODO
 
+//Non-implementation until Patchouli is updated
+
+public class PatchouliBook{
+
+}
+/*
 public class PatchouliBook extends ItemModBook{
 
 	protected PatchouliBook(){
@@ -21,11 +18,11 @@ public class PatchouliBook extends ItemModBook{
 	}
 
 	@Override
-	public void fillItemCategory(ItemGroup tab, NonNullList<ItemStack> items){
+	public void fillItemCategory(CreativeModeTab tab, NonNullList<ItemStack> items){
 		BookRegistry.INSTANCE.books.values().forEach((b) -> {
-			if(b.getBookItem().getItem() == this && !b.isExtension && (tab == ItemGroup.TAB_SEARCH || ESIntegration.bookTabs.contains(tab))){
+			if(b.getBookItem().getItem() == this && !b.isExtension && (tab == CreativeModeTab.TAB_SEARCH || ESIntegration.bookTabs.contains(tab))){
 				ItemStack stack = new ItemStack(this);
-				CompoundNBT cmp = new CompoundNBT();
+				CompoundTag cmp = new CompoundTag();
 				cmp.putString("patchouli:book", b.id.toString());
 				stack.setTag(cmp);
 				items.add(stack);
@@ -34,8 +31,9 @@ public class PatchouliBook extends ItemModBook{
 	}
 
 	@Override
-	public ITextComponent getName(ItemStack stack){
+	public Component getName(ItemStack stack){
 		Book book = getBook(stack);
-		return book != null ? new TranslationTextComponent(ESIntegration.bookName) : super.getName(stack);
+		return book != null ? new TranslatableComponent(ESIntegration.bookName) : super.getName(stack);
 	}
 }
+*/

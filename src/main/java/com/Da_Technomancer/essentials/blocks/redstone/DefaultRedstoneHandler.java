@@ -1,11 +1,9 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import net.minecraft.core.Direction;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.LazyOptional;
 
 import java.lang.ref.WeakReference;
-import java.util.HashSet;
 
 public class DefaultRedstoneHandler implements IRedstoneHandler{
 

@@ -5,24 +5,19 @@ import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.gui.AutoCrafterScreen;
 import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
 import net.minecraft.client.RecipeBookCategories;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.RecipeBookMenu;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.inventory.RecipeBookType;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.crafting.IShapedRecipe;
@@ -150,9 +145,9 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 	}
 
 	@Override
-	public ItemStack clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
+	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
 		if(slotId > 9 && slotId < 19 && player != null && te != null){
-			if(playerInv.getCarried().isEmpty()){
+			if(playerInv.getSelected().isEmpty()){
 				//Click on a recipe slot with an empty cursor
 
 				Recipe<CraftingContainer> rec = te.validateRecipe(AutoCrafterTileEntity.lookupRecipe(te.getRecipeManager(), te.recipe), this);
@@ -182,13 +177,13 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 					te.setRecipe(null);
 				}
 
-				ItemStack s = playerInv.getCarried().copy();
+				ItemStack s = playerInv.getSelected().copy();
 				s.setCount(1);
 				inv.setItem(slotId, s);
 			}
 		}
 
-		return super.clicked(slotId, dragType, clickTypeIn, player);
+		super.clicked(slotId, dragType, clickTypeIn, player);
 	}
 
 	@Override
@@ -200,6 +195,11 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 	@Override
 	public RecipeBookType getRecipeBookType(){
 		return RecipeBookType.CRAFTING;
+	}
+
+	@Override
+	public boolean shouldMoveToInventory(int slot){
+		return slot != this.getResultSlotIndex();
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public class ESIntegration{
 
 	public static final ArrayList<CreativeModeTab> bookTabs = new ArrayList<>();
 	public static final String PATCHOULI_ID = "patchouli";
-	public static String bookName = "book.essentials.name";
+	public static final String bookName = "book.essentials.name";
 
 	@Nullable
 	public static Item bookItem;

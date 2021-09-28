@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
-import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.gui.*;
 import com.Da_Technomancer.essentials.gui.container.*;
 import com.Da_Technomancer.essentials.items.ESItems;
@@ -16,6 +16,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -31,6 +32,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -38,14 +40,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmlclient.registry.RenderingRegistry;
 import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
 import net.minecraftforge.fmllegacy.network.IContainerFactory;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.function.Supplier;
 
 import static com.Da_Technomancer.essentials.Essentials.MODID;
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.*;
@@ -73,7 +72,6 @@ public final class Essentials{
 	private void commonInit(@SuppressWarnings("unused") FMLCommonSetupEvent e){
 		//Pre
 		EssentialsPackets.preInit();
-		RedstoneUtil.registerCap();
 		//Main
 		MinecraftForge.EVENT_BUS.register(new ESEventHandlerCommon());
 	}
@@ -87,8 +85,15 @@ public final class Essentials{
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
+	public static void registerCapabilities(RegisterCapabilitiesEvent e){
+		e.register(IRedstoneHandler.class);
+	}
+
+	@SuppressWarnings("unused")
+	@SubscribeEvent
+	@OnlyIn(Dist.CLIENT)
 	public static void registerModels(ModelRegistryEvent e){
-		RenderingRegistry.registerEntityRenderingHandler(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
+		EntityRenderers.register(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
 	}
 
 	@SuppressWarnings("unused")

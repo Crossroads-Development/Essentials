@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
@@ -22,7 +21,7 @@ import javax.annotation.Nullable;
 public abstract class AbstractShifter extends BaseEntityBlock{
 
 	protected AbstractShifter(String name){
-		super(Properties.of(Material.METAL).strength(2).sound(SoundType.METAL));
+		super(ESBlocks.getMetalProperty());
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
 		ESBlocks.blockAddQue(this);

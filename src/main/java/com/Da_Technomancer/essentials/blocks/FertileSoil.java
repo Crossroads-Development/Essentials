@@ -1,30 +1,27 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
-import net.minecraft.block.*;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.ToolType;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
-
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.IPlantable;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Random;
 
 public class FertileSoil extends Block{
 
@@ -44,11 +41,6 @@ public class FertileSoil extends Block{
 	@Override
 	public List<ItemStack> getDrops(BlockState p_220076_1_, LootContext.Builder p_220076_2_){
 		return super.getDrops(p_220076_1_, p_220076_2_);
-	}
-
-	@Override
-	public boolean isToolEffective(BlockState state, ToolType tool){
-		return tool == ToolType.SHOVEL;
 	}
 
 	@Override

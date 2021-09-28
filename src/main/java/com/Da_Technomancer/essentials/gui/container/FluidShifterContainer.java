@@ -2,17 +2,17 @@ package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -109,8 +109,8 @@ public class FluidShifterContainer extends AbstractContainerMenu{
 
 		if(te != null && !te.getLevel().isClientSide){
 			if(playerIn.isAlive() && !(playerIn instanceof ServerPlayer && ((ServerPlayer) playerIn).hasDisconnected())){
-				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(0).getStack());
-				playerIn.inventory.placeItemBackInInventory(te.getLevel(), inv.getItem(1).getStack());
+				playerIn.getInventory().placeItemBackInInventory(inv.getItem(0));
+				playerIn.getInventory().placeItemBackInInventory(inv.getItem(1));
 			}else{
 				playerIn.drop(slots.get(0).getItem(), false);
 				playerIn.drop(slots.get(1).getItem(), false);

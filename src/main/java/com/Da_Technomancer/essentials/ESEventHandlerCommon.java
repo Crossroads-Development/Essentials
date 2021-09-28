@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials;
 
+import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.items.ESItems;
@@ -25,8 +26,9 @@ public class ESEventHandlerCommon{
 	public void blockWitchSpawns(LivingSpawnEvent.CheckSpawn e){
 		//Prevents witch spawning if a nearby brazier has soulsand
 		if(e.getEntity() instanceof Witch && e.getWorld() instanceof Level){
-			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
-			for(BlockEntity te : ((Level) e.getWorld()).tickableBlockEntities){
+			int RANGE = ESConfig.brazierRange.get();
+			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
+			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange((Level) e.getWorld(), e.getEntity().blockPosition(), RANGE)){
 				Level w;
 				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(e.getX(), e.getY(), e.getZ(), true) <= RANGE_SQUARED && (w = te.getLevel()) != null){
 					BlockState state = w.getBlockState(te.getBlockPos());
@@ -43,8 +45,9 @@ public class ESEventHandlerCommon{
 	@SubscribeEvent
 	public void preventTeleport(EntityTeleportEvent e){
 		if(e.getEntity() instanceof EnderMan){
-			int RANGE_SQUARED = (int) Math.pow(ESConfig.brazierRange.get(), 2);
-			for(BlockEntity te : e.getEntity().getCommandSenderWorld().tickableBlockEntities){
+			int RANGE = ESConfig.brazierRange.get();
+			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
+			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange(e.getEntity().getCommandSenderWorld(), e.getEntity().blockPosition(), RANGE)){
 				Vec3 entPos = e.getEntity().position();
 				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(entPos, true) <= RANGE_SQUARED && te.getLevel() != null){
 					BlockState state = te.getBlockState();

@@ -318,7 +318,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 				}
 
 				if(remain.isEmpty()){
-					entityitem.remove(false);
+					entityitem.remove(Entity.RemovalReason.DISCARDED);
 					changed = true;
 				}else if(remain.getCount() != stack.getCount()){
 					entityitem.discard();

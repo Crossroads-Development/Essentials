@@ -1,0 +1,20 @@
+{
+	"replace": false,
+	"values": [
+		"essentials:brazier",
+		"essentials:sorting_hopper",
+		"essentials:speed_hopper",
+		"essentials:hopper_filter",
+		"essentials:item_chute",
+		"essentials:item_shifter",
+		"essentials:fluid_shifter",
+		"essentials:basic_item_splitter",
+		"essentials:item_splitter",
+		"essentials:basic_fluid_splitter",
+		"essentials:fluid_splitter",
+		"essentials:wither_cannon",
+		"essentials:auto_crafter",
+		"essentials:redstone_transmitter",
+		"essentials:redstone_receiver"
+	]
+}

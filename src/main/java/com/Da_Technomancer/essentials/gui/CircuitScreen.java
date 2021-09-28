@@ -5,15 +5,15 @@ import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.packets.SendNBTToServer;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
 import java.util.function.Predicate;
 
@@ -51,7 +51,8 @@ public class CircuitScreen<T extends CircuitContainer> extends AbstractContainer
 		inputBars[id].setValue(menu.inputs[id]);
 		inputBars[id].setResponder(this::entryChanged);
 		inputBars[id].setFilter(validator);
-		children.add(inputBars[id]);
+		addWidget(inputBars[id]);
+//		children.add(inputBars[id]);
 //		setFocusedDefault(inputBars[id]);
 	}
 
@@ -85,8 +86,8 @@ public class CircuitScreen<T extends CircuitContainer> extends AbstractContainer
 	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
-		RenderSystem.disableLighting();
-		RenderSystem.disableBlend();
+//		RenderSystem.disableLighting();
+//		RenderSystem.disableBlend();
 		for(EditBox bar : inputBars){
 			bar.render(matrix, mouseX, mouseY, partialTicks);
 		}

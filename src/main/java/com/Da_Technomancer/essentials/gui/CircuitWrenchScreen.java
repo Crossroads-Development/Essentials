@@ -58,7 +58,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 		searchBar.setBordered(false);
 		searchBar.setMaxLength(20);
 		searchBar.setResponder(this::filterChanged);
-		children.add(searchBar);
+		addWidget(searchBar);
 		setInitialFocus(searchBar);
 	}
 
@@ -113,8 +113,8 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 			renderComponentTooltip(matrix, tt, mouseX, mouseY);//MCP note: renderTooltip
 		}
 
-		RenderSystem.disableLighting();
-		RenderSystem.disableBlend();
+//		RenderSystem.disableLighting();
+//		RenderSystem.disableBlend();
 		searchBar.render(matrix, mouseX, mouseY, partialTicks);
 	}
 
@@ -148,7 +148,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 
 		EssentialsPackets.channel.sendToServer(new ConfigureWrenchOnServer(index));
 		minecraft.player.closeContainer();
-		inventory.player.sendMessage(new TranslatableComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId())), inventory.player.getUUID());//MCP note: setStyle, appendSibling
+		minecraft.player.sendMessage(new TranslatableComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId())), minecraft.player.getUUID());//MCP note: setStyle, appendSibling
 
 		return true;
 	}

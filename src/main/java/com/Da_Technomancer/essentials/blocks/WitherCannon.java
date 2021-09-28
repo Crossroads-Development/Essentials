@@ -27,11 +27,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -51,7 +48,7 @@ public class WitherCannon extends Block{
 	public static EntityType<CannonSkull> ENT_TYPE;
 
 	protected WitherCannon(){
-		super(Properties.of(Material.STONE, MaterialColor.COLOR_BLACK).strength(50F, 1200F).sound(SoundType.STONE));
+		super(ESBlocks.getRockProperty().strength(50F, 1200F));
 		String name = "wither_cannon";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
@@ -126,7 +123,7 @@ public class WitherCannon extends Block{
 			super.tick();
 			if(!level.isClientSide && lifespan-- <= 0){
 				level.addAlwaysVisibleParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), 0, 0, 0);
-				remove(false);
+				remove(RemovalReason.DISCARDED);
 			}
 		}
 
@@ -156,7 +153,7 @@ public class WitherCannon extends Block{
 				}
 				//Ignore mob griefing- always use Explosion.Mode.DESTROY
 				level.explode(this, getX(), getY(), getZ(), 2F, false, Explosion.BlockInteraction.BREAK);
-				remove(false);
+				remove(RemovalReason.DISCARDED);
 			}
 		}
 

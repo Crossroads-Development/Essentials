@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ToolAction;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -22,10 +22,15 @@ public class Wrench extends Item{
 
 	protected Wrench(){
 		//Wrench tooltype added as some other mods check tooltypes for wrenches
-		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS).addToolType(ToolType.get("wrench"), 0));
+		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS));
 		String name = "wrench";
 		setRegistryName(name);
 		ESItems.toRegister.add(this);
+	}
+
+	@Override
+	public boolean canPerformAction(ItemStack stack, ToolAction toolAction){
+		return toolAction == ESConfig.WRENCH_ACTION;
 	}
 
 	@Override

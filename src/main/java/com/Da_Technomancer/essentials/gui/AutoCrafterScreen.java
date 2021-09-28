@@ -4,24 +4,24 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
-import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.components.ImageButton;
-import com.mojang.blaze3d.platform.Lighting;
 import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
+import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 
 import java.util.List;
@@ -46,13 +46,14 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 		super.init();
 		widthTooNarrow = width < 379;
 		recipeBook.init(width, height, Minecraft.getInstance(), widthTooNarrow, menu);
-		leftPos = recipeBook.updateScreenPosition(widthTooNarrow, width, imageWidth);
-		children.add(recipeBook);
+		leftPos = recipeBook.updateScreenPosition(width, imageWidth);
+		addWidget(recipeBook);
+//        children.add(recipeBook);
 		setInitialFocus(recipeBook);
-		addButton(new ImageButton(leftPos + 5, height / 2 - 49, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
-			recipeBook.initVisuals(widthTooNarrow);
+		addRenderableWidget(new ImageButton(leftPos + 5, height / 2 - 49, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, (p_214076_1_) -> {
+			recipeBook.initVisuals();
 			recipeBook.toggleVisibility();
-			leftPos = recipeBook.updateScreenPosition(widthTooNarrow, width, imageWidth);
+			leftPos = recipeBook.updateScreenPosition(width, imageWidth);
 			((ImageButton) p_214076_1_).setPosition(leftPos + 5, height / 2 - 49);
 		}));
 	}
@@ -121,7 +122,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 	}
 
 	@Override
-	public void tick(){
+	public void containerTick(){
 		super.tick();
 		recipeBook.tick();
 	}
@@ -133,7 +134,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 	//MCP note: render screen
 	@Override
 	protected void renderBg(PoseStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
-		RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 		RenderSystem.setShaderTexture(0, getBackgroundTexture());
 		//draw background
 		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
@@ -151,9 +152,9 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 		Recipe<CraftingContainer> iRecipe = menu.te.findRecipe(AutoCrafterTileEntity.prepareCraftingInv(inv), menu);
 
 		if(iRecipe != null){
-			RenderSystem.enableRescaleNormal();
-
-			Lighting.turnBackOn();
+			RenderSystem.setShader(GameRenderer::getPositionTexShader);
+//			RenderSystem.enableRescaleNormal();
+//			Lighting.turnBackOn();
 
 			//If the recipe was set via recipe book/JEI, render the ingredients manually (if it was set via input slots, the slots will render the items for us)
 			if(menu.te.recipe != null){
@@ -170,19 +171,17 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 						continue;
 					}
 					ItemStack s = matching[(int) Math.floor(time / 30F) % matching.length];
-					itemRenderer.renderGuiItem(s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
+					itemRenderer.renderAndDecorateItem(s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
 				}
 			}
 
 			//Render the output
 			ItemStack output = iRecipe.getResultItem();
-			itemRenderer.renderGuiItem(output, 106 + leftPos, 33 + topPos);
-			if(output.getCount() > 1){
-				itemRenderer.renderGuiItemDecorations(font, output, leftPos + 106, topPos + 33, null);
-			}
+			itemRenderer.renderAndDecorateItem(output, 106 + leftPos, 33 + topPos);
+			itemRenderer.renderGuiItemDecorations(font, output, leftPos + 106, topPos + 33, null);
 
-			RenderSystem.disableRescaleNormal();
-			Lighting.turnOff();
+//			RenderSystem.disableRescaleNormal();
+//			Lighting.turnOff();
 		}
 	}
 

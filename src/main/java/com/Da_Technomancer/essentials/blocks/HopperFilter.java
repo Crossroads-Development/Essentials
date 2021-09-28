@@ -17,11 +17,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -36,7 +34,7 @@ import java.util.List;
 public class HopperFilter extends BaseEntityBlock{
 
 	protected HopperFilter(){
-		super(Properties.of(Material.STONE).sound(SoundType.STONE).strength(2));
+		super(ESBlocks.getRockProperty());
 		String name = "hopper_filter";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);

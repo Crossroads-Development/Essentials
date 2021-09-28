@@ -15,11 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -37,7 +34,7 @@ public class AutoCrafter extends BaseEntityBlock{
 	}
 
 	protected AutoCrafter(String name){
-		super(BlockBehaviour.Properties.of(Material.METAL).strength(2).sound(SoundType.METAL));
+		super(ESBlocks.getMetalProperty());
 		setRegistryName(name);
 	}
 

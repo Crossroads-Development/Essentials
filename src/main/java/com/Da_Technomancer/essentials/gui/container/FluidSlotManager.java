@@ -4,24 +4,24 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.inventory.DataSlot;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.LazyOptional;
@@ -153,23 +153,25 @@ public class FluidSlotManager{
 	public void render(PoseStack matrix, float partialTicks, int mouseX, int mouseY, Font fontRenderer, List<Component> tooltip){
 		//Background
 		FluidStack clientState = getStack();
-		Minecraft.getInstance().getTextureManager().bind(InventoryMenu.BLOCK_ATLAS);
+//		Minecraft.getInstance().getTextureManager().bind(InventoryMenu.BLOCK_ATLAS);
+		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 
 		Screen.fill(matrix, xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
 		//Screen.fill changes the color
-		RenderSystem.color4f(1, 1, 1, 1);
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 
 		FluidAttributes attr = clientState.getFluid().getAttributes();
 
 		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
 		int col = attr.getColor(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
-		RenderSystem.setShaderColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F);
+		RenderSystem.setShaderColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, 1F);
 		Screen.blit(matrix, xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
-		RenderSystem.setShaderColor(1, 1, 1);
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 
 		//Foreground
-		Minecraft.getInstance().getTextureManager().bind(OVERLAY);
+//		Minecraft.getInstance().getTextureManager().bind(OVERLAY);
+		RenderSystem.setShaderTexture(0, OVERLAY);
 		Screen.blit(matrix, windowXStart + xPos, windowYStart + yPos - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
 
 		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
@@ -215,10 +217,9 @@ public class FluidSlotManager{
 		}
 
 		@Override
-		public ItemStack onTake(Player player, ItemStack stack){
-			ItemStack s = super.onTake(player, stack);
+		public void onTake(Player player, ItemStack stack){
+			super.onTake(player, stack);
 			inSlot.setChanged();
-			return s;
 		}
 	}
 

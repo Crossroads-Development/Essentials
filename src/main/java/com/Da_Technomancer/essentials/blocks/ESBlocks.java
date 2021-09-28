@@ -5,6 +5,8 @@ import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.material.Material;
 
 import java.util.ArrayList;
 
@@ -89,6 +91,14 @@ public class ESBlocks{
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
 	public static final Item.Properties itemBlockProp = new Item.Properties().tab(ESItems.TAB_ESSENTIALS);
+
+    public static BlockBehaviour.Properties getMetalProperty(){
+        return BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL).strength(3).requiresCorrectToolForDrops();
+    }
+
+    public static BlockBehaviour.Properties getRockProperty(){
+        return BlockBehaviour.Properties.of(Material.STONE).strength(3).requiresCorrectToolForDrops().sound(SoundType.STONE);
+    }
 
 	/**
 	 * Registers the item form of a blocks and the item model.

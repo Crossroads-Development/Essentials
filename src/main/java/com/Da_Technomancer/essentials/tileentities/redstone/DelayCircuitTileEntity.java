@@ -123,11 +123,11 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuPro
 		while(nbt.contains(i + "_queue_out")){
 			queuedOutputs.add(Pair.of(nbt.getFloat(i + "queue_out"), nbt.getLong(i + "queue_time")));
 			i++;
-			//TODO remove
-			if(queuedOutputs.size() == Short.MAX_VALUE){
-				//allows recovery of worlds corrupted by a previous bug
-				break;
-			}
+//			This was a backwards compatability code-block
+//			if(queuedOutputs.size() == Short.MAX_VALUE){
+//				//allows recovery of worlds corrupted by a previous bug
+//				break;
+//			}
 		}
 	}
 

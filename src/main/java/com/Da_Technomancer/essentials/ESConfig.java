@@ -2,14 +2,14 @@ package com.Da_Technomancer.essentials;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Style;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
@@ -71,14 +71,16 @@ public class ESConfig{
 	}
 
 	private static final Tag<Item> WRENCH = ItemTags.bind("forge:wrench");
+	public static final ToolAction WRENCH_ACTION = ToolAction.get("wrench");//No single standard for wrench tool action name has emerged yet
 
 	/**
 	 * @param stack The stack to test
 	 * @return Whether this item is considered a wrench
 	 */
 	public static boolean isWrench(ItemStack stack){
-		//Essentials prefers wrenches defined via the forge:item/wrench.json, but will also check tooltypes- which some mods use to define their wrench
-		return WRENCH.contains(stack.getItem()) || stack.getToolTypes().contains(ToolType.get("wrench"));
+		//Essentials prefers wrenches defined via the forge:item/wrench.json, but will also check tool actions- which some mods use to define their wrench
+		//
+		return WRENCH.contains(stack.getItem()) || stack.canPerformAction(WRENCH_ACTION);
 	}
 
 	/**

@@ -28,7 +28,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -68,7 +67,7 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 	}
 
 	protected SortingHopper(){
-		this(Properties.of(Material.METAL).sound(SoundType.METAL).strength(2));
+		this(ESBlocks.getMetalProperty());
 		String name = "sorting_hopper";
 		setRegistryName(name);
 		ESBlocks.toRegister.add(this);
