@@ -74,6 +74,7 @@
 	"block.essentials.pulse_rising_circuit": "Pulse Former Circuit [Rising Edge]",
 	"block.essentials.pulse_falling_circuit": "Pulse Former Circuit [Falling Edge]",
 	"block.essentials.pulse_dual_circuit": "Pulse Former Circuit [Dual Edge]",
+	"block.essentials.d_counter_circuit": "Counter Circuit",
 
 	
 	"item.essentials.obsidian_cutting_kit": "Obsidian Cutting Kit",
@@ -204,6 +205,7 @@
 	"tt.essentials.pulse_circuit_rising": "Outputs a pulse of 1 for (setting) ticks at the start of a signal",
 	"tt.essentials.pulse_circuit_falling": "Outputs a pulse of 1 for (setting) ticks at the end of a signal",
 	"tt.essentials.pulse_circuit_dual": "Outputs a pulse of 1 for (setting) ticks at the start and end of a signal",
+	"tt.essentials.d_counter_circuit": "Outputs the sum of all signals ever received from the back (counts as a new signal when value changes). Reset with a side pulse",
 
 	"tt.essentials.fluid_contents": "%1$d/%2$d",
 	"tt.essentials.fluid_contents.empty": "Empty",

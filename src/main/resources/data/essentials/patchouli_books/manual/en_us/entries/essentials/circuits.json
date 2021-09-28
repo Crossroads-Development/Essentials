@@ -58,7 +58,7 @@
 		},
 		{
 			"type": "text",
-			"text": "false, and any non-zero value true. They output 1 for true and 0 for false.$(br2)"
+			"text": "and negative values false, and any value greater than 0 true. They output 1 for true and 0 for false.$(br2)"
 		},
 		{
 			"type": "image",
@@ -90,7 +90,7 @@
 		},
 		{
 			"type": "text",
-			"text": "<item>/$ UI is in red have ticking tile entities (only time circuits use ticking tile entities)- while less laggy than vanilla redstone versions of those circuits, they may still create lag when used excessively.$(br2)"
+			"text": "<item>/$ UI is in red have ticking tile entities- while less laggy than vanilla redstone versions of those circuits, they may still create lag when used excessively.$(br2)"
 		}
 	]
 }

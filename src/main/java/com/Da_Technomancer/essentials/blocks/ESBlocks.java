@@ -87,6 +87,7 @@ public class ESBlocks{
 	public static PulseCircuit pulseCircuitRising;
 	public static PulseCircuit pulseCircuitFalling;
 	public static PulseCircuit pulseCircuitDual;
+	public static DCounterCircuit dCounterCircuit;
 
 	public static final ArrayList<Block> toRegister = new ArrayList<>();
 
@@ -189,5 +190,6 @@ public class ESBlocks{
 		pulseCircuitRising = new PulseCircuit(PulseCircuit.Edge.RISING);
 		pulseCircuitFalling = new PulseCircuit(PulseCircuit.Edge.FALLING);
 		pulseCircuitDual = new PulseCircuit(PulseCircuit.Edge.DUAL);
+		dCounterCircuit = new DCounterCircuit();
 	}
 }
