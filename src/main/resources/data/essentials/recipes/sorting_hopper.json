@@ -1,62 +1,19 @@
 {
-	"type": "forge:conditional",
-	"recipes": [
-		{
-			"conditions": [
-				{
-					"type": "forge:not",
-					"value": {
-						"type": "forge:tag_empty",
-						"tag": "forge:ingots/copper"
-					}
-				}
-			],
-			"recipe": {
-				"type": "minecraft:crafting_shaped",
-				"result": {
-					"item": "essentials:sorting_hopper"
-				},
-				"pattern": [
-					"# #",
-					"#C#",
-					" # "
-				],
-				"key": {
-					"#": {
-						"tag": "forge:ingots/copper"
-					},
-					"C": {
-						"tag": "forge:chests"
-					}
-				}
-			}
+	"result": {
+		"item": "essentials:sorting_hopper"
+	},
+	"pattern": [
+		"# #",
+		"#C#",
+		" # "
+	],
+	"type": "minecraft:crafting_shaped",
+	"key": {
+		"#": {
+			"tag": "forge:ingots/copper"
 		},
-		{
-			"conditions": [
-
-			],
-			"recipe": {
-				"type": "minecraft:crafting_shaped",
-				"result": {
-					"item": "essentials:sorting_hopper"
-				},
-				"pattern": [
-					"# #",
-					"#C#",
-					" * "
-				],
-				"key": {
-					"#": {
-						"tag": "forge:ingots/iron"
-					},
-					"C": {
-						"tag": "forge:chests"
-					},
-					"*": {
-						"tag": "forge:ingots/gold"
-					}
-				}
-			}
+		"C": {
+			"tag": "forge:chests"
 		}
-	]
+	}
 }

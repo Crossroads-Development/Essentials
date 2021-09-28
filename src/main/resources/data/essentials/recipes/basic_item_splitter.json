@@ -4,12 +4,12 @@
   },
   "pattern": [
     "*^*",
-    "\u0026\u0026\u0026",
+    "GGG",
     "*^*"
   ],
   "type": "minecraft:crafting_shaped",
   "key": {
-    "\u0026": {
+    "G": {
       "tag": "forge:ingots/gold"
     },
     "*": {

@@ -130,7 +130,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 		}
 	}
 
-	private static final Style style = Style.EMPTY.applyFormat(ChatFormatting.DARK_RED);
+	public static final Style CIRCUIT_WRENCH_STYLE = Style.EMPTY.applyFormat(ChatFormatting.DARK_RED);
 
 	@Override
 	public boolean mouseClicked(double xPos, double yPos, int button){
@@ -148,7 +148,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 
 		EssentialsPackets.channel.sendToServer(new ConfigureWrenchOnServer(index));
 		minecraft.player.closeContainer();
-		minecraft.player.sendMessage(new TranslatableComponent("tt.essentials.circuit_wrench_setting").setStyle(style).append(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId())), minecraft.player.getUUID());//MCP note: setStyle, appendSibling
+		minecraft.player.sendMessage(new TranslatableComponent("tt.essentials.circuit_wrench_setting").setStyle(CIRCUIT_WRENCH_STYLE).append(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId())), minecraft.player.getUUID());//MCP note: setStyle, appendSibling
 
 		return true;
 	}

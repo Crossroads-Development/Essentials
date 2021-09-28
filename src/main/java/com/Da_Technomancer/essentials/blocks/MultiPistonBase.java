@@ -492,8 +492,7 @@ public class MultiPistonBase extends Block{
 	private static void getEntitiesMultiChunk(AABB checkBox, Level worldIn, ArrayList<Entity> entList){
 		entList.addAll(worldIn.getEntities(null, checkBox));
 		//As of MC1.17, the way entities are fetched from the world has changed
-		//It may be that the underlying issue is fixed, and a simple method call is sufficient
-		//TODO test
+		//It seems to be that the underlying issue is fixed, and a simple method call is sufficient
 //		final double maxEntityRad = worldIn.getMaxEntityRadius();
 //		int i = Mth.floor((checkBox.minX - maxEntityRad) / 16.0D) - 1;
 //		int j = Mth.floor((checkBox.maxX + maxEntityRad) / 16.0D) + 1;
