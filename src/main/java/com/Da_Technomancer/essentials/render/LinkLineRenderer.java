@@ -81,7 +81,7 @@ public class LinkLineRenderer<T extends BlockEntity & ILinkTE> implements BlockE
 		}
 
 		private static RenderType initType(){
-			return RenderType.create("link_line", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setTextureState(new RenderStateShard.TextureStateShard(TEXTURE, false, false)).setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
+			return RenderType.create("link_line", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, RenderType.CompositeState.builder().setShaderState(RenderStateShard.BLOCK_SHADER).setTextureState(new RenderStateShard.TextureStateShard(TEXTURE, false, false)).setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
 		}
 	}
 }
