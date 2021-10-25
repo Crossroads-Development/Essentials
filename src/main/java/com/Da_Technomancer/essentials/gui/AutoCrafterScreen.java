@@ -123,7 +123,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 
 	@Override
 	public void containerTick(){
-		super.tick();
+		super.containerTick();
 		recipeBook.tick();
 	}
 
