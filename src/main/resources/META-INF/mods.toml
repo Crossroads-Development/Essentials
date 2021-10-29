@@ -12,12 +12,15 @@ displayName="Essentials" #mandatory
 # displayURL="http://example.com/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 # logoFile="examplemod.png" #optional
-credits='''Many textures created by 5284973. Code submitted by Bord Listian.
-Translations by XuyuEre, Луксиния Гримхольд, scikirbypoke.''' #optional
+credits='''
+Developers & Maintainers: Technomancer.
+Artists: 5284973.
+Translators: XuyuEre, Луксиния Гримхольд, scikirbypoke.
+Misc Contributors: Bord Listian.''' #optional
 authors="Technomancer" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Adds several utility blocks that expand vanilla-style automation
+Adds utility blocks and light-weight features that expand vanilla-style automation.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.essentials]] #optional
