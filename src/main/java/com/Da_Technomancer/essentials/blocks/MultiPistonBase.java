@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Material;
@@ -65,8 +66,11 @@ public class MultiPistonBase extends Block{
 	 */
 	protected static boolean changingWorld = false;
 
+	private static final BlockBehaviour.StatePredicate STATE_PREDICATE = (state, world, pos) -> !state.getValue(ESProperties.EXTENDED);
+
 	protected MultiPistonBase(boolean sticky){
-		super(Properties.of(Material.PISTON).strength(0.5F).sound(SoundType.METAL));
+
+		super(Properties.of(Material.PISTON).isRedstoneConductor((state, world, pos) -> false).isSuffocating(STATE_PREDICATE).isViewBlocking(STATE_PREDICATE).strength(0.5F).sound(SoundType.METAL));
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
 		setRegistryName(name);
 		this.sticky = sticky;

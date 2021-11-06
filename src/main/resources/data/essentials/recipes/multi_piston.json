@@ -7,13 +7,6 @@
 					"type": "forge:not",
 					"value": {
 						"type": "forge:tag_empty",
-						"tag": "forge:ingots/tin"
-					}
-				},
-				{
-					"type": "forge:not",
-					"value": {
-						"type": "forge:tag_empty",
 						"tag": "forge:ingots/bronze"
 					}
 				}
@@ -36,7 +29,7 @@
 						"tag": "forge:ingots/bronze"
 					},
 					"*": {
-						"tag": "forge:ingots/tin"
+						"tag": "forge:ingots/iron"
 					}
 				}
 			}
@@ -63,7 +56,7 @@
 						"tag": "forge:ingots/copper"
 					},
 					"*": {
-						"tag": "forge:ingots/gold"
+						"tag": "forge:ingots/iron"
 					}
 				}
 			}
