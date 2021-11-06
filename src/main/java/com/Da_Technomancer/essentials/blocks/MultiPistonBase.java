@@ -21,7 +21,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -48,7 +47,6 @@ import java.util.*;
  * Notable differences from a normal piston include:
  * DIST_LIMIT blocks head range, distance controlled by signal strength,
  * No quasi-connectivity,
- * Redstone can be placed on top of the piston,
  * Piston extension takes 2-ticks per block extended, while retraction is instant. Block movement is not rendered
  * Can move up to PUSH_LIMIT blocks at a time instead of 12
  */
@@ -69,7 +67,6 @@ public class MultiPistonBase extends Block{
 	private static final BlockBehaviour.StatePredicate STATE_PREDICATE = (state, world, pos) -> !state.getValue(ESProperties.EXTENDED);
 
 	protected MultiPistonBase(boolean sticky){
-
 		super(Properties.of(Material.PISTON).isRedstoneConductor((state, world, pos) -> false).isSuffocating(STATE_PREDICATE).isViewBlocking(STATE_PREDICATE).strength(0.5F).sound(SoundType.METAL));
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
 		setRegistryName(name);
@@ -159,11 +156,6 @@ public class MultiPistonBase extends Block{
 	@Override
 	public void setPlacedBy(Level world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
 		neighborChanged(world.getBlockState(pos), world, pos, this, pos, false);
-	}
-
-	@Override
-	public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side){
-		return true;
 	}
 
 	@Override
@@ -299,7 +291,7 @@ public class MultiPistonBase extends Block{
 			if(!blocked){
 				playSound(world, pos, true, true);
 				state = state.setValue(ESProperties.EXTENDED, redstone != 0);
-				world.setBlock(pos, state, 2);
+				world.setBlockAndUpdate(pos, state);
 			}
 		}else{
 			//If we're retracting, we do it all at once, but calculate the result one block at a time
@@ -317,7 +309,7 @@ public class MultiPistonBase extends Block{
 
 			playSound(world, pos, true, false);
 			state = state.setValue(ESProperties.EXTENDED, redstone != 0);
-			world.setBlock(pos, state, 2);
+			world.setBlockAndUpdate(pos, state);
 		}
 
 		changingWorld = false;

@@ -88,7 +88,7 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 			//If no dependents, assume we're outputting to vanilla redstone
 			if(dependents.isEmpty() && RedstoneUtil.clampToVanilla(output) != RedstoneUtil.clampToVanilla(newPower)){
 				output = newPower;
-				level.neighborChanged(worldPosition.relative(facing), getOwner(), worldPosition.relative(facing.getOpposite()));
+				AbstractCircuit.strongSignalBlockUpdates(level, worldPosition, getOwner(), facing);
 			}
 			output = newPower;
 			BlockUtil.sendClientPacketAround(level, worldPosition, new SendFloatToClient(0, output, worldPosition));
@@ -361,18 +361,13 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 		}
 
 		public Direction getFacing(Direction front){
-			switch(this){
-				case FRONT:
-					return front;
-				case BACK:
-					return front.getOpposite();
-				case CW:
-					return front.getClockWise();
-				case CCW:
-					return front.getCounterClockWise();
-				default:
-					throw new IllegalStateException("Unhandled Orientation: " + name());
-			}
+			return switch(this){
+				case FRONT -> front;
+				case BACK -> front.getOpposite();
+				case CW -> front.getClockWise();
+				case CCW -> front.getCounterClockWise();
+				default -> throw new IllegalStateException("Unhandled Orientation: " + name());
+			};
 		}
 	}
 }

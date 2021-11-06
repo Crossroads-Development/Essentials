@@ -43,13 +43,13 @@ public class BrazierTileEntity extends BlockEntity implements ITickableTileEntit
 			ClientLevel world = (ClientLevel) level;
 			switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
 				case 2:
-					world.addAlwaysVisibleParticle(ParticleTypes.LAVA, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 3, 0, 0.01D);
+					world.addParticle(ParticleTypes.LAVA, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 0, 0, 0);
 					break;
 				case 3:
-					world.addAlwaysVisibleParticle(ParticleTypes.FLAME, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 3, 0, 0.01D);
+					world.addParticle(ParticleTypes.FLAME, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 0, 0, 0);
 					break;
 				case 6:
-					world.addAlwaysVisibleParticle(ParticleTypes.POOF, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 0, -1, 0.01D);
+					world.addParticle(ParticleTypes.POOF, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 0, -0, 0);
 					break;
 			}
 		}

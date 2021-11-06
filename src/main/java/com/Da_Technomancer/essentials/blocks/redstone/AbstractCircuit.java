@@ -102,6 +102,25 @@ public abstract class AbstractCircuit extends AbstractTile{
 	}
 
 	@Override
+	public int getDirectSignal(BlockState state, BlockGetter world, BlockPos pos, Direction side){
+		return getSignal(state, world, pos, side);
+	}
+
+	@Override
+	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean p_60519_){
+		strongSignalBlockUpdates(world, pos, this, state.getValue(ESProperties.HORIZ_FACING));
+		super.onRemove(state, world, pos, newState, p_60519_);
+	}
+
+	public static void strongSignalBlockUpdates(Level world, BlockPos pos, Block block, Direction facing){
+		//As this outputs a strong signal, it needs to update neighbors in front and adjacent to the block in front
+		Direction reverseDir = facing.getOpposite();
+		BlockPos offsetPos = pos.relative(facing);
+		world.neighborChanged(offsetPos, block, pos.relative(reverseDir));
+		world.updateNeighborsAtExceptFromFacing(offsetPos, block, reverseDir);
+	}
+
+	@Override
 	public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side){
 		return side != null && (side.getOpposite() == state.getValue(ESProperties.HORIZ_FACING) || useInput(CircuitTileEntity.Orient.getOrient(side.getOpposite(), state.getValue(ESProperties.HORIZ_FACING))));
 	}
