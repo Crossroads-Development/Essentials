@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
 import com.google.common.collect.Sets;
 import net.minecraft.CrashReport;
@@ -106,7 +107,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 	 * It is slightly modified to set filters where necessary (and sometimes even when not, because I can't be bothered to reverse engineer this thing).
 	 */
 	private void doClick(int slotId, int dragType, ClickType clickTypeIn, Player player){
-		ItemStack itemstack = ItemStack.EMPTY;
+//		ItemStack itemstack = ItemStack.EMPTY;
 		Inventory inventoryplayer = player.getInventory();
 
 		if(clickTypeIn == ClickType.QUICK_CRAFT){
@@ -198,9 +199,9 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 				if(slot6.mayPickup(player)){
 					ItemStack itemstack10 = quickMoveStack(player, slotId);
 
-					if(!itemstack10.isEmpty()){
-						itemstack = itemstack10.copy();
-					}
+//					if(!itemstack10.isEmpty()){
+//						itemstack = itemstack10.copy();
+//					}
 				}
 			}else{
 				if(slotId < 0){
@@ -213,9 +214,9 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 					ItemStack itemstack11 = slot7.getItem();
 					ItemStack itemstack13 = getCarried();
 
-					if(!itemstack11.isEmpty()){
-						itemstack = itemstack11.copy();
-					}
+//					if(!itemstack11.isEmpty()){
+//						itemstack = itemstack11.copy();
+//					}
 
 					if(itemstack11.isEmpty()){
 						if(!itemstack13.isEmpty() && slot7.mayPlace(itemstack13) && canAddItemToSlotLocked(slot7, itemstack13, false)){
@@ -468,7 +469,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 				Slot slot = slots.get(i);
 				ItemStack currentSlotStack = slot.getItem();
 
-				if(!(currentSlotStack.isEmpty() && (chestToPlayer || filter[i].isEmpty())) && (doStackContentsMatch(toMerge, currentSlotStack) || (!chestToPlayer && doStackContentsMatch(filter[i], toMerge)))){
+				if(!(currentSlotStack.isEmpty() && (chestToPlayer || filter[i].isEmpty())) && (BlockUtil.sameItem(currentSlotStack, toMerge) || (!chestToPlayer && BlockUtil.sameItem(toMerge, filter[i])))){
 					int totalCount = currentSlotStack.getCount() + toMerge.getCount();
 					if(currentSlotStack.isEmpty()){
 						slot.set(filter[i].copy());
@@ -521,13 +522,9 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 
 	private boolean canAddItemToSlotLocked(@Nullable Slot slotIn, ItemStack stack, boolean stackSizeMatters){
 		if(slotIn != null && slotIn.container instanceof SlottedChestTileEntity.SlottedInv){
-			return (filter[slotIn.getSlotIndex()].isEmpty() || doStackContentsMatch(filter[slotIn.getSlotIndex()], stack)) && (slotIn.getItem().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize());
+			return (filter[slotIn.getSlotIndex()].isEmpty() || BlockUtil.sameItem(stack, filter[slotIn.getSlotIndex()])) && (slotIn.getItem().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize());
 		}
 		boolean flag = slotIn == null || !slotIn.hasItem();
-		return !flag && stack.sameItem(slotIn.getItem()) && ItemStack.tagMatches(slotIn.getItem(), stack) ? slotIn.getItem().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize() : flag;
-	}
-
-	public static boolean doStackContentsMatch(ItemStack stackA, ItemStack stackB){
-		return stackB.getItem() == stackA.getItem() && ItemStack.tagMatches(stackA, stackB);
+		return !flag && BlockUtil.sameItem(stack, slotIn.getItem()) ? slotIn.getItem().getCount() + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize() : flag;
 	}
 }

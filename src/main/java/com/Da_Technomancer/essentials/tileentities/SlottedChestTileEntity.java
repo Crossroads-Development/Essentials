@@ -163,7 +163,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
-			if(slot >= 54 || stack.isEmpty() || !ItemStack.isSame(stack, lockedInv[slot])){
+			if(slot >= 54 || stack.isEmpty() || !BlockUtil.sameItem(stack, lockedInv[slot])){
 				return stack;
 			}
 
@@ -206,7 +206,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
-			return slot < 54 && ItemStack.isSame(stack, lockedInv[slot]) && ItemStack.tagMatches(stack, lockedInv[slot]);
+			return slot < 54 && BlockUtil.sameItem(stack, lockedInv[slot]);
 		}
 	}
 
@@ -288,7 +288,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 
 		@Override
 		public boolean canPlaceItem(int index, ItemStack stack){
-			return index < inv.length && (inv[index].isEmpty() ? lockedInv[index].isEmpty() || SlottedChestContainer.doStackContentsMatch(stack, lockedInv[index]) : SlottedChestContainer.doStackContentsMatch(stack, inv[index]));
+			return index < inv.length && (inv[index].isEmpty() ? lockedInv[index].isEmpty() || BlockUtil.sameItem(lockedInv[index], stack) : BlockUtil.sameItem(inv[index], stack));
 		}
 
 		@Override
