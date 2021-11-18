@@ -1,13 +1,16 @@
 package com.Da_Technomancer.essentials.integration;
 
-//TODO
+import com.Da_Technomancer.essentials.items.ESItems;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import vazkii.patchouli.common.book.Book;
+import vazkii.patchouli.common.book.BookRegistry;
+import vazkii.patchouli.common.item.ItemModBook;
 
-//Non-implementation until Patchouli is updated
-
-public class PatchouliBook{
-
-}
-/*
 public class PatchouliBook extends ItemModBook{
 
 	protected PatchouliBook(){
@@ -36,4 +39,3 @@ public class PatchouliBook extends ItemModBook{
 		return book != null ? new TranslatableComponent(ESIntegration.bookName) : super.getName(stack);
 	}
 }
-*/

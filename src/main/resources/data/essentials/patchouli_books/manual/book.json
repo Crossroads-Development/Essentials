@@ -9,6 +9,7 @@
 	"creative_tab": "essentials",
 	"show_progress": "false",
 	"advancement_namespaces": ["crossroads"],
+	"use_resource_pack": "true",
 	"macros": {
 		"\n": "$(br)",
 		"<em>": "$(o)",

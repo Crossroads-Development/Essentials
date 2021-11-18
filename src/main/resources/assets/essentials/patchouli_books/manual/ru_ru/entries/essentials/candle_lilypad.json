@@ -1,0 +1,12 @@
+{
+	"category": "essentials:essentials",
+	"name": "Кувшинка со свечкой",
+	"icon": "essentials:candle_lilypad",
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:text",
+			"text": "A $(item)Кувшинка со свечкой/$ - декоративный блок, который действует как кувшинка, выдавая при этом 14-тый уровень освещения(Яркость фонаря).$(br2)Удобна для освещения ферм, или для декора."
+		}
+	]
+}

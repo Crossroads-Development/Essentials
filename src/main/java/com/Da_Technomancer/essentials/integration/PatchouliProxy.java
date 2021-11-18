@@ -9,9 +9,7 @@ public class PatchouliProxy{
 	 */
 
 	public static void initBookItem(){
-		//TODO
-		//Non-implementation until Patchouli is updated
-//		ESIntegration.bookItem = new PatchouliBook();
+		ESIntegration.bookItem = new PatchouliBook();
 		Essentials.logger.info("Attempted to initialize Patchouli integration, but it has been disabled in code");
 		Essentials.logger.info("Notify the mod author that Patchouli integration should be re-enabled");
 	}

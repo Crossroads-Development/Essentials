@@ -84,14 +84,14 @@ repositories {
 dependencies {
 	minecraft "net.minecraftforge:forge:$mc_version-$fg_version"
 
-//	TODO disabled until updated
 	//JEI
 	//Compile against APIs
 	compileOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version:api")
 	//Run with the full versions
 	runtimeOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version")
-//
-//	compile(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+	//Patchouli
+	compileOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+	runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
