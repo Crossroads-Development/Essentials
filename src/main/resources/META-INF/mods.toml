@@ -1,6 +1,6 @@
 
 modLoader="javafml" #mandatory
-loaderVersion="[37,)" #mandatory
+loaderVersion="[38,)" #mandatory
 license="MIT" #mandatory
 issueTrackerURL="https://github.com/Da-Technomancer/Essentials" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
@@ -26,12 +26,12 @@ Adds utility blocks and light-weight features that expand vanilla-style automati
 [[dependencies.essentials]] #optional
 modId="forge" #mandatory
 mandatory=true #mandatory
-versionRange="[37,)" #mandatory
+versionRange="[38,)" #mandatory
 ordering="NONE"
 side="BOTH"
 [[dependencies.essentials]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.17.1,]"
+versionRange="[1.18,]"
 ordering="NONE"
 side="BOTH"

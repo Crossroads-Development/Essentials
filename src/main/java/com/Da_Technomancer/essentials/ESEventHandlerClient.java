@@ -30,67 +30,66 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.IContainerFactory;
 
 import java.util.ArrayList;
 
-@OnlyIn(Dist.CLIENT)
 public class ESEventHandlerClient{
 
-	//Begin registration events
+	@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = Essentials.MODID, value = Dist.CLIENT)
+	public static class ESModEventsClient{
+
+		@SubscribeEvent
+		@SuppressWarnings("unused")
+		public static void registerContainers(RegistryEvent.Register<MenuType<?>> e){
+			registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
+			registerCon(FluidShifterContainer::new, FluidShifterScreen::new, "fluid_shifter", e);
+			registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
+			registerCon(CircuitWrenchContainer::new, CircuitWrenchScreen::new, "circuit_wrench", e);
+			registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
+			registerCon(TimerCircuitContainer::new, TimerCircuitScreen::new, "timer_circuit", e);
+			registerCon(AutoCrafterContainer::new, AutoCrafterScreen::new, "auto_crafter", e);
+			registerCon(DelayCircuitContainer::new, DelayCircuitScreen::new, "delay_circuit", e);
+			registerCon(PulseCircuitContainer::new, PulseCircuitScreen::new, "pulse_circuit", e);
+		}
+
+		/**
+		 * Creates and registers both a container type and a screen factory. Not usable on the physical server due to screen factory.
+		 * @param cons Container factory
+		 * @param screenFactory The screen factory to be linked to the type
+		 * @param id The ID to use
+		 * @param reg Registery event
+		 * @param <T> Container subclass
+		 */
+		private static <T extends AbstractContainerMenu> void registerCon(IContainerFactory<T> cons, MenuScreens.ScreenConstructor<T, AbstractContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<MenuType<?>> reg){
+			MenuType<T> contType = ESEventHandlerCommon.ESModEventsCommon.registerConType(cons, id, reg);
+			MenuScreens.register(contType, screenFactory);
+		}
+
+		@SubscribeEvent
+		@SuppressWarnings("unused")
+		public static void onTextureStitch(TextureStitchEvent.Pre event){
+			//Add textures used in TESRs
+			//Currently none used
+		}
+
+		@SuppressWarnings("unused")
+		@SubscribeEvent
+		public static void registerModels(ModelRegistryEvent e){
+			EntityRenderers.register(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
+		}
+	}
 
 	@SubscribeEvent
 	@SuppressWarnings("unused")
-	public void registerContainers(RegistryEvent.Register<MenuType<?>> e){
-		registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
-		registerCon(FluidShifterContainer::new, FluidShifterScreen::new, "fluid_shifter", e);
-		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
-		registerCon(CircuitWrenchContainer::new, CircuitWrenchScreen::new, "circuit_wrench", e);
-		registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
-		registerCon(TimerCircuitContainer::new, TimerCircuitScreen::new, "timer_circuit", e);
-		registerCon(AutoCrafterContainer::new, AutoCrafterScreen::new, "auto_crafter", e);
-		registerCon(DelayCircuitContainer::new, DelayCircuitScreen::new, "delay_circuit", e);
-		registerCon(PulseCircuitContainer::new, PulseCircuitScreen::new, "pulse_circuit", e);
-	}
-
-	/**
-	 * Creates and registers both a container type and a screen factory. Not usable on the physical server due to screen factory.
-	 * @param cons Container factory
-	 * @param screenFactory The screen factory to be linked to the type
-	 * @param id The ID to use
-	 * @param reg Registery event
-	 * @param <T> Container subclass
-	 */
-	private static <T extends AbstractContainerMenu> void registerCon(IContainerFactory<T> cons, MenuScreens.ScreenConstructor<T, AbstractContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<MenuType<?>> reg){
-		MenuType<T> contType = Essentials.registerConType(cons, id, reg);
-		MenuScreens.register(contType, screenFactory);
-	}
-
-	@SubscribeEvent
-	@SuppressWarnings("unused")
-	public void onTextureStitch(TextureStitchEvent.Pre event){
-		//Add textures used in TESRs
-		//Currently none used
-	}
-
-	@SuppressWarnings("unused")
-	@SubscribeEvent
-	public void registerModels(ModelRegistryEvent e){
-		EntityRenderers.register(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
-	}
-
-	//End registration events
-
-	@SubscribeEvent
-	@SuppressWarnings("unused")
-	public void renderRedsOutput(RenderLevelLastEvent e){
+	public static void renderRedsOutput(RenderLevelLastEvent e){
 		LocalPlayer player = Minecraft.getInstance().player;
 		//If the player is holding a CircuitWrench (or subclass for addons)
 		if(player != null && (player.getMainHandItem().getItem() instanceof CircuitWrench || player.getOffhandItem().getItem() instanceof CircuitWrench)){
@@ -128,7 +127,7 @@ public class ESEventHandlerClient{
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public void pickBlockCircuitWrench(InputEvent.ClickInputEvent e){
+	public static void pickBlockCircuitWrench(InputEvent.ClickInputEvent e){
 		if(e.isPickBlock() && Minecraft.getInstance().player.getItemInHand(e.getHand()).getItem() == ESItems.circuitWrench){
 			//When using pick block on a circuit and holding a circuit wrench, override normal behaviour and set the wrench to that circuit type
 			HitResult hit = Minecraft.getInstance().hitResult;
