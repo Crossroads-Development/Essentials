@@ -36,7 +36,7 @@ public class ItemSplitter extends BasicItemSplitter{
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
 		return new ItemSplitterTileEntity(pos, state);
 	}
-	
+
 	@Override
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean flag){
 		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, flag);
@@ -49,7 +49,6 @@ public class ItemSplitter extends BasicItemSplitter{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.item_splitter_basic"));
 		tooltip.add(new TranslatableComponent("tt.essentials.item_splitter_formula"));

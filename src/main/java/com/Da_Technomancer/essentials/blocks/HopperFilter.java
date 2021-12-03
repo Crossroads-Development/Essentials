@@ -52,7 +52,6 @@ public class HopperFilter extends BaseEntityBlock{
 //	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.move"));
@@ -78,10 +77,10 @@ public class HopperFilter extends BaseEntityBlock{
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.getBlock() != newState.getBlock()){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof HopperFilterTileEntity) {
+			if(te instanceof HopperFilterTileEntity){
 				Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), ((HopperFilterTileEntity) te).getFilter());
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}

@@ -34,7 +34,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nullable;
@@ -80,7 +80,6 @@ public class WitherCannon extends Block{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.wither_cannon"));
 	}
@@ -90,7 +89,7 @@ public class WitherCannon extends Block{
 		boolean powered = world.hasNeighborSignal(pos) || world.hasNeighborSignal(pos.above());
 		boolean wasActive = state.getValue(ESProperties.REDSTONE_BOOL);
 		if(powered && !wasActive){
-			world.getBlockTicks().scheduleTick(pos, this, 4);
+			world.scheduleTick(pos, this, 4);
 			world.setBlock(pos, state.setValue(ESProperties.REDSTONE_BOOL, true), 4);
 		}else if(!powered && wasActive){
 			world.setBlock(pos, state.setValue(ESProperties.REDSTONE_BOOL, false), 4);

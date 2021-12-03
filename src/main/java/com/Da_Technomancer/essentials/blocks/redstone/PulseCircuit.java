@@ -22,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -30,7 +30,7 @@ import java.util.List;
 public class PulseCircuit extends AbstractCircuit{
 
 	public final Edge edge;
-	
+
 	public PulseCircuit(Edge edge){
 		super("pulse_" + edge.name + "_circuit");
 		this.edge = edge;

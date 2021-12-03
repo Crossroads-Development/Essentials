@@ -93,13 +93,13 @@ public class ESBlocks{
 
 	public static final Item.Properties itemBlockProp = new Item.Properties().tab(ESItems.TAB_ESSENTIALS);
 
-    public static BlockBehaviour.Properties getMetalProperty(){
-        return BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL).strength(3).requiresCorrectToolForDrops();
-    }
+	public static BlockBehaviour.Properties getMetalProperty(){
+		return BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL).strength(3).requiresCorrectToolForDrops();
+	}
 
-    public static BlockBehaviour.Properties getRockProperty(){
-        return BlockBehaviour.Properties.of(Material.STONE).strength(3).requiresCorrectToolForDrops().sound(SoundType.STONE);
-    }
+	public static BlockBehaviour.Properties getRockProperty(){
+		return BlockBehaviour.Properties.of(Material.STONE).strength(3).requiresCorrectToolForDrops().sound(SoundType.STONE);
+	}
 
 	/**
 	 * Registers the item form of a blocks and the item model.
@@ -181,7 +181,10 @@ public class ESBlocks{
 		floorCircuit = new GenericACircuit("floor", (a) -> (float) Math.floor(a));
 		ceilCircuit = new GenericACircuit("ceil", (a) -> (float) Math.ceil(a));
 		logCircuit = new GenericACircuit("log", (a) -> (float) Math.log10(a));
-		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> {a = Math.abs(a); return ((b % a) + a) % a;});//Does the clock modulus, not remainder modulus
+		moduloCircuit = new GenericABCircuit("modulo", (a, b) -> {
+			a = Math.abs(a);
+			return ((b % a) + a) % a;
+		});//Does the clock modulus, not remainder modulus
 		absCircuit = new GenericACircuit("abs", Math::abs);
 		signCircuit = new GenericACircuit("sign", Math::signum);
 		readerCircuit = new ReaderCircuit();

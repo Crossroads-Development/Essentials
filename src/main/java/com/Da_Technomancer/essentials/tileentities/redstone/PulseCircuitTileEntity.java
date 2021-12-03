@@ -16,7 +16,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -91,14 +91,13 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putInt("setting_d", settingDuration);
 		nbt.putString("setting_s_d", settingStrDuration);
 		nbt.putLong("existed", ticksExisted);
 		nbt.putLong("st_time", pulseStTime);
 		nbt.putBoolean("input", hadInput);
-		return nbt;
 	}
 
 	@Override

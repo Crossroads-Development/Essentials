@@ -18,7 +18,7 @@ public class GenericAACircuit extends AbstractCircuit{
 	private final BiFunction<Float, Float, Float> function;
 
 	public GenericAACircuit(String name, BiFunction<Float, Float, Float> function){
-		super(name +"_circuit");
+		super(name + "_circuit");
 		this.ttName = "tt." + Essentials.MODID + "." + name + "_circuit";
 		this.function = function;
 	}

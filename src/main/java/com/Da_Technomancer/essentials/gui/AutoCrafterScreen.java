@@ -42,7 +42,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 		inventoryLabelY = imageHeight - 94;//MCP note: player inventory text overlay y position
 	}
 
-	protected void init() {
+	protected void init(){
 		super.init();
 		widthTooNarrow = width < 379;
 		recipeBook.init(width, height, Minecraft.getInstance(), widthTooNarrow, menu);

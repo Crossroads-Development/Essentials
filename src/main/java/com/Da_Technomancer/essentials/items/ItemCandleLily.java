@@ -23,7 +23,6 @@ public class ItemCandleLily extends WaterLilyBlockItem{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.candle_lilypad.desc"));
 	}

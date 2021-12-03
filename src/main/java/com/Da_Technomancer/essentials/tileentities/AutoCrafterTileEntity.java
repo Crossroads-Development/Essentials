@@ -273,8 +273,8 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 
 		for(int i = 0; i < inv.length; ++i){
 			if(!inv[i].isEmpty()){
@@ -287,7 +287,6 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 		}
 		nbt.putBoolean("reds", redstone);
 
-		return nbt;
 	}
 
 	@Override

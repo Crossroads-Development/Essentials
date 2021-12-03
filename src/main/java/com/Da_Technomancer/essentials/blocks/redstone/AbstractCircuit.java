@@ -17,7 +17,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 
@@ -67,7 +67,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 			cte.builtConnections = false;
 			cte.buildConnections();
 		}else{
-			worldIn.getBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.VERY_HIGH);
+			worldIn.scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.VERY_HIGH);
 		}
 	}
 

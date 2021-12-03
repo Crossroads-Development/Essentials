@@ -23,7 +23,7 @@ public class GenericABCircuit extends AbstractCircuit{
 	 * @param function The operation function- Float 1 is side input, Float 2 is back input. Output is sanitized
 	 */
 	public GenericABCircuit(String name, BiFunction<Float, Float, Float> function){
-		super(name +"_circuit");
+		super(name + "_circuit");
 		this.ttName = "tt." + Essentials.MODID + "." + name + "_circuit";
 		this.function = function;
 	}

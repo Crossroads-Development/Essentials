@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -43,7 +43,7 @@ public class RedstoneTransmitter extends BaseEntityBlock implements IWireConnect
 
 	@Override
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		worldIn.getBlockTicks().scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
+		worldIn.scheduleTick(pos, this, RedstoneUtil.DELAY, TickPriority.HIGH);
 
 		if(blockIn != Blocks.REDSTONE_WIRE && !(blockIn instanceof DiodeBlock)){
 			//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
@@ -94,7 +94,6 @@ public class RedstoneTransmitter extends BaseEntityBlock implements IWireConnect
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.reds_trans.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.reds_trans.linking"));

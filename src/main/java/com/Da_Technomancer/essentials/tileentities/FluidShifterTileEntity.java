@@ -62,10 +62,9 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.put("fluid", fluid.writeToNBT(new CompoundTag()));
-		return nbt;
 	}
 
 	@Override
@@ -76,7 +75,9 @@ public class FluidShifterTileEntity extends AbstractShifterTileEntity implements
 
 	@Override
 	public CompoundTag getUpdateTag(){
-		return save(super.getUpdateTag());
+		CompoundTag nbt = super.getUpdateTag();
+		saveAdditional(nbt);
+		return nbt;
 	}
 
 	@Override

@@ -65,13 +65,12 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 
 		if(!inventory.isEmpty()){
 			nbt.put("inv", inventory.save(new CompoundTag()));
 		}
-		return nbt;
 	}
 
 	@Override

@@ -15,11 +15,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ObjectHolder;
@@ -103,7 +103,7 @@ public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkT
 
 			//if sources changed, schedule an update
 			if(sources.size() != preSrc.size() || !sources.containsAll(preSrc)){
-				level.getBlockTicks().scheduleTick(worldPosition, ESBlocks.redstoneTransmitter, RedstoneUtil.DELAY, TickPriority.NORMAL);
+				level.scheduleTick(worldPosition, ESBlocks.redstoneTransmitter, RedstoneUtil.DELAY, TickPriority.NORMAL);
 			}
 		}
 	}
@@ -168,11 +168,10 @@ public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkT
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putFloat("out", output);
 		linkHelper.writeNBT(nbt);
-		return nbt;
 	}
 
 	@Override
@@ -277,7 +276,7 @@ public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkT
 
 		@Override
 		public void notifyInputChange(WeakReference<LazyOptional<IRedstoneHandler>> src){
-			level.getBlockTicks().scheduleTick(worldPosition, ESBlocks.redstoneTransmitter, RedstoneUtil.DELAY, TickPriority.HIGH);
+			level.scheduleTick(worldPosition, ESBlocks.redstoneTransmitter, RedstoneUtil.DELAY, TickPriority.HIGH);
 		}
 	}
 }

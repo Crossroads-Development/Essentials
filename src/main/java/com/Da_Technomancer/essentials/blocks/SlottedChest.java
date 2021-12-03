@@ -25,7 +25,7 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -46,10 +46,10 @@ public class SlottedChest extends BaseEntityBlock implements IReadable{
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if(state.getBlock() != newState.getBlock()) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.getBlock() != newState.getBlock()){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof SlottedChestTileEntity) {
+			if(te instanceof SlottedChestTileEntity){
 				Containers.dropContents(worldIn, pos, ((SlottedChestTileEntity) te).iInv);
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
@@ -80,7 +80,6 @@ public class SlottedChest extends BaseEntityBlock implements IReadable{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.slotted_chest.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.slotted_chest.quip").setStyle(ESConfig.TT_QUIP));

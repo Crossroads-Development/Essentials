@@ -22,7 +22,7 @@ public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
 	@Override
 	public Component getDisplayName(){
-		return new TranslatableComponent( "container.speed_hopper");
+		return new TranslatableComponent("container.speed_hopper");
 	}
 
 	@Override

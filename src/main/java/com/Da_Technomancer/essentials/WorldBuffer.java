@@ -18,18 +18,18 @@ import java.util.Set;
  * This is for making large changes to the world step by step without a huge number of unnecessary intermediate blocks updates.
  */
 public class WorldBuffer implements BlockGetter{
-	
+
 	private final Level world;
 	private final HashMap<BlockPos, BlockState> memory = new HashMap<>();
-	
+
 	public WorldBuffer(Level worldObj){
 		this.world = worldObj;
 	}
-	
+
 	public Level getWorld(){
 		return world;
 	}
-	
+
 	public void addChange(BlockPos pos, BlockState state){
 		pos = pos.immutable();
 		if(getBlockState(pos) == state){
@@ -49,7 +49,7 @@ public class WorldBuffer implements BlockGetter{
 		if(memory.containsKey(pos)){
 			return memory.get(pos);
 		}
-		
+
 		return world.getBlockState(pos);
 	}
 

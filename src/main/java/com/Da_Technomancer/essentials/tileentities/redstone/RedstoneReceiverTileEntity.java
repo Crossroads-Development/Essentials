@@ -137,7 +137,7 @@ public class RedstoneReceiverTileEntity extends BlockEntity implements ILinkTE{
 		}
 		return 0;
 	}
-	
+
 	@Override
 	public void load(CompoundTag nbt){
 		super.load(nbt);
@@ -145,14 +145,13 @@ public class RedstoneReceiverTileEntity extends BlockEntity implements ILinkTE{
 			src = BlockPos.of(nbt.getLong("src"));
 		}
 	}
-	
+
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		if(src != null){
 			nbt.putLong("src", src.asLong());
 		}
-		return nbt;
 	}
 
 	@Override

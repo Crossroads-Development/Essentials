@@ -76,10 +76,9 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.put("filter", filter.save(new CompoundTag()));
-		return nbt;
 	}
 
 	@Override
@@ -90,7 +89,9 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 
 	@Override
 	public CompoundTag getUpdateTag(){
-		return save(super.getUpdateTag());
+		CompoundTag nbt = super.getUpdateTag();
+		saveAdditional(nbt);
+		return nbt;
 	}
 
 	@Override

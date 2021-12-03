@@ -63,10 +63,9 @@ public class ESEventHandlerCommon{
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void feedAnimal(PlayerInteractEvent.EntityInteract e){
-		if(e.getTarget() instanceof Animal && e.getItemStack().getItem() == ESItems.animalFeed && (!(e.getTarget() instanceof TamableAnimal) || ((TamableAnimal) e.getTarget()).isTame())){
+		if(e.getTarget() instanceof Animal an && e.getItemStack().getItem() == ESItems.animalFeed && (!(e.getTarget() instanceof TamableAnimal) || ((TamableAnimal) e.getTarget()).isTame())){
 			e.setResult(Event.Result.DENY);
 			e.setCanceled(true);
-			Animal an = (Animal) e.getTarget();
 			if(!e.getWorld().isClientSide && an.getAge() == 0){
 				an.setInLove(e.getPlayer());
 				if(!e.getPlayer().isCreative()){

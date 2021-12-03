@@ -43,13 +43,12 @@ public class DCounterCircuitTileEntity extends CircuitTileEntity{
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putFloat("counter", counter);
 		nbt.putFloat("input_back", prevInputBack);
 		nbt.putBoolean("input_left", hadInputSideL);
 		nbt.putBoolean("input_right", hadInputSideR);
-		return nbt;
 	}
 
 	@Override

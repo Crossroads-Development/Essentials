@@ -52,7 +52,6 @@ public class AnimalFeed extends Item{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
 		tooltip.add(new TranslatableComponent("tt.essentials.animal_feed"));
 	}

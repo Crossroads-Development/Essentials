@@ -12,7 +12,7 @@ import net.minecraft.world.entity.player.Inventory;
 public class ItemShifterScreen extends AbstractContainerScreen<ItemShifterContainer>{
 
 	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/gui/item_shifter.png");
-	
+
 	public ItemShifterScreen(ItemShifterContainer cont, Inventory playerInventory, Component text){
 		super(cont, playerInventory, text);
 	}

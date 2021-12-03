@@ -25,7 +25,6 @@ public class ObsidianCuttingKit extends Item{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
 		tooltip.add(new TranslatableComponent("tt.essentials.obsidian_kit.desc"));
 	}

@@ -3,20 +3,14 @@ package com.Da_Technomancer.essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
-import com.Da_Technomancer.essentials.gui.*;
-import com.Da_Technomancer.essentials.gui.container.*;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.packets.EssentialsPackets;
-import com.Da_Technomancer.essentials.render.CannonSkullRenderer;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.Da_Technomancer.essentials.tileentities.*;
 import com.Da_Technomancer.essentials.tileentities.redstone.*;
 import com.mojang.datafixers.DSL;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -27,10 +21,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -39,9 +29,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.network.FMLPlayMessages;
-import net.minecraftforge.fmllegacy.network.IContainerFactory;
+import net.minecraftforge.network.IContainerFactory;
+import net.minecraftforge.network.PlayMessages;
 import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -61,6 +52,7 @@ public final class Essentials{
 		final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		bus.addListener(this::commonInit);
 		bus.addListener(this::clientInit);
+		bus.addListener(this::serverInit);
 
 		ESConfig.init();
 
@@ -83,17 +75,14 @@ public final class Essentials{
 		ItemBlockRenderTypes.setRenderLayer(candleLilyPad, RenderType.cutout());
 	}
 
-	@SuppressWarnings("unused")
-	@SubscribeEvent
-	public static void registerCapabilities(RegisterCapabilitiesEvent e){
-		e.register(IRedstoneHandler.class);
+	private void serverInit(@SuppressWarnings("unused") FMLDedicatedServerSetupEvent e){
+		MinecraftForge.EVENT_BUS.register(new ESEventHandlerServer());
 	}
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
-	public static void registerModels(ModelRegistryEvent e){
-		EntityRenderers.register(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
+	public static void registerCapabilities(RegisterCapabilitiesEvent e){
+		e.register(IRedstoneHandler.class);
 	}
 
 	@SuppressWarnings("unused")
@@ -122,7 +111,7 @@ public final class Essentials{
 	@SubscribeEvent
 	public static void registerEnts(RegistryEvent.Register<EntityType<?>> e){
 		IForgeRegistry<EntityType<?>> registry = e.getRegistry();
-		registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, MobCategory.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((FMLPlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
+		registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, MobCategory.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((PlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
 	}
 
 	@SuppressWarnings("unused")
@@ -159,44 +148,6 @@ public final class Essentials{
 		reg.register(teType);
 	}
 
-	@SubscribeEvent
-	@SuppressWarnings("unused")
-	@OnlyIn(Dist.CLIENT)
-	public static void registerContainers(RegistryEvent.Register<MenuType<?>> e){
-		registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", e);
-		registerCon(FluidShifterContainer::new, FluidShifterScreen::new, "fluid_shifter", e);
-		registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", e);
-		registerCon(CircuitWrenchContainer::new, CircuitWrenchScreen::new, "circuit_wrench", e);
-		registerCon(ConstantCircuitContainer::new, ConstantCircuitScreen::new, "cons_circuit", e);
-		registerCon(TimerCircuitContainer::new, TimerCircuitScreen::new, "timer_circuit", e);
-		registerCon(AutoCrafterContainer::new, AutoCrafterScreen::new, "auto_crafter", e);
-		registerCon(DelayCircuitContainer::new, DelayCircuitScreen::new, "delay_circuit", e);
-		registerCon(PulseCircuitContainer::new, PulseCircuitScreen::new, "pulse_circuit", e);
-	}
-
-	@SubscribeEvent
-	@SuppressWarnings("unused")
-	@OnlyIn(Dist.DEDICATED_SERVER)
-	public static void registerContainerTypes(RegistryEvent.Register<MenuType<?>> e){
-		registerConType(ItemShifterContainer::new, "item_shifter", e);
-		registerConType(FluidShifterContainer::new, "fluid_shifter", e);
-		registerConType(SlottedChestContainer::new, "slotted_chest", e);
-		registerConType(CircuitWrenchContainer::new, "circuit_wrench", e);
-		registerConType(ConstantCircuitContainer::new, "cons_circuit", e);
-		registerConType(TimerCircuitContainer::new, "timer_circuit", e);
-		registerConType(AutoCrafterContainer::new, "auto_crafter", e);
-		registerConType(DelayCircuitContainer::new, "delay_circuit", e);
-		registerConType(PulseCircuitContainer::new, "pulse_circuit", e);
-	}
-
-	@SubscribeEvent
-	@SuppressWarnings("unused")
-	@OnlyIn(Dist.CLIENT)
-	public static void onTextureStitch(TextureStitchEvent.Pre event){
-		//Add textures used in TESRs
-		//Currently none used
-	}
-
 	/**
 	 * Creates and registers a container type
 	 * @param cons Container factory
@@ -205,24 +156,10 @@ public final class Essentials{
 	 * @param <T> Container subclass
 	 * @return The newly created type
 	 */
-	private static <T extends AbstractContainerMenu> MenuType<T> registerConType(IContainerFactory<T> cons, String id, RegistryEvent.Register<MenuType<?>> reg){
+	protected static <T extends AbstractContainerMenu> MenuType<T> registerConType(IContainerFactory<T> cons, String id, RegistryEvent.Register<MenuType<?>> reg){
 		MenuType<T> contType = new MenuType<>(cons);
 		contType.setRegistryName(new ResourceLocation(MODID, id));
 		reg.getRegistry().register(contType);
 		return contType;
-	}
-
-	/**
-	 * Creates and registers both a container type and a screen factory. Not usable on the physical server due to screen factory.
-	 * @param cons Container factory
-	 * @param screenFactory The screen factory to be linked to the type
-	 * @param id The ID to use
-	 * @param reg Registery event
-	 * @param <T> Container subclass
-	 */
-	@OnlyIn(Dist.CLIENT)
-	private static <T extends AbstractContainerMenu> void registerCon(IContainerFactory<T> cons, MenuScreens.ScreenConstructor<T, AbstractContainerScreen<T>> screenFactory, String id, RegistryEvent.Register<MenuType<?>> reg){
-		MenuType<T> contType = registerConType(cons, id, reg);
-		MenuScreens.register(contType, screenFactory);
 	}
 }

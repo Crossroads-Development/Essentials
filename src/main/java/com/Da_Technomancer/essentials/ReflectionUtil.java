@@ -55,7 +55,8 @@ public final class ReflectionUtil{
 				}
 			}
 		}catch(Exception e){
-			Essentials.logger.error(LogMarkers.LOADING, "Failed to reflect field: " + key.getMcpName() + "; Report to mod author; Disabling relevant feature(s): " + key.getPurpose(), e);		}
+			Essentials.logger.error(LogMarkers.LOADING, "Failed to reflect field: " + key.getMcpName() + "; Report to mod author; Disabling relevant feature(s): " + key.getPurpose(), e);
+		}
 		return null;
 	}
 
@@ -104,8 +105,11 @@ public final class ReflectionUtil{
 
 		@Nullable
 		Class<?> getSourceClass();//Class to reflect from. Null value disables helper methods
+
 		String getObfName();//Obfuscated name
+
 		String getMcpName();//Human readable name
+
 		String getPurpose();//Short description of what this reflection is for- for user-readable error messages
 
 	}

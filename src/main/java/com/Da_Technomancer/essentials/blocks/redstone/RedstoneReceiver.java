@@ -60,7 +60,6 @@ public class RedstoneReceiver extends BaseEntityBlock implements IWireConnect{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.reds_rec.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.reds_rec.linking"));

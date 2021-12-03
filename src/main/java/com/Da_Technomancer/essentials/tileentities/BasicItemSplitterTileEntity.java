@@ -83,8 +83,8 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putByte("type", (byte) 1);//Version number for the nbt data
 		nbt.putInt("mode", mode);
 		nbt.putInt("transferred", transferred);
@@ -95,7 +95,6 @@ public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 				nbt.put("inv_" + i, inner);
 			}
 		}
-		return nbt;
 	}
 
 	@Override

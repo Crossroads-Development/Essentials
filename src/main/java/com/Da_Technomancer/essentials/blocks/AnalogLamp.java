@@ -1,29 +1,25 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.Material;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class AnalogLamp extends Block{
 
@@ -46,7 +42,6 @@ public class AnalogLamp extends Block{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.analog_lamp.desc"));
 	}
@@ -57,14 +52,14 @@ public class AnalogLamp extends Block{
 	}
 
 	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-		if(!worldIn.isClientSide) {
+	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
+		if(!worldIn.isClientSide){
 			int current = state.getValue(ESProperties.REDSTONE);
 			int worldReds = RedstoneUtil.getRedstoneAtPos(worldIn, pos);
 			if(current != worldReds){
 				if(worldReds == 0){
 					//Turn off w/ 4 tick delay (2 redstone ticks), (vanilla redstone lamp behaviour reproduced here)
-					worldIn.getBlockTicks().scheduleTick(pos, this, 4);
+					worldIn.scheduleTick(pos, this, 4);
 				}else{
 					//Turn on/change light level instantly
 					worldIn.setBlock(pos, state.setValue(ESProperties.REDSTONE, worldReds), 2);

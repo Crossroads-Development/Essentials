@@ -23,7 +23,7 @@ public class GenericACircuit extends AbstractCircuit{
 	}
 
 	public GenericACircuit(String name, Function<Float, Float> function, boolean usesQuartz){
-		super(name +"_circuit");
+		super(name + "_circuit");
 		this.ttName = "tt." + Essentials.MODID + "." + name + "_circuit";
 		this.function = function;
 		this.usesQuartz = usesQuartz;

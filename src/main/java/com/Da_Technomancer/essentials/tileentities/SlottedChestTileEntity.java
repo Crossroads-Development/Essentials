@@ -89,8 +89,8 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 
 		for(int i = 0; i < 54; ++i){
 			if(!inv[i].isEmpty()){
@@ -100,8 +100,6 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 				nbt.put("lockSlot" + i, lockedInv[i].save(new CompoundTag()));
 			}
 		}
-
-		return nbt;
 	}
 
 	@Override

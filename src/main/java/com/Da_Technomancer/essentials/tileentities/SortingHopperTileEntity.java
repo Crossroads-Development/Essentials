@@ -109,8 +109,8 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 
 		for(int i = 0; i < 5; i++){
 			if(!inventory[i].isEmpty()){
@@ -121,8 +121,6 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 		}
 
 		nbt.putInt("trans_cooldown", transferCooldown);
-
-		return nbt;
 	}
 
 	/**

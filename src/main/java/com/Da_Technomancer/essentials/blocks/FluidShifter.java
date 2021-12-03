@@ -32,7 +32,6 @@ public class FluidShifter extends AbstractShifter{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.fluid_shifter_info"));
 		tooltip.add(new TranslatableComponent("tt.essentials.fluid_shifter_range", ESConfig.itemChuteRange.get()));

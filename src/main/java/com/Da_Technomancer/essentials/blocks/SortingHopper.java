@@ -156,10 +156,10 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.getBlock() != newState.getBlock()){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof SortingHopperTileEntity) {
+			if(te instanceof SortingHopperTileEntity){
 				Containers.dropContents(worldIn, pos, (SortingHopperTileEntity) te);
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
@@ -205,8 +205,7 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 	}
 
 //	@Override
-//	@OnlyIn(Dist.CLIENT)
-//	public BlockRenderLayer getRenderLayer(){
+//	//	public BlockRenderLayer getRenderLayer(){
 //		return BlockRenderLayer.CUTOUT_MIPPED;
 //	}
 
@@ -226,7 +225,6 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.sorting_hopper.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.sorting_hopper.quip").setStyle(ESConfig.TT_QUIP));//MCP note: setStyle

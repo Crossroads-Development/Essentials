@@ -28,7 +28,7 @@ import java.util.List;
 public class ItemChute extends Block{
 
 	private static final VoxelShape[] BB = new VoxelShape[] {box(0, 2, 2, 16, 14, 14), box(2, 0, 2, 14, 16, 14), box(2, 2, 0, 14, 14, 16)};
-	
+
 	protected ItemChute(){
 		super(ESBlocks.getMetalProperty());
 		String name = "item_chute";
@@ -58,9 +58,8 @@ public class ItemChute extends Block{
 	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
 		return BB[state.getValue(ESProperties.AXIS).ordinal()];
 	}
-	
+
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.item_chute.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.item_chute.decor"));

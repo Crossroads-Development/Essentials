@@ -21,7 +21,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.TickPriority;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -37,6 +36,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -143,7 +143,6 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void animateTick(BlockState state, Level worldIn, BlockPos pos, Random rand){
 		if(state.getValue(ESProperties.SHIFTING)){
 			double particleRad = 0.75D;
@@ -172,7 +171,7 @@ public class MultiPistonBase extends Block{
 		if(redstone > currExtend){
 			//Extension has a delay of DELAY ticks
 			worldIn.setBlock(pos, state.setValue(ESProperties.SHIFTING, true), 2);
-			worldIn.getBlockTicks().scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
+			worldIn.scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
 			playSound(worldIn, pos, false, true);
 		}else{
 			//Retraction happens instantly
@@ -278,7 +277,7 @@ public class MultiPistonBase extends Block{
 			if(!blocked && currExtend + 1 < redstone){
 				state = state.setValue(ESProperties.SHIFTING, true);
 				world.setBlock(pos, state, 2);
-				world.getBlockTicks().scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
+				world.scheduleTick(pos, this, DELAY, TickPriority.NORMAL);
 			}
 
 			//Don't apply block updates until after all changes have been applied to avoid a variety of issues, including rail dupe bugs

@@ -191,7 +191,6 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 		return AutoCrafterScreen.getRecipeCategories();//Redirect to a method in AutoCrafterScreen as RecipeBookCategories is client only
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	@Override
 	public RecipeBookType getRecipeBookType(){
 		return RecipeBookType.CRAFTING;

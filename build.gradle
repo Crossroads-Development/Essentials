@@ -28,7 +28,7 @@ sourceSets.main.java.exclude('**/python/**')
 //	options.encoding = 'UTF-8'
 //}
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '16' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17' // Need this here so eclipse task generates correctly.
 
 minecraft {
 	mappings channel: "$mcp_channel", version: "$mcp_version"
@@ -84,14 +84,15 @@ repositories {
 dependencies {
 	minecraft "net.minecraftforge:forge:$mc_version-$fg_version"
 
+	//TODO disabled until updated
 	//JEI
 	//Compile against APIs
-	compileOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version:api")
+//	compileOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version:api")
 	//Run with the full versions
-	runtimeOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version")
+//	runtimeOnly fg.deobf("mezz.jei:jei-$jei_mc_version:$jei_version")
 	//Patchouli
-	compileOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
-	runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+//	compileOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+//	runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

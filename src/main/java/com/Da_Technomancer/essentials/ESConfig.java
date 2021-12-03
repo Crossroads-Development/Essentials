@@ -27,7 +27,7 @@ public class ESConfig{
 
 	public static ForgeConfigSpec.BooleanValue addWrench;
 
-//	private static ForgeConfigSpec.ConfigValue<List<? extends String>> wrenchTypes;
+	//	private static ForgeConfigSpec.ConfigValue<List<? extends String>> wrenchTypes;
 	public static ForgeConfigSpec.IntValue brazierRange;
 	public static ForgeConfigSpec.IntValue itemChuteRange;
 	public static ForgeConfigSpec.DoubleValue fertileSoilRate;

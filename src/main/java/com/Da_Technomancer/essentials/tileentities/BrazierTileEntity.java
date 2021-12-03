@@ -172,7 +172,7 @@ public class BrazierTileEntity extends BlockEntity implements ITickableTileEntit
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate){
 			if(slot == 0){
-				ItemStack  out = getStackInSlot(0);
+				ItemStack out = getStackInSlot(0);
 				if(!simulate){
 					level.setBlockAndUpdate(worldPosition, getBlockState().setValue(ESProperties.BRAZIER_CONTENTS, 0));
 				}

@@ -69,14 +69,13 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putInt("setting_p", settingPeriod);
 		nbt.putString("setting_s_p", settingStrPeriod);
 		nbt.putInt("setting_d", settingDuration);
 		nbt.putString("setting_s_d", settingStrDuration);
 		nbt.putLong("existed", ticksExisted);
-		return nbt;
 	}
 
 	@Override

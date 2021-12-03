@@ -42,7 +42,6 @@ public class BasicItemSplitter extends AbstractSplitter{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.item_splitter_basic"));
 		tooltip.add(new TranslatableComponent("tt.essentials.basic_item_splitter_formula"));

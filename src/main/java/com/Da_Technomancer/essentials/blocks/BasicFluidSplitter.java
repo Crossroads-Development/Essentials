@@ -41,7 +41,6 @@ public class BasicFluidSplitter extends AbstractSplitter{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.fluid_splitter_basic"));
 		tooltip.add(new TranslatableComponent("tt.essentials.basic_fluid_splitter_formula"));

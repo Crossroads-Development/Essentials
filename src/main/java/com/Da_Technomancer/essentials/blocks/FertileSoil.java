@@ -44,7 +44,6 @@ public class FertileSoil extends Block{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.benefits"));

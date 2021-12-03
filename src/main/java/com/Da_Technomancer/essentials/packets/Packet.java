@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.packets;
 
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Field;

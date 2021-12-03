@@ -40,11 +40,10 @@ public class ConstantCircuitTileEntity extends CircuitTileEntity implements Menu
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putFloat("setting", setting);
 		nbt.putString("setting_s", settingStr);
-		return nbt;
 	}
 
 	@Override

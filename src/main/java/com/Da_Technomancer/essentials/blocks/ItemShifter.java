@@ -33,10 +33,10 @@ public class ItemShifter extends AbstractShifter{
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.getBlock() != newState.getBlock()){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof ItemShifterTileEntity) {
+			if(te instanceof ItemShifterTileEntity){
 				Containers.dropContents(worldIn, pos, (ItemShifterTileEntity) te);
 				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
@@ -46,7 +46,6 @@ public class ItemShifter extends AbstractShifter{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.item_shifter.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.item_shifter.range", ESConfig.itemChuteRange.get()));

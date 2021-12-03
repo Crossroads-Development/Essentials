@@ -12,7 +12,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RedStoneWireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -23,8 +24,7 @@ import java.util.Map;
 @ParametersAreNonnullByDefault
 public class RedstoneUtil extends BlockUtil{
 
-	@CapabilityInject(IRedstoneHandler.class)
-	public static Capability<IRedstoneHandler> REDSTONE_CAPABILITY = null;
+	public static Capability<IRedstoneHandler> REDSTONE_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 	/**
 	 * Allows other mods to support being read by a reader circuit without a hard dependency on Essentials
@@ -54,7 +54,7 @@ public class RedstoneUtil extends BlockUtil{
 	}
 
 	@Nullable
-	public static IReadable getReadable(Block block) {
+	public static IReadable getReadable(Block block){
 		if(block instanceof IReadable){
 			return ((IReadable) block);
 		}else{

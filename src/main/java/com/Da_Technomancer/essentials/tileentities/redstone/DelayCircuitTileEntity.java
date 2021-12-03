@@ -17,7 +17,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ObjectHolder;
@@ -97,8 +97,8 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putInt("setting_d", settingDelay);
 		nbt.putString("setting_s_d", settingStrDelay);
 		nbt.putLong("existed", ticksExisted);
@@ -108,7 +108,6 @@ public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuPro
 			nbt.putFloat(i + "_queue_out", outputPair.getLeft());
 			nbt.putLong(i + "_queue_time", outputPair.getRight());
 		}
-		return nbt;
 	}
 
 	@Override

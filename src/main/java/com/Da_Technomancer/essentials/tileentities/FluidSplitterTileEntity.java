@@ -20,10 +20,9 @@ public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putInt("reds", redstone);
-		return nbt;
 	}
 
 	@Override

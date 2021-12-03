@@ -44,13 +44,13 @@ public class Brazier extends BaseEntityBlock{
 
 	protected Brazier(){
 		super(ESBlocks.getRockProperty().lightLevel(state ->
-						switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
-							case 2, 4 -> 15;
-							case 3 -> 14;
-							case 7 -> 3;
-							default -> 0;
-						}
-				));
+				switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
+					case 2, 4 -> 15;
+					case 3 -> 14;
+					case 7 -> 3;
+					default -> 0;
+				}
+		));
 		String name = "brazier";
 		setRegistryName(name);
 		registerDefaultState(defaultBlockState().setValue(ESProperties.BRAZIER_CONTENTS, 0));
@@ -124,10 +124,10 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
+	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving){
+		if(state.getBlock() != newState.getBlock()){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if (te instanceof BrazierTileEntity) {
+			if(te instanceof BrazierTileEntity){
 				ItemStack made = switch(state.getValue(ESProperties.BRAZIER_CONTENTS)){
 					case 3 -> new ItemStack(Blocks.COAL_BLOCK);
 					case 4 -> new ItemStack(Blocks.GLOWSTONE);
@@ -143,7 +143,6 @@ public class Brazier extends BaseEntityBlock{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.brazier.desc"));
 		tooltip.add(new TranslatableComponent("tt.essentials.brazier.purpose"));

@@ -95,7 +95,16 @@ public class FluidSlotManager{
 		fluidQty = init.getAmount() - Short.MAX_VALUE;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+
+	/**
+	 * Only call on the virtual client side
+	 * @param windowXStart Window x start position
+	 * @param windowYStart Window y start position
+	 * @param xPos Left-most X position of the fluid bar
+	 * @param yPos Bottom-most Y position of the fluid bar
+	 * @param idRef Reference tracking fluid type
+	 * @param qtyRef Reference tracking fluid quantity
+	 */
 	public void initScreen(int windowXStart, int windowYStart, int xPos, int yPos, DataSlot idRef, DataSlot qtyRef){
 		this.windowXStart = windowXStart;
 		this.windowYStart = windowYStart;
@@ -135,7 +144,11 @@ public class FluidSlotManager{
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	/**
+	 * Gets the fluidstack represented by this fluid inventory
+	 *
+	 * Call on the virtual client side only
+	 */
 	public FluidStack getStack(){
 		short fluidId = (short) idRef.get();
 		if(fluidId < 0){

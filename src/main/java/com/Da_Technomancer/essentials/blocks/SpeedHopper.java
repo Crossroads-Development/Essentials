@@ -35,7 +35,6 @@ public class SpeedHopper extends SortingHopper{
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(new TranslatableComponent("tt.essentials.speed_hopper.sort"));
 		tooltip.add(new TranslatableComponent("tt.essentials.speed_hopper.desc"));

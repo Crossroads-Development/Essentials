@@ -13,7 +13,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.TickPriority;
+import net.minecraft.world.ticks.TickPriority;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -245,15 +245,16 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag nbt){
-		super.save(nbt);
+	public void saveAdditional(CompoundTag nbt){
+		super.saveAdditional(nbt);
 		nbt.putFloat("pow", output);
-		return nbt;
 	}
 
 	@Override
 	public CompoundTag getUpdateTag(){
-		return save(new CompoundTag());
+		CompoundTag nbt = super.getUpdateTag();
+		saveAdditional(nbt);
+		return nbt;
 	}
 
 	@Nonnull
@@ -274,7 +275,7 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 	 * @param priority The priority this tick should be scheduled with
 	 */
 	public void handleInputChange(TickPriority priority){
-		level.getBlockTicks().scheduleTick(worldPosition, getOwner(), RedstoneUtil.DELAY, priority);
+		level.scheduleTick(worldPosition, getOwner(), RedstoneUtil.DELAY, priority);
 	}
 
 	private class RedsHandler implements IRedstoneHandler{

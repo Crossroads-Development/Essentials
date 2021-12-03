@@ -66,7 +66,7 @@ public abstract class AbstractShifterTileEntity extends BlockEntity implements I
 
 		endPos = worldPosition.relative(dir, extension);
 	}
-	
+
 	public static ItemStack ejectItem(Level world, BlockPos outputPos, Direction fromSide, ItemStack stack, @Nullable LazyOptional<IItemHandler> outputHandlerCache){
 		if(stack.isEmpty()){
 			return ItemStack.EMPTY;
