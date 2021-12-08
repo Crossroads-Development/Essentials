@@ -327,8 +327,8 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 		}
 	}
 
-	protected static IItemHandler getHandlerAtPosition(Level world, BlockPos otherPos, Direction direction, @Nullable BlockEntity aboveTE){
-		final BlockEntity te = aboveTE == null ? world.getBlockEntity(otherPos) : aboveTE;
+	public static IItemHandler getHandlerAtPosition(Level world, BlockPos otherPos, Direction direction, @Nullable BlockEntity cacheTE){
+		final BlockEntity te = cacheTE == null ? world.getBlockEntity(otherPos) : cacheTE;
 
 		if(te != null){
 			final LazyOptional<IItemHandler> capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
@@ -345,7 +345,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 		BlockState state = world.getBlockState(otherPos);
 		if(state.getBlock() instanceof WorldlyContainerHolder){
 			WorldlyContainer inv = ((WorldlyContainerHolder) state.getBlock()).getContainer(state, world, otherPos);
-			return new InvWrapper(inv);
+			return new WorldlyInvWrapper(inv, direction);
 		}
 
 		List<Entity> list = world.getEntities((Entity) null, new AABB(otherPos), EntitySelector.CONTAINER_ENTITY_SELECTOR);
@@ -474,6 +474,39 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
 			return true;
+		}
+	}
+
+	/**
+	 * A version of InvWrapper which can handle the special requirements of WorldlyContainers in addition to still handling regular Containers
+	 */
+	private static class WorldlyInvWrapper extends InvWrapper{
+
+		//Because WorldlyContainer adds extra methods to control item movement, we need to adjust the wrapper to use them
+
+		private final Direction direction;
+
+		public WorldlyInvWrapper(Container inv, Direction accessDirection){
+			super(inv);
+			this.direction = accessDirection;
+		}
+
+		@Nonnull
+		@Override
+		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
+			if(getInv() instanceof WorldlyContainer wInv && !wInv.canPlaceItemThroughFace(slot, stack, direction)){
+				return stack;
+			}
+			return super.insertItem(slot, stack, simulate);
+		}
+
+		@Nonnull
+		@Override
+		public ItemStack extractItem(int slot, int amount, boolean simulate){
+			if(getInv() instanceof WorldlyContainer wInv && !wInv.canTakeItemThroughFace(slot, wInv.getItem(slot), direction)){
+				return ItemStack.EMPTY;
+			}
+			return super.extractItem(slot, amount, simulate);
 		}
 	}
 }

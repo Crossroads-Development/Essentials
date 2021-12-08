@@ -6,8 +6,6 @@ import com.Da_Technomancer.essentials.blocks.ESProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.WorldlyContainerHolder;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,9 +17,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nullable;
 
@@ -71,31 +67,22 @@ public abstract class AbstractShifterTileEntity extends BlockEntity implements I
 		if(stack.isEmpty()){
 			return ItemStack.EMPTY;
 		}
-
+		
+		//Capability item handlers
 		IItemHandler handler = null;
 
-		//Capability item handlers
-		//Null means no cache, check independently
-		if(outputHandlerCache == null){
-			BlockEntity outputTE = world.getBlockEntity(outputPos);
-			LazyOptional<IItemHandler> outputCap;
-			if(outputTE != null && (outputCap = outputTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
-				handler = outputCap.orElseThrow(NullPointerException::new);
-			}
-		}else if(outputHandlerCache.isPresent()){
+		//Use cache if possible
+		if(outputHandlerCache != null && outputHandlerCache.isPresent()){
 			handler = outputHandlerCache.orElseThrow(NullPointerException::new);
 		}
 
-		//ISidedInventoryProvider
 		if(handler == null){
-			BlockState outputState = world.getBlockState(outputPos);
-			if(outputState.getBlock() instanceof WorldlyContainerHolder){
-				WorldlyContainer inv = ((WorldlyContainerHolder) outputState.getBlock()).getContainer(outputState, world, outputPos);
-				handler = new InvWrapper(inv);
-			}
+			//Null means no cache, check independently
+			handler = SortingHopperTileEntity.getHandlerAtPosition(world, outputPos, fromSide, null);
 		}
 
 		if(handler != null){
+			//Found an item handler. Interact with it
 			for(int i = 0; i < handler.getSlots(); i++){
 				ItemStack outStack = handler.insertItem(i, stack, false);
 				if(outStack.getCount() != stack.getCount()){
@@ -105,6 +92,7 @@ public abstract class AbstractShifterTileEntity extends BlockEntity implements I
 			return stack;
 		}
 
+		//No item handler found
 		//Drop the item in the world
 		ItemEntity ent = new ItemEntity(world, outputPos.getX() + 0.5D, outputPos.getY() + 0.5D, outputPos.getZ() + 0.5D, stack);
 		ent.setDeltaMovement(Vec3.ZERO);
