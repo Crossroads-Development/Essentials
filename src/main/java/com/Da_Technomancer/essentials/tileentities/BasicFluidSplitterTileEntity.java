@@ -16,8 +16,6 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 @ObjectHolder(Essentials.MODID)
 public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
@@ -48,7 +46,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 	}
 
 	@Override
-	public void tick(){
+	public void serverTick(){
 		if(endPos[0] == null || endPos[1] == null){
 			refreshCache();
 		}
