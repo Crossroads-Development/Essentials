@@ -18,8 +18,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -147,7 +145,7 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 	@Override
 	public void clicked(int slotId, int dragType, ClickType clickTypeIn, Player player){
 		if(slotId > 9 && slotId < 19 && player != null && te != null){
-			if(playerInv.getSelected().isEmpty()){
+			if(getCarried().isEmpty()){
 				//Click on a recipe slot with an empty cursor
 
 				Recipe<CraftingContainer> rec = te.validateRecipe(AutoCrafterTileEntity.lookupRecipe(te.getRecipeManager(), te.recipe), this);
@@ -177,7 +175,7 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 					te.setRecipe(null);
 				}
 
-				ItemStack s = playerInv.getSelected().copy();
+				ItemStack s = getCarried().copy();
 				s.setCount(1);
 				inv.setItem(slotId, s);
 			}

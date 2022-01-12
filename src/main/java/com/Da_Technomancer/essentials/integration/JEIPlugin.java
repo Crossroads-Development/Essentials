@@ -54,13 +54,12 @@ public class JEIPlugin implements IModPlugin{
 			return AutoCrafterContainer.class;
 		}
 
-        @Override
-        public Class<CraftingRecipe> getRecipeClass()
-        {
-            return CraftingRecipe.class;
-        }
+		@Override
+		public Class<CraftingRecipe> getRecipeClass(){
+			return CraftingRecipe.class;
+		}
 
-        @Nullable
+		@Nullable
 		@Override
 		public IRecipeTransferError transferRecipe(AutoCrafterContainer c, CraftingRecipe recipe, IRecipeLayout iRecipeLayout, Player playerEntity, boolean maxTransfer, boolean doTransfer){
 			try{
