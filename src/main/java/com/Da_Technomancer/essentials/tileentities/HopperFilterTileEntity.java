@@ -6,20 +6,21 @@ import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
 import com.Da_Technomancer.essentials.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.packets.SendNBTToClient;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.WorldlyContainerHolder;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.WorldlyContainerHolder;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -29,6 +30,8 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @ObjectHolder(Essentials.MODID)
 public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
@@ -42,6 +45,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 
 	private Direction.Axis axisCache = null;
 	private ItemStack filter = ItemStack.EMPTY;
+	private Set<Item> filterItemsCache = null;
 
 	public ItemStack getFilter(){
 		return filter;
@@ -49,6 +53,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 
 	public void setFilter(ItemStack filter){
 		this.filter = filter;
+		filterItemsCache = null;
 		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(filter.save(new CompoundTag()), worldPosition));
 		setChanged();
 	}
@@ -85,6 +90,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	public void load(CompoundTag nbt){
 		super.load(nbt);
 		filter = ItemStack.of(nbt.getCompound("filter"));
+		filterItemsCache = null;
 	}
 
 	@Override
@@ -97,26 +103,27 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	@Override
 	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
 		filter = ItemStack.of(nbt);
+		filterItemsCache = null;
 	}
 
-	public static boolean matchFilter(ItemStack query, ItemStack filt){
-		if(filt.isEmpty()){
+	public boolean matchFilter(ItemStack query){
+		if(filter.isEmpty()){
 			return false;
 		}
 
-		CompoundTag nbt;
-		if(filt.getItem() instanceof BlockItem && ((BlockItem) filt.getItem()).getBlock() instanceof ShulkerBoxBlock && (nbt = filt.getTag()) != null){
-			NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
-			ContainerHelper.loadAllItems(nbt.getCompound("BlockEntityTag"), nonnulllist);
-
-			for(ItemStack singleFilt : nonnulllist){
-				if(matchFilter(query, singleFilt)){
-					return true;
-				}
+		if(filterItemsCache == null){
+			if(filter.getItem() instanceof BlockItem && ((BlockItem) filter.getItem()).getBlock() instanceof ShulkerBoxBlock){
+				CompoundTag nbt = filter.getOrCreateTag();
+				NonNullList<ItemStack> nonnulllist = NonNullList.withSize(27, ItemStack.EMPTY);
+				//Loading the shulker box contents from NBT is slow, so we cache the result
+				ContainerHelper.loadAllItems(nbt.getCompound("BlockEntityTag"), nonnulllist);
+				filterItemsCache = nonnulllist.stream().map(ItemStack::getItem).collect(Collectors.toSet());
+			}else{
+				filterItemsCache = Set.of(filter.getItem());
 			}
-			return false;
 		}
-		return query.getItem() == filt.getItem();
+		//The cache is a set because they are distinct and contains queries are constant time
+		return filterItemsCache.contains(query.getItem());
 	}
 
 	private LazyOptional<IItemHandler> passedHandlerPos = null;
@@ -202,7 +209,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 		@Override
 		public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate){
 			IItemHandler handler = getHandler();
-			if(handler != null && matchFilter(stack, filter)){
+			if(handler != null && matchFilter(stack)){
 				return handler.insertItem(slot, stack, simulate);
 			}
 			return stack;
@@ -212,7 +219,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 		@Override
 		public ItemStack extractItem(int slot, int amount, boolean simulate){
 			IItemHandler handler = getHandler();
-			if(handler != null && matchFilter(getStackInSlot(slot), filter)){
+			if(handler != null && matchFilter(getStackInSlot(slot))){
 				return handler.extractItem(slot, amount, simulate);
 			}
 			return ItemStack.EMPTY;
@@ -227,7 +234,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 		@Override
 		public boolean isItemValid(int slot, @Nonnull ItemStack stack){
 			IItemHandler handler = getHandler();
-			return handler != null && matchFilter(stack, filter) && handler.isItemValid(slot, stack);
+			return handler != null && matchFilter(stack) && handler.isItemValid(slot, stack);
 		}
 	}
 }

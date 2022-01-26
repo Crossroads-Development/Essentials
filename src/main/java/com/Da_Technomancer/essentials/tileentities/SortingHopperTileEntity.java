@@ -294,8 +294,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 
 			//If the block above is a Hopper Filter, we can pick up items through the filter, but only if they match the filter
 			if(aboveTE instanceof HopperFilterTileEntity){
-				ItemStack filter = ((HopperFilterTileEntity) aboveTE).getFilter();
-				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AABB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 3D, worldPosition.getZ() + 1), entity -> entity.isAlive() && HopperFilterTileEntity.matchFilter(entity.getItem(), filter));
+				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AABB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 3D, worldPosition.getZ() + 1), entity -> entity.isAlive() && ((HopperFilterTileEntity) aboveTE).matchFilter(entity.getItem()));
 			}else{
 				itemEntities = level.getEntitiesOfClass(ItemEntity.class, new AABB(worldPosition.getX(), worldPosition.getY() + 0.5D, worldPosition.getZ(), worldPosition.getX() + 1, worldPosition.getY() + 2D, worldPosition.getZ() + 1), EntitySelector.ENTITY_STILL_ALIVE);
 			}
