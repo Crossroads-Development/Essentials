@@ -16,8 +16,11 @@ Summary:
 
 ---------------------------------
 
-IF SUBMITTING TRANSLATIONS:
+IF UPDATING THE GUIDEBOOK:
 
+For the non-English guidebook, edit the JSON files (in Essentials/src/main/resources/assets/essentials/patchouli_books/manual/).
+
+For the English guidebook:
 The guidebook files are stored in Essentials/src/main/resources/python/docs/src/ as txt files.
 Edit those files, NOT the book JSON files. The JSON files are auto-generated based on the txt files. 
 For full details on the formatting for the txt files (probably more information than you need), see the top of https://github.com/Crossroads-Development/Essentials/blob/1.18/src/main/resources/python/docs/GenDocs.py. 
