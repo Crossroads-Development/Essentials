@@ -221,7 +221,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 	@Override
 	public boolean stillValid(Player player){
-		return worldPosition.distSqr(player.position(), true) < 64;
+		return worldPosition.distToCenterSqr(player.position()) < 64;
 	}
 
 	@Override

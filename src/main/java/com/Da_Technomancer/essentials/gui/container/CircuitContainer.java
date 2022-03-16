@@ -39,7 +39,7 @@ public abstract class CircuitContainer extends AbstractContainerMenu{
 
 	@Override
 	public boolean stillValid(Player playerIn){
-		return pos != null && pos.distSqr(playerIn.position(), true) <= 64;
+		return pos != null && pos.distToCenterSqr(playerIn.position()) <= 64;
 	}
 
 	public abstract int inputBars();

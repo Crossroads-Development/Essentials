@@ -12,7 +12,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -22,11 +22,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,7 +47,7 @@ public class CircuitWrench extends Item{
 	public static final ArrayList<ResourceLocation> ICONS = new ArrayList<>(39);
 
 	public static final String NBT_KEY = Essentials.MODID + ":mode";
-	private static final Tag<Item> COMPONENT_TAG = ItemTags.bind(new ResourceLocation(Essentials.MODID, "circuit_components").toString());
+	private static final TagKey<Item> COMPONENT_TAG = ItemTags.create(new ResourceLocation(Essentials.MODID, "circuit_components"));
 
 	static{
 		registerCircuit(ESBlocks.wireCircuit, new ResourceLocation(Essentials.MODID, "textures/gui/circuit/wire.png"));
@@ -150,7 +152,7 @@ public class CircuitWrench extends Item{
 						//Have to pay for tile->circuit
 						List<ItemStack> playerInv = context.getPlayer().getInventory().items;
 						for(ItemStack stack : playerInv){
-							if(COMPONENT_TAG.contains(stack.getItem())){
+							if(stack.is(COMPONENT_TAG)){
 								if(!context.getLevel().isClientSide){
 									stack.shrink(1);
 								}
@@ -165,7 +167,7 @@ public class CircuitWrench extends Item{
 
 					if(worldTile.usesQuartz()){
 						//If we downgrade from a circuit to a non-circuit tile (like wire or junction), return a circuit component
-						ItemStack given = new ItemStack(COMPONENT_TAG.getRandomElement(context.getLevel().random), 1);
+						ItemStack given = new ItemStack(ForgeRegistries.ITEMS.tags().getTag(COMPONENT_TAG).getRandomElement(context.getLevel().random).orElse(Items.QUARTZ), 1);
 						if(!given.isEmpty()){
 							context.getPlayer().addItem(given);
 						}

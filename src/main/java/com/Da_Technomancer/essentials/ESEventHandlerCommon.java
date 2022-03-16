@@ -138,7 +138,7 @@ public class ESEventHandlerCommon{
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
 			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange((Level) e.getWorld(), e.getEntity().blockPosition(), RANGE)){
 				Level w;
-				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(e.getX(), e.getY(), e.getZ(), true) <= RANGE_SQUARED && (w = te.getLevel()) != null){
+				if(te instanceof BrazierTileEntity && te.getBlockPos().distToCenterSqr(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED && (w = te.getLevel()) != null){
 					BlockState state = w.getBlockState(te.getBlockPos());
 					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setResult(Event.Result.DENY);
@@ -157,7 +157,7 @@ public class ESEventHandlerCommon{
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
 			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange(e.getEntity().getCommandSenderWorld(), e.getEntity().blockPosition(), RANGE)){
 				Vec3 entPos = e.getEntity().position();
-				if(te instanceof BrazierTileEntity && te.getBlockPos().distSqr(entPos, true) <= RANGE_SQUARED && te.getLevel() != null){
+				if(te instanceof BrazierTileEntity && te.getBlockPos().distToCenterSqr(entPos) <= RANGE_SQUARED && te.getLevel() != null){
 					BlockState state = te.getBlockState();
 					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setCanceled(true);

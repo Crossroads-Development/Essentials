@@ -3,18 +3,18 @@ package com.Da_Technomancer.essentials.tileentities;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.BlockUtil;
 import com.Da_Technomancer.essentials.packets.SendLongToClient;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public class LinkHelper{
 
-	public static final Tag<Item> LINKING_TOOLS = ItemTags.bind(new ResourceLocation(Essentials.MODID, "linking_tool").toString());
+	public static final TagKey<Item> LINKING_TOOLS = ItemTags.create(new ResourceLocation(Essentials.MODID, "linking_tool"));
 	public static final String POS_NBT = "c_link";
 	public static final String DIM_NBT = "c_link_dim";
 	public static final byte LINK_PACKET_ID = 8;//Used to add a link with position encoded into the message
@@ -151,7 +151,7 @@ public class LinkHelper{
 	}
 
 	public static boolean isLinkTool(ItemStack stack){
-		return LINKING_TOOLS.contains(stack.getItem());
+		return stack.is(LINKING_TOOLS);
 	}
 
 	/**

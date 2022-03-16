@@ -100,7 +100,7 @@ public class FluidShifterContainer extends AbstractContainerMenu{
 
 	@Override
 	public boolean stillValid(Player playerIn){
-		return pos.distSqr(playerIn.position(), true) <= 64;
+		return pos.distToCenterSqr(playerIn.position()) <= 64;
 	}
 
 	@Override
