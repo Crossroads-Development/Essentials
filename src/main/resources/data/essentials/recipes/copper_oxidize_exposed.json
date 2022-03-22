@@ -1,0 +1,11 @@
+{
+	"result": "minecraft:weathered_copper",
+	"count": "1",
+	"experience": 0,
+	"type": "minecraft:smelting",
+	"ingredient": [
+		{
+			"item": "minecraft:exposed_copper"
+		}
+	]
+}

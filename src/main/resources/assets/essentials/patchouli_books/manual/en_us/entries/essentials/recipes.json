@@ -10,7 +10,7 @@
 			"type": "patchouli:spotlight",
 			"title": "Extra Recipes",
 			"item": "minecraft:name_tag",
-			"text": "Essentials adds simple recipes for saddles and nametags. Essentials also adds a shapeless 2x2 recipe for pistons. These can be viewed using a recipe mod like Just Enough Items, as usual.$(br2)"
+			"text": "Essentials adds simple recipes for saddles and nametags. Essentials also adds a shapeless 2x2 recipe for pistons, and smelting recipes to increase the oxidation level of copper blocks. These can be viewed using a recipe mod like Just Enough Items, as usual.$(br2)"
 		}
 	]
 }

@@ -1,0 +1,11 @@
+{
+	"result": "minecraft:exposed_copper",
+	"count": "1",
+	"experience": 0,
+	"type": "minecraft:smelting",
+	"ingredient": [
+		{
+			"item": "minecraft:copper_block"
+		}
+	]
+}
