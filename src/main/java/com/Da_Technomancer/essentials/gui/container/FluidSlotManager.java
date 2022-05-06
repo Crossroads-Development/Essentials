@@ -32,11 +32,13 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FluidSlotManager{
 
@@ -52,8 +54,20 @@ public class FluidSlotManager{
 			fluidIDs = HashBiMap.create(ForgeRegistries.FLUIDS.getKeys().size());
 			//As execution order is important, this cannot work as a parallel stream
 			//This must have the exact same result on the server and client sides
-			final short[] value = {0};
-			ForgeRegistries.FLUIDS.getKeys().stream().sorted(ResourceLocation::compareTo).forEach(key -> fluidIDs.put(key, value[0]++));
+			final AtomicReference<Short> value = new AtomicReference<>((short) 0);
+			ForgeRegistries.FLUIDS.getKeys().stream().sorted(ResourceLocation::compareTo).forEach(key -> {
+				short newId = value.get();
+				value.set((short) (newId + 1));
+				try{
+					fluidIDs.put(key, newId);
+				}catch(IllegalArgumentException e){
+					Essentials.logger.log(Level.ERROR, "Duplicate while creating fluid map; report to mod author");
+					Essentials.logger.log(Level.ERROR, "Entry being added: " + key.toString() + " -> " + newId);
+					Essentials.logger.log(Level.ERROR, "Fluid bi-map dump:");
+					Essentials.logger.log(Level.ERROR, fluidIDs);
+					Essentials.logger.log(Level.ERROR, "Stacktrace:", e);
+				}
+			});
 		}
 		return fluidIDs;
 	}
