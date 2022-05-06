@@ -252,11 +252,19 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 				if(!stackInSlot.isEmpty()){
 					ItemStack insert = stackInSlot.copy();
 					insert.setCount(Math.min(insert.getCount(), transferQuantity()));
-					ItemStack newStack = ItemHandlerHelper.insertItem(otherHandler, insert, true);
+					//newStack is uninserted remainder
+					ItemStack newStack = ItemHandlerHelper.insertItem(otherHandler, insert, true);//Simulate the transfer
 					if(newStack.getCount() < insert.getCount()){
-						ItemHandlerHelper.insertItem(otherHandler, removeItem(i, insert.getCount() - newStack.getCount()), false);
-						setChanged();
-						return true;
+						insert.setCount(insert.getCount() - newStack.getCount());//Only attempt to insert the number accepted in the simulated transfer
+						newStack = ItemHandlerHelper.insertItem(otherHandler, insert, false);//Actually perform the transfer
+						//Typically, newStack is empty, but it is not guaranteed.
+						//Remove the items that were actually inserted
+						if(!removeItem(i, insert.getCount() - newStack.getCount()).isEmpty()){
+							//True for items actually moved
+							setChanged();
+							return true;
+						}
+						return false;
 					}
 				}
 			}

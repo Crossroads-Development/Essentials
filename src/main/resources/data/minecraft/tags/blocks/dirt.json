@@ -1,5 +1,6 @@
 {
 	"replace": false,
+	"__comment": "Sapling fertile soil NEEDS to be in the dirt tag, or it is replaced with dirt by any growing tree on top",
 	"values": [
 		"essentials:fertile_soil_oak",
 		"essentials:fertile_soil_birch",

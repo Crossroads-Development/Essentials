@@ -15,8 +15,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
 
 import javax.annotation.Nullable;
@@ -54,19 +52,6 @@ public class FertileSoil extends Block{
 
 	@Override
 	public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction direction, IPlantable plantable){
-		//No longer needed as of MC1.16 due to large spruce trees using the dirt tag
-//		//As it turns out, the same method determines whether a block is a valid soil for a plant type, and whether it should be turned into podzol by large spruce trees
-//		//We do want to act as a soil, we don't want to become podzol
-//		//So, in the special case of spruce trees, we read the stacktrace and see if this method is being called for podzol-ification, and if so, return false
-//		if(plant.getBlock() == Blocks.SPRUCE_SAPLING){
-//			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
-//			String name;
-//			//Because there's a lambda function in the stacktrace, different compilers disagree on the stacktrace below the lambda. In practice, placePodzolAt can be either at index 6 or 7, so we check both
-//			if(stack.length > 7 && ((name = stack[6].getMethodName()).equals(ReflectionUtil.EsReflection.PODZOL_GEN.mcp) || name.equals(ReflectionUtil.EsReflection.PODZOL_GEN.obf) || (name = stack[7].getMethodName()).equals(ReflectionUtil.EsReflection.PODZOL_GEN.mcp) || name.equals(ReflectionUtil.EsReflection.PODZOL_GEN.obf))){
-//				return false;
-//			}
-//		}
-
 		return plant.getBlock() == plantable;
 	}
 
