@@ -15,3 +15,7 @@ Math circuits, like <item>Addition/$ and <item>Logarithm/$ do mathematical opera
 <page|image|time|Clock circuit output|essentials:textures/book/circuit_timer.png>
 Time circuits, like <item>Clock/$ and <item>Delay/$, do things involving redstone pulses. The <item>Clock Circuit/$ creates pulses with a duration and period set via the UI. The <item>Delay Circuit/$ delays any change in the input by a time set via the UI (in redstone ticks, minimum 1), before outputting it. Unlike a vanilla repeater, the <item>Delay Circuit/$ doesn't lengthen pulses or change the signal strength.
 Circuits where the symbol in the <item>Circuit Wrench/$ UI is in red have ticking tile entities- while less laggy than vanilla redstone versions of those circuits, they may still create lag when used excessively.
+<page|text|computercraft>
+There is <thing>ComputerCraft integration/$ with <item>circuits/$ if ComputerCraft (or a similar mod, like CC-Tweaked) is installed. <item>Wire Splice Plates/$ are ComputerCraft peripherals.
+A computer connected to the output of a <item>Wire Splice Plate/$ sees it as a 'circuit_reader' peripheral, which has the method getCircuitOutput() to read the circuit signal value.
+A computer connected to the input of a <item>Wire Splice Plate/$ sees it as a 'circuit_emitter' peripheral, which has the method setCircuitOutput(double newSignal) to emit a circuit signal.

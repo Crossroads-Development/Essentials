@@ -91,6 +91,15 @@
 		{
 			"type": "patchouli:text",
 			"text": "<item>/$ UI is in red have ticking tile entities- while less laggy than vanilla redstone versions of those circuits, they may still create lag when used excessively.$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"anchor": "computercraft",
+			"text": "There is <thing>ComputerCraft integration/$ with <item>circuits/$ if ComputerCraft (or a similar mod, like CC-Tweaked) is installed. <item>Wire Splice Plates/$ are ComputerCraft peripherals.$(br2)A computer connected to the output of a <item>Wire Splice Plate/$ sees it as a 'circuit_reader' peripheral, which has the method getCircuitOutput() to read the circuit signal value."
+		},
+		{
+			"type": "patchouli:text",
+			"text": "A computer connected to the input of a <item>Wire Splice Plate/$ sees it as a 'circuit_emitter' peripheral, which has the method setCircuitOutput(float newSignal) to emit a circuit signal. $(br2)"
 		}
 	]
 }

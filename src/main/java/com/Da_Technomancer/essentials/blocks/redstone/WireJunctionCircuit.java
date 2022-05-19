@@ -28,8 +28,7 @@ public class WireJunctionCircuit extends AbstractTile{
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		//Wire junctions propagate block updates horizontally to make sure any attached circuit can update when a new connection is made/broken
 		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof WireTileEntity){
-			WireTileEntity wte = (WireTileEntity) te;
+		if(te instanceof WireTileEntity wte){
 
 			//Prevent the repeated updating of the same wire within a gametick
 			long worldTime = worldIn.getGameTime();

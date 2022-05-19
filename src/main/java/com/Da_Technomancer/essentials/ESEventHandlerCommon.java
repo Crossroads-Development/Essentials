@@ -94,7 +94,7 @@ public class ESEventHandlerCommon{
 			registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
 			registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", reg, basicFluidSplitter);
 			registerTE(FluidSplitterTileEntity::new, "fluid_splitter", reg, fluidSplitter);
-			registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, interfaceCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
+			registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
 			registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
 			registerTE(TimerCircuitTileEntity::new, "timer_circuit", reg, timerCircuit);
 			registerTE(DelayCircuitTileEntity::new, "delay_circuit", reg, delayCircuit);
@@ -105,6 +105,7 @@ public class ESEventHandlerCommon{
 			registerTE(RedstoneReceiverTileEntity::new, "redstone_receiver", reg, redstoneReceiver);
 			registerTE(PulseCircuitTileEntity::new, "pulse_circuit", reg, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
 			registerTE(DCounterCircuitTileEntity::new, "d_counter_circuit", reg, dCounterCircuit);
+			registerTE(InterfaceCircuitTileEntity::new, "interface_circuit", reg, interfaceCircuit);
 		}
 
 		private static void registerTE(BlockEntityType.BlockEntitySupplier<? extends BlockEntity> cons, String id, IForgeRegistry<BlockEntityType<?>> reg, Block... blocks){

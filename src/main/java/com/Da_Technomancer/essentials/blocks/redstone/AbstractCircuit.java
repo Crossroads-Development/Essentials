@@ -62,8 +62,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 	@Override
 	public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving){
 		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof CircuitTileEntity && !worldIn.isClientSide){
-			CircuitTileEntity cte = (CircuitTileEntity) te;
+		if(te instanceof CircuitTileEntity cte && !worldIn.isClientSide){
 			cte.builtConnections = false;
 			cte.buildConnections();
 		}else{

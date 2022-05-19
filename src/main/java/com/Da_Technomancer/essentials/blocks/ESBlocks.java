@@ -47,7 +47,7 @@ public class ESBlocks{
 	public static AutoCrafter autoCrafter;
 
 	public static WireCircuit wireCircuit;
-	public static AbstractCircuit interfaceCircuit;
+	public static InterfaceCircuit interfaceCircuit;
 	public static WireJunctionCircuit wireJunctionCircuit;
 	public static AbstractCircuit andCircuit;
 	public static ConsCircuit consCircuit;
@@ -155,7 +155,7 @@ public class ESBlocks{
 		wireJunctionCircuit = new WireJunctionCircuit();
 		consCircuit = new ConsCircuit();
 		//The function outputs will be sanitized regardless, so no sanity-checks are included in the function
-		interfaceCircuit = new GenericACircuit("interface", (a) -> a, false);
+		interfaceCircuit = new InterfaceCircuit("interface", (a) -> a, false);
 		andCircuit = new GenericAACircuit("and", (a0, a1) -> a0 > 0 && a1 > 0 ? 1F : 0F);
 		notCircuit = new GenericACircuit("not", (a) -> a > 0 ? 0F : 1F);
 		orCircuit = new GenericAACircuit("or", (a0, a1) -> a0 > 0 || a1 > 0 ? 1F : 0F);

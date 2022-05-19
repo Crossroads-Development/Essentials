@@ -78,6 +78,7 @@ minecraft {
 repositories {
 	maven { url "https://dvs1.progwml6.com/files/maven" } //JEI
 	maven { url "https://maven.blamejared.com" } //Patchouli
+	maven { url "https://squiddev.cc/maven/" } //CC Tweaked
 
 }
 
@@ -92,6 +93,9 @@ dependencies {
 	//Patchouli
 	compileOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
 	runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+	//CC Tweaked
+	compileOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
+	runtimeOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
