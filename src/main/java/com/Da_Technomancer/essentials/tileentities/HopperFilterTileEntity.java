@@ -148,7 +148,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side.getAxis() == getAxis()){
+		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side != null && side.getAxis() == getAxis()){
 			updatePassedOptionals();
 			return (LazyOptional<T>) (side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? passedHandlerPos : passedHandlerNeg);
 		}
