@@ -37,8 +37,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -417,15 +415,11 @@ public class MultiPistonBase extends Block{
 		BlockState state = world.getBlockState(curPos);
 
 		//While vanilla has this very good and logical system for blocks exposing how they react to pistons, there is for no necessary reason a large number of exceptions
-		PushReaction reaction = state.getPistonPushReaction();
-		if(state.isAir()){
-			reaction = PushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
-		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock() instanceof EntityBlock || pistonPos.equals(curPos)){
-			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
-		}else if(state.getDestroySpeed(world, curPos) < 0){
-			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
-		}else if(state.getBlock() instanceof PistonBaseBlock && state.hasProperty(PistonBaseBlock.EXTENDED)){
-			reaction = state.getValue(PistonBaseBlock.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;//Vanilla pistons report BLOCK even when retracted and movable
+		PushReaction reaction;
+		if(pistonPos.equals(curPos)){
+			reaction = PushReaction.BLOCK;
+		}else{
+			reaction = getActualPushReaction(world, curPos, state);
 		}
 
 		boolean blocked = false;
@@ -437,7 +431,7 @@ public class MultiPistonBase extends Block{
 				//else treat push-only as normal
 			case NORMAL:
 				//Check for world height
-				if(moveDir == Direction.UP && curPos.getY() == world.getWorld().getMaxBuildHeight() || moveDir == Direction.DOWN && curPos.getY() == 0){
+				if(moveDir == Direction.UP && curPos.getY() == world.getWorld().getMaxBuildHeight() || moveDir == Direction.DOWN && curPos.getY() == world.getWorld().getMinBuildHeight()){
 					blocked = true;
 					break;
 				}
@@ -478,6 +472,20 @@ public class MultiPistonBase extends Block{
 		}
 
 		return blocked || movedBlocks.size() > PUSH_LIMIT;
+	}
+	
+	public static PushReaction getActualPushReaction(BlockGetter world, BlockPos pos, BlockState state){
+		PushReaction reaction = state.getPistonPushReaction();
+		if(state.isAir()){
+			reaction = PushReaction.IGNORE;//Vanilla marks air as normal. This is an impressively stupid decision- it means we have to special case it
+		}else if(state.getBlock() == Blocks.OBSIDIAN || state.getBlock() instanceof EntityBlock){
+			reaction = PushReaction.BLOCK;//Guess what else is marked as normal? That's right, obsidian. You know, the quintessential unmovable blocks. It's special cased. whhhhyyyyyyyyyy?
+		}else if(state.getDestroySpeed(world, pos) < 0){
+			reaction = PushReaction.BLOCK;//Mod makers adding indestructible blocks regularly forget to make them immovable
+		}else if(state.getBlock() instanceof PistonBaseBlock && state.hasProperty(PistonBaseBlock.EXTENDED)){
+			reaction = state.getValue(PistonBaseBlock.EXTENDED) ? PushReaction.BLOCK : PushReaction.NORMAL;//Vanilla pistons report BLOCK even when retracted and movable
+		}
+		return reaction;
 	}
 
 	/**
