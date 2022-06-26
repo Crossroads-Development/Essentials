@@ -1,11 +1,9 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
-import com.Da_Technomancer.essentials.tileentities.FluidSplitterTileEntity;
-import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
+import com.Da_Technomancer.essentials.api.ITickableTileEntity;
+import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -48,9 +46,9 @@ public class FluidSplitter extends BasicFluidSplitter{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.fluid_splitter_basic"));
-		tooltip.add(new TranslatableComponent("tt.essentials.fluid_splitter_formula"));
-		tooltip.add(new TranslatableComponent("tt.essentials.fluid_splitter_chute"));
+		tooltip.add(Component.translatable("tt.essentials.fluid_splitter_basic"));
+		tooltip.add(Component.translatable("tt.essentials.fluid_splitter_formula"));
+		tooltip.add(Component.translatable("tt.essentials.fluid_splitter_chute"));
 	}
 
 	@Nullable

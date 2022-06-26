@@ -1,8 +1,8 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
+import com.Da_Technomancer.essentials.api.BlockUtil;
+import com.Da_Technomancer.essentials.blocks.SlottedChestTileEntity;
 import com.google.common.collect.Sets;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
@@ -21,10 +21,9 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-@ObjectHolder(Essentials.MODID)
 public class SlottedChestContainer extends AbstractContainerMenu{
 
-	@ObjectHolder("slotted_chest")
+	@ObjectHolder(registryName="menu", value=Essentials.MODID + ":slotted_chest")
 	private static MenuType<SlottedChestContainer> TYPE = null;
 
 	public final SlottedChestTileEntity.SlottedInv inv;

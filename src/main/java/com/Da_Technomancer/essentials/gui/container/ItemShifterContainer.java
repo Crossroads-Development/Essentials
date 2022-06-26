@@ -12,10 +12,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.ObjectHolder;
 
-@ObjectHolder(Essentials.MODID)
 public class ItemShifterContainer extends AbstractContainerMenu{
 
-	@ObjectHolder("item_shifter")
+	@ObjectHolder(registryName="menu", value=Essentials.MODID + ":item_shifter")
 	private static MenuType<ItemShifterContainer> TYPE = null;
 
 	private final Container inv;

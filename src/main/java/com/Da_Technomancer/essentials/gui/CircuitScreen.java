@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
-import com.Da_Technomancer.essentials.packets.EssentialsPackets;
-import com.Da_Technomancer.essentials.packets.SendNBTToServer;
+import com.Da_Technomancer.essentials.api.packets.EssentialsPackets;
+import com.Da_Technomancer.essentials.api.packets.SendNBTToServer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;

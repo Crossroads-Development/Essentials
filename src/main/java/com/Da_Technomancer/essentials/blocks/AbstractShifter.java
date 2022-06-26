@@ -1,7 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.tileentities.AbstractShifterTileEntity;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -22,9 +21,8 @@ public abstract class AbstractShifter extends BaseEntityBlock{
 
 	protected AbstractShifter(String name){
 		super(ESBlocks.getMetalProperty());
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	@Override
@@ -57,7 +55,7 @@ public abstract class AbstractShifter extends BaseEntityBlock{
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(!worldIn.isClientSide){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+			if(ConfigUtil.isWrench(playerIn.getItemInHand(hand))){
 				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.FACING));//MCP note: cycle
 			}else if(te instanceof AbstractShifterTileEntity){
 				NetworkHooks.openGui((ServerPlayer) playerIn, (AbstractShifterTileEntity) te, pos);

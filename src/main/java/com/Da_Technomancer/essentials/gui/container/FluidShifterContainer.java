@@ -1,7 +1,8 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.tileentities.FluidShifterTileEntity;
+import com.Da_Technomancer.essentials.api.IntDeferredRef;
+import com.Da_Technomancer.essentials.blocks.FluidShifterTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -16,10 +17,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
-@ObjectHolder(Essentials.MODID)
 public class FluidShifterContainer extends AbstractContainerMenu{
 
-	@ObjectHolder("fluid_shifter")
+	@ObjectHolder(registryName="menu", value=Essentials.MODID + ":fluid_shifter")
 	private static MenuType<FluidShifterContainer> TYPE = null;
 
 	private final Container inv;

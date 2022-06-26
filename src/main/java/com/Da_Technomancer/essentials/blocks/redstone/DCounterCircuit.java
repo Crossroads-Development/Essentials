@@ -1,10 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.DCounterCircuitTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -42,6 +39,6 @@ public class DCounterCircuit extends AbstractCircuit{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("tt.essentials.d_counter_circuit"));
+		tooltip.add(Component.translatable("tt.essentials.d_counter_circuit"));
 	}
 }

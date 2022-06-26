@@ -1,9 +1,8 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
 
 public class DelayCircuitScreen extends CircuitScreen<DelayCircuitContainer>{
 
@@ -15,6 +14,6 @@ public class DelayCircuitScreen extends CircuitScreen<DelayCircuitContainer>{
 	protected void init(){
 		super.init();
 
-		createTextBar(0, 18, 28, new TranslatableComponent("container.delay_circuit.delay"));
+		createTextBar(0, 18, 28, Component.translatable("container.delay_circuit.delay"));
 	}
 }

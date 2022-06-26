@@ -1,14 +1,13 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
+import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import com.Da_Technomancer.essentials.tileentities.ILinkTE;
-import com.Da_Technomancer.essentials.tileentities.LinkHelper;
-import com.Da_Technomancer.essentials.tileentities.redstone.RedstoneReceiverTileEntity;
+import com.Da_Technomancer.essentials.api.ILinkTE;
+import com.Da_Technomancer.essentials.api.LinkHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,8 +22,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -34,9 +31,8 @@ public class RedstoneReceiver extends BaseEntityBlock implements IWireConnect{
 	public RedstoneReceiver(){
 		super(ESBlocks.getRockProperty());
 		String name = "redstone_receiver";
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 		registerDefaultState(defaultBlockState().setValue(ESProperties.COLOR, DyeColor.WHITE));
 	}
 
@@ -61,9 +57,9 @@ public class RedstoneReceiver extends BaseEntityBlock implements IWireConnect{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.reds_rec.desc"));
-		tooltip.add(new TranslatableComponent("tt.essentials.reds_rec.linking"));
-		tooltip.add(new TranslatableComponent("tt.essentials.reds_rec.dyes"));
+		tooltip.add(Component.translatable("tt.essentials.reds_rec.desc"));
+		tooltip.add(Component.translatable("tt.essentials.reds_rec.linking"));
+		tooltip.add(Component.translatable("tt.essentials.reds_rec.dyes"));
 	}
 
 	@Nullable

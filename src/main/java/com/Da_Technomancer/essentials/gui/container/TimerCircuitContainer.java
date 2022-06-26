@@ -6,10 +6,9 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ObjectHolder;
 
-@ObjectHolder(Essentials.MODID)
 public class TimerCircuitContainer extends CircuitContainer{
 
-	@ObjectHolder("timer_circuit")
+	@ObjectHolder(registryName="menu", value=Essentials.MODID + ":timer_circuit")
 	private static MenuType<TimerCircuitContainer> TYPE = null;
 
 	public TimerCircuitContainer(int id, Inventory playerInventory, FriendlyByteBuf data){

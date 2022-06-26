@@ -1,11 +1,8 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.tileentities.AbstractSplitterTE;
-import com.Da_Technomancer.essentials.tileentities.BasicItemSplitterTileEntity;
-import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
+import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
@@ -42,14 +39,14 @@ public class BasicItemSplitter extends AbstractSplitter{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.item_splitter_basic"));
-		tooltip.add(new TranslatableComponent("tt.essentials.basic_item_splitter_formula"));
-		tooltip.add(new TranslatableComponent("tt.essentials.item_splitter_chute"));
+		tooltip.add(Component.translatable("tt.essentials.item_splitter_basic"));
+		tooltip.add(Component.translatable("tt.essentials.basic_item_splitter_formula"));
+		tooltip.add(Component.translatable("tt.essentials.item_splitter_chute"));
 	}
 
 	@Override
 	protected Component getModeComponent(AbstractSplitterTE te, int newMode){
-		return new TranslatableComponent("tt.essentials.basic_item_splitter.mode", newMode, te.getDistribution().base);
+		return Component.translatable("tt.essentials.basic_item_splitter.mode", newMode, te.getDistribution().base);
 	}
 
 	@Nullable

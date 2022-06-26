@@ -1,7 +1,8 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.blocks.BlockUtil;
+import com.Da_Technomancer.essentials.api.BlockUtil;
+import com.Da_Technomancer.essentials.api.IFluidSlotTE;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -11,7 +12,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -24,8 +24,9 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.IFluidTypeRenderProperties;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -105,7 +106,7 @@ public class FluidSlotManager{
 	 */
 	public FluidSlotManager(FluidStack init, int capacity){
 		this.capacity = capacity;
-		fluidId = getFluidMap().getOrDefault(init.getFluid().getRegistryName(), (short) -1);
+		fluidId = getFluidMap().getOrDefault(ForgeRegistries.FLUIDS.getKey(init.getFluid()), (short) -1);
 		fluidQty = init.getAmount() - Short.MAX_VALUE;
 	}
 
@@ -144,7 +145,7 @@ public class FluidSlotManager{
 	}
 
 	public void updateState(FluidStack newFluid){
-		fluidId = getFluidMap().getOrDefault(newFluid.getFluid().getRegistryName(), (short) -1);
+		fluidId = getFluidMap().getOrDefault(ForgeRegistries.FLUIDS.getKey(newFluid.getFluid()), (short) -1);
 		fluidQty = newFluid.getAmount() - Short.MAX_VALUE;
 
 		for(int index = 0; index < fluidItemInSlots.size(); index++){
@@ -168,10 +169,10 @@ public class FluidSlotManager{
 		if(fluidId < 0){
 			return FluidStack.EMPTY;
 		}
-		//These values default to water to prevent the possibility of crashing if any registry is corrupted
-		Fluid f = ForgeRegistries.FLUIDS.getValue(getFluidMap().inverse().getOrDefault(fluidId, Fluids.WATER.getRegistryName()));
+		//These values default to empty to prevent the possibility of crashing if any registry is corrupted
+		Fluid f = ForgeRegistries.FLUIDS.getValue(getFluidMap().inverse().get(fluidId));
 		if(f == null){
-			f = Fluids.WATER;
+			f = Fluids.EMPTY;
 		}
 		return new FluidStack(f, qtyRef.get() + Short.MAX_VALUE);
 	}
@@ -187,10 +188,11 @@ public class FluidSlotManager{
 		//Screen.fill changes the color
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 
-		FluidAttributes attr = clientState.getFluid().getAttributes();
+
+		IFluidTypeRenderProperties attr = RenderProperties.get(clientState.getFluid());
 
 		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
-		int col = attr.getColor(clientState);
+		int col = attr.getColorTint(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
 		RenderSystem.setShaderColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, 1F);
 		Screen.blit(matrix, xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
@@ -203,11 +205,11 @@ public class FluidSlotManager{
 
 		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
 			if(clientState.isEmpty()){
-				tooltip.add(new TranslatableComponent("tt.essentials.fluid_contents.empty"));
+				tooltip.add(Component.translatable("tt.essentials.fluid_contents.empty"));
 			}else{
 				tooltip.add(clientState.getDisplayName());
 			}
-			tooltip.add(new TranslatableComponent("tt.essentials.fluid_contents", clientState.getAmount(), capacity));
+			tooltip.add(Component.translatable("tt.essentials.fluid_contents", clientState.getAmount(), capacity));
 		}
 	}
 

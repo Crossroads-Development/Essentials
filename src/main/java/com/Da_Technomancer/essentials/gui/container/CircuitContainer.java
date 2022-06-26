@@ -1,12 +1,13 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 
 public abstract class CircuitContainer extends AbstractContainerMenu{
 
@@ -43,4 +44,9 @@ public abstract class CircuitContainer extends AbstractContainerMenu{
 	}
 
 	public abstract int inputBars();
+
+	@Override
+	public ItemStack quickMoveStack(Player playerIn, int fromSlot){
+		return ItemStack.EMPTY;//No-op
+	}
 }

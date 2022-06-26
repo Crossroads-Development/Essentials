@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.render;
 
-import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.RedstoneTransmitterTileEntity;
+import com.Da_Technomancer.essentials.blocks.HopperFilterTileEntity;
+import com.Da_Technomancer.essentials.blocks.redstone.RedstoneTransmitterTileEntity;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 
 public class TESRRegistry{

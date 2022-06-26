@@ -1,9 +1,9 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.blocks.BlockUtil;
+import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.gui.AutoCrafterScreen;
-import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
+import com.Da_Technomancer.essentials.blocks.AutoCrafterTileEntity;
 import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,11 +24,10 @@ import net.minecraftforge.registries.ObjectHolder;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@ObjectHolder(Essentials.MODID)
 public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 
-	@ObjectHolder("auto_crafter")
-	private static MenuType<AutoCrafterContainer> TYPE = null;
+	@ObjectHolder(registryName="menu", value=Essentials.MODID + ":auto_crafter")
+	public static MenuType<AutoCrafterContainer> TYPE = null;
 
 	@Nullable
 	public final AutoCrafterTileEntity te;

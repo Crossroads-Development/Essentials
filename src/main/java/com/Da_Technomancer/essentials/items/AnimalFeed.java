@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockSource;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.item.Item;
@@ -13,8 +12,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -24,8 +21,7 @@ public class AnimalFeed extends Item{
 	protected AnimalFeed(){
 		super(new Properties().tab(ESItems.TAB_ESSENTIALS));
 		String name = "animal_feed";
-		setRegistryName(name);
-		ESItems.toRegister.add(this);
+		ESItems.toRegister.put(name, this);
 		DispenserBlock.registerBehavior(this, new Dispense());
 	}
 
@@ -53,6 +49,6 @@ public class AnimalFeed extends Item{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("tt.essentials.animal_feed"));
+		tooltip.add(Component.translatable("tt.essentials.animal_feed"));
 	}
 }

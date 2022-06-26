@@ -1,11 +1,12 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -19,7 +20,6 @@ import net.minecraftforge.common.IPlantable;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 public class FertileSoil extends Block{
 
@@ -31,9 +31,8 @@ public class FertileSoil extends Block{
 		this.plant = plant;
 		this.category = category;
 		String name = "fertile_soil_" + plantName;
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	@Override
@@ -43,10 +42,10 @@ public class FertileSoil extends Block{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.desc"));
-		tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.benefits"));
+		tooltip.add(Component.translatable("tt.essentials.fertile_soil.desc"));
+		tooltip.add(Component.translatable("tt.essentials.fertile_soil.benefits"));
 		if(category == SeedCategory.HELL_CROP){
-			tooltip.add(new TranslatableComponent("tt.essentials.fertile_soil.quip").setStyle(ESConfig.TT_QUIP));//MCP note: setStyle
+			tooltip.add(Component.translatable("tt.essentials.fertile_soil.quip").setStyle(ConfigUtil.TT_QUIP));//MCP note: setStyle
 		}
 	}
 
@@ -61,7 +60,7 @@ public class FertileSoil extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random random){
+	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random){
 		if(ESConfig.fertileSoilRate.get() < 100D * Math.random()){
 			return;
 		}

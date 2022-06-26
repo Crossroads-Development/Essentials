@@ -1,9 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -18,8 +16,6 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -29,13 +25,13 @@ public class AutoCrafter extends BaseEntityBlock{
 
 	protected AutoCrafter(){
 		this("auto_crafter");
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		String name = "auto_crafter";
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	protected AutoCrafter(String name){
 		super(ESBlocks.getMetalProperty());
-		setRegistryName(name);
 	}
 
 	@Nullable
@@ -86,8 +82,8 @@ public class AutoCrafter extends BaseEntityBlock{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.auto_crafter_basic"));
-		tooltip.add(new TranslatableComponent("tt.essentials.auto_crafter_book"));
+		tooltip.add(Component.translatable("tt.essentials.auto_crafter_basic"));
+		tooltip.add(Component.translatable("tt.essentials.auto_crafter_book"));
 
 	}
 }

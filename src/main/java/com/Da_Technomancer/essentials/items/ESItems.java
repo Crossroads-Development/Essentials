@@ -2,11 +2,11 @@ package com.Da_Technomancer.essentials.items;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.integration.ESIntegration;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ESItems{
 
@@ -24,7 +24,7 @@ public class ESItems{
 	public static CircuitWrench circuitWrench;
 	public static LinkingTool linkingTool;
 
-	public static final ArrayList<Item> toRegister = new ArrayList<>();
+	public static final HashMap<String, Item> toRegister = new HashMap<>();
 
 	public static void init(){
 		obsidianKit = new ObsidianCuttingKit();

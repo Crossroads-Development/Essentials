@@ -1,7 +1,5 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.InterfaceCircuitTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;

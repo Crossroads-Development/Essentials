@@ -1,10 +1,8 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.tileentities.HopperFilterTileEntity;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -25,8 +23,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -36,9 +32,8 @@ public class HopperFilter extends BaseEntityBlock{
 	protected HopperFilter(){
 		super(ESBlocks.getRockProperty());
 		String name = "hopper_filter";
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	@Override
@@ -53,9 +48,9 @@ public class HopperFilter extends BaseEntityBlock{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.desc"));
-		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.move"));
-		tooltip.add(new TranslatableComponent("tt.essentials.hopper_filter.shulker"));
+		tooltip.add(Component.translatable("tt.essentials.hopper_filter.desc"));
+		tooltip.add(Component.translatable("tt.essentials.hopper_filter.move"));
+		tooltip.add(Component.translatable("tt.essentials.hopper_filter.shulker"));
 	}
 
 	private static final VoxelShape[] BB = new VoxelShape[3];
@@ -91,7 +86,7 @@ public class HopperFilter extends BaseEntityBlock{
 
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
-		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+		if(ConfigUtil.isWrench(playerIn.getItemInHand(hand))){
 			if(!worldIn.isClientSide){
 				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.AXIS));//MCP note: cycle
 			}

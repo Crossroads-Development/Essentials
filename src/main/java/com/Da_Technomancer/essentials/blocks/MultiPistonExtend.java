@@ -29,9 +29,8 @@ public class MultiPistonExtend extends Block{
 		super(Properties.of(Material.PISTON).strength(0.5F));
 		this.sticky = sticky;
 		String name = "multi_piston_extend" + (sticky ? "_sticky" : "");
-		setRegistryName(name);
 		registerDefaultState(defaultBlockState().setValue(ESProperties.AXIS, Direction.Axis.Y).setValue(ESProperties.HEAD, 0));
-		ESBlocks.toRegister.add(this);
+		ESBlocks.toRegister.put(name, this);
 	}
 
 	@Nullable

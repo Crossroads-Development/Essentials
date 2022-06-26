@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
+import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,8 +25,7 @@ public abstract class AbstractTile extends BaseEntityBlock implements IWireConne
 
 	protected AbstractTile(String name){
 		super(PROP);
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
+		ESBlocks.toRegister.put(name, this);
 		//Don't register an item form
 	}
 

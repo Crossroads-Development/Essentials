@@ -1,21 +1,20 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
+import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESProperties;
-import com.Da_Technomancer.essentials.tileentities.redstone.WireTileEntity;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -24,8 +23,9 @@ public class WireCircuit extends AbstractTile{
 
 	public WireCircuit(){
 		super("wire_circuit");
+		String name = "wire_circuit";
 		registerDefaultState(defaultBlockState().setValue(ESProperties.CONNECTIONS, 0));
-		ESBlocks.blockAddQue(this);//Register an item form only for the actual wire circuit
+		ESBlocks.blockAddQue(name, this);//Register an item form only for the actual wire circuit
 	}
 
 	@Override
@@ -84,6 +84,6 @@ public class WireCircuit extends AbstractTile{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("tt.essentials.wire_circuit"));
+		tooltip.add(Component.translatable("tt.essentials.wire_circuit"));
 	}
 }

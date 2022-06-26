@@ -1,11 +1,9 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
-import com.Da_Technomancer.essentials.tileentities.SlottedChestTileEntity;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
+import com.Da_Technomancer.essentials.api.redstone.IReadable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.Containers;
@@ -23,8 +21,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
@@ -35,9 +31,8 @@ public class SlottedChest extends BaseEntityBlock implements IReadable{
 	protected SlottedChest(){
 		super(Properties.of(Material.WOOD).strength(2).sound(SoundType.WOOD));
 		String name = "slotted_chest";
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	@Override
@@ -81,8 +76,8 @@ public class SlottedChest extends BaseEntityBlock implements IReadable{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.slotted_chest.desc"));
-		tooltip.add(new TranslatableComponent("tt.essentials.slotted_chest.quip").setStyle(ESConfig.TT_QUIP));
+		tooltip.add(Component.translatable("tt.essentials.slotted_chest.desc"));
+		tooltip.add(Component.translatable("tt.essentials.slotted_chest.quip").setStyle(ConfigUtil.TT_QUIP));
 	}
 
 	@Override

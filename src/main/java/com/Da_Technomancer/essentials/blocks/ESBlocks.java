@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ESBlocks{
 
@@ -89,7 +89,7 @@ public class ESBlocks{
 	public static PulseCircuit pulseCircuitDual;
 	public static DCounterCircuit dCounterCircuit;
 
-	public static final ArrayList<Block> toRegister = new ArrayList<>();
+	public static final HashMap<String, Block> toRegister = new HashMap<>();
 
 	public static final Item.Properties itemBlockProp = new Item.Properties().tab(ESItems.TAB_ESSENTIALS);
 
@@ -106,9 +106,9 @@ public class ESBlocks{
 	 * @param block The blocks to register
 	 * @return The passed blocks for convenience.
 	 */
-	public static <T extends Block> T blockAddQue(T block){
-		Item item = new BlockItem(block, itemBlockProp).setRegistryName(block.getRegistryName());
-		ESItems.toRegister.add(item);
+	public static <T extends Block> T blockAddQue(String regName, T block){
+		Item item = new BlockItem(block, itemBlockProp);
+		ESItems.toRegister.put(regName, item);
 		return block;
 	}
 

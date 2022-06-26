@@ -1,14 +1,11 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.items.ESItems;
-import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.CircuitTileEntity;
-import com.Da_Technomancer.essentials.tileentities.redstone.TimerCircuitTileEntity;
+import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -50,7 +47,7 @@ public class TimerCircuit extends AbstractCircuit{
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		BlockEntity te;
-		if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+		if(ConfigUtil.isWrench(playerIn.getItemInHand(hand))){
 			super.use(state, worldIn, pos, playerIn, hand, hit);
 		}else if(playerIn.getItemInHand(hand).getItem() == ESItems.circuitWrench){
 			return InteractionResult.PASS;
@@ -70,7 +67,7 @@ public class TimerCircuit extends AbstractCircuit{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("tt.essentials.timer_circuit"));
+		tooltip.add(Component.translatable("tt.essentials.timer_circuit"));
 	}
 
 	@Nullable

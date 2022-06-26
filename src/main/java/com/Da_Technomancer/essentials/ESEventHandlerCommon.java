@@ -1,15 +1,11 @@
 package com.Da_Technomancer.essentials;
 
-import com.Da_Technomancer.essentials.blocks.BlockUtil;
-import com.Da_Technomancer.essentials.blocks.ESBlocks;
-import com.Da_Technomancer.essentials.blocks.ESProperties;
-import com.Da_Technomancer.essentials.blocks.WitherCannon;
-import com.Da_Technomancer.essentials.blocks.redstone.IRedstoneHandler;
+import com.Da_Technomancer.essentials.api.BlockUtil;
+import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
+import com.Da_Technomancer.essentials.blocks.*;
+import com.Da_Technomancer.essentials.blocks.redstone.*;
 import com.Da_Technomancer.essentials.items.ESItems;
-import com.Da_Technomancer.essentials.tileentities.*;
-import com.Da_Technomancer.essentials.tileentities.redstone.*;
 import com.mojang.datafixers.DSL;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.TamableAnimal;
@@ -26,7 +22,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -35,7 +30,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.IContainerFactory;
 import net.minecraftforge.network.PlayMessages;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
+
+import java.util.Map;
 
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.*;
 
@@ -52,80 +50,70 @@ public class ESEventHandlerCommon{
 
 		@SuppressWarnings("unused")
 		@SubscribeEvent
-		public static void registerBlocks(RegistryEvent.Register<Block> e){
-			IForgeRegistry<Block> registry = e.getRegistry();
-			ESBlocks.init();
-			for(Block block : toRegister){
-				registry.register(block);
-			}
-			toRegister.clear();
+		public static void register(RegisterEvent e){
+			e.register(ForgeRegistries.Keys.BLOCKS, helper -> {
+				ESBlocks.init();
+				for(Map.Entry<String, Block> block : toRegister.entrySet()){
+					helper.register(block.getKey(), block.getValue());
+				}
+				toRegister.clear();
+			});
+		
+			e.register(ForgeRegistries.Keys.ITEMS, helper -> {
+				ESItems.init();
+				for(Map.Entry<String, Item> item : ESItems.toRegister.entrySet()){
+					helper.register(item.getKey(), item.getValue());
+				}
+				ESItems.toRegister.clear();
+			});
+		
+			e.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
+				helper.register("cannon_skull", EntityType.Builder.of(WitherCannon.CannonSkull::new, MobCategory.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((PlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull"));
+			});
+			
+			e.register(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES, helper -> {
+				registerTE(BrazierTileEntity::new, "brazier", helper, brazier);
+				registerTE(SlottedChestTileEntity::new, "slotted_chest", helper, slottedChest);
+				registerTE(SortingHopperTileEntity::new, "sorting_hopper", helper, sortingHopper);
+				registerTE(SpeedHopperTileEntity::new, "speed_hopper", helper, speedHopper);
+				registerTE(ItemShifterTileEntity::new, "item_shifter", helper, itemShifter);
+				registerTE(FluidShifterTileEntity::new, "fluid_shifter", helper, fluidShifter);
+				registerTE(HopperFilterTileEntity::new, "hopper_filter", helper, hopperFilter);
+				registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", helper, basicItemSplitter);
+				registerTE(ItemSplitterTileEntity::new, "item_splitter", helper, itemSplitter);
+				registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", helper, basicFluidSplitter);
+				registerTE(FluidSplitterTileEntity::new, "fluid_splitter", helper, fluidSplitter);
+				registerTE(CircuitTileEntity::new, "circuit", helper, andCircuit, orCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
+				registerTE(ConstantCircuitTileEntity::new, "cons_circuit", helper, consCircuit);
+				registerTE(TimerCircuitTileEntity::new, "timer_circuit", helper, timerCircuit);
+				registerTE(DelayCircuitTileEntity::new, "delay_circuit", helper, delayCircuit);
+				registerTE(WireTileEntity::new, "wire", helper, wireCircuit);
+				registerTE(WireJunctionTileEntity::new, "wire_junction", helper, wireJunctionCircuit);
+				registerTE(AutoCrafterTileEntity::new, "auto_crafter", helper, autoCrafter);
+				registerTE(RedstoneTransmitterTileEntity::new, "redstone_transmitter", helper, redstoneTransmitter);
+				registerTE(RedstoneReceiverTileEntity::new, "redstone_receiver", helper, redstoneReceiver);
+				registerTE(PulseCircuitTileEntity::new, "pulse_circuit", helper, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
+				registerTE(DCounterCircuitTileEntity::new, "d_counter_circuit", helper, dCounterCircuit);
+				registerTE(InterfaceCircuitTileEntity::new, "interface_circuit", helper, interfaceCircuit);
+			});
 		}
 
-		@SuppressWarnings("unused")
-		@SubscribeEvent
-		public static void registerItems(RegistryEvent.Register<Item> e){
-			IForgeRegistry<Item> registry = e.getRegistry();
-			ESItems.init();
-			for(Item item : ESItems.toRegister){
-				registry.register(item);
-			}
-			ESItems.toRegister.clear();
-		}
-
-		@SuppressWarnings("unused")
-		@SubscribeEvent
-		public static void registerEnts(RegistryEvent.Register<EntityType<?>> e){
-			IForgeRegistry<EntityType<?>> registry = e.getRegistry();
-			registry.register(EntityType.Builder.of(WitherCannon.CannonSkull::new, MobCategory.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((PlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull").setRegistryName(Essentials.MODID, "cannon_skull"));
-		}
-
-		@SuppressWarnings("unused")
-		@SubscribeEvent
-		public static void registerTileEntities(RegistryEvent.Register<BlockEntityType<?>> e){
-			IForgeRegistry<BlockEntityType<?>> reg = e.getRegistry();
-			registerTE(BrazierTileEntity::new, "brazier", reg, brazier);
-			registerTE(SlottedChestTileEntity::new, "slotted_chest", reg, slottedChest);
-			registerTE(SortingHopperTileEntity::new, "sorting_hopper", reg, sortingHopper);
-			registerTE(SpeedHopperTileEntity::new, "speed_hopper", reg, speedHopper);
-			registerTE(ItemShifterTileEntity::new, "item_shifter", reg, itemShifter);
-			registerTE(FluidShifterTileEntity::new, "fluid_shifter", reg, fluidShifter);
-			registerTE(HopperFilterTileEntity::new, "hopper_filter", reg, hopperFilter);
-			registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", reg, basicItemSplitter);
-			registerTE(ItemSplitterTileEntity::new, "item_splitter", reg, itemSplitter);
-			registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", reg, basicFluidSplitter);
-			registerTE(FluidSplitterTileEntity::new, "fluid_splitter", reg, fluidSplitter);
-			registerTE(CircuitTileEntity::new, "circuit", reg, andCircuit, orCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
-			registerTE(ConstantCircuitTileEntity::new, "cons_circuit", reg, consCircuit);
-			registerTE(TimerCircuitTileEntity::new, "timer_circuit", reg, timerCircuit);
-			registerTE(DelayCircuitTileEntity::new, "delay_circuit", reg, delayCircuit);
-			registerTE(WireTileEntity::new, "wire", reg, wireCircuit);
-			registerTE(WireJunctionTileEntity::new, "wire_junction", reg, wireJunctionCircuit);
-			registerTE(AutoCrafterTileEntity::new, "auto_crafter", reg, autoCrafter);
-			registerTE(RedstoneTransmitterTileEntity::new, "redstone_transmitter", reg, redstoneTransmitter);
-			registerTE(RedstoneReceiverTileEntity::new, "redstone_receiver", reg, redstoneReceiver);
-			registerTE(PulseCircuitTileEntity::new, "pulse_circuit", reg, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
-			registerTE(DCounterCircuitTileEntity::new, "d_counter_circuit", reg, dCounterCircuit);
-			registerTE(InterfaceCircuitTileEntity::new, "interface_circuit", reg, interfaceCircuit);
-		}
-
-		private static void registerTE(BlockEntityType.BlockEntitySupplier<? extends BlockEntity> cons, String id, IForgeRegistry<BlockEntityType<?>> reg, Block... blocks){
+		private static void registerTE(BlockEntityType.BlockEntitySupplier<? extends BlockEntity> cons, String id, RegisterEvent.RegisterHelper<BlockEntityType<?>> helper, Block... blocks){
 			BlockEntityType<?> teType = BlockEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
-			teType.setRegistryName(new ResourceLocation(Essentials.MODID, id));
-			reg.register(teType);
+			helper.register(id, teType);
 		}
 
 		/**
 		 * Creates and registers a container type
 		 * @param cons Container factory
 		 * @param id The ID to use
-		 * @param reg Registery event
+		 * @param helper Registry helper
 		 * @param <T> Container subclass
 		 * @return The newly created type
 		 */
-		protected static <T extends AbstractContainerMenu> MenuType<T> registerConType(IContainerFactory<T> cons, String id, RegistryEvent.Register<MenuType<?>> reg){
+		protected static <T extends AbstractContainerMenu> MenuType<T> registerConType(IContainerFactory<T> cons, String id, RegisterEvent.RegisterHelper<MenuType<?>> helper){
 			MenuType<T> contType = new MenuType<>(cons);
-			contType.setRegistryName(new ResourceLocation(Essentials.MODID, id));
-			reg.getRegistry().register(contType);
+			helper.register(id, contType);
 			return contType;
 		}
 	}

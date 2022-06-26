@@ -1,13 +1,11 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.blocks.redstone.IReadable;
-import com.Da_Technomancer.essentials.tileentities.ITickableTileEntity;
-import com.Da_Technomancer.essentials.tileentities.SortingHopperTileEntity;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
+import com.Da_Technomancer.essentials.api.ITickableTileEntity;
+import com.Da_Technomancer.essentials.api.redstone.IReadable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -33,8 +31,6 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -69,9 +65,8 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 	protected SortingHopper(){
 		this(ESBlocks.getMetalProperty());
 		String name = "sorting_hopper";
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	@Override
@@ -130,7 +125,7 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		if(!worldIn.isClientSide){
 			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(ESConfig.isWrench(playerIn.getItemInHand(hand))){
+			if(ConfigUtil.isWrench(playerIn.getItemInHand(hand))){
 				worldIn.setBlockAndUpdate(pos, state.cycle(FACING));//MCP note: cycle
 				if(te instanceof SortingHopperTileEntity){
 					((SortingHopperTileEntity) te).resetCache();
@@ -226,8 +221,8 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.sorting_hopper.desc"));
-		tooltip.add(new TranslatableComponent("tt.essentials.sorting_hopper.quip").setStyle(ESConfig.TT_QUIP));//MCP note: setStyle
+		tooltip.add(Component.translatable("tt.essentials.sorting_hopper.desc"));
+		tooltip.add(Component.translatable("tt.essentials.sorting_hopper.quip").setStyle(ConfigUtil.TT_QUIP));//MCP note: setStyle
 	}
 
 	@Nullable

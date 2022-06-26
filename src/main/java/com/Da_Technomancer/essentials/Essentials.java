@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials;
 
-import com.Da_Technomancer.essentials.packets.EssentialsPackets;
+import com.Da_Technomancer.essentials.api.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;

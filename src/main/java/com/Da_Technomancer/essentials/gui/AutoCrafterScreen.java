@@ -2,7 +2,7 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
-import com.Da_Technomancer.essentials.tileentities.AutoCrafterTileEntity;
+import com.Da_Technomancer.essentials.blocks.AutoCrafterTileEntity;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

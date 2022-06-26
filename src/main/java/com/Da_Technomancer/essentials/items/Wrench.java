@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.items;
 
 import com.Da_Technomancer.essentials.ESConfig;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -24,13 +24,12 @@ public class Wrench extends Item{
 		//Wrench tooltype added as some other mods check tooltypes for wrenches
 		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS));
 		String name = "wrench";
-		setRegistryName(name);
-		ESItems.toRegister.add(this);
+		ESItems.toRegister.put(name, this);
 	}
 
 	@Override
 	public boolean canPerformAction(ItemStack stack, ToolAction toolAction){
-		return toolAction == ESConfig.WRENCH_ACTION;
+		return toolAction == ConfigUtil.WRENCH_ACTION;
 	}
 
 	@Override
@@ -48,6 +47,6 @@ public class Wrench extends Item{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("tt.essentials.wrench"));
+		tooltip.add(Component.translatable("tt.essentials.wrench"));
 	}
 }

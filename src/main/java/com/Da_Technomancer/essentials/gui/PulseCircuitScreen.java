@@ -1,9 +1,8 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.gui.container.PulseCircuitContainer;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
 
 public class PulseCircuitScreen extends CircuitScreen<PulseCircuitContainer>{
 
@@ -15,6 +14,6 @@ public class PulseCircuitScreen extends CircuitScreen<PulseCircuitContainer>{
 	protected void init(){
 		super.init();
 
-		createTextBar(0, 18, 28, new TranslatableComponent("container.pulse_circuit.duration"));
+		createTextBar(0, 18, 28, Component.translatable("container.pulse_circuit.duration"));
 	}
 }

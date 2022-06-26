@@ -4,7 +4,6 @@ import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import vazkii.patchouli.common.book.Book;
@@ -16,8 +15,7 @@ public class PatchouliBook extends ItemModBook{
 	protected PatchouliBook(){
 		super();
 		String name = "guide_book";
-		setRegistryName(name);
-		ESItems.toRegister.add(this);
+		ESItems.toRegister.put(name, this);
 	}
 
 	@Override
@@ -36,7 +34,7 @@ public class PatchouliBook extends ItemModBook{
 	@Override
 	public Component getName(ItemStack stack){
 		Book book = getBook(stack);
-		return book != null ? new TranslatableComponent(ESIntegration.bookName) : super.getName(stack);
+		return book != null ? Component.translatable(ESIntegration.bookName) : super.getName(stack);
 	}
 }
 
@@ -47,7 +45,7 @@ public class PatchouliBook extends ItemModBook{
 //		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS));
 //		String name = "guide_book";
 //		setRegistryName(name);
-//		ESItems.toRegister.add(this);
+//		ESItems.toRegister.put(name, this);
 //
 //		Essentials.logger.info("Attempted to initialize Patchouli integration, but it has been disabled in code");
 //		Essentials.logger.info("Notify the mod author that Patchouli integration should be re-enabled");

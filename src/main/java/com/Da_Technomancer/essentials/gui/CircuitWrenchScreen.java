@@ -1,25 +1,24 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.blocks.redstone.AbstractTile;
+import com.Da_Technomancer.essentials.api.packets.ConfigureWrenchOnServer;
+import com.Da_Technomancer.essentials.api.packets.EssentialsPackets;
+import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
-import com.Da_Technomancer.essentials.packets.ConfigureWrenchOnServer;
-import com.Da_Technomancer.essentials.packets.EssentialsPackets;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 
 import java.util.ArrayList;
 
@@ -51,7 +50,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 	@Override
 	protected void init(){
 		super.init();
-		searchBar = new EditBox(font, leftPos + 4, topPos + 8, COLUMNS * 18 - 4, 18, new TranslatableComponent("container.search_bar"));
+		searchBar = new EditBox(font, leftPos + 4, topPos + 8, COLUMNS * 18 - 4, 18, Component.translatable("container.search_bar"));
 		searchBar.setCanLoseFocus(false);
 		searchBar.setTextColor(-1);
 		searchBar.setTextColorUneditable(-1);
@@ -107,9 +106,9 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 		int index = getSelectedMode(mouseX, mouseY);
 		if(index >= 0){
 			ArrayList<Component> tt = new ArrayList<>();
-			tt.add(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId()));
-			AbstractTile block = CircuitWrench.MODES.get(index);
-			block.appendHoverText(ItemStack.EMPTY, null, tt, TooltipFlag.Default.NORMAL);
+			tt.add(Component.translatable(CircuitWrench.MODES.get(index).wireAsBlock().getDescriptionId()));
+			IWireConnect block = CircuitWrench.MODES.get(index);
+			block.wireAsBlock().appendHoverText(ItemStack.EMPTY, null, tt, TooltipFlag.Default.NORMAL);
 			renderComponentTooltip(matrix, tt, mouseX, mouseY);//MCP note: renderTooltip
 		}
 
@@ -122,8 +121,8 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 		options.clear();
 
 		for(int i = 0; i < CircuitWrench.MODES.size(); i++){
-			AbstractTile tile = CircuitWrench.MODES.get(i);
-			String name = I18n.get(tile.getDescriptionId()).toLowerCase();
+			IWireConnect tile = CircuitWrench.MODES.get(i);
+			String name = I18n.get(tile.wireAsBlock().getDescriptionId()).toLowerCase();
 			if(name.contains(newFilter.toLowerCase().trim())){
 				options.add(i);
 			}
@@ -148,7 +147,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 
 		EssentialsPackets.channel.sendToServer(new ConfigureWrenchOnServer(index));
 		minecraft.player.closeContainer();
-		minecraft.player.sendMessage(new TranslatableComponent("tt.essentials.circuit_wrench_setting").setStyle(CIRCUIT_WRENCH_STYLE).append(new TranslatableComponent(CircuitWrench.MODES.get(index).getDescriptionId())), minecraft.player.getUUID());//MCP note: setStyle, appendSibling
+		minecraft.player.displayClientMessage(Component.translatable("tt.essentials.circuit_wrench_setting").setStyle(CIRCUIT_WRENCH_STYLE).append(Component.translatable(CircuitWrench.MODES.get(index).wireAsBlock().getDescriptionId())), true);//MCP note: setStyle, appendSibling
 
 		return true;
 	}

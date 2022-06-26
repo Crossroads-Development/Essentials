@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -19,16 +19,14 @@ import net.minecraft.world.level.material.Material;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 public class AnalogLamp extends Block{
 
 	protected AnalogLamp(){
 		super(Properties.of(Material.BUILDABLE_GLASS).lightLevel(state -> state.getValue(ESProperties.REDSTONE)).strength(0.3F).sound(SoundType.GLASS).isValidSpawn(AnalogLamp::propagateFunction));
 		String name = "analog_lamp";
-		setRegistryName(name);
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	private static Boolean propagateFunction(BlockState state, BlockGetter world, BlockPos pos, EntityType<?> type){
@@ -43,7 +41,7 @@ public class AnalogLamp extends Block{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
-		tooltip.add(new TranslatableComponent("tt.essentials.analog_lamp.desc"));
+		tooltip.add(Component.translatable("tt.essentials.analog_lamp.desc"));
 	}
 
 	@Override
@@ -70,7 +68,7 @@ public class AnalogLamp extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, Random rand){
+	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource rand){
 		int current = state.getValue(ESProperties.REDSTONE);
 		int worldReds = RedstoneUtil.getRedstoneAtPos(worldIn, pos);
 		if(current != worldReds){

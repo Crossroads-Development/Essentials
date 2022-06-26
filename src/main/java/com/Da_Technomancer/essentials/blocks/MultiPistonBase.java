@@ -1,16 +1,16 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.WorldBuffer;
-import com.Da_Technomancer.essentials.blocks.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.api.ConfigUtil;
+import com.Da_Technomancer.essentials.api.WorldBuffer;
+import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -67,11 +67,10 @@ public class MultiPistonBase extends Block{
 	protected MultiPistonBase(boolean sticky){
 		super(Properties.of(Material.PISTON).isRedstoneConductor((state, world, pos) -> false).isSuffocating(STATE_PREDICATE).isViewBlocking(STATE_PREDICATE).strength(0.5F).sound(SoundType.METAL));
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
-		setRegistryName(name);
 		this.sticky = sticky;
 		registerDefaultState(defaultBlockState().setValue(ESProperties.FACING, Direction.NORTH).setValue(ESProperties.EXTENDED, false).setValue(ESProperties.SHIFTING, false));
-		ESBlocks.toRegister.add(this);
-		ESBlocks.blockAddQue(this);
+		ESBlocks.toRegister.put(name, this);
+		ESBlocks.blockAddQue(name, this);
 	}
 
 	@Override
@@ -88,8 +87,8 @@ public class MultiPistonBase extends Block{
 
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("tt.essentials.multi_piston.desc", DIST_LIMIT, PUSH_LIMIT));
-		tooltip.add(new TranslatableComponent("tt.essentials.multi_piston.reds"));
+		tooltip.add(Component.translatable("tt.essentials.multi_piston.desc", DIST_LIMIT, PUSH_LIMIT));
+		tooltip.add(Component.translatable("tt.essentials.multi_piston.reds"));
 	}
 
 	@Override
@@ -124,7 +123,7 @@ public class MultiPistonBase extends Block{
 	@Override
 	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player playerIn, InteractionHand hand, BlockHitResult hit){
 		//Rotate with a wrench
-		if(ESConfig.isWrench(playerIn.getItemInHand(hand)) && !state.getValue(ESProperties.EXTENDED) && !state.getValue(ESProperties.SHIFTING)){
+		if(ConfigUtil.isWrench(playerIn.getItemInHand(hand)) && !state.getValue(ESProperties.EXTENDED) && !state.getValue(ESProperties.SHIFTING)){
 			if(!worldIn.isClientSide){
 				BlockState endState = state.cycle(ESProperties.FACING);//MCP note: cycle
 				worldIn.setBlockAndUpdate(pos, endState);
@@ -141,7 +140,7 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void animateTick(BlockState state, Level worldIn, BlockPos pos, Random rand){
+	public void animateTick(BlockState state, Level worldIn, BlockPos pos, RandomSource rand){
 		if(state.getValue(ESProperties.SHIFTING)){
 			double particleRad = 0.75D;
 			for(int i = 0; i < 4; i++){
@@ -250,7 +249,7 @@ public class MultiPistonBase extends Block{
 	}
 
 	@Override
-	public void tick(BlockState state, ServerLevel world, BlockPos pos, Random rand){
+	public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand){
 		//We re-check everything as the world could have changed in the previous 2 ticks
 		Direction facing = state.getValue(ESProperties.FACING);
 		int redstone = getRedstoneInput(world, pos, state, facing);

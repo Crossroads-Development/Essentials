@@ -6,10 +6,9 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.registries.ObjectHolder;
 
-@ObjectHolder(Essentials.MODID)
 public class PulseCircuitContainer extends CircuitContainer{
 
-	@ObjectHolder("pulse_circuit")
+	@ObjectHolder(registryName="menu", value=Essentials.MODID + ":pulse_circuit")
 	private static MenuType<PulseCircuitContainer> TYPE = null;
 
 	public PulseCircuitContainer(int id, Inventory playerInventory, FriendlyByteBuf data){
