@@ -45,7 +45,7 @@ public class AutoCrafter extends BaseEntityBlock{
 		BlockEntity te;
 		if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof AutoCrafterTileEntity){
 			AutoCrafterTileEntity acTE = (AutoCrafterTileEntity) te;
-			NetworkHooks.openGui((ServerPlayer) playerIn, acTE, pos);
+			NetworkHooks.openScreen((ServerPlayer) playerIn, acTE, pos);
 		}
 
 		return InteractionResult.SUCCESS;

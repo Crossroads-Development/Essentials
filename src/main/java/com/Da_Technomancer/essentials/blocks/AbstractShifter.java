@@ -58,7 +58,7 @@ public abstract class AbstractShifter extends BaseEntityBlock{
 			if(ConfigUtil.isWrench(playerIn.getItemInHand(hand))){
 				worldIn.setBlockAndUpdate(pos, state.cycle(ESProperties.FACING));//MCP note: cycle
 			}else if(te instanceof AbstractShifterTileEntity){
-				NetworkHooks.openGui((ServerPlayer) playerIn, (AbstractShifterTileEntity) te, pos);
+				NetworkHooks.openScreen((ServerPlayer) playerIn, (AbstractShifterTileEntity) te, pos);
 			}
 		}
 		return InteractionResult.SUCCESS;

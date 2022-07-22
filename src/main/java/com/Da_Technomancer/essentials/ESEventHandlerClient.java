@@ -7,8 +7,24 @@ import com.Da_Technomancer.essentials.api.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.CircuitTileEntity;
-import com.Da_Technomancer.essentials.gui.*;
-import com.Da_Technomancer.essentials.gui.container.*;
+import com.Da_Technomancer.essentials.gui.AutoCrafterScreen;
+import com.Da_Technomancer.essentials.gui.CircuitWrenchScreen;
+import com.Da_Technomancer.essentials.gui.ConstantCircuitScreen;
+import com.Da_Technomancer.essentials.gui.DelayCircuitScreen;
+import com.Da_Technomancer.essentials.gui.FluidShifterScreen;
+import com.Da_Technomancer.essentials.gui.ItemShifterScreen;
+import com.Da_Technomancer.essentials.gui.PulseCircuitScreen;
+import com.Da_Technomancer.essentials.gui.SlottedChestScreen;
+import com.Da_Technomancer.essentials.gui.TimerCircuitScreen;
+import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
+import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
+import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
+import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
+import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
+import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
+import com.Da_Technomancer.essentials.gui.container.PulseCircuitContainer;
+import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
+import com.Da_Technomancer.essentials.gui.container.TimerCircuitContainer;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.render.CannonSkullRenderer;
@@ -31,8 +47,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.InputEvent.InteractionKeyMappingTriggered;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,7 +67,7 @@ public class ESEventHandlerClient{
 		@SubscribeEvent
 		@SuppressWarnings("unused")
 		public static void registerContainers(RegisterEvent e){
-			e.register(ForgeRegistries.Keys.CONTAINER_TYPES, helper -> {
+			e.register(ForgeRegistries.Keys.MENU_TYPES, helper -> {
 				registerCon(ItemShifterContainer::new, ItemShifterScreen::new, "item_shifter", helper);
 				registerCon(FluidShifterContainer::new, FluidShifterScreen::new, "fluid_shifter", helper);
 				registerCon(SlottedChestContainer::new, SlottedChestScreen::new, "slotted_chest", helper);
@@ -86,7 +102,7 @@ public class ESEventHandlerClient{
 
 		@SuppressWarnings("unused")
 		@SubscribeEvent
-		public static void registerModels(ModelRegistryEvent e){
+		public static void registerModels(ModelEvent.RegisterAdditional e){
 			EntityRenderers.register(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
 		}
 	}
@@ -131,7 +147,7 @@ public class ESEventHandlerClient{
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public static void pickBlockCircuitWrench(InputEvent.ClickInputEvent e){
+	public static void pickBlockCircuitWrench(InteractionKeyMappingTriggered e){
 		if(e.isPickBlock() && Minecraft.getInstance().player.getItemInHand(e.getHand()).getItem() == ESItems.circuitWrench){
 			//When using pick block on a circuit and holding a circuit wrench, override normal behaviour and set the wrench to that circuit type
 			HitResult hit = Minecraft.getInstance().hitResult;

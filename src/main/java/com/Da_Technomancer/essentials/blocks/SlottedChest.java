@@ -64,7 +64,7 @@ public class SlottedChest extends BaseEntityBlock implements IReadable{
 			BlockEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof SlottedChestTileEntity){
 				ItemStack[] filter = ((SlottedChestTileEntity) te).lockedInv;
-				NetworkHooks.openGui((ServerPlayer) playerIn, (SlottedChestTileEntity) te, (buf) -> {
+				NetworkHooks.openScreen((ServerPlayer) playerIn, (SlottedChestTileEntity) te, (buf) -> {
 					for(ItemStack lock : filter){
 						buf.writeItem(lock);
 					}

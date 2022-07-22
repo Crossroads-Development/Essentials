@@ -102,7 +102,7 @@ public class CircuitWrench extends Item{
 		ItemStack stack = playerIn.getItemInHand(handIn);
 		if(playerIn.isCrouching()){
 			if(!worldIn.isClientSide){
-				NetworkHooks.openGui((ServerPlayer) playerIn, UIProvider.INSTANCE);
+				NetworkHooks.openScreen((ServerPlayer) playerIn, UIProvider.INSTANCE);
 			}
 			return new InteractionResultHolder<>(InteractionResult.SUCCESS, stack);
 		}

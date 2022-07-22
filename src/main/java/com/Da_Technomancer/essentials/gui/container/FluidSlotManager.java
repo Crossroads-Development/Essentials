@@ -24,8 +24,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.IFluidTypeRenderProperties;
-import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -189,10 +188,10 @@ public class FluidSlotManager{
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 
 
-		IFluidTypeRenderProperties attr = RenderProperties.get(clientState.getFluid());
+		IClientFluidTypeExtensions attr = ((IClientFluidTypeExtensions)clientState.getFluid().getFluidType().getRenderPropertiesInternal()); 
 
 		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
-		int col = attr.getColorTint(clientState);
+		int col = attr.getTintColor(clientState);
 		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
 		RenderSystem.setShaderColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, 1F);
 		Screen.blit(matrix, xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);

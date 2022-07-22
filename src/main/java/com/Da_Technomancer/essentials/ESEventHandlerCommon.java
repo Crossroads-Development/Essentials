@@ -122,10 +122,10 @@ public class ESEventHandlerCommon{
 	@SubscribeEvent
 	public static void blockWitchSpawns(LivingSpawnEvent.CheckSpawn e){
 		//Prevents witch spawning if a nearby brazier has soulsand
-		if(e.getEntity() instanceof Witch && e.getWorld() instanceof Level){
+		if(e.getEntity() instanceof Witch && e.getLevel() instanceof Level){
 			int RANGE = ESConfig.brazierRange.get();
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
-			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange((Level) e.getWorld(), e.getEntity().blockPosition(), RANGE)){
+			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange((Level) e.getLevel(), e.getEntity().blockPosition(), RANGE)){
 				Level w;
 				if(te instanceof BrazierTileEntity && te.getBlockPos().distToCenterSqr(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED && (w = te.getLevel()) != null){
 					BlockState state = w.getBlockState(te.getBlockPos());
@@ -163,9 +163,9 @@ public class ESEventHandlerCommon{
 		if(e.getTarget() instanceof Animal an && e.getItemStack().getItem() == ESItems.animalFeed && (!(e.getTarget() instanceof TamableAnimal) || ((TamableAnimal) e.getTarget()).isTame())){
 			e.setResult(Event.Result.DENY);
 			e.setCanceled(true);
-			if(!e.getWorld().isClientSide && an.getAge() == 0){
-				an.setInLove(e.getPlayer());
-				if(!e.getPlayer().isCreative()){
+			if(!e.getLevel().isClientSide && an.getAge() == 0){
+				an.setInLove(e.getEntity());
+				if(!e.getEntity().isCreative()){
 					e.getItemStack().shrink(1);
 				}
 			}
