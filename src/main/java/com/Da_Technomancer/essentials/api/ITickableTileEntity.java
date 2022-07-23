@@ -12,9 +12,8 @@ import javax.annotation.Nullable;
 public interface ITickableTileEntity{
 
 	@Nullable
-	@SuppressWarnings("unchecked")
-	static <T extends BlockEntity, A extends BlockEntity & ITickableTileEntity> BlockEntityTicker<T> createTicker(@Nullable BlockEntityType<T> actualType, BlockEntityType<A> requiredType){
-		return requiredType == actualType ? (BlockEntityTicker<T>) new GeneralTileEntityTicker<A>() : null;
+	static <T extends BlockEntity> BlockEntityTicker<T> createTicker(@Nullable BlockEntityType<T> actualType, BlockEntityType<?> requiredType){
+		return requiredType == actualType ? new GeneralTileEntityTicker<T>() : null;
 	}
 
 	default void tick(){
@@ -29,14 +28,16 @@ public interface ITickableTileEntity{
 		tick();
 	}
 
-	class GeneralTileEntityTicker<T extends BlockEntity & ITickableTileEntity> implements BlockEntityTicker<T>{
+	class GeneralTileEntityTicker<T extends BlockEntity> implements BlockEntityTicker<T>{
 
 		@Override
 		public void tick(Level world, BlockPos pos, BlockState state, T te){
-			if(world.isClientSide){
-				te.clientTick();
-			}else{
-				te.serverTick();
+			if(te instanceof ITickableTileEntity ite){
+				if(world.isClientSide){
+					ite.clientTick();
+				}else{
+					ite.serverTick();
+				}
 			}
 		}
 	}

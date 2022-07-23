@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.render;
 
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
-import com.Da_Technomancer.essentials.blocks.ESProperties;
+import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.blocks.HopperFilterTileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;

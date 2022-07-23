@@ -3,7 +3,7 @@ package com.Da_Technomancer.essentials.blocks;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
-import com.Da_Technomancer.essentials.gui.container.FluidSlotManager;
+import com.Da_Technomancer.essentials.api.FluidSlotManager;
 import com.Da_Technomancer.essentials.api.IFluidSlotTE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

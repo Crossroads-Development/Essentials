@@ -1,6 +1,8 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.api.ConfigUtil;
+import com.Da_Technomancer.essentials.api.ESProperties;
+import com.Da_Technomancer.essentials.api.TEBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -17,17 +19,12 @@ import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 
-public abstract class AbstractShifter extends BaseEntityBlock{
+public abstract class AbstractShifter extends TEBlock{
 
 	protected AbstractShifter(String name){
 		super(ESBlocks.getMetalProperty());
 		ESBlocks.toRegister.put(name, this);
 		ESBlocks.blockAddQue(name, this);
-	}
-
-	@Override
-	public RenderShape getRenderShape(BlockState state){
-		return RenderShape.MODEL;
 	}
 
 	@Nullable

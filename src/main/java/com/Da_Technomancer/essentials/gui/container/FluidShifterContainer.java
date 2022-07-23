@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.gui.container;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.api.FluidSlotManager;
 import com.Da_Technomancer.essentials.api.IntDeferredRef;
 import com.Da_Technomancer.essentials.blocks.FluidShifterTileEntity;
 import net.minecraft.core.BlockPos;

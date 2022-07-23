@@ -1,6 +1,8 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.api.ConfigUtil;
+import com.Da_Technomancer.essentials.api.ESProperties;
+import com.Da_Technomancer.essentials.api.TEBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Containers;
@@ -12,9 +14,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -27,7 +27,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class HopperFilter extends BaseEntityBlock{
+public class HopperFilter extends TEBlock{
 
 	protected HopperFilter(){
 		super(ESBlocks.getRockProperty());
@@ -77,7 +77,6 @@ public class HopperFilter extends BaseEntityBlock{
 			BlockEntity te = worldIn.getBlockEntity(pos);
 			if(te instanceof HopperFilterTileEntity){
 				Containers.dropItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), ((HopperFilterTileEntity) te).getFilter());
-				worldIn.updateNeighbourForOutputSignal(pos, this);
 			}
 
 			super.onRemove(state, worldIn, pos, newState, isMoving);
@@ -114,10 +113,5 @@ public class HopperFilter extends BaseEntityBlock{
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context){
 		return defaultBlockState().setValue(ESProperties.AXIS, context.getClickedFace().getAxis());
-	}
-
-	@Override
-	public RenderShape getRenderShape(BlockState state){
-		return RenderShape.MODEL;
 	}
 }

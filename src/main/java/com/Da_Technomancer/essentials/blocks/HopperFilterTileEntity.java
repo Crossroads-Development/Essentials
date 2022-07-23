@@ -2,6 +2,7 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
+import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.api.packets.SendNBTToClient;
 import net.minecraft.core.BlockPos;

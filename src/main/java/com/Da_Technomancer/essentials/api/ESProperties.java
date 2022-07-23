@@ -1,4 +1,4 @@
-package com.Da_Technomancer.essentials.blocks;
+package com.Da_Technomancer.essentials.api;
 
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;

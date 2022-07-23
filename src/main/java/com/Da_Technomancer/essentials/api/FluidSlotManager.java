@@ -1,8 +1,6 @@
-package com.Da_Technomancer.essentials.gui.container;
+package com.Da_Technomancer.essentials.api;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.api.BlockUtil;
-import com.Da_Technomancer.essentials.api.IFluidSlotTE;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.systems.RenderSystem;

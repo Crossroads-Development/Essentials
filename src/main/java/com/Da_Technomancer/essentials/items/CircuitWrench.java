@@ -4,7 +4,7 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
-import com.Da_Technomancer.essentials.blocks.ESProperties;
+import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractTile;
 import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import net.minecraft.ChatFormatting;

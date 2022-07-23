@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials.integration;
 
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
-import com.Da_Technomancer.essentials.blocks.ESProperties;
+import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.CircuitTileEntity;
 import com.Da_Technomancer.essentials.blocks.redstone.InterfaceCircuitTileEntity;
 import dan200.computercraft.api.ComputerCraftAPI;

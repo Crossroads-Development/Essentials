@@ -200,7 +200,7 @@ public class RedstoneUtil extends BlockUtil{
 				formula.add((float) Math.PI);
 				index += 2;
 			}else if(opChars.contains(input.substring(index, index + 1))){
-				//Handle operations +-Xx/()^
+				//Handle operations +-Xx*/()^
 				char c = input.charAt(index);
 				formula.add(c == 'x' || c == 'X' ? '*' : input.charAt(index));
 				index++;
