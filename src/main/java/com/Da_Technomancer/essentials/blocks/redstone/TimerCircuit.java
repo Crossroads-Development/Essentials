@@ -53,7 +53,7 @@ public class TimerCircuit extends AbstractCircuit{
 			return InteractionResult.PASS;
 		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof TimerCircuitTileEntity){
 			TimerCircuitTileEntity tte = (TimerCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrPeriod, tte.settingStrDuration));
+			NetworkHooks.openScreen((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrPeriod, tte.settingStrDuration));
 		}
 
 		return InteractionResult.SUCCESS;

@@ -209,8 +209,8 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 						List<ItemStack> containers = new ArrayList<>(0);
 						//Consume ingredients
 						for(int i = 0; i < 9; i++){
-							if(used[i] != 0 && inv[i].hasContainerItem()){
-								ItemStack cont = inv[i].getContainerItem().copy();
+							if(used[i] != 0 && inv[i].hasCraftingRemainingItem()){
+								ItemStack cont = inv[i].getCraftingRemainingItem().copy();
 								cont.setCount(used[i]);
 								containers.add(cont);
 							}

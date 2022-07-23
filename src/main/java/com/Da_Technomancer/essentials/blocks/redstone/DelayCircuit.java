@@ -53,7 +53,7 @@ public class DelayCircuit extends AbstractCircuit{
 			return InteractionResult.PASS;
 		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof DelayCircuitTileEntity){
 			DelayCircuitTileEntity tte = (DelayCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrDelay));
+			NetworkHooks.openScreen((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrDelay));
 		}
 
 		return InteractionResult.SUCCESS;

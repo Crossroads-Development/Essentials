@@ -56,7 +56,7 @@ public class PulseCircuit extends AbstractCircuit{
 			return InteractionResult.PASS;
 		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof PulseCircuitTileEntity){
 			PulseCircuitTileEntity tte = (PulseCircuitTileEntity) te;
-			NetworkHooks.openGui((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrDuration));
+			NetworkHooks.openScreen((ServerPlayer) playerIn, tte, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), tte.settingStrDuration));
 		}
 
 		return InteractionResult.SUCCESS;

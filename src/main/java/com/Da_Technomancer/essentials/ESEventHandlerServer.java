@@ -15,7 +15,7 @@ public class ESEventHandlerServer{
 		@SubscribeEvent
 		@SuppressWarnings("unused")
 		public static void registerContainerTypes(RegisterEvent e){
-			e.register(ForgeRegistries.Keys.CONTAINER_TYPES, helper -> {
+			e.register(ForgeRegistries.Keys.MENU_TYPES, helper -> {
 				ESEventHandlerCommon.ESModEventsCommon.registerConType(ItemShifterContainer::new, "item_shifter", helper);
 				ESEventHandlerCommon.ESModEventsCommon.registerConType(FluidShifterContainer::new, "fluid_shifter", helper);
 				ESEventHandlerCommon.ESModEventsCommon.registerConType(SlottedChestContainer::new, "slotted_chest", helper);

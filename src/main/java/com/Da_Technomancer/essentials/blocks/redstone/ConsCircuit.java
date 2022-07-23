@@ -50,7 +50,7 @@ public class ConsCircuit extends AbstractCircuit{
 		}else if(playerIn.getItemInHand(hand).getItem() == ESItems.circuitWrench){
 			return InteractionResult.PASS;
 		}else if(!worldIn.isClientSide && (te = worldIn.getBlockEntity(pos)) instanceof ConstantCircuitTileEntity){
-			NetworkHooks.openGui((ServerPlayer) playerIn, (MenuProvider) te, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), ((ConstantCircuitTileEntity) te).settingStr));
+			NetworkHooks.openScreen((ServerPlayer) playerIn, (MenuProvider) te, buf -> CircuitContainer.encodeData(buf, te.getBlockPos(), ((ConstantCircuitTileEntity) te).settingStr));
 		}
 
 		return InteractionResult.SUCCESS;
