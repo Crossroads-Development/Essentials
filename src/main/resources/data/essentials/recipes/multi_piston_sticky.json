@@ -8,7 +8,7 @@
 			"item": "essentials:multi_piston"
 		},
 		{
-			"item": "minecraft:slime_ball"
+			"tag": "forge:slimeballs"
 		}
 	]
 }

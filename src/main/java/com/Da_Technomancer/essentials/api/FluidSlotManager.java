@@ -177,7 +177,6 @@ public class FluidSlotManager{
 	@OnlyIn(Dist.CLIENT)
 	public void render(PoseStack matrix, float partialTicks, int mouseX, int mouseY, Font fontRenderer, List<Component> tooltip){
 		//Background
-		FluidStack clientState = getStack();
 //		Minecraft.getInstance().getTextureManager().bind(InventoryMenu.BLOCK_ATLAS);
 		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 
@@ -185,8 +184,13 @@ public class FluidSlotManager{
 		//Screen.fill changes the color
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 
+		//Render the fluid
+		FluidStack clientState = getStack();
+		if(clientState.isEmpty()){
+			return;
+		}
 
-		IClientFluidTypeExtensions attr = ((IClientFluidTypeExtensions)clientState.getFluid().getFluidType().getRenderPropertiesInternal()); 
+		IClientFluidTypeExtensions attr = IClientFluidTypeExtensions.of(clientState.getFluid());
 
 		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
 		int col = attr.getTintColor(clientState);
