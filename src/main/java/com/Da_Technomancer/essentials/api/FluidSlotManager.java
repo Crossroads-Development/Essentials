@@ -186,18 +186,16 @@ public class FluidSlotManager{
 
 		//Render the fluid
 		FluidStack clientState = getStack();
-		if(clientState.isEmpty()){
-			return;
+		if(!clientState.isEmpty()){
+			IClientFluidTypeExtensions attr = IClientFluidTypeExtensions.of(clientState.getFluid());
+
+			TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
+			int col = attr.getTintColor(clientState);
+			int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
+			RenderSystem.setShaderColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, 1F);
+			Screen.blit(matrix, xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
+			RenderSystem.setShaderColor(1, 1, 1, 1);
 		}
-
-		IClientFluidTypeExtensions attr = IClientFluidTypeExtensions.of(clientState.getFluid());
-
-		TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
-		int col = attr.getTintColor(clientState);
-		int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
-		RenderSystem.setShaderColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, 1F);
-		Screen.blit(matrix, xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 
 		//Foreground
 //		Minecraft.getInstance().getTextureManager().bind(OVERLAY);
