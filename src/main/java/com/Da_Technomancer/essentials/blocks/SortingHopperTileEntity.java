@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,16 +29,16 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.sortingHopper;
+
 public class SortingHopperTileEntity extends BlockEntity implements ITickableTileEntity, Container, MenuProvider{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":sorting_hopper")
-	public static BlockEntityType<SortingHopperTileEntity> TYPE = null;
+	public static final BlockEntityType<SortingHopperTileEntity> TYPE = ESTileEntity.createType(SortingHopperTileEntity::new, sortingHopper);
 
 	protected final ItemStack[] inventory = new ItemStack[5];
 	private int transferCooldown = -1;

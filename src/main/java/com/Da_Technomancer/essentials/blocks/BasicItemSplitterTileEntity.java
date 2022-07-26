@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,14 +11,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.basicItemSplitter;
+
 public class BasicItemSplitterTileEntity extends AbstractSplitterTE{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":basic_item_splitter")
-	public static BlockEntityType<BasicItemSplitterTileEntity> TYPE = null;
+	public static final BlockEntityType<BasicItemSplitterTileEntity> TYPE = ESTileEntity.createType(BasicItemSplitterTileEntity::new, basicItemSplitter);
 
 	private final ItemStack[] inventory = new ItemStack[] {ItemStack.EMPTY, ItemStack.EMPTY};
 	private int transferred = 0;//Tracks how many items have been transferred in one batch of 12/15

@@ -1,12 +1,12 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.api.ITickableTileEntity;
+import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
-import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
-import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -18,16 +18,16 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.ticks.TickPriority;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.delayCircuit;
+
 public class DelayCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, ITickableTileEntity{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":delay_circuit")
-	public static BlockEntityType<DelayCircuitTileEntity> TYPE = null;
+	public static final BlockEntityType<DelayCircuitTileEntity> TYPE = ESTileEntity.createType(DelayCircuitTileEntity::new, delayCircuit);
 
 	private static final int MIN_DELAY = 1;
 

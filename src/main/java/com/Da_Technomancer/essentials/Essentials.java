@@ -1,7 +1,7 @@
 package com.Da_Technomancer.essentials;
 
 import com.Da_Technomancer.essentials.api.packets.EssentialsPackets;
-import com.Da_Technomancer.essentials.render.TESRRegistry;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.common.MinecraftForge;
@@ -15,8 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import static com.Da_Technomancer.essentials.Essentials.MODID;
-import static com.Da_Technomancer.essentials.blocks.ESBlocks.candleLilyPad;
-import static com.Da_Technomancer.essentials.blocks.ESBlocks.hopperFilter;
 
 @Mod(MODID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -49,12 +47,13 @@ public final class Essentials{
 	}
 
 	private void clientInit(@SuppressWarnings("unused") FMLClientSetupEvent e){
-		TESRRegistry.init();
+//		TESRRegistry.init();
 		MinecraftForge.EVENT_BUS.register(ESEventHandlerClient.class);
 //		MOD_EVENT_BUS.register(ESEventHandlerClient.ESModEventsClient.class);
 
-		ItemBlockRenderTypes.setRenderLayer(hopperFilter, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(candleLilyPad, RenderType.cutout());
+		// Still needed for candle lilypad to render properly as of Forge 41.0.98
+//		ItemBlockRenderTypes.setRenderLayer(hopperFilter, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(ESBlocks.candleLilyPad, RenderType.cutout());
 	}
 
 	private void serverInit(@SuppressWarnings("unused") FMLDedicatedServerSetupEvent e){

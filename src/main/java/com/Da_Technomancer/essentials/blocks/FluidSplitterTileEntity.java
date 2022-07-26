@@ -1,16 +1,15 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ObjectHolder;
+
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.fluidSplitter;
 
 public class FluidSplitterTileEntity extends BasicFluidSplitterTileEntity{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":fluid_splitter")
-	public static BlockEntityType<FluidSplitterTileEntity> TYPE = null;
+	public static final BlockEntityType<FluidSplitterTileEntity> TYPE = ESTileEntity.createType(FluidSplitterTileEntity::new, fluidSplitter);
 
 	public int redstone;
 

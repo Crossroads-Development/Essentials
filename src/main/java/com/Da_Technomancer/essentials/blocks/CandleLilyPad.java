@@ -17,7 +17,7 @@ import java.util.List;
 public class CandleLilyPad extends WaterlilyBlock{
 
 	protected CandleLilyPad(){
-		super(BlockBehaviour.Properties.of(Material.PLANT).strength(0).sound(SoundType.GRASS).lightLevel(s -> 14));
+		super(BlockBehaviour.Properties.of(Material.PLANT).strength(0).sound(SoundType.GRASS).lightLevel(s -> 14).noOcclusion());
 		String name = "candle_lilypad";
 		ESBlocks.toRegister.put(name, this);
 	}

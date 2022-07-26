@@ -1,17 +1,17 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ObjectHolder;
+
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.dCounterCircuit;
 
 public class DCounterCircuitTileEntity extends CircuitTileEntity{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":d_counter_circuit")
-	public static BlockEntityType<DCounterCircuitTileEntity> TYPE = null;
+	public static final BlockEntityType<DCounterCircuitTileEntity> TYPE = ESTileEntity.createType(DCounterCircuitTileEntity::new, dCounterCircuit);
 
 	private float counter = 0;
 	private float prevInputBack = 0F;

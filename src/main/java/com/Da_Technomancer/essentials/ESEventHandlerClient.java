@@ -7,27 +7,12 @@ import com.Da_Technomancer.essentials.api.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.CircuitTileEntity;
-import com.Da_Technomancer.essentials.gui.AutoCrafterScreen;
-import com.Da_Technomancer.essentials.gui.CircuitWrenchScreen;
-import com.Da_Technomancer.essentials.gui.ConstantCircuitScreen;
-import com.Da_Technomancer.essentials.gui.DelayCircuitScreen;
-import com.Da_Technomancer.essentials.gui.FluidShifterScreen;
-import com.Da_Technomancer.essentials.gui.ItemShifterScreen;
-import com.Da_Technomancer.essentials.gui.PulseCircuitScreen;
-import com.Da_Technomancer.essentials.gui.SlottedChestScreen;
-import com.Da_Technomancer.essentials.gui.TimerCircuitScreen;
-import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
-import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
-import com.Da_Technomancer.essentials.gui.container.ConstantCircuitContainer;
-import com.Da_Technomancer.essentials.gui.container.DelayCircuitContainer;
-import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
-import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
-import com.Da_Technomancer.essentials.gui.container.PulseCircuitContainer;
-import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
-import com.Da_Technomancer.essentials.gui.container.TimerCircuitContainer;
+import com.Da_Technomancer.essentials.gui.*;
+import com.Da_Technomancer.essentials.gui.container.*;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
 import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.render.CannonSkullRenderer;
+import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
@@ -36,7 +21,6 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -47,8 +31,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent.InteractionKeyMappingTriggered;
-import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -102,8 +86,9 @@ public class ESEventHandlerClient{
 
 		@SuppressWarnings("unused")
 		@SubscribeEvent
-		public static void registerModels(ModelEvent.RegisterAdditional e){
-			EntityRenderers.register(WitherCannon.ENT_TYPE, CannonSkullRenderer::new);
+		public static void registerRenderers(EntityRenderersEvent.RegisterRenderers e){
+			TESRRegistry.init(e);
+			e.registerEntityRenderer(WitherCannon.CannonSkull.ENT_TYPE, CannonSkullRenderer::new);
 		}
 	}
 

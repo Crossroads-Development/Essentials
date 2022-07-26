@@ -1,24 +1,23 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.api.ESProperties;
+import com.Da_Technomancer.essentials.api.ILinkTE;
 import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
-import com.Da_Technomancer.essentials.api.ESProperties;
-import com.Da_Technomancer.essentials.api.ILinkTE;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.DyeColor;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.core.Direction;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,15 +25,16 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.redstoneReceiver;
+
 public class RedstoneReceiverTileEntity extends BlockEntity implements ILinkTE{
 
 	private BlockPos src = null;
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":redstone_receiver")
-	public static BlockEntityType<RedstoneReceiverTileEntity> type = null;
+	public static final BlockEntityType<RedstoneReceiverTileEntity> TYPE = ESTileEntity.createType(RedstoneReceiverTileEntity::new, redstoneReceiver);
 
 	public RedstoneReceiverTileEntity(BlockPos pos, BlockState state){
-		super(type, pos, state);
+		super(TYPE, pos, state);
 	}
 
 	@Override

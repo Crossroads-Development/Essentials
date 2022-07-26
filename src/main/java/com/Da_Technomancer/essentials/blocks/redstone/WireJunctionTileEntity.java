@@ -1,23 +1,23 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.registries.ObjectHolder;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.wireJunctionCircuit;
+
 public class WireJunctionTileEntity extends WireTileEntity{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":wire_junction")
-	public static BlockEntityType<WireJunctionTileEntity> TYPE = null;
+	public static final BlockEntityType<WireJunctionTileEntity> TYPE = ESTileEntity.createType(WireJunctionTileEntity::new, wireJunctionCircuit);
 
 	public WireJunctionTileEntity(BlockPos pos, BlockState state){
 		super(TYPE, pos, state);

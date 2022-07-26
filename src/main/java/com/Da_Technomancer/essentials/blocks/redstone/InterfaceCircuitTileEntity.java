@@ -1,17 +1,17 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ObjectHolder;
+
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.interfaceCircuit;
 
 public class InterfaceCircuitTileEntity extends CircuitTileEntity{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":interface_circuit")
-	private static BlockEntityType<ConstantCircuitTileEntity> TYPE = null;
+	public static final BlockEntityType<InterfaceCircuitTileEntity> TYPE = ESTileEntity.createType(InterfaceCircuitTileEntity::new, interfaceCircuit);
 
 	public InterfaceCircuitTileEntity(BlockPos pos, BlockState state){
 		super(TYPE, pos, state);

@@ -1,14 +1,14 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.ESConfig;
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
-import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
-import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
-import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.ILinkTE;
 import com.Da_Technomancer.essentials.api.LinkHelper;
+import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
+import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -22,7 +22,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.ticks.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -32,10 +31,11 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Set;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.redstoneTransmitter;
+
 public class RedstoneTransmitterTileEntity extends BlockEntity implements ILinkTE{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":redstone_transmitter")
-	public static BlockEntityType<RedstoneTransmitterTileEntity> TYPE = null;
+	public static final BlockEntityType<RedstoneTransmitterTileEntity> TYPE = ESTileEntity.createType(RedstoneTransmitterTileEntity::new, redstoneTransmitter);
 
 	public final LinkHelper linkHelper = new LinkHelper(this);
 

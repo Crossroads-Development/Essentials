@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
@@ -25,17 +24,17 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.hopperFilter;
+
 public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":hopper_filter")
-	public static BlockEntityType<HopperFilterTileEntity> TYPE = null;
+	public static final BlockEntityType<HopperFilterTileEntity> TYPE = ESTileEntity.createType(HopperFilterTileEntity::new, hopperFilter);
 
 	public HopperFilterTileEntity(BlockPos pos, BlockState state){
 		super(TYPE, pos, state);

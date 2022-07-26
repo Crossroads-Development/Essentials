@@ -96,7 +96,7 @@ dependencies {
 	runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
 	//CC Tweaked
 	compileOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
-	runtimeOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
+//	runtimeOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,15 +17,15 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.itemShifter;
+
 public class ItemShifterTileEntity extends AbstractShifterTileEntity implements Container{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":item_shifter")
-	public static BlockEntityType<ItemShifterTileEntity> TYPE = null;
+	public static final BlockEntityType<ItemShifterTileEntity> TYPE = ESTileEntity.createType(ItemShifterTileEntity::new, itemShifter);
 
 	private ItemStack inventory = ItemStack.EMPTY;
 	private LazyOptional<IItemHandler> outputOptionalCache = LazyOptional.empty();

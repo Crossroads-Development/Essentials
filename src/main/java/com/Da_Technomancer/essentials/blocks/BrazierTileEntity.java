@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,14 +16,14 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.brazier;
+
 public class BrazierTileEntity extends BlockEntity implements ITickableTileEntity{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":brazier")
-	public static BlockEntityType<BrazierTileEntity> TYPE = null;
+	public static final BlockEntityType<BrazierTileEntity> TYPE = ESTileEntity.createType(BrazierTileEntity::new, brazier);
 
 	public BrazierTileEntity(BlockPos pos, BlockState state){
 		super(TYPE, pos, state);

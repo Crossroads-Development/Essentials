@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -12,14 +11,14 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.basicFluidSplitter;
+
 public class BasicFluidSplitterTileEntity extends AbstractSplitterTE{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":basic_fluid_splitter")
-	public static BlockEntityType<BasicFluidSplitterTileEntity> TYPE = null;
+	public static final BlockEntityType<BasicFluidSplitterTileEntity> TYPE = ESTileEntity.createType(BasicFluidSplitterTileEntity::new, basicFluidSplitter);
 
 	private final FluidStack[] inventory = new FluidStack[] {FluidStack.EMPTY, FluidStack.EMPTY};
 	private static final int CAPACITY = 4000;

@@ -1,16 +1,15 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ObjectHolder;
+
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.itemSplitter;
 
 public class ItemSplitterTileEntity extends BasicItemSplitterTileEntity{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":item_splitter")
-	public static BlockEntityType<ItemSplitterTileEntity> TYPE = null;
+	public static final BlockEntityType<ItemSplitterTileEntity> TYPE = ESTileEntity.createType(ItemSplitterTileEntity::new, itemSplitter);
 
 	public int redstone;
 

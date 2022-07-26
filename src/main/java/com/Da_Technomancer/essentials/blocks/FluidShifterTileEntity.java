@@ -1,10 +1,9 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
-import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import com.Da_Technomancer.essentials.api.FluidSlotManager;
 import com.Da_Technomancer.essentials.api.IFluidSlotTE;
+import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -19,15 +18,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.fluidShifter;
+
 public class FluidShifterTileEntity extends AbstractShifterTileEntity implements IFluidSlotTE{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":fluid_shifter")
-	public static BlockEntityType<FluidShifterTileEntity> TYPE = null;
+	public static final BlockEntityType<FluidShifterTileEntity> TYPE = ESTileEntity.createType(FluidShifterTileEntity::new, fluidShifter);
 
 	private static final int CAPACITY = 4_000;
 

@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.ConfigUtil;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import net.minecraft.core.BlockPos;
@@ -19,6 +18,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.ItemStack;
@@ -34,15 +34,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.registries.ObjectHolder;
+import net.minecraftforge.network.PlayMessages;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
 public class WitherCannon extends Block{
-
-	@ObjectHolder(registryName="entity_type", value=Essentials.MODID + ":cannon_skull")
-	public static EntityType<CannonSkull> ENT_TYPE;
 
 	protected WitherCannon(){
 		super(ESBlocks.getRockProperty().strength(50F, 1200F));
@@ -96,7 +93,7 @@ public class WitherCannon extends Block{
 	public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource rand){
 		Direction dir = state.getValue(ESProperties.FACING);
 		BlockPos spawnPos = pos.relative(dir);
-		WitherSkull skull = new CannonSkull(ENT_TYPE, world);
+		WitherSkull skull = new CannonSkull(CannonSkull.ENT_TYPE, world);
 		skull.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY() + 0.5D, spawnPos.getZ() + 0.5D, dir.toYRot() + 180, dir.getStepY() * -90);
 		skull.setDeltaMovement(dir.getStepX() / 5F, dir.getStepY() / 5F, dir.getStepZ() / 5F);
 		skull.xPower = dir.getStepX() / 20D;
@@ -106,6 +103,8 @@ public class WitherCannon extends Block{
 	}
 
 	public static class CannonSkull extends WitherSkull{
+
+		public static final EntityType<CannonSkull> ENT_TYPE = EntityType.Builder.of(WitherCannon.CannonSkull::new, MobCategory.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((PlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.CannonSkull.ENT_TYPE, w)).build("cannon_skull");
 
 		private int lifespan = 60;
 

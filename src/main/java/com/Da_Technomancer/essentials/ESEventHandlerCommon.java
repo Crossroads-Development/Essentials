@@ -3,12 +3,11 @@ package com.Da_Technomancer.essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
-import com.Da_Technomancer.essentials.blocks.*;
-import com.Da_Technomancer.essentials.blocks.redstone.*;
+import com.Da_Technomancer.essentials.blocks.BrazierTileEntity;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
+import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.items.ESItems;
-import com.mojang.datafixers.DSL;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -30,13 +29,12 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.IContainerFactory;
-import net.minecraftforge.network.PlayMessages;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.Map;
 
-import static com.Da_Technomancer.essentials.blocks.ESBlocks.*;
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.toRegister;
 
 public class ESEventHandlerCommon{
 
@@ -69,39 +67,16 @@ public class ESEventHandlerCommon{
 			});
 		
 			e.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
-				helper.register("cannon_skull", EntityType.Builder.of(WitherCannon.CannonSkull::new, MobCategory.MISC).setShouldReceiveVelocityUpdates(true).sized(0.3125F, 0.3125F).fireImmune().setUpdateInterval(4).setTrackingRange(4).setCustomClientFactory((PlayMessages.SpawnEntity s, Level w) -> new WitherCannon.CannonSkull(WitherCannon.ENT_TYPE, w)).build("cannon_skull"));
+				helper.register("cannon_skull", WitherCannon.CannonSkull.ENT_TYPE);
 			});
-			
-			e.register(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES, helper -> {
-				registerTE(BrazierTileEntity::new, "brazier", helper, brazier);
-				registerTE(SlottedChestTileEntity::new, "slotted_chest", helper, slottedChest);
-				registerTE(SortingHopperTileEntity::new, "sorting_hopper", helper, sortingHopper);
-				registerTE(SpeedHopperTileEntity::new, "speed_hopper", helper, speedHopper);
-				registerTE(ItemShifterTileEntity::new, "item_shifter", helper, itemShifter);
-				registerTE(FluidShifterTileEntity::new, "fluid_shifter", helper, fluidShifter);
-				registerTE(HopperFilterTileEntity::new, "hopper_filter", helper, hopperFilter);
-				registerTE(BasicItemSplitterTileEntity::new, "basic_item_splitter", helper, basicItemSplitter);
-				registerTE(ItemSplitterTileEntity::new, "item_splitter", helper, itemSplitter);
-				registerTE(BasicFluidSplitterTileEntity::new, "basic_fluid_splitter", helper, basicFluidSplitter);
-				registerTE(FluidSplitterTileEntity::new, "fluid_splitter", helper, fluidSplitter);
-				registerTE(CircuitTileEntity::new, "circuit", helper, andCircuit, orCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
-				registerTE(ConstantCircuitTileEntity::new, "cons_circuit", helper, consCircuit);
-				registerTE(TimerCircuitTileEntity::new, "timer_circuit", helper, timerCircuit);
-				registerTE(DelayCircuitTileEntity::new, "delay_circuit", helper, delayCircuit);
-				registerTE(WireTileEntity::new, "wire", helper, wireCircuit);
-				registerTE(WireJunctionTileEntity::new, "wire_junction", helper, wireJunctionCircuit);
-				registerTE(AutoCrafterTileEntity::new, "auto_crafter", helper, autoCrafter);
-				registerTE(RedstoneTransmitterTileEntity::new, "redstone_transmitter", helper, redstoneTransmitter);
-				registerTE(RedstoneReceiverTileEntity::new, "redstone_receiver", helper, redstoneReceiver);
-				registerTE(PulseCircuitTileEntity::new, "pulse_circuit", helper, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
-				registerTE(DCounterCircuitTileEntity::new, "d_counter_circuit", helper, dCounterCircuit);
-				registerTE(InterfaceCircuitTileEntity::new, "interface_circuit", helper, interfaceCircuit);
-			});
-		}
 
-		private static void registerTE(BlockEntityType.BlockEntitySupplier<? extends BlockEntity> cons, String id, RegisterEvent.RegisterHelper<BlockEntityType<?>> helper, Block... blocks){
-			BlockEntityType<?> teType = BlockEntityType.Builder.of(cons, blocks).build(DSL.emptyPartType());
-			helper.register(id, teType);
+			e.register(ForgeRegistries.Keys.BLOCK_ENTITY_TYPES, helper -> {
+				ESTileEntity.init();
+				for(Map.Entry<String, BlockEntityType<?>> entry : ESTileEntity.toRegister.entrySet()){
+					helper.register(entry.getKey(), entry.getValue());
+				}
+				ESTileEntity.toRegister.clear();
+			});
 		}
 
 		/**

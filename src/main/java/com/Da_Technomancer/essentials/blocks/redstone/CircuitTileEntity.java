@@ -2,12 +2,13 @@ package com.Da_Technomancer.essentials.blocks.redstone;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
-import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
-import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
-import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.packets.IFloatReceiver;
 import com.Da_Technomancer.essentials.api.packets.SendFloatToClient;
+import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
+import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
+import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -20,7 +21,6 @@ import net.minecraft.world.ticks.TickPriority;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ObjectHolder;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -28,10 +28,11 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
+import static com.Da_Technomancer.essentials.blocks.ESBlocks.*;
+
 public class CircuitTileEntity extends BlockEntity implements IFloatReceiver{
 
-	@ObjectHolder(registryName="block_entity_type", value=Essentials.MODID + ":circuit")
-	public static BlockEntityType<CircuitTileEntity> TYPE = null;
+	public static final BlockEntityType<CircuitTileEntity> TYPE = ESTileEntity.createType(CircuitTileEntity::new, andCircuit, orCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
 
 	public boolean builtConnections = false;
 	private final ArrayList<WeakReference<LazyOptional<IRedstoneHandler>>> dependents = new ArrayList<>(1);
