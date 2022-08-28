@@ -24,6 +24,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -261,8 +262,21 @@ public class LinkHelper{
 	//Rendering
 
 	public static final ResourceLocation LINK_TEXTURE = new ResourceLocation(Essentials.MODID, "textures/model/link_line.png");
+
 	@OnlyIn(Dist.CLIENT)
-	public static final RenderType LINK_TYPE = DummyRenderType.initType();
+	private static RenderType LINK_TYPE;
+
+	@OnlyIn(Dist.CLIENT)
+	public static RenderType getLinkRenderType(){
+		return LINK_TYPE;
+	}
+
+	static{
+		//We need to split declaration of LINK_TYPE from assignment, as the @OnlyIn doesn't cover the assignment
+		if(FMLEnvironment.dist == Dist.CLIENT){
+			LINK_TYPE = DummyRenderType.initType();
+		}
+	}
 
 	/**
 	 * @param startPoint Starting position, usually center of TE block position
@@ -283,7 +297,7 @@ public class LinkHelper{
 		Vec3 normal = ray.cross(widthVec);
 		float length = (float) ray.length();
 
-		VertexConsumer builder = buffer.getBuffer(LinkHelper.LINK_TYPE);
+		VertexConsumer builder = buffer.getBuffer(getLinkRenderType());
 
 		RenderUtil.addVertexBlock(builder, matrix, widthVec.scale(-1), 0, 0, normal, alpha, RenderUtil.BRIGHT_LIGHT);//min-min
 		RenderUtil.addVertexBlock(builder, matrix, widthVec, uWidth, 0, normal, alpha, RenderUtil.BRIGHT_LIGHT);//max-min
