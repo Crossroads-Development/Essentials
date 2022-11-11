@@ -2,12 +2,12 @@ package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.api.ConfigUtil;
 import com.Da_Technomancer.essentials.api.ITickableTileEntity;
+import com.Da_Technomancer.essentials.api.TEBlock;
 import com.Da_Technomancer.essentials.api.redstone.IReadable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +35,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class SortingHopper extends BaseEntityBlock implements IReadable{
+public class SortingHopper extends TEBlock implements IReadable{
 
 	public static final DirectionProperty FACING = HopperBlock.FACING;
 	public static final BooleanProperty ENABLED = HopperBlock.ENABLED;
@@ -127,14 +127,14 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 			BlockEntity te = worldIn.getBlockEntity(pos);
 			if(ConfigUtil.isWrench(playerIn.getItemInHand(hand))){
 				worldIn.setBlockAndUpdate(pos, state.cycle(FACING));//MCP note: cycle
-				if(te instanceof SortingHopperTileEntity){
-					((SortingHopperTileEntity) te).resetCache();
+				if(te instanceof SortingHopperTileEntity shTe){
+					shTe.resetCache();
 				}
 				return InteractionResult.SUCCESS;
 			}
 
-			if(te instanceof SortingHopperTileEntity){
-				playerIn.openMenu((SortingHopperTileEntity) te);
+			if(te instanceof SortingHopperTileEntity shTe){
+				playerIn.openMenu(shTe);
 //				playerIn.addStat(Stats.INSPECT_HOPPER);
 			}
 		}
@@ -151,38 +151,15 @@ public class SortingHopper extends BaseEntityBlock implements IReadable{
 	}
 
 	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving){
-		if(state.getBlock() != newState.getBlock()){
-			BlockEntity te = worldIn.getBlockEntity(pos);
-			if(te instanceof SortingHopperTileEntity){
-				Containers.dropContents(worldIn, pos, (SortingHopperTileEntity) te);
-				worldIn.updateNeighbourForOutputSignal(pos, this);
-			}
-
-			super.onRemove(state, worldIn, pos, newState, isMoving);
-		}
-	}
-
-	@Override
-	public RenderShape getRenderShape(BlockState state){
-		return RenderShape.MODEL;
-	}
-
-	@Override
-	public boolean hasAnalogOutputSignal(BlockState state){
-		return true;
-	}
-
-	@Override
 	public int getAnalogOutputSignal(BlockState blockState, Level worldIn, BlockPos pos){
+		//Enforce the vanilla hopper formula for comparators
 		return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(worldIn.getBlockEntity(pos));
 	}
 
 	@Override
 	public float read(Level world, BlockPos pos, BlockState state){
 		BlockEntity te = world.getBlockEntity(pos);
-		if(te instanceof Container){
-			Container inv = (Container) te;
+		if(te instanceof Container inv){
 			float f = 0.0F;
 
 			for(int i = 0; i < inv.getContainerSize(); i++){
