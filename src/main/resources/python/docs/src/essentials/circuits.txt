@@ -1,5 +1,6 @@
 Circuitry
 essentials:circuit_wrench
+essentials:circuit_wrench,essentials:wire_circuit
 <item>Circuits/$ are redstone devices like Repeaters or Comparators that are low-lag and can do advanced logic compactly, easily, and cheaply.
 Place <item>Circuit Wire Plate/$, and use a <item>Circuit Wrench/$ to convert the wire into the selected circuit (this consumes 1 Nether Quartz per circuit). Shift-right-clicking with the <item>Circuit Wrench/$ opens a menu to choose which circuit to place, and which describes each circuit type. Shift-right clicking with a <item>Circuit Wrench/$ on a circuit will rotate that circuit instead (normal <item><link:essentials/wrench>wrenches/$ can still rotate circuits). Example circuits are <item>AND/$, <item>XOR/$, and <item>Multiplication/$, which do what the names suggest.
 <item>Circuits/$ that are either adjacent or connected with <item>Wire Plate/$ can transfer redstone values other than the vanilla 0-15 integers, including values up to 1 billion, decimals, and negative numbers.

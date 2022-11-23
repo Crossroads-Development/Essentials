@@ -1,4 +1,5 @@
 Wrench
 essentials:wrench
+essentials:wrench
 The $(item)Wrench/$ is a normal adjustment tool used for Essentials and Crossroads.
 It does not have durability. Both mods will accept other mods' wrench tools in most cases.

@@ -1,6 +1,6 @@
 Item Shifter
 essentials:item_shifter
-essentials:item_shifter
+essentials:item_shifter,essentials:item_chute
 <item>Item Shifters/$ are a simple and cheap item transportation method that have 1 inventory slot, and eject any item out the front. They can eject items into an inventory if available, or into the world if not.
 A line of <item>Transport Chutes/$ can be attached to the front to allows ejecting items to an inventory several blocks away (default limit: 16).
 Handy for moving items cheaply and quickly, including upwards.
