@@ -12,5 +12,8 @@
 			"item": "essentials:linking_tool",
 			"text": "The <item>Linking Tool/$ is used by a few machines to connect inputs and outputs. Right click on the input, then the output to create a link.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:linking_tool" : 0
+	}
 }

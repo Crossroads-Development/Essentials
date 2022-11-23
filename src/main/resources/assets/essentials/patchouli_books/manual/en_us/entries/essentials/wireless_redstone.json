@@ -16,5 +16,9 @@
 			"type": "patchouli:text",
 			"text": "<item>/$.$(br2)A <item>receiver/$ can only be linked to one <item>transmitter/$ at a time.$(br2)<item>Wireless transmitters/receivers/$ can be right-clicked with dyes to color code them.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:redstone_transmitter" : 0,
+		"essentials:redstone_receiver" : 0
+	}
 }

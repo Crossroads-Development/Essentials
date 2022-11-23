@@ -12,5 +12,8 @@
 			"item": "essentials:analog_lamp",
 			"text": "The <item>Analog Lamp/$ is a normal Redstone Lamp except, instead of always emitting light level 0 or 15, emits a light level equal to the incoming redstone signal strength (capped at 15).$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:analog_lamp" : 0
+	}
 }

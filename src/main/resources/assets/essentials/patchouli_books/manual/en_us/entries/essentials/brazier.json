@@ -20,5 +20,8 @@
 			"type": "patchouli:text",
 			"text": "Soul sand prevents the spawning of witches and endermen teleportation in a large area (default 32 block radius). This is useful for mob farms.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:brazier" : 0
+	}
 }

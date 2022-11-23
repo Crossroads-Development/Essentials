@@ -33,5 +33,8 @@
 			"type": "patchouli:text",
 			"text": "pulled from the top chest. On the right, all items will move from the chest into the hopper, but only cobble will be pushed by the hopper into the lower chest. <item>Hopper Filter/$ can also be oriented sideways.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:hopper_filter" : 0
+	}
 }

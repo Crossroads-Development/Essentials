@@ -33,5 +33,9 @@
 			],
 			"text": "This <item>Sticky Multi-Piston/$ is extended out 3 blocks, of a possible 15.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:multi_piston" : 0,
+		"essentials:multi_piston_sticky" : 0
+	}
 }

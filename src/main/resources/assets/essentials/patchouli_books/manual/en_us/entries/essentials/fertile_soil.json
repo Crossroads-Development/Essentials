@@ -20,5 +20,20 @@
 			"type": "patchouli:text",
 			"text": "can sprout at any light level, as if on mycelium. Growing large spruce trees using <item>Fertile Soil/$ has the side-effect of replacing the <item>Fertile Soil/$ with podzol as if it were normal dirt.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:fertile_soil_wheat" : 0,
+		"essentials:fertile_soil_berry" : 0,
+		"essentials:fertile_soil_jungle" : 0,
+		"essentials:fertile_soil_acacia" : 0,
+		"essentials:fertile_soil_potato" : 0,
+		"essentials:fertile_soil_oak" : 0,
+		"essentials:fertile_soil_red_mushroom" : 0,
+		"essentials:fertile_soil_brown_mushroom" : 0,
+		"essentials:fertile_soil_dark_oak" : 0,
+		"essentials:fertile_soil_carrot" : 0,
+		"essentials:fertile_soil_netherwart" : 0,
+		"essentials:fertile_soil_beetroot" : 0,
+		"essentials:fertile_soil_birch" : 0
+	}
 }

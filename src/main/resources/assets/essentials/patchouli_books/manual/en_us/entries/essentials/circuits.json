@@ -99,7 +99,11 @@
 		},
 		{
 			"type": "patchouli:text",
-			"text": "A computer connected to the input of a <item>Wire Splice Plate/$ sees it as a 'circuit_emitter' peripheral, which has the method setCircuitOutput(float newSignal) to emit a circuit signal. $(br2)"
+			"text": "A computer connected to the input of a <item>Wire Splice Plate/$ sees it as a 'circuit_emitter' peripheral, which has the method setCircuitOutput(double newSignal) to emit a circuit signal.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:circuit_wrench" : 0,
+		"essentials:wire_circuit" : 0
+	}
 }
