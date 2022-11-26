@@ -20,5 +20,9 @@
 			"type": "patchouli:text",
 			"text": "The <item>Fluid Splitter/$ is controlled by a redstone signal to control the ratio. It sends (redstone strength)/15 of fluid to the non-blue colored output side, and the rest to the blue colored output side.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:basic_fluid_splitter" : 0,
+		"essentials:fluid_splitter" : 0
+	}
 }

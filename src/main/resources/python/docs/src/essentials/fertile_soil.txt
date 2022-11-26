@@ -1,5 +1,6 @@
 Fertile Soil
 essentials:fertile_soil_wheat
+essentials:fertile_soil_wheat,essentials:fertile_soil_berry,essentials:fertile_soil_jungle,essentials:fertile_soil_acacia,essentials:fertile_soil_spruce,essentials:fertile_soil_potato,essentials:fertile_soil_oak,essentials:fertile_soil_red_mushroom,essentials:fertile_soil_brown_mushroom,essentials:fertile_soil_dark_oak,essentials:fertile_soil_carrot,essentials:fertile_soil_netherwart,essentials:fertile_soil_beetroot,essentials:fertile_soil_birch
 <item>Fertile Soil/$ is an aid to farming. It has 13 variants, for wheat, carrots, potatoes, beetroot, netherwart, the 6 saplings, and both mushrooms. Crops can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.
 At random intervals, if there is nothing growing on top of <item>Fertile Soil/$, it plants the crop corresponding to its type on itself for free, saving the trouble of replanting and enabling the automation of farming without villagers.
 Crops will only sprout in light level 8 or higher (same light level they need to not break normally). Mushrooms can sprout at any light level, as if on mycelium. Growing large spruce trees using <item>Fertile Soil/$ has the side-effect of replacing the <item>Fertile Soil/$ with podzol as if it were normal dirt.

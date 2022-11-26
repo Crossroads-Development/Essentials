@@ -1,0 +1,6 @@
+Animal Feed
+essentials:animal_feed
+essentials:animal_feed
+<item>Animal Feed/$ is an animal breeding item that works on all types of livestock (cows, sheep, pigs, wolves, etc.).
+It can also be used by dispensers.
+It makes fully automated animal farms possible.

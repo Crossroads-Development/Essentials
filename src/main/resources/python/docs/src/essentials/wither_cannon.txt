@@ -1,0 +1,5 @@
+Wither Cannon
+essentials:wither_cannon
+essentials:wither_cannon
+The <item>Wither Cannon/$ is a redstone block like a dropper that shoots an exploding wither skeleton skull when powered in the direction it's pointed.
+The block itself is blast resistant. It's a safer alternative to a live wither for block breaking machines like quarries, treefarms, and cobblegens.

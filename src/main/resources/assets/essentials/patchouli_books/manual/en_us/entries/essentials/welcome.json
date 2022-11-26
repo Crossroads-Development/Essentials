@@ -21,5 +21,8 @@
 			"anchor": "crossroads",
 			"text": "Crossroads is another mod by the same developer- if Crossroads is installed, it will also be documented in this book. Crossroads is a much larger steampunk mod designed to have interesting, tricky, and rewarding automation. It also has a powerful lategame and is highly configurable.$(br2)$(l:https://www.curseforge.com/minecraft/mc-mods/crossroads-mc)Why not give it a try?/$$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"minecraft:paper" : 0
+	}
 }

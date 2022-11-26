@@ -16,5 +16,8 @@
 			"type": "patchouli:text",
 			"text": "fluids to an inventory several blocks away (default limit: 16).$(br2)<item>Fluid shifters/$ are handy for moving fluids cheaply and quickly, including upwards.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:fluid_shifter" : 0
+	}
 }

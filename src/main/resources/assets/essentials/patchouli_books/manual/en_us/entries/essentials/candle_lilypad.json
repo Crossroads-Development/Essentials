@@ -2,11 +2,18 @@
 	"category": "essentials:essentials",
 	"name": "Candle Lilypad",
 	"icon": "essentials:candle_lilypad",
+	"sortnum": 0,
+	"priority": false,
 	"read_by_default": "true",
 	"pages": [
 		{
-			"type": "patchouli:text",
-			"text": "A $(item)Candle Lilypad/$ is a decorative block that functions as a lilypad while giving off level 14 light (torch brightness).$(br2)It's handy for lighting up farms, or for decoration."
+			"type": "patchouli:spotlight",
+			"title": "Candle Lilypad",
+			"item": "essentials:candle_lilypad",
+			"text": "A <item>Candle Lilypad/$ is a decorative block that functions as a lilypad while giving off level 14 light (torch brightness).$(br2)It's handy for lighting up farms, or for decoration.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:candle_lilypad" : 0
+	}
 }

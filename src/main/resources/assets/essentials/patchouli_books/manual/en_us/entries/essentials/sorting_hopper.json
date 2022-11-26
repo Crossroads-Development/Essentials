@@ -29,5 +29,8 @@
 			"type": "patchouli:text",
 			"text": "<item>$(l:essentials/hopper_filter)Hopper Filters/$, each <item>Sorting Hopper/$ will push any items matching the <item>$(l:essentials/hopper_filter)filter/$ into the chest, with any items that don't match being pulled by the hopper below it. Any items that matched none of the <item>$(l:essentials/hopper_filter)filters/$ ends up in the bottom hopper/chest.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:sorting_hopper" : 0
+	}
 }

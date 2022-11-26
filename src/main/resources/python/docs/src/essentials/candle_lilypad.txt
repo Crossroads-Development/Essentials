@@ -1,0 +1,5 @@
+Candle Lilypad
+essentials:candle_lilypad
+essentials:candle_lilypad
+A <item>Candle Lilypad/$ is a decorative block that functions as a lilypad while giving off level 14 light (torch brightness).
+It's handy for lighting up farms, or for decoration.

@@ -2,11 +2,22 @@
 	"category": "essentials:essentials",
 	"name": "Wither Cannon",
 	"icon": "essentials:wither_cannon",
+	"sortnum": 0,
+	"priority": false,
 	"read_by_default": "true",
 	"pages": [
 		{
+			"type": "patchouli:spotlight",
+			"title": "Wither Cannon",
+			"item": "essentials:wither_cannon",
+			"text": "The <item>Wither Cannon/$ is a redstone block like a dropper that shoots an exploding wither skeleton skull when powered in the direction it's pointed.$(br2)The block itself is blast resistant. It's a safer alternative to a live wither for block breaking machines like quarries, "
+		},
+		{
 			"type": "patchouli:text",
-			"text": "The $(item)Wither Cannon/$ is a redstone block like a dropper that shoots an exploding wither skeleton skull when powered in the direction it's pointed.$(br2)The block itself is blast resistant. It's a safer alternative to a live wither for block breaking machines like quarries, treefarms, and cobblegens."
+			"text": "treefarms, and cobblegens.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:wither_cannon" : 0
+	}
 }

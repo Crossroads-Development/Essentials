@@ -12,5 +12,8 @@
 			"item": "essentials:speed_hopper",
 			"text": "The <item>High-Throughput Hopper/$ acts the same as the <item>$(l:essentials/sorting_hopper)Sorting Hopper/$, except it can move up to a stack of items at a time.$(br2)"
 		}
-	]
+	],
+	"extra_recipe_mappings": {
+		"essentials:speed_hopper" : 0
+	}
 }

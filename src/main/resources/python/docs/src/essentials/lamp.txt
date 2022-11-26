@@ -1,3 +1,4 @@
 Analog Lamp
 essentials:analog_lamp
+essentials:analog_lamp
 The <item>Analog Lamp/$ is a normal Redstone Lamp except, instead of always emitting light level 0 or 15, emits a light level equal to the incoming redstone signal strength (capped at 15).
