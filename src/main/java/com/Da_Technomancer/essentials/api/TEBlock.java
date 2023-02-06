@@ -8,6 +8,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -22,9 +23,15 @@ public abstract class TEBlock extends BaseEntityBlock{
 	@Override
 	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean isMoving){
 		//Drop items from the inventory, if applicable
-		if(newState.getBlock() != state.getBlock() && world.getBlockEntity(pos) instanceof Container cont){
-			Containers.dropContents(world, pos, cont);
-			world.updateNeighbourForOutputSignal(pos, this);
+		if(newState.getBlock() != state.getBlock()){
+			BlockEntity te = world.getBlockEntity(pos);
+			if(te instanceof IItemStorage itemStorage){
+				itemStorage.dropItems(world, pos);
+				world.updateNeighbourForOutputSignal(pos, this);
+			}else if(te instanceof Container cont){
+				Containers.dropContents(world, pos, cont);
+				world.updateNeighbourForOutputSignal(pos, this);
+			}
 		}
 		super.onRemove(state, world, pos, newState, isMoving);
 	}

@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.api.BlockUtil;
+import com.Da_Technomancer.essentials.api.IItemStorage;
 import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.api.packets.SendNBTToClient;
 import com.Da_Technomancer.essentials.gui.container.SlottedChestContainer;
@@ -10,11 +11,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -28,7 +31,7 @@ import javax.annotation.Nullable;
 
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.slottedChest;
 
-public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver, MenuProvider{
+public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver, MenuProvider, IItemStorage{
 
 	public static final BlockEntityType<SlottedChestTileEntity> TYPE = ESTileEntity.createType(SlottedChestTileEntity::new, slottedChest);
 
@@ -67,6 +70,11 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 			}
 		}
 		BlockUtil.sendClientPacketAround(level, worldPosition, new SendNBTToClient(slotNBT, worldPosition));
+	}
+
+	@Override
+	public void dropItems(Level world, BlockPos pos){
+		Containers.dropContents(world, pos, iInv);
 	}
 
 	@Override

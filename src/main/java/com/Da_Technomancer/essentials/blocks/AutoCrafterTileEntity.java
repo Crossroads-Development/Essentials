@@ -1,6 +1,7 @@
 package com.Da_Technomancer.essentials.blocks;
 
 import com.Da_Technomancer.essentials.api.BlockUtil;
+import com.Da_Technomancer.essentials.api.IItemStorage;
 import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.api.packets.SendNBTToClient;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
@@ -21,6 +22,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,7 +40,7 @@ import java.util.Optional;
 
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.autoCrafter;
 
-public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, MenuProvider{
+public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, MenuProvider, IItemStorage{
 
 	public static final BlockEntityType<AutoCrafterTileEntity> TYPE = ESTileEntity.createType(AutoCrafterTileEntity::new, autoCrafter);
 
@@ -248,7 +250,8 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 		}
 	}
 
-	public void dropItems(){
+	@Override
+	public void dropItems(Level world, BlockPos pos){
 		for(int i = 0; i < 10; i++){
 			Containers.dropItemStack(level, worldPosition.getX(), worldPosition.getY(), worldPosition.getZ(), inv[i]);
 		}

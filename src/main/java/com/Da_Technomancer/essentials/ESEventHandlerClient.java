@@ -33,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent.InteractionKeyMappingTriggered;
-import net.minecraftforge.client.event.RenderLevelLastEvent;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -94,7 +94,10 @@ public class ESEventHandlerClient{
 
 	@SubscribeEvent
 	@SuppressWarnings("unused")
-	public static void renderRedsOutput(RenderLevelLastEvent e){
+	public static void renderRedsOutput(RenderLevelStageEvent e){
+		if(e.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES){
+			return;
+		}
 		LocalPlayer player = Minecraft.getInstance().player;
 		//If the player is holding a CircuitWrench (or subclass for addons)
 		if(player != null && (player.getMainHandItem().getItem() instanceof CircuitWrench || player.getOffhandItem().getItem() instanceof CircuitWrench)){

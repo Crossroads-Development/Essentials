@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 /**
  * For placement on tile entities which act as item containers
  */
-public interface IItemContainer extends WorldlyContainer{
+public interface IItemContainer extends WorldlyContainer, IItemStorage{
 
 	default int getMaxStackSize(int slot){
 		return getMaxStackSize();
