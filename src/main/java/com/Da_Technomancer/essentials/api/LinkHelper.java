@@ -113,7 +113,9 @@ public class LinkHelper{
 	public void unlinkAllEndpoints(){
 		BlockPos selfPos = te.getTE().getBlockPos();
 		Level world = te.getTE().getLevel();
-		for(BlockPos relPos : linked){
+		Set<BlockPos> linkedCopy = new HashSet<>(linked);
+		linked.clear();
+		for(BlockPos relPos : linkedCopy){
 			BlockPos endPos = relPos.offset(selfPos);
 			BlockEntity endTe = world.getBlockEntity(endPos);
 			if(endTe instanceof ILinkTE){

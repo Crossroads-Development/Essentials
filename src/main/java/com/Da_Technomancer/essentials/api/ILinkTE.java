@@ -57,7 +57,7 @@ public interface ILinkTE extends ILongReceiver{
 
 	/**
 	 * Called on the endpoint of a link when the link is removed.
-	 * Called after removeLinkEnd, if applicable. The other method will still be called even if this ILinkTE no longer exists.
+	 * Called after removeLinkSource, if applicable. The other method will still be called even if this ILinkTE no longer exists.
 	 * @param src The absolute position that this was linked to
 	 */
 	default void removeLinkEnd(BlockPos src){
