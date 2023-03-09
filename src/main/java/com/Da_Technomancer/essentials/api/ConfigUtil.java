@@ -21,7 +21,7 @@ public class ConfigUtil{
 	public static final Style TT_QUIP = Style.EMPTY.applyFormat(ChatFormatting.AQUA).withItalic(true);
 
 	public static final ToolAction WRENCH_ACTION = ToolAction.get("wrench");//No single standard for wrench tool action name has emerged yet
-	private static final TagKey<Item> WRENCH = ItemTags.create(new ResourceLocation("forge:wrench"));
+	private static final TagKey<Item> WRENCH = ItemTags.create(new ResourceLocation("forge:tools/wrench"));
 
 	/**
 	 * @param stack The stack to test
