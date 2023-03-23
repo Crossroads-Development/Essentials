@@ -1,5 +1,8 @@
 # Directories
 /.gradle/
+/.idea/
+/.metadata/
+/.vscode/
 /build/
 /eclipse
 /run/
@@ -9,8 +12,6 @@
 /build/
 /config/
 crash-reports/
-/.idea/
-/.metadata/
 /libs/
 /saves/
 /resourcepacks/
