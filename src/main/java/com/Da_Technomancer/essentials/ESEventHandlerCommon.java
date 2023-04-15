@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials;
 
-import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.blocks.BrazierTileEntity;
@@ -8,6 +7,8 @@ import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.items.ESItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -15,12 +16,9 @@ import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -98,13 +96,13 @@ public class ESEventHandlerCommon{
 	@SubscribeEvent
 	public static void blockWitchSpawns(LivingSpawnEvent.CheckSpawn e){
 		//Prevents witch spawning if a nearby brazier has soulsand
-		if(e.getEntity() instanceof Witch && e.getLevel() instanceof Level){
+		if(e.getEntity() instanceof Witch && e.getLevel() instanceof ServerLevel world){
 			int RANGE = ESConfig.brazierRange.get();
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
-			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange((Level) e.getLevel(), e.getEntity().blockPosition(), RANGE)){
-				Level w;
-				if(te instanceof BrazierTileEntity && te.getBlockPos().distToCenterSqr(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED && (w = te.getLevel()) != null){
-					BlockState state = w.getBlockState(te.getBlockPos());
+			String dimKey = world.dimension().location().toString();
+			for(BlockPos otherPos : BrazierTileEntity.BRAZIER_POSITIONS.get(dimKey)){
+				if(otherPos.distToCenterSqr(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED){
+					BlockState state = world.getBlockState(otherPos);
 					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
 						e.setResult(Event.Result.DENY);
 						return;
@@ -117,15 +115,15 @@ public class ESEventHandlerCommon{
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void preventTeleport(EntityTeleportEvent e){
-		if(e.getEntity() instanceof EnderMan){
+		if(e.getEntity() instanceof EnderMan enderman && enderman.level instanceof ServerLevel world){
 			int RANGE = ESConfig.brazierRange.get();
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
-			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange(e.getEntity().getCommandSenderWorld(), e.getEntity().blockPosition(), RANGE)){
-				Vec3 entPos = e.getEntity().position();
-				if(te instanceof BrazierTileEntity && te.getBlockPos().distToCenterSqr(entPos) <= RANGE_SQUARED && te.getLevel() != null){
-					BlockState state = te.getBlockState();
+			String dimKey = world.dimension().location().toString();
+			for(BlockPos otherPos : BrazierTileEntity.BRAZIER_POSITIONS.get(dimKey)){
+				if(otherPos.distToCenterSqr(e.getPrevX(), e.getPrevY(), e.getPrevZ()) <= RANGE_SQUARED){
+					BlockState state = world.getBlockState(otherPos);
 					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
-						e.setCanceled(true);
+						e.setResult(Event.Result.DENY);
 						return;
 					}
 				}
