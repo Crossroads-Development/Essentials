@@ -30,6 +30,7 @@ import net.minecraftforge.network.IContainerFactory;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
+import java.util.HashSet;
 import java.util.Map;
 
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.toRegister;
@@ -100,12 +101,15 @@ public class ESEventHandlerCommon{
 			int RANGE = ESConfig.brazierRange.get();
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
 			String dimKey = world.dimension().location().toString();
-			for(BlockPos otherPos : BrazierTileEntity.BRAZIER_POSITIONS.get(dimKey)){
-				if(otherPos.distToCenterSqr(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED){
-					BlockState state = world.getBlockState(otherPos);
-					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
-						e.setResult(Event.Result.DENY);
-						return;
+			HashSet<BlockPos> brazierPositions = BrazierTileEntity.BRAZIER_POSITIONS.get(dimKey);
+			if(brazierPositions != null){
+				for(BlockPos otherPos : brazierPositions){
+					if(otherPos.distToCenterSqr(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED){
+						BlockState state = world.getBlockState(otherPos);
+						if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
+							e.setResult(Event.Result.DENY);
+							return;
+						}
 					}
 				}
 			}
@@ -119,12 +123,15 @@ public class ESEventHandlerCommon{
 			int RANGE = ESConfig.brazierRange.get();
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
 			String dimKey = world.dimension().location().toString();
-			for(BlockPos otherPos : BrazierTileEntity.BRAZIER_POSITIONS.get(dimKey)){
-				if(otherPos.distToCenterSqr(e.getPrevX(), e.getPrevY(), e.getPrevZ()) <= RANGE_SQUARED){
-					BlockState state = world.getBlockState(otherPos);
-					if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
-						e.setResult(Event.Result.DENY);
-						return;
+			HashSet<BlockPos> brazierPositions = BrazierTileEntity.BRAZIER_POSITIONS.get(dimKey);
+			if(brazierPositions != null){
+				for(BlockPos otherPos : brazierPositions){
+					if(otherPos.distToCenterSqr(e.getPrevX(), e.getPrevY(), e.getPrevZ()) <= RANGE_SQUARED){
+						BlockState state = world.getBlockState(otherPos);
+						if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
+							e.setResult(Event.Result.DENY);
+							return;
+						}
 					}
 				}
 			}
