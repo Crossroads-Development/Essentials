@@ -1,0 +1,36 @@
+{
+	"type": "forge:conditional",
+	"recipes": [
+		{
+			"conditions": [
+				{
+					"type": "forge:not",
+					"value": {
+						"type": "forge:tag_empty",
+						"tag": "forge:ingots/bronze"
+					}
+				}
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shaped",
+				"result": {
+					"item": "essentials:bricks_bronze",
+					"count": 8
+				},
+				"pattern": [
+					"***",
+					"*I*",
+					"***"
+				],
+				"key": {
+					"*": {
+						"tag": "minecraft:stone_bricks"
+					},
+					"I": {
+						"tag": "forge:ingots/bronze"
+					}
+				}
+			}
+		}
+	]
+}
