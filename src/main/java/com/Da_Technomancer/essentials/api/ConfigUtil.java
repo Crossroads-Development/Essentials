@@ -51,7 +51,7 @@ public class ConfigUtil{
 				if(absValue == 0){
 					return "0";
 				}
-				if(absValue < 1000 && absValue >= 0.0005F){
+				if(absValue < 1_000_000 && absValue >= 0.001F){
 					return trimTrail(Math.round(value * 1000F) / 1000F);
 				}
 
@@ -61,7 +61,7 @@ public class ConfigUtil{
 				if(absoValue == 0){
 					return "0";
 				}
-				if(absoValue < 1000 && absoValue >= 0.0005F){
+				if(absoValue < 1000 && absoValue >= 0.001F){
 					return trimTrail(Math.round(value * 1000F) / 1000F);
 				}
 

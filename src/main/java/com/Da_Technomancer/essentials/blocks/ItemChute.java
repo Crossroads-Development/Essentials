@@ -59,7 +59,7 @@ public class ItemChute extends Block{
 	@Override
 	public void appendHoverText(ItemStack stack, @Nullable BlockGetter world, List<Component> tooltip, TooltipFlag advanced){
 		tooltip.add(Component.translatable("tt.essentials.item_chute.desc"));
-		tooltip.add(Component.translatable("tt.essentials.item_chute.decor"));
+		tooltip.add(Component.translatable("tt.essentials.decoration"));
 	}
 
 	@Override

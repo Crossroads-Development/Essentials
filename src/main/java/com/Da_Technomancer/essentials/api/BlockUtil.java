@@ -72,7 +72,9 @@ public class BlockUtil{
 	 * @param centerPos The position to measure from
 	 * @param range The range, in blocks, where all loaded block entities within range will definitely be returned
 	 * @return A collection containing all relevant block entities, and possibly non-relevant ones as well
+	 * @deprecated Very laggy in some cases; find alternative solutions
 	 */
+	@Deprecated
 	public static Collection<BlockEntity> getAllLoadedBlockEntitiesRange(Level world, BlockPos centerPos, int range){
 		ArrayList<BlockEntity> blockEntities = new ArrayList<>();
 		//Each chunk has a list of loaded entities
