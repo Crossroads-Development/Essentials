@@ -88,6 +88,11 @@ public class ESBlocks{
 	public static PulseCircuit pulseCircuitFalling;
 	public static PulseCircuit pulseCircuitDual;
 	public static DCounterCircuit dCounterCircuit;
+	public static DecorativeBlock bricksIron;
+	public static DecorativeBlock bricksGold;
+	public static DecorativeBlock bricksTin;
+	public static DecorativeBlock bricksBronze;
+	public static DecorativeBlock bricksCopshowium;
 
 	public static final HashMap<String, Block> toRegister = new HashMap<>();
 
@@ -149,6 +154,11 @@ public class ESBlocks{
 		analogLamp = new AnalogLamp();
 		redstoneTransmitter = new RedstoneTransmitter();
 		redstoneReceiver = new RedstoneReceiver();
+		bricksIron = new DecorativeBlock("bricks_iron", getMetalProperty());
+		bricksGold = new DecorativeBlock("bricks_gold", getMetalProperty());
+		bricksTin = new DecorativeBlock("bricks_tin", getMetalProperty());
+		bricksBronze = new DecorativeBlock("bricks_bronze", getMetalProperty());
+		bricksCopshowium = new DecorativeBlock("bricks_copshowium", getMetalProperty());
 
 		//Circuits
 		wireCircuit = new WireCircuit();

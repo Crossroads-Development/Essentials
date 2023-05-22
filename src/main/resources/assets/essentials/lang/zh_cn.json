@@ -197,7 +197,7 @@
 	"tt.essentials.brazier.purpose": "盛放水时可防止掉落伤害，盛放熔岩/煤/荧石时可以发光，盛放熔岩时还可以摧毁掉落的物品，盛放灵魂沙时可以防止女巫生成和末影传送",
 	"tt.essentials.candle_lilypad.desc": "一个发光的睡莲",
 	"tt.essentials.item_chute.desc": "通过一列的运输槽可延长物品运输器的输出距离",
-	"tt.essentials.item_chute.decor": "可安全地用于装饰",
+	"tt.essentials.decoration": "可安全地用于装饰",
 	"tt.essentials.item_shifter.desc": "将内含的物品向正面排出，运输到容器或掉在地上",
 	"tt.essentials.item_shifter.range": "能将物品“推”过一列最多%1$d个运输槽",
 	"tt.essentials.analog_lamp.desc": "发出亮度等于红石信号强度的光",

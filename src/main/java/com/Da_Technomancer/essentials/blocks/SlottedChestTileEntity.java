@@ -119,12 +119,19 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 	}
 
 	public final SlottedInv iInv = new SlottedInv(inv, lockedInv, this);
+	private final LazyOptional<IItemHandler> invOptional = LazyOptional.of(InventoryHandler::new);
+
+	@Override
+	public void setRemoved(){
+		super.setRemoved();
+		invOptional.invalidate();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
 		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return LazyOptional.of(() -> (T) new InventoryHandler());
+			return (LazyOptional<T>) invOptional;
 		}
 
 		return super.getCapability(cap, facing);
@@ -182,6 +189,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 
 			ItemStack out = stack.copy();
 			out.shrink(change);
+			setChanged();
 			return stack.getCount() == change ? ItemStack.EMPTY : out;
 		}
 
@@ -197,6 +205,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 
 			if(!simulate){
 				inv[slot].shrink(change);
+				setChanged();
 			}
 
 			return change == 0 ? ItemStack.EMPTY : out;
@@ -246,7 +255,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 			if(index >= inv.length || inv[index].isEmpty()){
 				return ItemStack.EMPTY;
 			}
-
+			setChanged();
 			return inv[index].split(count);
 		}
 
@@ -264,6 +273,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 		@Override
 		public void setItem(int index, ItemStack stack){
 			if(index < inv.length){
+				setChanged();
 				inv[index] = stack;
 				if(!stack.isEmpty()){
 					lockedInv[index] = stack.copy();

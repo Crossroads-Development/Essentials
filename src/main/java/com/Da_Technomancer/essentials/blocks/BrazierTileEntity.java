@@ -6,6 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -18,10 +19,36 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.brazier;
 
 public class BrazierTileEntity extends BlockEntity implements ITickableTileEntity{
+
+	/**
+	 * Dirty optimization as a faster way of finding all braziers within range of events. Server-side only.
+	 * When brazier tile entities load, they add their positions. When they unload, they remove them.
+	 * A position being in this does not guarantee there is a brazier at this position, but all loaded braziers are in this set.
+	 */
+	public static final HashMap<String, HashSet<BlockPos>> BRAZIER_POSITIONS = new HashMap<>();
+
+	public static void addBrazierPosition(ServerLevel world, BlockPos pos){
+		String dimKey = world.dimension().location().toString();
+		if(!BRAZIER_POSITIONS.containsKey(dimKey)){
+			BRAZIER_POSITIONS.put(dimKey, new HashSet<>());
+		}
+		HashSet<BlockPos> positions = BRAZIER_POSITIONS.get(dimKey);
+		positions.add(pos.immutable());
+	}
+
+	public static void removeBrazierPosition(ServerLevel world, BlockPos pos){
+		String dimKey = world.dimension().location().toString();
+		if(BRAZIER_POSITIONS.containsKey(dimKey)){
+			HashSet<BlockPos> positions = BRAZIER_POSITIONS.get(dimKey);
+			positions.remove(pos.immutable());
+		}
+	}
 
 	public static final BlockEntityType<BrazierTileEntity> TYPE = ESTileEntity.createType(BrazierTileEntity::new, brazier);
 
@@ -50,6 +77,22 @@ public class BrazierTileEntity extends BlockEntity implements ITickableTileEntit
 					world.addParticle(ParticleTypes.POOF, worldPosition.getX() + .25 + (.5 * Math.random()), worldPosition.getY() + 1 + (Math.random() * .25D), worldPosition.getZ() + .25 + (.5 * Math.random()), 0, -0, 0);
 					break;
 			}
+		}
+	}
+
+	@Override
+	public void onLoad(){
+		super.onLoad();
+		if(!level.isClientSide){
+			addBrazierPosition((ServerLevel) level, worldPosition);
+		}
+	}
+
+	@Override
+	public void setRemoved(){
+		super.setRemoved();
+		if(!level.isClientSide){
+			removeBrazierPosition((ServerLevel) level, worldPosition);
 		}
 	}
 

@@ -1,0 +1,36 @@
+{
+	"type": "forge:conditional",
+	"recipes": [
+		{
+			"conditions": [
+				{
+					"type": "forge:not",
+					"value": {
+						"type": "forge:tag_empty",
+						"tag": "crossroads:ingots/copshowium"
+					}
+				}
+			],
+			"recipe": {
+				"type": "minecraft:crafting_shaped",
+				"result": {
+					"item": "essentials:bricks_copshowium",
+					"count": 8
+				},
+				"pattern": [
+					"***",
+					"*I*",
+					"***"
+				],
+				"key": {
+					"*": {
+						"tag": "minecraft:stone_bricks"
+					},
+					"I": {
+						"tag": "crossroads:ingots/copshowium"
+					}
+				}
+			}
+		}
+	]
+}
