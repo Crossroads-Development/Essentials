@@ -14,7 +14,6 @@ import com.Da_Technomancer.essentials.items.ESItems;
 import com.Da_Technomancer.essentials.render.CannonSkullRenderer;
 import com.Da_Technomancer.essentials.render.TESRRegistry;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -34,12 +33,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent.InteractionKeyMappingTriggered;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.IContainerFactory;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
+import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 
@@ -75,13 +74,6 @@ public class ESEventHandlerClient{
 		private static <T extends AbstractContainerMenu> void registerCon(IContainerFactory<T> cons, MenuScreens.ScreenConstructor<T, AbstractContainerScreen<T>> screenFactory, String id, RegisterEvent.RegisterHelper<MenuType<?>> helper){
 			MenuType<T> contType = ESEventHandlerCommon.ESModEventsCommon.registerConType(cons, id, helper);
 			MenuScreens.register(contType, screenFactory);
-		}
-
-		@SubscribeEvent
-		@SuppressWarnings("unused")
-		public static void onTextureStitch(TextureStitchEvent.Pre event){
-			//Add textures used in TESRs
-			//Currently none used
 		}
 
 		@SuppressWarnings("unused")
@@ -128,7 +120,7 @@ public class ESEventHandlerClient{
 		Matrix4f matrix4f = matrix.last().pose();
 		Font fontrenderer = Minecraft.getInstance().font;
 		float xSt = -fontrenderer.width(nameplate) / 2F;
-		fontrenderer.drawInBatch(nameplate, xSt, 0, -1, false, matrix4f, buffer, false, 0, 0xf000f0);
+		fontrenderer.drawInBatch(nameplate, xSt, 0, -1, false, matrix4f, buffer, Font.DisplayMode.NORMAL, 0, 0xf000f0);
 		buffer.endBatch();
 		matrix.popPose();
 	}

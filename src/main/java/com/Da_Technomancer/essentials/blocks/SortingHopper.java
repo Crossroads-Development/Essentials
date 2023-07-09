@@ -65,8 +65,7 @@ public class SortingHopper extends TEBlock implements IReadable{
 	protected SortingHopper(){
 		this(ESBlocks.getMetalProperty());
 		String name = "sorting_hopper";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Override

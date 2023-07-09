@@ -168,9 +168,9 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 					ItemStack output;
 					if(recipe != null){
 						//If the recipe ID is nonnull, then the fake crafting inv was made with the empty manual input slots, and we should use the generic output
-						output = iRecipe.getResultItem();
+						output = iRecipe.getResultItem(level.registryAccess());
 					}else{
-						output = iRecipe.assemble(fakeInv);
+						output = iRecipe.assemble(fakeInv, level.registryAccess());
 					}
 
 					//Check if the output can fit

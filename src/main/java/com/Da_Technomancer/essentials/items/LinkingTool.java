@@ -17,9 +17,9 @@ import java.util.List;
 public class LinkingTool extends Item{
 
 	public LinkingTool(){
-		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS));
+		super(ESItems.baseItemProperties().stacksTo(1));
 		String name = "linking_tool";
-		ESItems.toRegister.put(name, this);
+		ESItems.queueForRegister(name, this);
 	}
 
 

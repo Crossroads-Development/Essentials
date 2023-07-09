@@ -19,9 +19,9 @@ import java.util.List;
 public class AnimalFeed extends Item{
 
 	protected AnimalFeed(){
-		super(new Properties().tab(ESItems.TAB_ESSENTIALS));
+		super(ESItems.baseItemProperties());
 		String name = "animal_feed";
-		ESItems.toRegister.put(name, this);
+		ESItems.queueForRegister(name, this);
 		DispenserBlock.registerBehavior(this, new Dispense());
 	}
 

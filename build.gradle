@@ -92,11 +92,14 @@ dependencies {
 	//Run with the full versions
 	runtimeOnly fg.deobf("mezz.jei:jei-$jei_mc_version-forge:$jei_version")
 	//Patchouli
-	compileOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
-	runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version"))
+	compileOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version-FORGE"))
+	runtimeOnly(fg.deobf("vazkii.patchouli:Patchouli:$patchouli_version-FORGE"))
 	//CC Tweaked
-	compileOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
+//	compileOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
 //	runtimeOnly(fg.deobf("org.squiddev:cc-tweaked-${mc_version}:${cctweaked_version}"))
+	compileOnly("cc.tweaked:cc-tweaked-${mc_version}-core-api:${cctweaked_version}")
+	compileOnly(fg.deobf("cc.tweaked:cc-tweaked-${mc_version}-forge-api:${cctweaked_version}"))
+//	runtimeOnly(fg.deobf("cc.tweaked:cc-tweaked-${mc_version}-forge:${cctweaked_version}"))
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

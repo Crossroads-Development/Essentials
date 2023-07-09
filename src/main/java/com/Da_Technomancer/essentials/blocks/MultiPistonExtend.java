@@ -31,7 +31,7 @@ public class MultiPistonExtend extends Block{
 		this.sticky = sticky;
 		String name = "multi_piston_extend" + (sticky ? "_sticky" : "");
 		registerDefaultState(defaultBlockState().setValue(ESProperties.AXIS, Direction.Axis.Y).setValue(ESProperties.HEAD, 0));
-		ESBlocks.toRegister.put(name, this);
+		ESBlocks.queueForRegister(name, this, false);
 	}
 
 	@Nullable

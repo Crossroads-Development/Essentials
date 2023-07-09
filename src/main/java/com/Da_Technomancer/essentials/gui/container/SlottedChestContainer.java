@@ -7,7 +7,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -411,7 +411,7 @@ public class SlottedChestContainer extends AbstractContainerMenu{
 			CrashReport crashreport = CrashReport.forThrowable(exception, "Container click");
 			CrashReportCategory crashreportcategory = crashreport.addCategory("Click info");
 			crashreportcategory.setDetail("Menu Type", () -> {
-				return getType() != null ? Registry.MENU.getKey(getType()).toString() : "<no type>";
+				return getType() != null ? BuiltInRegistries.MENU.getKey(getType()).toString() : "<no type>";
 			});
 			crashreportcategory.setDetail("Menu Class", () -> {
 				return getClass().getCanonicalName();

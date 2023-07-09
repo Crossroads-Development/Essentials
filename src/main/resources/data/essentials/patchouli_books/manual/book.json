@@ -6,7 +6,6 @@
 	"model": "essentials:guide_book",
 	"dont_generate_book": "true",
 	"custom_book_item": "essentials:guide_book",
-	"creative_tab": "essentials",
 	"show_progress": "false",
 	"advancement_namespaces": ["crossroads"],
 	"use_resource_pack": "true",

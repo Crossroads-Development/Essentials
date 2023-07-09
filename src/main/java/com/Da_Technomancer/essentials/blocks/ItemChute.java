@@ -30,8 +30,7 @@ public class ItemChute extends Block{
 	protected ItemChute(){
 		super(ESBlocks.getMetalProperty());
 		String name = "item_chute";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Nullable

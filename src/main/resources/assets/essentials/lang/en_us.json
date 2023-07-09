@@ -221,7 +221,7 @@
 	"book.essentials.subtext": "Guide to Essentials",
 	"book.essentials.landing": "Welcome to Essentials!$(br2)This book contains documentation on Essentials, and also Crossroads if it is installed.",
 
-	"itemGroup.essentials": "Essentials",
+	"item_group.essentials": "Essentials",
 
 	"tt.essentials.jei.recipe_transfer.fail": "Failed to transfer recipe"
 }

@@ -8,20 +8,23 @@ import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.Witch;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,8 +35,7 @@ import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.HashSet;
 import java.util.Map;
-
-import static com.Da_Technomancer.essentials.blocks.ESBlocks.toRegister;
+import java.util.function.Supplier;
 
 public class ESEventHandlerCommon{
 
@@ -49,22 +51,10 @@ public class ESEventHandlerCommon{
 		@SuppressWarnings("unused")
 		@SubscribeEvent
 		public static void register(RegisterEvent e){
-			e.register(ForgeRegistries.Keys.BLOCKS, helper -> {
-				ESBlocks.init();
-				for(Map.Entry<String, Block> block : toRegister.entrySet()){
-					helper.register(block.getKey(), block.getValue());
-				}
-				toRegister.clear();
-			});
-		
-			e.register(ForgeRegistries.Keys.ITEMS, helper -> {
-				ESItems.init();
-				for(Map.Entry<String, Item> item : ESItems.toRegister.entrySet()){
-					helper.register(item.getKey(), item.getValue());
-				}
-				ESItems.toRegister.clear();
-			});
-		
+			e.register(ForgeRegistries.Keys.BLOCKS, ESBlocks::init);
+
+			e.register(ForgeRegistries.Keys.ITEMS, ESItems::init);
+
 			e.register(ForgeRegistries.Keys.ENTITY_TYPES, helper -> {
 				helper.register("cannon_skull", WitherCannon.CannonSkull.ENT_TYPE);
 			});
@@ -78,6 +68,22 @@ public class ESEventHandlerCommon{
 			});
 		}
 
+		@SuppressWarnings("unused")
+		@SubscribeEvent
+		public static void registerCreativeTabs(CreativeModeTabEvent.Register e){
+			ESItems.ESSENTIALS_TAB = e.registerCreativeModeTab(new ResourceLocation(Essentials.MODID, "core"), builder -> builder
+					.title(Component.translatable("item_group." + Essentials.MODID))
+					.icon(() -> new ItemStack(ESItems.itemCandleLilypad))
+					.displayItems((params, output) -> {
+								for(Supplier<ItemStack[]> itemsToAdd : ESItems.creativeTabItems){
+									for(ItemStack itemToAdd : itemsToAdd.get()){
+										output.accept(itemToAdd);
+									}
+								}
+							}
+					));
+		}
+
 		/**
 		 * Creates and registers a container type
 		 * @param cons Container factory
@@ -87,7 +93,7 @@ public class ESEventHandlerCommon{
 		 * @return The newly created type
 		 */
 		protected static <T extends AbstractContainerMenu> MenuType<T> registerConType(IContainerFactory<T> cons, String id, RegisterEvent.RegisterHelper<MenuType<?>> helper){
-			MenuType<T> contType = new MenuType<>(cons);
+			MenuType<T> contType = new MenuType<>(cons, FeatureFlags.VANILLA_SET);
 			helper.register(id, contType);
 			return contType;
 		}
@@ -95,7 +101,7 @@ public class ESEventHandlerCommon{
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public static void blockWitchSpawns(LivingSpawnEvent.CheckSpawn e){
+	public static void blockWitchSpawns(MobSpawnEvent.FinalizeSpawn e){
 		//Prevents witch spawning if a nearby brazier has soulsand
 		if(e.getEntity() instanceof Witch && e.getLevel() instanceof ServerLevel world){
 			int RANGE = ESConfig.brazierRange.get();
@@ -107,7 +113,7 @@ public class ESEventHandlerCommon{
 					if(otherPos.distToCenterSqr(e.getX(), e.getY(), e.getZ()) <= RANGE_SQUARED){
 						BlockState state = world.getBlockState(otherPos);
 						if(state.getBlock() == ESBlocks.brazier && state.getValue(ESProperties.BRAZIER_CONTENTS) == 6){
-							e.setResult(Event.Result.DENY);
+							e.setSpawnCancelled(true);
 							return;
 						}
 					}

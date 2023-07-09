@@ -32,8 +32,7 @@ public class HopperFilter extends TEBlock{
 	protected HopperFilter(){
 		super(ESBlocks.getRockProperty());
 		String name = "hopper_filter";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Override

@@ -28,8 +28,7 @@ public class SlottedChest extends TEBlock implements IReadable{
 	protected SlottedChest(){
 		super(Properties.of(Material.WOOD).strength(2).sound(SoundType.WOOD));
 		String name = "slotted_chest";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Override

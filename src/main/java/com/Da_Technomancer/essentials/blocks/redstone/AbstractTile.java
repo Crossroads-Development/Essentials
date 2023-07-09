@@ -24,9 +24,12 @@ public abstract class AbstractTile extends BaseEntityBlock implements IWireConne
 	private static final Properties PROP = Properties.of(Material.DECORATION).strength(0, 0).sound(SoundType.WOOD);
 
 	protected AbstractTile(String name){
+		this(name, false);
+	}
+
+	protected AbstractTile(String name, boolean hasItemForm){
 		super(PROP);
-		ESBlocks.toRegister.put(name, this);
-		//Don't register an item form
+		ESBlocks.queueForRegister(name, this, hasItemForm);
 	}
 
 	private static final VoxelShape BB = box(0, 0, 0, 16, 2, 16);

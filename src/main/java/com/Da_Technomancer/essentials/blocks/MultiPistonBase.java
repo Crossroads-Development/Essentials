@@ -70,8 +70,7 @@ public class MultiPistonBase extends Block{
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
 		this.sticky = sticky;
 		registerDefaultState(defaultBlockState().setValue(ESProperties.FACING, Direction.NORTH).setValue(ESProperties.EXTENDED, false).setValue(ESProperties.SHIFTING, false));
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Override

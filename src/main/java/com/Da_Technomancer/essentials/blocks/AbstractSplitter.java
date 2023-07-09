@@ -23,8 +23,7 @@ public abstract class AbstractSplitter extends TEBlock{
 
 	protected AbstractSplitter(String name, Properties prop){
 		super(prop);
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	protected abstract boolean isBasic();

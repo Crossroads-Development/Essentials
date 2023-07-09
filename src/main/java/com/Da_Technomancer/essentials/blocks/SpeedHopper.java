@@ -20,8 +20,7 @@ public class SpeedHopper extends SortingHopper{
 	protected SpeedHopper(){
 		super(ESBlocks.getMetalProperty());
 		String name = "speed_hopper";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Override

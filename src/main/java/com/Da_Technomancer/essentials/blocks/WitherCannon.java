@@ -8,11 +8,11 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -25,7 +25,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -44,8 +43,7 @@ public class WitherCannon extends Block{
 	protected WitherCannon(){
 		super(ESBlocks.getRockProperty().strength(50F, 1200F));
 		String name = "wither_cannon";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 		registerDefaultState(defaultBlockState().setValue(ESProperties.REDSTONE_BOOL, false));
 	}
 
@@ -138,21 +136,21 @@ public class WitherCannon extends Block{
 			if(!level.isClientSide){
 				if(result.getType() == HitResult.Type.ENTITY){
 					Entity entity = ((EntityHitResult) result).getEntity();
-					entity.hurt(DamageSource.MAGIC, 5F);
+					entity.hurt(damageSources().magic(), 5F);
 
 					if(entity instanceof LivingEntity){
 						//Locked at normal difficulty duration, because this is a redstone component meant to be precise and utilized and not an evil monster that exists to stab you
 						((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.WITHER, 200, 1));
 					}
 				}
-				//Ignore mob griefing- always use Explosion.Mode.DESTROY
-				level.explode(this, getX(), getY(), getZ(), 2F, false, Explosion.BlockInteraction.BREAK);
+				//Ignore mob griefing- use tnt explosion type, which defaults to dropping everything
+				level.explode(this, getX(), getY(), getZ(), 2F, false, Level.ExplosionInteraction.TNT);
 				remove(RemovalReason.DISCARDED);
 			}
 		}
 
 		@Override
-		public Packet<?> getAddEntityPacket(){
+		public Packet<ClientGamePacketListener> getAddEntityPacket(){
 			return NetworkHooks.getEntitySpawningPacket(this);
 		}
 	}

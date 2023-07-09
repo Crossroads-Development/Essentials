@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.integration;
 
-import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.api.ESProperties;
+import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.blocks.redstone.CircuitTileEntity;
 import com.Da_Technomancer.essentials.blocks.redstone.InterfaceCircuitTileEntity;
-import dan200.computercraft.api.ComputerCraftAPI;
+import dan200.computercraft.api.ForgeComputerCraftAPI;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
 import dan200.computercraft.api.peripheral.IComputerAccess;
@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 public class ComputerCraftIntegration{
 
 	public static void init(){
-		ComputerCraftAPI.registerPeripheralProvider(new CircuitPeripheralProvider());
+		ForgeComputerCraftAPI.registerPeripheralProvider(new CircuitPeripheralProvider());
 	}
 
 	private static class CircuitPeripheralProvider implements IPeripheralProvider{

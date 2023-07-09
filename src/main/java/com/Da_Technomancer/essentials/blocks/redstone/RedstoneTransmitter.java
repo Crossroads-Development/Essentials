@@ -33,8 +33,7 @@ public class RedstoneTransmitter extends BaseEntityBlock implements IWireConnect
 	public RedstoneTransmitter(){
 		super(ESBlocks.getRockProperty());
 		String name = "redstone_transmitter";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 		registerDefaultState(defaultBlockState().setValue(ESProperties.COLOR, DyeColor.WHITE));
 	}
 

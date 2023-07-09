@@ -7,8 +7,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
+import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class ESBlocks{
 
@@ -94,9 +96,9 @@ public class ESBlocks{
 	public static DecorativeBlock bricksBronze;
 	public static DecorativeBlock bricksCopshowium;
 
-	public static final HashMap<String, Block> toRegister = new HashMap<>();
+	private static final HashMap<String, Block> toRegister = new HashMap<>();
 
-	public static final Item.Properties itemBlockProp = new Item.Properties().tab(ESItems.TAB_ESSENTIALS);
+	public static final Item.Properties itemBlockProp = new Item.Properties();
 
 	public static BlockBehaviour.Properties getMetalProperty(){
 		return BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL).strength(3).requiresCorrectToolForDrops();
@@ -107,22 +109,38 @@ public class ESBlocks{
 	}
 
 	/**
-	 * Registers the item form of a blocks and the item model.
-	 * @param block The blocks to register
-	 * @return The passed blocks for convenience.
+	 * Queues up a block to be registered, along with an itemblock added to the creative tab
+	 * @param regName Block registry name (without essentials: prefix)
+	 * @param block Block
+	 * @return The block
+	 * @param <T> Block class
 	 */
-	public static <T extends Block> T blockAddQue(String regName, T block){
-		Item item = new BlockItem(block, itemBlockProp);
-		ESItems.toRegister.put(regName, item);
+	public static <T extends Block> T queueForRegister(String regName, T block){
+		return queueForRegister(regName, block, true);
+	}
+
+	/**
+	 * Queues up a block to be registered, optionally along with an itemblock added to the creative tab
+	 * @param regName Block registry name (without essentials: prefix)
+	 * @param block Block
+	 * @param itemBlock Whether to create and register an associated itemblock
+	 * @return The block
+	 * @param <T> Block class
+	 */
+	public static <T extends Block> T queueForRegister(String regName, T block, boolean itemBlock){
+		toRegister.put(regName, block);
+		if(itemBlock){
+			Item item = new BlockItem(block, itemBlockProp);
+			ESItems.queueForRegister(regName, item);
+		}
 		return block;
 	}
 
-	public static void init(){
+	public static void init(RegisterEvent.RegisterHelper<Block> helper){
 		brazier = new Brazier();
 		slottedChest = new SlottedChest();
 		sortingHopper = new SortingHopper();
 		speedHopper = new SpeedHopper();
-		candleLilyPad = new CandleLilyPad();
 		fertileSoilWheat = new FertileSoil("wheat", Blocks.WHEAT.defaultBlockState().setValue(CropBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
 		fertileSoilCarrot = new FertileSoil("carrot", Blocks.CARROTS.defaultBlockState().setValue(CropBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
 		fertileSoilPotato = new FertileSoil("potato", Blocks.POTATOES.defaultBlockState().setValue(CropBlock.AGE, 0), FertileSoil.SeedCategory.CROP);
@@ -140,15 +158,15 @@ public class ESBlocks{
 		hopperFilter = new HopperFilter();
 		itemChute = new ItemChute();
 		itemShifter = new ItemShifter();
+		basicItemSplitter = new BasicItemSplitter();
+		itemSplitter = new ItemSplitter();
 		fluidShifter = new FluidShifter();
+		basicFluidSplitter = new BasicFluidSplitter();
+		fluidSplitter = new FluidSplitter();
 		multiPistonExtend = new MultiPistonExtend(false);
 		multiPistonExtendSticky = new MultiPistonExtend(true);
 		multiPiston = new MultiPistonBase(false);
 		multiPistonSticky = new MultiPistonBase(true);
-		basicItemSplitter = new BasicItemSplitter();
-		itemSplitter = new ItemSplitter();
-		basicFluidSplitter = new BasicFluidSplitter();
-		fluidSplitter = new FluidSplitter();
 		witherCannon = new WitherCannon();
 		autoCrafter = new AutoCrafter();
 		analogLamp = new AnalogLamp();
@@ -159,6 +177,7 @@ public class ESBlocks{
 		bricksTin = new DecorativeBlock("bricks_tin", getMetalProperty());
 		bricksBronze = new DecorativeBlock("bricks_bronze", getMetalProperty());
 		bricksCopshowium = new DecorativeBlock("bricks_copshowium", getMetalProperty());
+		candleLilyPad = new CandleLilyPad();//Itemblock registered separately
 
 		//Circuits
 		wireCircuit = new WireCircuit();
@@ -204,5 +223,11 @@ public class ESBlocks{
 		pulseCircuitFalling = new PulseCircuit(PulseCircuit.Edge.FALLING);
 		pulseCircuitDual = new PulseCircuit(PulseCircuit.Edge.DUAL);
 		dCounterCircuit = new DCounterCircuit();
+
+
+		for(Map.Entry<String, Block> block : toRegister.entrySet()){
+			helper.register(block.getKey(), block.getValue());
+		}
+		toRegister.clear();
 	}
 }

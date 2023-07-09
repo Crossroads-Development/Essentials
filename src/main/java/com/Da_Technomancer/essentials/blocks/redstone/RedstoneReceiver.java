@@ -31,8 +31,7 @@ public class RedstoneReceiver extends BaseEntityBlock implements IWireConnect{
 	public RedstoneReceiver(){
 		super(ESBlocks.getRockProperty());
 		String name = "redstone_receiver";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 		registerDefaultState(defaultBlockState().setValue(ESProperties.COLOR, DyeColor.WHITE));
 	}
 

@@ -57,8 +57,8 @@ public class SlottedChestScreen extends AbstractContainerScreen<SlottedChestCont
 			ItemStack filter = menu.filter[i];
 			Slot renderSlot = menu.slots.get(i);
 			if(!filter.isEmpty() && !renderSlot.hasItem()){
-				itemRenderer.renderAndDecorateItem(filter, leftPos + renderSlot.x, topPos + renderSlot.y);
-				itemRenderer.renderGuiItemDecorations(font, filter, leftPos + renderSlot.x, topPos + renderSlot.y, "0");
+				itemRenderer.renderAndDecorateItem(matrix, filter, leftPos + renderSlot.x, topPos + renderSlot.y);
+				itemRenderer.renderGuiItemDecorations(matrix, font, filter, leftPos + renderSlot.x, topPos + renderSlot.y, "0");
 			}
 		}
 //		RenderSystem.enableLighting();

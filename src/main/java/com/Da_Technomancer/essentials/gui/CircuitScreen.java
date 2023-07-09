@@ -102,12 +102,12 @@ public class CircuitScreen<T extends CircuitContainer> extends AbstractContainer
 		//Text bars
 		RenderSystem.setShaderTexture(0, SEARCH_BAR_TEXTURE);
 		for(EditBox bar : inputBars){
-			blit(matrix, bar.x - 2, bar.y - 8, 0, 0, 144, 18, 144, 18);
+			blit(matrix, bar.getX() - 2, bar.getY() - 8, 0, 0, 144, 18, 144, 18);
 		}
 
 		//Text labelling input bars
 		for(EditBox inputBar : inputBars){
-			font.draw(matrix, inputBar.getMessage(), inputBar.x - 2, inputBar.y - 16, 0x404040);
+			font.draw(matrix, inputBar.getMessage(), inputBar.getX() - 2, inputBar.getY() - 16, 0x404040);
 		}
 	}
 

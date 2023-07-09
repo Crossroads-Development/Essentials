@@ -13,8 +13,7 @@ public class DecorativeBlock extends Block{
 
 	public DecorativeBlock(String name, Properties properties){
 		super(properties);
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Override

@@ -1,8 +1,7 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
-import com.Da_Technomancer.essentials.blocks.ESBlocks;
 import com.Da_Technomancer.essentials.api.ESProperties;
+import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -22,10 +21,9 @@ import java.util.List;
 public class WireCircuit extends AbstractTile{
 
 	public WireCircuit(){
-		super("wire_circuit");
+		super("wire_circuit", true);
 		String name = "wire_circuit";
 		registerDefaultState(defaultBlockState().setValue(ESProperties.CONNECTIONS, 0));
-		ESBlocks.blockAddQue(name, this);//Register an item form only for the actual wire circuit
 	}
 
 	@Override

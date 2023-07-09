@@ -1,10 +1,10 @@
 package com.Da_Technomancer.essentials.items;
 
 import com.Da_Technomancer.essentials.Essentials;
+import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
-import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.blocks.redstone.AbstractTile;
 import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import net.minecraft.ChatFormatting;
@@ -92,9 +92,9 @@ public class CircuitWrench extends Item{
 	}
 
 	protected CircuitWrench(){
-		super(new Item.Properties().stacksTo(1).tab(ESItems.TAB_ESSENTIALS));
+		super(ESItems.baseItemProperties().stacksTo(1));
 		String name = "circuit_wrench";
-		ESItems.toRegister.put(name, this);
+		ESItems.queueForRegister(name, this);
 	}
 
 	@Override

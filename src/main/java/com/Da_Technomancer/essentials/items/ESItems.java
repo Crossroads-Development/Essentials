@@ -1,21 +1,19 @@
 package com.Da_Technomancer.essentials.items;
 
-import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.integration.ESIntegration;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.RegisterEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class ESItems{
 
-	public static final CreativeModeTab TAB_ESSENTIALS = new CreativeModeTab(Essentials.MODID){
-		@Override
-		public ItemStack makeIcon(){
-			return new ItemStack(itemCandleLilypad, 1);
-		}
-	};
+	public static CreativeModeTab ESSENTIALS_TAB;
 
 	public static ObsidianCuttingKit obsidianKit;
 	public static ItemCandleLily itemCandleLilypad;
@@ -24,16 +22,53 @@ public class ESItems{
 	public static CircuitWrench circuitWrench;
 	public static LinkingTool linkingTool;
 
-	public static final HashMap<String, Item> toRegister = new HashMap<>();
+	private static final HashMap<String, Item> toRegister = new HashMap<>();
+	public static final ArrayList<Supplier<ItemStack[]>> creativeTabItems = new ArrayList<>();
 
-	public static void init(){
-		obsidianKit = new ObsidianCuttingKit();
+	/**
+	 * Queues up an item to be registered and added to the creative tab
+	 * @param regName Item registry name (without essentials: prefix)
+	 * @param item Item
+	 * @param creativeItems All itemstacks to be registered to the creative tab. Null for no creative tab items.
+	 * @return The item
+	 * @param <T> Item class
+	 */
+	public static <T extends Item> T queueForRegister(String regName, T item, Supplier<ItemStack[]> creativeItems){
+		toRegister.put(regName, item);
+		if(creativeItems != null){
+			creativeTabItems.add(creativeItems);
+		}
+		return item;
+	}
+
+	/**
+	 * Queues up an item to be registered and added to the creative tab
+	 * @param regName Item registry name (without essentials: prefix)
+	 * @param item Item
+	 * @return The item
+	 * @param <T> Item class
+	 */
+	public static <T extends Item> T queueForRegister(String regName, T item){
+		return queueForRegister(regName, item, () -> new ItemStack[] {new ItemStack(item)});
+	}
+
+	public static Item.Properties baseItemProperties(){
+		return new Item.Properties();
+	}
+
+	public static void init(RegisterEvent.RegisterHelper<net.minecraft.world.item.Item> helper){
 		itemCandleLilypad = new ItemCandleLily();
 		wrench = new Wrench();
-		animalFeed = new AnimalFeed();
 		circuitWrench = new CircuitWrench();
 		linkingTool = new LinkingTool();
+		obsidianKit = new ObsidianCuttingKit();
+		animalFeed = new AnimalFeed();
 
 		ESIntegration.initItems();
+
+		for(Map.Entry<String, Item> item : toRegister.entrySet()){
+			helper.register(item.getKey(), item.getValue());
+		}
+		toRegister.clear();
 	}
 }

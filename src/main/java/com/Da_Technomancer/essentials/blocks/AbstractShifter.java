@@ -23,8 +23,7 @@ public abstract class AbstractShifter extends TEBlock{
 
 	protected AbstractShifter(String name){
 		super(ESBlocks.getMetalProperty());
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Nullable

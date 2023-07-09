@@ -25,8 +25,7 @@ public class AutoCrafter extends TEBlock{
 	protected AutoCrafter(){
 		this("auto_crafter");
 		String name = "auto_crafter";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	protected AutoCrafter(String name){

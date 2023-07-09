@@ -1,8 +1,8 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.Da_Technomancer.essentials.blocks.AutoCrafterTileEntity;
+import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -111,12 +111,6 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 	}
 
 	@Override
-	public void removed(){
-		recipeBook.removed();
-		super.removed();
-	}
-
-	@Override
 	public RecipeBookComponent getRecipeBookComponent(){
 		return recipeBook;
 	}
@@ -171,14 +165,14 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 						continue;
 					}
 					ItemStack s = matching[(int) Math.floor(time / 30F) % matching.length];
-					itemRenderer.renderAndDecorateItem(s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
+					itemRenderer.renderAndDecorateItem(matrix, s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
 				}
 			}
 
 			//Render the output
-			ItemStack output = iRecipe.getResultItem();
-			itemRenderer.renderAndDecorateItem(output, 106 + leftPos, 33 + topPos);
-			itemRenderer.renderGuiItemDecorations(font, output, leftPos + 106, topPos + 33, null);
+			ItemStack output = iRecipe.getResultItem(menu.te.getLevel().registryAccess());
+			itemRenderer.renderAndDecorateItem(matrix, output, 106 + leftPos, 33 + topPos);
+			itemRenderer.renderGuiItemDecorations(matrix, font, output, leftPos + 106, topPos + 33, null);
 
 //			RenderSystem.disableRescaleNormal();
 //			Lighting.turnOff();

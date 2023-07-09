@@ -15,9 +15,9 @@ import java.util.List;
 public class ObsidianCuttingKit extends Item{
 
 	protected ObsidianCuttingKit(){
-		super(new Properties().tab(ESItems.TAB_ESSENTIALS));
+		super(ESItems.baseItemProperties());
 		String name = "obsidian_cutting_kit";
-		ESItems.toRegister.put(name, this);
+		ESItems.queueForRegister(name, this);
 	}
 
 	@Override

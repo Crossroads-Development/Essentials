@@ -26,8 +26,7 @@ public class AnalogLamp extends Block{
 	protected AnalogLamp(){
 		super(Properties.of(Material.BUILDABLE_GLASS).lightLevel(state -> state.getValue(ESProperties.REDSTONE)).strength(0.3F).sound(SoundType.GLASS).isValidSpawn(AnalogLamp::propagateFunction));
 		String name = "analog_lamp";
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	private static Boolean propagateFunction(BlockState state, BlockGetter world, BlockPos pos, EntityType<?> type){

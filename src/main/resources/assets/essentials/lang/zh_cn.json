@@ -216,7 +216,7 @@
 	"book.essentials.subtext": "Essentials指南",
 	"book.essentials.landing": "欢迎来到Essentials！$(br2)这本书包含了Essentials的文档，如果也安装了交错道途，也会有对应的文档。",
 
-	"itemGroup.essentials": "Essentials",
+	"item_group.essentials": "Essentials",
 
 	"tt.essentials.jei.recipe_transfer.fail": "转移配方失败"
 }

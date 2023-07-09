@@ -31,8 +31,7 @@ public class FertileSoil extends Block{
 		this.plant = plant;
 		this.category = category;
 		String name = "fertile_soil_" + plantName;
-		ESBlocks.toRegister.put(name, this);
-		ESBlocks.blockAddQue(name, this);
+		ESBlocks.queueForRegister(name, this);
 	}
 
 	@Override
