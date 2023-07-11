@@ -190,8 +190,8 @@ public class LinkHelper{
 		}
 
 		Pair<String, BlockPos> wrenchData = readLinkNBT(wrench);
-		if(wrenchData != null && wrenchData.getLeft().equals(getWorldString(player.level))){
-			BlockEntity prevTE = player.level.getBlockEntity(wrenchData.getRight());
+		if(wrenchData != null && wrenchData.getLeft().equals(getWorldString(player.level()))){
+			BlockEntity prevTE = player.level().getBlockEntity(wrenchData.getRight());
 			if(prevTE instanceof ILinkTE && ((ILinkTE) prevTE).canLink(linkTE) && prevTE != linkTE){
 				int range = ((ILinkTE) prevTE).getRange();
 				if(wrenchData.getRight().distSqr(linkTE.getTE().getBlockPos()) <= range * range){
@@ -320,7 +320,7 @@ public class LinkHelper{
 		}
 
 		private static RenderType initType(){
-			return RenderType.create("link_line", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, CompositeState.builder().setShaderState(RenderStateShard.BLOCK_SHADER).setTextureState(new TextureStateShard(LINK_TEXTURE, false, false)).setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
+			return RenderType.create("link_line", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, CompositeState.builder().setShaderState(RenderStateShard.RENDERTYPE_SOLID_SHADER).setTextureState(new TextureStateShard(LINK_TEXTURE, false, false)).setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY).createCompositeState(false));
 		}
 	}
 }

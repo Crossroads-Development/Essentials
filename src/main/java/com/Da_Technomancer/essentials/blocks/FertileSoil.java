@@ -14,8 +14,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.common.IPlantable;
 
 import javax.annotation.Nullable;
@@ -27,16 +26,11 @@ public class FertileSoil extends Block{
 	private final SeedCategory category;
 
 	protected FertileSoil(String plantName, BlockState plant, SeedCategory category){
-		super(BlockBehaviour.Properties.of(category == SeedCategory.HELL_CROP ? Material.SAND : Material.DIRT).strength(0.5F).sound(SoundType.GRAVEL).randomTicks());
+		super(BlockBehaviour.Properties.of().mapColor(category == SeedCategory.HELL_CROP ? MapColor.SAND : MapColor.DIRT).strength(0.5F).sound(SoundType.GRAVEL).randomTicks());
 		this.plant = plant;
 		this.category = category;
 		String name = "fertile_soil_" + plantName;
 		ESBlocks.queueForRegister(name, this);
-	}
-
-	@Override
-	public List<ItemStack> getDrops(BlockState p_220076_1_, LootContext.Builder p_220076_2_){
-		return super.getDrops(p_220076_1_, p_220076_2_);
 	}
 
 	@Override

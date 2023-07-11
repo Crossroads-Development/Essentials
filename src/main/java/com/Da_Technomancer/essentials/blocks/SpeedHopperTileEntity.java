@@ -41,7 +41,7 @@ public class SpeedHopperTileEntity extends SortingHopperTileEntity{
 
 			TileEntity te = world.getTileEntity(pos.offset(facing));
 			LazyOptional<IItemHandler> otherCap;
-			if(te != null && (otherCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
+			if(te != null && (otherCap = te.getCapability(ForgeCapabilities.ITEM_HANDLER, facing.getOpposite())).isPresent()){
 				IItemHandler otherHandler = otherCap.orElseThrow(NullPointerException::new);
 				int slots = otherHandler.getSlots();
 				for(int i = 0; i < slots; i++){

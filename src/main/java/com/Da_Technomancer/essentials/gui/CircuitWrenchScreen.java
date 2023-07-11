@@ -7,9 +7,9 @@ import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.gui.container.CircuitWrenchContainer;
 import com.Da_Technomancer.essentials.items.CircuitWrench;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.resources.language.I18n;
@@ -98,7 +98,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 	}
 
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 
@@ -109,7 +109,7 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 			tt.add(Component.translatable(CircuitWrench.MODES.get(index).wireAsBlock().getDescriptionId()));
 			IWireConnect block = CircuitWrench.MODES.get(index);
 			block.wireAsBlock().appendHoverText(ItemStack.EMPTY, null, tt, TooltipFlag.Default.NORMAL);
-			renderComponentTooltip(matrix, tt, mouseX, mouseY);//MCP note: renderTooltip
+			matrix.renderComponentTooltip(font, tt, mouseX, mouseY);//MCP note: renderTooltip
 		}
 
 //		RenderSystem.disableLighting();
@@ -154,16 +154,16 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(GuiGraphics matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
 		//Search bar
-		RenderSystem.setShaderTexture(0, SEARCH_BAR_TEXTURE);
-		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 18, imageWidth, 18);
+//		RenderSystem.setShaderTexture(0, SEARCH_BAR_TEXTURE);
+		matrix.blit(SEARCH_BAR_TEXTURE, leftPos, topPos, 0, 0, imageWidth, 18, imageWidth, 18);
 
 		//Rows
-		RenderSystem.setShaderTexture(0, ROW_TEXTURE);
+//		RenderSystem.setShaderTexture(0, ROW_TEXTURE);
 		for(int i = 1; i <= ROWS; i++){
-			blit(matrix, leftPos, topPos + i * 18, 0, 0, imageWidth, 18, imageWidth, 18);
+			matrix.blit(ROW_TEXTURE, leftPos, topPos + i * 18, 0, 0, imageWidth, 18, imageWidth, 18);
 		}
 
 		//Foreground
@@ -174,14 +174,14 @@ public class CircuitWrenchScreen extends AbstractContainerScreen<CircuitWrenchCo
 			if(sprite == null){
 				sprite = MISSING_TEXTURE;
 			}
-			RenderSystem.setShaderTexture(0, sprite);
-			blit(matrix, (i % COLUMNS) * 18 + 1 + leftPos, (i / COLUMNS) * 18 + 19 + topPos, 0, 0, 16, 16, 16, 16);
+//			RenderSystem.setShaderTexture(0, sprite);
+			matrix.blit(sprite, (i % COLUMNS) * 18 + 1 + leftPos, (i / COLUMNS) * 18 + 19 + topPos, 0, 0, 16, 16, 16, 16);
 		}
 	}
 
 	//MCP note: draw tooltip/foreground
 	@Override
-	protected void renderLabels(PoseStack matrix, int p_230451_2_, int p_230451_3_){
+	protected void renderLabels(GuiGraphics matrix, int p_230451_2_, int p_230451_3_){
 		//Don't render text overlays
 	}
 }

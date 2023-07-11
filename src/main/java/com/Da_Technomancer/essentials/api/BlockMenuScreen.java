@@ -1,6 +1,6 @@
 package com.Da_Technomancer.essentials.api;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -31,18 +31,18 @@ public abstract class BlockMenuScreen<T extends BlockMenuContainer<U>, U extends
 	}
 
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		renderTooltip(matrix, mouseX, mouseY);
 		if(getSlotUnderMouse() == null){
-			renderComponentTooltip(matrix, tooltip, mouseX, mouseY);
+			matrix.renderComponentTooltip(font, tooltip, mouseX, mouseY);
 		}
 		tooltip.clear();
 	}
 
 	@Override
-	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(GuiGraphics matrix, float partialTicks, int mouseX, int mouseY){
 		//No-op
 		//Even though we don't need to implement this method, as this is an abstract class, having this here allows super calls in subclasses.
 		//While this currently does nothing, that could change, and allowing super calls in subclasses will make changes seamless

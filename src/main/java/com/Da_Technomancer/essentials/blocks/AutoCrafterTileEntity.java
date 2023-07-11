@@ -19,6 +19,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -27,8 +28,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
@@ -99,7 +100,7 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 	 * @return A crafting inventory
 	 */
 	public static CraftingContainer prepareCraftingInv(ItemStack[] inv){
-		CraftingContainer craftInv = new CraftingContainer(new AbstractContainerMenu(null, 0){
+		CraftingContainer craftInv = new TransientCraftingContainer(new AbstractContainerMenu(null, 0){
 			@Override
 			public ItemStack quickMoveStack(Player playerIn, int p_38942_){
 				return ItemStack.EMPTY;//No-op
@@ -348,7 +349,7 @@ public class AutoCrafterTileEntity extends BlockEntity implements INBTReceiver, 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+		if(cap == ForgeCapabilities.ITEM_HANDLER){
 			return (LazyOptional<T>) hanOptional;
 		}
 

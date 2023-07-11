@@ -6,7 +6,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.HashMap;
@@ -101,11 +101,11 @@ public class ESBlocks{
 	public static final Item.Properties itemBlockProp = new Item.Properties();
 
 	public static BlockBehaviour.Properties getMetalProperty(){
-		return BlockBehaviour.Properties.of(Material.METAL).sound(SoundType.METAL).strength(3).requiresCorrectToolForDrops();
+		return BlockBehaviour.Properties.of().mapColor(MapColor.METAL).sound(SoundType.METAL).strength(3).requiresCorrectToolForDrops();
 	}
 
 	public static BlockBehaviour.Properties getRockProperty(){
-		return BlockBehaviour.Properties.of(Material.STONE).strength(3).requiresCorrectToolForDrops().sound(SoundType.STONE);
+		return BlockBehaviour.Properties.of().mapColor(MapColor.STONE).strength(3).requiresCorrectToolForDrops().sound(SoundType.STONE);
 	}
 
 	/**

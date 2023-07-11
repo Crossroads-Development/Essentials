@@ -14,14 +14,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public abstract class AbstractTile extends BaseEntityBlock implements IWireConnect{
 
-	private static final Properties PROP = Properties.of(Material.DECORATION).strength(0, 0).sound(SoundType.WOOD);
+	private static final Properties PROP = Properties.of().pushReaction(PushReaction.DESTROY).strength(0, 0).sound(SoundType.WOOD);
 
 	protected AbstractTile(String name){
 		this(name, false);

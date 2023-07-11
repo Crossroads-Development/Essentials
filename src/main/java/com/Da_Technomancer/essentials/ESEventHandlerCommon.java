@@ -8,8 +8,8 @@ import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.Animal;
@@ -18,11 +18,11 @@ import net.minecraft.world.entity.monster.Witch;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -66,22 +66,21 @@ public class ESEventHandlerCommon{
 				}
 				ESTileEntity.toRegister.clear();
 			});
-		}
 
-		@SuppressWarnings("unused")
-		@SubscribeEvent
-		public static void registerCreativeTabs(CreativeModeTabEvent.Register e){
-			ESItems.ESSENTIALS_TAB = e.registerCreativeModeTab(new ResourceLocation(Essentials.MODID, "core"), builder -> builder
-					.title(Component.translatable("item_group." + Essentials.MODID))
-					.icon(() -> new ItemStack(ESItems.itemCandleLilypad))
-					.displayItems((params, output) -> {
-								for(Supplier<ItemStack[]> itemsToAdd : ESItems.creativeTabItems){
-									for(ItemStack itemToAdd : itemsToAdd.get()){
-										output.accept(itemToAdd);
+			e.register(Registries.CREATIVE_MODE_TAB, helper -> {
+				ESItems.ESSENTIALS_TAB = CreativeModeTab.builder()
+						.title(Component.translatable("item_group." + Essentials.MODID))
+						.icon(() -> new ItemStack(ESItems.itemCandleLilypad))
+						.displayItems((params, output) -> {
+									for(Supplier<ItemStack[]> itemsToAdd : ESItems.creativeTabItems){
+										for(ItemStack itemToAdd : itemsToAdd.get()){
+											output.accept(itemToAdd);
+										}
 									}
 								}
-							}
-					));
+						).build();
+				helper.register("core", ESItems.ESSENTIALS_TAB);
+			});
 		}
 
 		/**
@@ -125,7 +124,7 @@ public class ESEventHandlerCommon{
 	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void preventTeleport(EntityTeleportEvent e){
-		if(e.getEntity() instanceof EnderMan enderman && enderman.level instanceof ServerLevel world){
+		if(e.getEntity() instanceof EnderMan enderman && enderman.level() instanceof ServerLevel world){
 			int RANGE = ESConfig.brazierRange.get();
 			int RANGE_SQUARED = (int) Math.pow(RANGE, 2);
 			String dimKey = world.dimension().location().toString();

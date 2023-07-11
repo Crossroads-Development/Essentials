@@ -31,7 +31,7 @@ public abstract class BlockMenuContainer<U extends BlockEntity & Container> exte
 		super(type, windowId);
 		this.playerInv = playerInv;
 		BlockPos pos = data.readBlockPos();
-		BlockEntity rawTE = playerInv.player.level.getBlockEntity(pos);
+		BlockEntity rawTE = playerInv.player.level().getBlockEntity(pos);
 		U worldTe = null;
 		if(rawTE != null){
 			try{
@@ -48,8 +48,8 @@ public abstract class BlockMenuContainer<U extends BlockEntity & Container> exte
 		if(worldTe == null){
 			//Just in case one of the two things that should never happen happens, we create a fake instance of type U
 			//The UI will be basically non-functional, but we prevent a hard crash
-			worldTe = generateEmptyTE(pos, playerInv.player.level.getBlockState(pos));
-			worldTe.setLevel(playerInv.player.level);
+			worldTe = generateEmptyTE(pos, playerInv.player.level().getBlockState(pos));
+			worldTe.setLevel(playerInv.player.level());
 			Essentials.logger.error("Null world tile entity! Generating dummy TE. Report to mod author; type=%1$s", type.toString());
 		}
 		this.te = worldTe;

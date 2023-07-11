@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
@@ -145,7 +145,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && side != null && side.getAxis() == getAxis()){
+		if(cap == ForgeCapabilities.ITEM_HANDLER && side != null && side.getAxis() == getAxis()){
 			updatePassedOptionals();
 			return (LazyOptional<T>) (side.getAxisDirection() == Direction.AxisDirection.POSITIVE ? passedHandlerPos : passedHandlerNeg);
 		}
@@ -171,7 +171,7 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver{
 				BlockEntity checkTE = level.getBlockEntity(checkPos);
 
 				if(checkTE != null){
-					src = checkTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side);
+					src = checkTE.getCapability(ForgeCapabilities.ITEM_HANDLER, side);
 					if(src.isPresent()){
 						return src.orElseThrow(NullPointerException::new);
 					}

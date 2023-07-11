@@ -13,9 +13,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.IItemHandler;
 
@@ -107,7 +107,7 @@ public abstract class AbstractShifterTileEntity extends BlockEntity implements I
 
 		BlockEntity outputTE = world.getBlockEntity(pos);
 		LazyOptional<IFluidHandler> outHandlerCon;
-		if(outputTE != null && (outHandlerCon = outputTE.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, fromSide.getOpposite())).isPresent()){
+		if(outputTE != null && (outHandlerCon = outputTE.getCapability(ForgeCapabilities.FLUID_HANDLER, fromSide.getOpposite())).isPresent()){
 			IFluidHandler outHandler = outHandlerCon.orElseThrow(NullPointerException::new);
 			int filled = outHandler.fill(stack, IFluidHandler.FluidAction.EXECUTE);
 			FluidStack out = stack.copy();

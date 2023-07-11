@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,8 +15,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
@@ -48,7 +49,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 		if(!outputOptionalCache.isPresent()){
 			BlockEntity endTE = level.getBlockEntity(endPos);
 			if(endTE != null){
-				outputOptionalCache = endTE.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, getFacing().getOpposite());
+				outputOptionalCache = endTE.getCapability(ForgeCapabilities.ITEM_HANDLER, getFacing().getOpposite());
 			}
 		}
 
@@ -90,7 +91,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction facing){
-		if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+		if(cap == ForgeCapabilities.ITEM_HANDLER){
 			return (LazyOptional<T>) invOptional;
 		}
 
@@ -122,7 +123,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity implements 
 
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate){
-			if(slot != 0 || stack.isEmpty() || !inventory.isEmpty() && (!inventory.sameItem(stack) || !ItemStack.tagMatches(inventory, stack))){
+			if(slot != 0 || stack.isEmpty() || !inventory.isEmpty() && !BlockUtil.sameItem(inventory, stack)){
 				return stack;
 			}
 

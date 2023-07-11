@@ -113,8 +113,8 @@ public class WitherCannon extends Block{
 		@Override
 		public void tick(){
 			super.tick();
-			if(!level.isClientSide && lifespan-- <= 0){
-				level.addAlwaysVisibleParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), 0, 0, 0);
+			if(!level().isClientSide && lifespan-- <= 0){
+				level().addAlwaysVisibleParticle(ParticleTypes.SMOKE, getX(), getY(), getZ(), 0, 0, 0);
 				remove(RemovalReason.DISCARDED);
 			}
 		}
@@ -133,7 +133,7 @@ public class WitherCannon extends Block{
 
 		@Override
 		protected void onHit(HitResult result){
-			if(!level.isClientSide){
+			if(!level().isClientSide){
 				if(result.getType() == HitResult.Type.ENTITY){
 					Entity entity = ((EntityHitResult) result).getEntity();
 					entity.hurt(damageSources().magic(), 5F);
@@ -144,7 +144,7 @@ public class WitherCannon extends Block{
 					}
 				}
 				//Ignore mob griefing- use tnt explosion type, which defaults to dropping everything
-				level.explode(this, getX(), getY(), getZ(), 2F, false, Level.ExplosionInteraction.TNT);
+				level().explode(this, getX(), getY(), getZ(), 2F, false, Level.ExplosionInteraction.TNT);
 				remove(RemovalReason.DISCARDED);
 			}
 		}

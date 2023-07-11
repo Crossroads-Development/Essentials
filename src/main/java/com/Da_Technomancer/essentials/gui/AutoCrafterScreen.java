@@ -5,9 +5,9 @@ import com.Da_Technomancer.essentials.blocks.AutoCrafterTileEntity;
 import com.Da_Technomancer.essentials.gui.container.AutoCrafterContainer;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.RecipeBookCategories;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
@@ -59,7 +59,7 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 	}
 
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTicks){
 		time += partialTicks;
 		renderBackground(matrix);
 		if(recipeBook.isVisible() && widthTooNarrow){
@@ -127,11 +127,11 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(PoseStack matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
-		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		RenderSystem.setShaderTexture(0, getBackgroundTexture());
+	protected void renderBg(GuiGraphics matrix, float p_230450_2_, int p_230450_3_, int p_230450_4_){
+		matrix.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+//		RenderSystem.setShaderTexture(0, getBackgroundTexture());
 		//draw background
-		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		matrix.blit(getBackgroundTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
 		//foreground
 		if(menu.te == null){
@@ -165,14 +165,17 @@ public class AutoCrafterScreen extends AbstractContainerScreen<AutoCrafterContai
 						continue;
 					}
 					ItemStack s = matching[(int) Math.floor(time / 30F) % matching.length];
-					itemRenderer.renderAndDecorateItem(matrix, s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
+//					itemRenderer.renderAndDecorateItem(matrix, s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
+					matrix.renderItem(s, 44 + 18 * (i % width) + leftPos, 15 + 18 * (i / width) + topPos);
 				}
 			}
 
 			//Render the output
 			ItemStack output = iRecipe.getResultItem(menu.te.getLevel().registryAccess());
-			itemRenderer.renderAndDecorateItem(matrix, output, 106 + leftPos, 33 + topPos);
-			itemRenderer.renderGuiItemDecorations(matrix, font, output, leftPos + 106, topPos + 33, null);
+//			itemRenderer.renderAndDecorateItem(matrix, output, 106 + leftPos, 33 + topPos);
+//			itemRenderer.renderGuiItemDecorations(matrix, font, output, leftPos + 106, topPos + 33, null);
+			matrix.renderItem(output, 106 + leftPos, 33 + topPos);
+			matrix.renderItemDecorations(font, output, leftPos + 106, topPos + 33, null);
 
 //			RenderSystem.disableRescaleNormal();
 //			Lighting.turnOff();

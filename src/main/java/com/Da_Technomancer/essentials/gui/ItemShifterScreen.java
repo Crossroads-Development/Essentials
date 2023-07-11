@@ -3,7 +3,7 @@ package com.Da_Technomancer.essentials.gui;
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.ItemShifterContainer;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +18,7 @@ public class ItemShifterScreen extends AbstractContainerScreen<ItemShifterContai
 	}
 
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		renderTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
@@ -26,10 +26,8 @@ public class ItemShifterScreen extends AbstractContainerScreen<ItemShifterContai
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(GuiGraphics matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
-		RenderSystem.setShaderTexture(0, GUI_TEXTURE);
-		//drawTexturedModelRectangle
-		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		matrix.blit(GUI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 	}
 }

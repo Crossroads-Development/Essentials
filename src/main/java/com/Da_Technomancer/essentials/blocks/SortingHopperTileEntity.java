@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.blocks;
 
+import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,8 +25,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
@@ -335,7 +336,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 		final BlockEntity te = cacheTE == null ? world.getBlockEntity(otherPos) : cacheTE;
 
 		if(te != null){
-			final LazyOptional<IItemHandler> capability = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, direction);
+			final LazyOptional<IItemHandler> capability = te.getCapability(ForgeCapabilities.ITEM_HANDLER, direction);
 			if(capability.isPresent()){
 				IItemHandler handler = capability.orElseThrow(NullPointerException::new);
 				//This slot count check enables sorting hoppers to pull items from the world through a hopper filter when there is no inventory on the other side
@@ -361,7 +362,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 	}
 
 	protected static boolean canCombine(ItemStack stack1, ItemStack stack2){
-		return stack1.getItem() == stack2.getItem() && stack1.getCount() <= stack1.getMaxStackSize() && ItemStack.tagMatches(stack1, stack2);
+		return BlockUtil.sameItem(stack1, stack2) && stack1.getCount() <= stack1.getMaxStackSize();
 	}
 
 	@Override
@@ -377,7 +378,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction facing){
-		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+		if(capability == ForgeCapabilities.ITEM_HANDLER){
 			return LazyOptional.of(() -> (T) handler);
 		}
 		return super.getCapability(capability, facing);
@@ -448,7 +449,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 
 			BlockEntity te = level.getBlockEntity(worldPosition.relative(facing));
 			LazyOptional<IItemHandler> otherCap;
-			if(te != null && (otherCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing.getOpposite())).isPresent()){
+			if(te != null && (otherCap = te.getCapability(ForgeCapabilities.ITEM_HANDLER, facing.getOpposite())).isPresent()){
 				IItemHandler otherHandler = otherCap.orElseThrow(NullPointerException::new);
 				int slots = otherHandler.getSlots();
 				for(int i = 0; i < slots; i++){

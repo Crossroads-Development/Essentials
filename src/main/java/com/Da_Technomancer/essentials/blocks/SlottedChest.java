@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 
@@ -26,7 +26,7 @@ import java.util.List;
 public class SlottedChest extends TEBlock implements IReadable{
 
 	protected SlottedChest(){
-		super(Properties.of(Material.WOOD).strength(2).sound(SoundType.WOOD));
+		super(Properties.of().mapColor(MapColor.WOOD).strength(2).sound(SoundType.WOOD));
 		String name = "slotted_chest";
 		ESBlocks.queueForRegister(name, this);
 	}
@@ -43,6 +43,7 @@ public class SlottedChest extends TEBlock implements IReadable{
 			if(te instanceof SlottedChestTileEntity){
 				ItemStack[] filter = ((SlottedChestTileEntity) te).lockedInv;
 				NetworkHooks.openScreen((ServerPlayer) playerIn, (SlottedChestTileEntity) te, (buf) -> {
+					buf.writeBlockPos(pos);
 					for(ItemStack lock : filter){
 						buf.writeItem(lock);
 					}

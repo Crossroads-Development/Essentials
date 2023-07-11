@@ -49,7 +49,7 @@ public class BlockUtil{
 		if(a == null || b == null){
 			return false;
 		}
-		return ItemStack.isSame(a, b) && ItemStack.tagMatches(a, b);
+		return ItemStack.isSameItemSameTags(a, b);
 	}
 
 	/**

@@ -2,8 +2,7 @@ package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.gui.container.FluidShifterContainer;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,22 +28,21 @@ public class FluidShifterScreen extends AbstractContainerScreen<FluidShifterCont
 	}
 
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		renderTooltip(matrix, mouseX, mouseY);//MCP note: renderHoveredToolTip
 		if(getSlotUnderMouse() == null){
-			renderComponentTooltip(matrix, tooltip, mouseX, mouseY);//MCP: renderTooltip
+			matrix.renderComponentTooltip(font, tooltip, mouseX, mouseY);//MCP: renderTooltip
 		}
 		tooltip.clear();
 	}
 
 	//MCP note: render screen
 	@Override
-	protected void renderBg(PoseStack matrix, float partialTicks, int mouseX, int mouseY){
+	protected void renderBg(GuiGraphics matrix, float partialTicks, int mouseX, int mouseY){
 		//Background
-		RenderSystem.setShaderTexture(0, TEXTURE);
-		blit(matrix, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		matrix.blit(TEXTURE, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		if(menu.te != null){
 			menu.te.getFluidManager().render(matrix, partialTicks, mouseX, mouseY, font, tooltip);
 		}

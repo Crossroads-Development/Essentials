@@ -99,7 +99,7 @@ public class ESEventHandlerClient{
 			matrix.pushPose();
 			MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 			matrix.translate(-eyePos.x, -eyePos.y, -eyePos.z);
-			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange(player.level, player.blockPosition(), RANGE)){
+			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange(player.level(), player.blockPosition(), RANGE)){
 				if(te instanceof CircuitTileEntity){
 					float output = ((CircuitTileEntity) te).getOutput();
 					float[] relPos = {te.getBlockPos().getX() + 0.5F, te.getBlockPos().getY() + 0.5F, te.getBlockPos().getZ() + 0.5F};

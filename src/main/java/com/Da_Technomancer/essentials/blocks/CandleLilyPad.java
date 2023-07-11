@@ -8,7 +8,8 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.WaterlilyBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.common.PlantType;
 
 import javax.annotation.Nullable;
@@ -17,7 +18,7 @@ import java.util.List;
 public class CandleLilyPad extends WaterlilyBlock{
 
 	protected CandleLilyPad(){
-		super(BlockBehaviour.Properties.of(Material.PLANT).strength(0).sound(SoundType.GRASS).lightLevel(s -> 14).noOcclusion());
+		super(BlockBehaviour.Properties.of().mapColor(MapColor.PLANT).pushReaction(PushReaction.DESTROY).instabreak().sound(SoundType.LILY_PAD).lightLevel(s -> 14).noOcclusion());
 		String name = "candle_lilypad";
 		ESBlocks.queueForRegister(name, this, false);
 	}

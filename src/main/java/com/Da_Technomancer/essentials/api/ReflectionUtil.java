@@ -38,6 +38,7 @@ public final class ReflectionUtil{
 		}catch(Exception e){
 			Essentials.logger.error("Failed to reflect method: " + key.getMcpName() + "; Report to mod author; Disabling relevant feature(s): " + key.getPurpose(), e);
 		}
+		assert false;//For development environment
 		return null;
 	}
 
@@ -57,6 +58,7 @@ public final class ReflectionUtil{
 		}catch(Exception e){
 			Essentials.logger.error("Failed to reflect field: " + key.getMcpName() + "; Report to mod author; Disabling relevant feature(s): " + key.getPurpose(), e);
 		}
+		assert false;//For development environment
 		return null;
 	}
 

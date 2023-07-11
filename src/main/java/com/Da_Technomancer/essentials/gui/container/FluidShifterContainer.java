@@ -38,7 +38,7 @@ public class FluidShifterContainer extends AbstractContainerMenu{
 		super(TYPE, id);
 		this.inv = new FluidSlotManager.FakeInventory(this);
 		this.pos = pos;
-		BlockEntity t = playerInventory.player.level.getBlockEntity(pos);
+		BlockEntity t = playerInventory.player.level().getBlockEntity(pos);
 		if(t instanceof FluidShifterTileEntity){
 			this.te = (FluidShifterTileEntity) t;
 			//Track fluid fields

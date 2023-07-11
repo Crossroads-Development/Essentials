@@ -18,7 +18,7 @@ public class PatchouliProxy{
 
 	public static ItemStack getBookStack(){
 		for(Book book : BookRegistry.INSTANCE.books.values()){
-			if(book.getBookItem().getItem() == ESIntegration.bookItem && !book.isExtension){
+			if(book.getBookItem().getItem() == ESIntegration.bookItem && !book.isExternal){
 				ItemStack stack = new ItemStack(ESIntegration.bookItem);
 				CompoundTag cmp = new CompoundTag();
 				cmp.putString("patchouli:book", book.id.toString());

@@ -1,13 +1,12 @@
 package com.Da_Technomancer.essentials.gui;
 
 import com.Da_Technomancer.essentials.Essentials;
-import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
-import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.api.packets.EssentialsPackets;
 import com.Da_Technomancer.essentials.api.packets.SendNBTToServer;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
+import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.CompoundTag;
@@ -83,7 +82,7 @@ public class CircuitScreen<T extends CircuitContainer> extends AbstractContainer
 	}
 
 	@Override
-	public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks){
+	public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTicks){
 		renderBackground(matrix);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 //		RenderSystem.disableLighting();
@@ -94,25 +93,24 @@ public class CircuitScreen<T extends CircuitContainer> extends AbstractContainer
 	}
 
 	@Override
-	protected void renderBg(PoseStack matrix, float partialTicks, int x, int y){
+	protected void renderBg(GuiGraphics matrix, float partialTicks, int x, int y){
 		//background
-		RenderSystem.setShaderTexture(0, UI_TEXTURE);
-		blit(matrix, leftPos, topPos, 0, 0, imageWidth, 90);
+		matrix.blit(UI_TEXTURE, leftPos, topPos, 0, 0, imageWidth, 90);
 
 		//Text bars
-		RenderSystem.setShaderTexture(0, SEARCH_BAR_TEXTURE);
 		for(EditBox bar : inputBars){
-			blit(matrix, bar.getX() - 2, bar.getY() - 8, 0, 0, 144, 18, 144, 18);
+			matrix.blit(SEARCH_BAR_TEXTURE, bar.getX() - 2, bar.getY() - 8, 0, 0, 144, 18, 144, 18);
 		}
 
 		//Text labelling input bars
 		for(EditBox inputBar : inputBars){
-			font.draw(matrix, inputBar.getMessage(), inputBar.getX() - 2, inputBar.getY() - 16, 0x404040);
+			matrix.drawString(font, inputBar.getMessage(), inputBar.getX() - 2, inputBar.getY() - 16, 0x404040);
+//			font.draw(matrix, inputBar.getMessage(), inputBar.getX() - 2, inputBar.getY() - 16, 0x404040);
 		}
 	}
 
 	@Override
-	protected void renderLabels(PoseStack matrix, int x, int y){
+	protected void renderLabels(GuiGraphics matrix, int x, int y){
 		//Don't render text overlays
 	}
 

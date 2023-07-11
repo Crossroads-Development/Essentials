@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -40,7 +40,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.ticks.TickPriority;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Notable differences from a normal piston include:
@@ -66,7 +69,7 @@ public class MultiPistonBase extends Block{
 	private static final BlockBehaviour.StatePredicate STATE_PREDICATE = (state, world, pos) -> !state.getValue(ESProperties.EXTENDED);
 
 	protected MultiPistonBase(boolean sticky){
-		super(Properties.of(Material.PISTON).isRedstoneConductor((state, world, pos) -> false).isSuffocating(STATE_PREDICATE).isViewBlocking(STATE_PREDICATE).strength(0.5F).sound(SoundType.METAL));
+		super(Properties.of().mapColor(MapColor.STONE).isRedstoneConductor((state, world, pos) -> false).isSuffocating(STATE_PREDICATE).isViewBlocking(STATE_PREDICATE).strength(0.5F).sound(SoundType.METAL));
 		String name = "multi_piston" + (sticky ? "_sticky" : "");
 		this.sticky = sticky;
 		registerDefaultState(defaultBlockState().setValue(ESProperties.FACING, Direction.NORTH).setValue(ESProperties.EXTENDED, false).setValue(ESProperties.SHIFTING, false));

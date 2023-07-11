@@ -35,8 +35,8 @@ minecraft {
 
 	runs {
 		client {
-			workingDirectory project.file('run')
-
+			workingDirectory project.file('run\\client')
+			jvmArgs '-ea' //Enable assert keyword
 			// Recommended logging data for a userdev environment
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 
@@ -55,8 +55,8 @@ minecraft {
 		}
 
 		server {
-			workingDirectory project.file('run')
-
+			workingDirectory project.file('run\\server')
+			jvmArgs '-ea' //Enable assert keyword
 			// Recommended logging data for a userdev environment
 			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
 

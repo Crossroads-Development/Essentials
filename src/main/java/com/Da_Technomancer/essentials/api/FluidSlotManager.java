@@ -4,9 +4,9 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -23,9 +23,9 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -175,14 +175,14 @@ public class FluidSlotManager{
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public void render(PoseStack matrix, float partialTicks, int mouseX, int mouseY, Font fontRenderer, List<Component> tooltip){
+	public void render(GuiGraphics matrix, float partialTicks, int mouseX, int mouseY, Font fontRenderer, List<Component> tooltip){
 		//Background
 //		Minecraft.getInstance().getTextureManager().bind(InventoryMenu.BLOCK_ATLAS);
 		RenderSystem.setShaderTexture(0, InventoryMenu.BLOCK_ATLAS);
 
-		Screen.fill(matrix, xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
+		matrix.fill(xPos + windowXStart, yPos + windowYStart - MAX_HEIGHT, xPos + windowXStart + 16, yPos + windowYStart, 0xFF959595);
 		//Screen.fill changes the color
-		RenderSystem.setShaderColor(1, 1, 1, 1);
+		matrix.setColor(1, 1, 1, 1);
 
 		//Render the fluid
 		FluidStack clientState = getStack();
@@ -192,15 +192,15 @@ public class FluidSlotManager{
 			TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(InventoryMenu.BLOCK_ATLAS).apply(attr.getStillTexture());
 			int col = attr.getTintColor(clientState);
 			int height = (int) (MAX_HEIGHT * (float) clientState.getAmount() / (float) capacity);
-			RenderSystem.setShaderColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, 1F);
-			Screen.blit(matrix, xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
-			RenderSystem.setShaderColor(1, 1, 1, 1);
+			matrix.setColor((float) ((col >>> 16) & 0xFF) / 255F, ((float) ((col >>> 8) & 0xFF)) / 255F, ((float) (col & 0xFF)) / 255F, 1F);
+			matrix.blit(xPos + windowXStart, yPos + windowYStart - height, 0, 16, height, sprite);
+			matrix.setColor(1, 1, 1, 1);
 		}
 
 		//Foreground
 //		Minecraft.getInstance().getTextureManager().bind(OVERLAY);
-		RenderSystem.setShaderTexture(0, OVERLAY);
-		Screen.blit(matrix, windowXStart + xPos, windowYStart + yPos - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
+//		RenderSystem.setShaderTexture(0, OVERLAY);
+		matrix.blit(OVERLAY, windowXStart + xPos, windowYStart + yPos - MAX_HEIGHT, 0, 0, 16, MAX_HEIGHT, 16, MAX_HEIGHT);
 
 		if(mouseX >= xPos + windowXStart && mouseX <= xPos + windowXStart + 16 && mouseY >= yPos + windowYStart - MAX_HEIGHT && mouseY <= yPos + windowYStart){
 			if(clientState.isEmpty()){
@@ -270,7 +270,7 @@ public class FluidSlotManager{
 
 		@Override
 		public boolean mayPlace(ItemStack stack){
-			return stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
+			return stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
 		}
 
 		@Override
@@ -284,7 +284,7 @@ public class FluidSlotManager{
 				ItemStack outSlot = container.getItem(outSlotIndex);
 				ItemStack inSlotCopy = inSlot.copy();//We make a copy of the inSlot so we can restore in case this fails
 				inSlotCopy.setCount(1);//Size needs to be one or item fluid capabilities refuse to work
-				LazyOptional<IFluidHandlerItem> opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+				LazyOptional<IFluidHandlerItem> opt = inSlotCopy.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
 				IFluidHandler teHandler = te.getFluidHandler();
 				if(opt.isPresent()){
 					IFluidHandlerItem itemHandler = opt.orElseThrow(NullPointerException::new);
@@ -364,7 +364,7 @@ public class FluidSlotManager{
 									//Failed- revert the changes and continue
 									inSlotCopy = inSlot.copy();
 									inSlotCopy.setCount(1);
-									opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+									opt = inSlotCopy.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
 									itemHandler = opt.orElseThrow(NullPointerException::new);
 									container.setItem(getSlotIndex(), inSlot);
 									//no markDirty, as the final result is the same as the start state
@@ -392,7 +392,7 @@ public class FluidSlotManager{
 								//Failed- revert the changes and continue
 								inSlotCopy = inSlot.copy();
 								inSlotCopy.setCount(1);
-								opt = inSlotCopy.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
+								opt = inSlotCopy.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM);
 								itemHandler = opt.orElseThrow(NullPointerException::new);
 								container.setItem(getSlotIndex(), inSlot);
 								//no markDirty, as the final result is the same as the start state
@@ -468,7 +468,7 @@ public class FluidSlotManager{
 
 		@Override
 		public boolean canPlaceItem(int index, ItemStack stack){
-			return index == 0 && stack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY).isPresent();
+			return index == 0 && stack.getCapability(ForgeCapabilities.FLUID_HANDLER_ITEM).isPresent();
 		}
 
 		@Override

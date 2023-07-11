@@ -49,7 +49,7 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 	protected AutoCrafterContainer(MenuType<? extends AutoCrafterContainer> type, int id, Inventory playerInventory, Container inv, BlockPos pos){
 		super(type, id);
 		playerInv = playerInventory;
-		BlockEntity getTe = playerInventory.player.level.getBlockEntity(pos);
+		BlockEntity getTe = playerInventory.player.level().getBlockEntity(pos);
 		if(getTe instanceof AutoCrafterTileEntity){
 			te = (AutoCrafterTileEntity) getTe;
 		}else{
@@ -156,7 +156,7 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 					int width = rec instanceof IShapedRecipe ? ((IShapedRecipe<CraftingContainer>) rec).getRecipeWidth() : 3;
 					if(index % 3 < width && !ingr.get(index - (3 - width) * (index / 3)).isEmpty()){
 						//Has an "item" from the recipe in the clicked slot to clear
-						if(player.level.isClientSide){
+						if(player.level().isClientSide){
 							te.recipe = null;
 						}else{
 							te.setRecipe(null);
@@ -168,7 +168,7 @@ public class AutoCrafterContainer extends RecipeBookMenu<CraftingContainer>{
 				//Click on a recipe slot with an item in the cursor
 
 				//Clear any configured recipe
-				if(player.level.isClientSide){
+				if(player.level().isClientSide){
 					te.recipe = null;
 				}else{
 					te.setRecipe(null);
