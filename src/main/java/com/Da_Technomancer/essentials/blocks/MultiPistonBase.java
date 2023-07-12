@@ -208,7 +208,7 @@ public class MultiPistonBase extends Block{
 	 */
 	private void playSound(Level world, BlockPos pos, boolean moving, boolean extension){
 		if(moving){
-			world.playSound(null, pos, extension ? SoundEvents.PISTON_EXTEND : SoundEvents.PISTON_CONTRACT, SoundSource.BLOCKS, 1, 1);
+			world.playSound(null, pos, extension ? SoundEvents.PISTON_EXTEND : SoundEvents.PISTON_CONTRACT, SoundSource.BLOCKS, 0.8F, 1);
 		}else{
 			world.playSound(null, pos, SoundEvents.METAL_PRESSURE_PLATE_CLICK_ON, SoundSource.BLOCKS, 1, 1);
 		}
