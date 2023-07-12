@@ -13,7 +13,7 @@ displayName="Essentials" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 # logoFile="examplemod.png" #optional
 credits='''
-Developers & Maintainers: Technomancer.
+Developers & Maintainers: Technomancer, Mr.No.
 Artists: 5284973, Луксиния Гримхольд.
 Translators: XuyuEre, Луксиния Гримхольд, scikirbypoke.
 Misc Contributors: Bord Listian.''' #optional
