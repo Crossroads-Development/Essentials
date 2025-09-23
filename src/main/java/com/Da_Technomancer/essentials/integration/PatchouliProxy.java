@@ -1,9 +1,10 @@
 package com.Da_Technomancer.essentials.integration;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import vazkii.patchouli.common.book.Book;
 import vazkii.patchouli.common.book.BookRegistry;
+import vazkii.patchouli.common.item.PatchouliDataComponents;
 
 public class PatchouliProxy{
 
@@ -20,10 +21,8 @@ public class PatchouliProxy{
 		for(Book book : BookRegistry.INSTANCE.books.values()){
 			if(book.getBookItem().getItem() == ESIntegration.bookItem && !book.isExternal){
 				ItemStack stack = new ItemStack(ESIntegration.bookItem);
-				CompoundTag cmp = new CompoundTag();
-				cmp.putString("patchouli:book", book.id.toString());
-//				TODO replace w/ DataComponent when Patchouli updates
-//				stack.setTag(cmp);
+				ResourceLocation id = book.id;
+				stack.set(PatchouliDataComponents.BOOK, id);
 				return stack;
 			}
 		};
