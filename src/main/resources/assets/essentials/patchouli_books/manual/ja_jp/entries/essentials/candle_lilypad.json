@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "ろうそく付きスイレンの葉",
+	"icon": "essentials:candle_lilypad",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "ろうそく付きスイレンの葉",
+			"item": "essentials:candle_lilypad",
+			"text": "<item>ろうそく付きスイレンの葉/$ は、スイレンのように浮かぶ装飾ブロックで、光源レベル14(松明と同等)の明るさを放ちます。$(br2)畑の明かりや装飾に最適です。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:candle_lilypad" : 0
+	}
+}

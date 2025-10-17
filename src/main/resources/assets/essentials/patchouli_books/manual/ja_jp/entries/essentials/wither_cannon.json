@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "ウィザー砲",
+	"icon": "essentials:wither_cannon",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "ウィザー砲",
+			"item": "essentials:wither_cannon",
+			"text": "<item>ウィザー砲/$ は、ドロッパーのように動作するブロックで、信号を受けると向いてる方向へ爆発性ウィザースケルトンの頭蓋骨を発射します。$(br2)このブロック自体は爆発耐性を持っており、採掘機、自動植林場、丸石製造機などを使うより安全にブロックを破壊し尽せます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:wither_cannon" : 0
+	}
+}

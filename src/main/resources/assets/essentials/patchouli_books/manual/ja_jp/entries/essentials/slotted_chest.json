@@ -1,0 +1,27 @@
+{
+	"category": "essentials:essentials",
+	"name": "仕分けチェスト",
+	"icon": "essentials:slotted_chest",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "仕分けチェスト",
+			"item": "essentials:slotted_chest",
+			"text": "<item>仕分けチェスト/$ は、1ブロックの大きさでありながら、ラージチェストと同等の容量を持ち、スロットごとに仕分けができる特殊なチェストです。$(br2)このチェストには、特異な性質があり、スロットからアイテムを取り出すと、そのスロットに見かけのアイテム(数が0個のアイテム)が残ります。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "Shiftを押しながらクリックでアイテムを投入することもできますが、投入先に同じアイテムがある場合のみ可能です。$(br2)見かけのアイテムを消すには、カーソルを合わせてShift+クリックをしてください。また、自動化装置もこの見かけのアイテムを認識し、同じアイテムがあるスロットにしか投入しません。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "取り出す時も見かけのアイテムが残りますが、Shiftクリックや自動化でスロット配置が乱れる心配はありません。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:slotted_chest" : 0
+	}
+}

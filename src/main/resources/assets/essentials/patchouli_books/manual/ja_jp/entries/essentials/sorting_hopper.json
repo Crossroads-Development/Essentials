@@ -1,0 +1,36 @@
+{
+	"category": "essentials:essentials",
+	"name": "仕分けホッパー",
+	"icon": "essentials:sorting_hopper",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "仕分けホッパー",
+			"item": "essentials:sorting_hopper",
+			"text": "<item>仕分けホッパー/$ は、通常のホッパーと同様に動作しますが、出力可能なアイテムがある場合、そのアイテムをほかの装置から取り出せなくします。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "$(br2)横向きの <item>仕分けホッパー/$ を縦に積むと、各段でアイテムを仕分けできます。これは <item>$(l:essentials/hopper_filter)ホッパーフィルター/$ や <item>$(l:essentials/slotted_chest)仕分けチェスト/$ と組み合わせるとさらに効率的に仕分けることができます。$(br2)"
+		},
+		{
+			"type": "patchouli:image",
+			"border": "true",
+			"title": "シンプルな仕分け装置",
+			"images": [
+				"essentials:textures/book/sorting_hopper_vertical.png"
+			],
+			"text": "ホッパーフィルターを使った装置。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "各<item>仕分けホッパー/$ は、一致するアイテムを <item>$(l:essentials/hopper_filter)ホッパーフィルター/$ に送り、<item>$(l:essentials/hopper_filter)ホッパーフィルター/$はチェストに送り、一致しないアイテムは下のホッパーに送られます。どのフィルターにも一致しなかったアイテムは、一番下のホッパーやチェストに溜まります。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:sorting_hopper" : 0
+	}
+}

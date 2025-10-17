@@ -1,0 +1,24 @@
+{
+	"category": "essentials:essentials",
+	"name": "アイテム排出口",
+	"icon": "essentials:item_shifter",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "アイテム排出口",
+			"item": "essentials:item_shifter",
+			"text": "<item>アイテム排出口/$ は、低コストでシンプルなアイテム輸送装置です。$(br2)1スロットのインベントリを持ち、前方にアイテムを排出します。前方に倉庫がある場合はそこへ、ない場合は、そのまま外に排出します。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "<item>輸送管/$ を接続することで、数ブロック先(デフォルトでは最大16ブロック)までアイテムを輸送できます。上への輸送を含め、低コストかつ高速なアイテム移動が可能です。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:item_shifter" : 0,
+		"essentials:item_chute" : 0
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "ペアリングツール",
+	"icon": "essentials:linking_tool",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "ペアリングツール",
+			"item": "essentials:linking_tool",
+			"text": "<item>ペアリングツール/$ は、機械同士の入出力をつなぐためのツールです。$(br2)入力～出力の順に右クリックするとリンクが作成されます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:linking_tool" : 0
+	}
+}

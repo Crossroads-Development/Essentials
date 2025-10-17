@@ -1,0 +1,28 @@
+{
+	"category": "essentials:essentials",
+	"name": "アイテム分配機",
+	"icon": "essentials:basic_item_splitter",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "アイテム分配機",
+			"item": "essentials:basic_item_splitter",
+			"text": "<item>アイテム分配機/$ には「基本型」と「レッドストーン型」の2種類があります。$(br2)この装置は2つの出力面を持ち、出力面以外のどこからでもアイテムを投入できます。投入されたアイテムは、設定された比率に従って2つの面から出力されます。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "<item>基本型アイテム分配機/$ は、<item>$(l:essentials/wrench)レンチ/$ を使ってShift+右クリックをすることで比率を調整できます（設定可能な比率：0/12、1/12、1/6、1/4、1/3、5/12、1/2、7/12、3/4、2/3、5/6、12/12）。$(br2)設定された比率分のアイテムを金色の面に出力し、残りは金色ではない面に出力されます。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "<item>レッドストーン型アイテム分配機/$ は、レッドストーン信号強度 ÷ 15 の比率でアイテムを金色の面に出力し、残りは金色ではない面に出力されます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:basic_item_splitter" : 0,
+		"essentials:item_splitter" : 0
+	}
+}

@@ -1,0 +1,40 @@
+{
+	"category": "essentials:essentials",
+	"name": "よく育つ土",
+	"icon": "essentials:fertile_soil_wheat",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "よく育つ土",
+			"item": "essentials:fertile_soil_wheat",
+			"text": "<item>よく育つ土/$ は、農業の助けになるブロックです。小麦、ニンジン、ジャガイモ、ビートルート、ネザーウォート、6種の苗木、2種のキノコに対応した、全13種類のバリエーションがあります。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "作物は <item>よく育つ土/$ の上に植えられ、水がなくても常に水がある地と同じ速度で成長します。また、踏み荒らされることもありません。$(br2)何も植えられていない場合、一定の間隔で <item>よく育つ土/$ の種類に対応した作物が自動で発芽します(ノーコスト)。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "この機能により毎回植える必要が無くなり、村人を使わない自動農場が構築できるようになります。作物は明るさレベル8以上（通常の成長に必要な明るさと同じ）の時のみ成長します。キノコはどんな明るさでも成長可能です。$(br2)<item>よく育つ土/$ で巨大トウヒを育てると、通常の土と同じく <item>よく育つ土/$ がポドゾルに置き換わる副作用があります。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:fertile_soil_wheat" : 0,
+		"essentials:fertile_soil_berry" : 0,
+		"essentials:fertile_soil_jungle" : 0,
+		"essentials:fertile_soil_acacia" : 0,
+		"essentials:fertile_soil_spruce" : 0,
+		"essentials:fertile_soil_potato" : 0,
+		"essentials:fertile_soil_oak" : 0,
+		"essentials:fertile_soil_red_mushroom" : 0,
+		"essentials:fertile_soil_brown_mushroom" : 0,
+		"essentials:fertile_soil_dark_oak" : 0,
+		"essentials:fertile_soil_carrot" : 0,
+		"essentials:fertile_soil_netherwart" : 0,
+		"essentials:fertile_soil_beetroot" : 0,
+		"essentials:fertile_soil_birch" : 0
+	}
+}
