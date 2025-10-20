@@ -1,0 +1,23 @@
+{
+	"category": "essentials:essentials",
+	"name": "火鉢",
+	"icon": "essentials:brazier",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "火鉢",
+			"item": "essentials:brazier",
+			"text": "<item>火鉢/$ は、非常に汎用性が高いブロックです。右クリックか機械を経由してアイテムを追加・取り外しができます。$(br2)バケツで水を入れると、落下しても着地点が火鉢ならダメージを受けず、上に立つと火を消火してくれます。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "溶岩を入れると、上に立つものを燃やすようになり、周りを燃やさないゴミ箱として使えます。$(br2)石炭ブロックを入れると、光源になります。同様に、グロウストーンブロックを入れると、光源レベル15で輝きます。$(br2)ソウルサンドを入れると、広範囲（デフォルトで半径32ブロック）でウィッチのスポーンとエンダーマンのテレポートを防ぎます。モブトラップに便利ですね。"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:brazier" : 0
+	}
+}

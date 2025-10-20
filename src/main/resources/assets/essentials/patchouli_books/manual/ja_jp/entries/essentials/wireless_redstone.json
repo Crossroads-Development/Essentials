@@ -1,0 +1,24 @@
+{
+	"category": "essentials:essentials",
+	"name": "無線レッドストーン",
+	"icon": "essentials:redstone_transmitter",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "無線レッドストーン",
+			"item": "essentials:redstone_transmitter",
+			"text": "<item>レッドストーン送信機/$ と <item>レッドストーン受信機/$ は、レッドストーン信号を無線で伝達できます（<thing>$(l:essentials/circuits)回路/$ の小数値信号にも対応しています）。$(br2)<item>ペアリングツール/$ を使えば、1つの <item>送信機/$ から複数の <item>受信機/$ へ信号を送ることができます。ただし、受信機は1つの送信機にしか接続できません。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "受信機は、送信機に入力された信号をそのまま出力します。染料で右クリックすると<item>送信機/$ と <item>受信機/$ を色分けできます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:redstone_transmitter" : 0,
+		"essentials:redstone_receiver" : 0
+	}
+}

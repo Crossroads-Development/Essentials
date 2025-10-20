@@ -1,0 +1,23 @@
+{
+	"category": "essentials:essentials",
+	"name": "液体排出口",
+	"icon": "essentials:fluid_shifter",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "液体排出口",
+			"item": "essentials:fluid_shifter",
+			"text": "<item>液体排出口/$ は、<item>$(l:essentials/item_shifter)アイテム排出口/$ の液体バージョンで、内部に小さなタンクを備えています。$(br2)前方の機械やほかのタンクに液体を排出しますが、液体をそのままの状態で外に排出することはできません。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "前方に<item>輸送管/$ を接続すると、排出範囲を延長でき、数ブロック先（デフォルトでは最大16ブロック）まで液体を輸送できます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:fluid_shifter" : 0
+	}
+}

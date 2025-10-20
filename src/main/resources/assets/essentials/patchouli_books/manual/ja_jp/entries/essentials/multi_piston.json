@@ -1,0 +1,41 @@
+{
+	"category": "essentials:essentials",
+	"name": "マルチピストン",
+	"icon": "essentials:multi_piston",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "マルチピストン",
+			"item": "essentials:multi_piston",
+			"text": "<item>マルチピストン/$ は、通常のピストンよりもはるかに強力なピストンで、最大15ブロックまで伸縮できます(通常は1ブロック)。$(br2)さらに、一度に最大64ブロックまで押し引きできます（通常は12ブロック）。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "レッドストーン信号強度に応じて伸びる距離が決まり、たとえば信号強度が3なら3ブロック伸びます。$(br2)動作速度は通常のピストンと同じで、1ブロック伸びるごとに2Tick(1レッドストーンTick) かかりますが、縮むと瞬時に戻ります。完全に縮んでいる状態では、他のピストンで押し引き可能です。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "また、<item> 粘着マルチピストン/$ という粘着型のバージョンも存在します。$(br2)動作中、スライムブロックを使えば通常のピストンと同様にエンティティ(プレイヤー含む)を打ち上げることができます。$(br2)特に複数ブロックを同時に縮める際は、その移動速度に応じて打ち上げ速度が倍率的に上昇します。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "たとえば、<item> 粘着マルチピストン/$ が3ブロック縮むときにプレイヤーを押した場合、通常の3倍の速度で打ち上げられます。最大の15ブロックで縮むと、遥か彼方までエンティティを飛ばすことができます。$(br2)"
+		},
+		{
+			"type": "patchouli:image",
+			"border": "true",
+			"title": "伸縮しているマルチピストン",
+			"images": [
+				"essentials:textures/book/multi_piston_side.png"
+			],
+			"text": "この <item>粘着マルチピストン/$ は、最大15ブロックのうち3ブロック分まで伸びています。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:multi_piston" : 0,
+		"essentials:multi_piston_sticky" : 0
+	}
+}

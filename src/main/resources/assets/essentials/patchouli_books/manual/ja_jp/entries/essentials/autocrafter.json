@@ -1,0 +1,23 @@
+{
+	"category": "essentials:essentials",
+	"name": "自動作業台",
+	"icon": "essentials:auto_crafter",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "自動作業台",
+			"item": "essentials:auto_crafter",
+			"text": "レッドストーン信号を受けるたびに、設定されたレシピを自動でクラフトします。$(br2)パイプやホッパーから投入されたアイテムは、レシピで使用する素材1アイテムにつき1スロットしか使用しないため、同じ素材で素材スロットが埋まる心配はありません。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "レシピは、UI内のレシピブックかアイテムをクラフトするように配置すると設定できます。$(br2)クラフト時に返却されるアイテム(ケーキのレシピで使用されるバケツなど) はクラフト時に素材スロット出力され、ホッパーやパイプで取り出すことができます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:auto_crafter" : 0
+	}
+}

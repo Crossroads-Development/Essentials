@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "黒曜石お手軽破壊キット",
+	"icon": "essentials:obsidian_cutting_kit",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "黒曜石お手軽破壊キット",
+			"item": "essentials:obsidian_cutting_kit",
+			"text": "<item>黒曜石お手軽破壊キット/$ は、黒曜石を一瞬で破壊できる便利アイテムです。$(br2)黒曜石を右クリックすると即破壊できますが、キットが消費されます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:obsidian_cutting_kit" : 0
+	}
+}

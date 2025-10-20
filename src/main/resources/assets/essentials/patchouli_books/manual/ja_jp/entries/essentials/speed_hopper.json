@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "高速ホッパー",
+	"icon": "essentials:speed_hopper",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "高速ホッパー",
+			"item": "essentials:speed_hopper",
+			"text": "<item>高速ホッパー/$ は、基本動作は<item>$(l:essentials/sorting_hopper)仕分けホッパー/$ と同じですが、一度に1スタック分のアイテムを輸送できます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:speed_hopper" : 0
+	}
+}

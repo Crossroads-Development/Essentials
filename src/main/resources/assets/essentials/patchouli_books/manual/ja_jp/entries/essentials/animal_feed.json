@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "家畜の餌",
+	"icon": "essentials:animal_feed",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "家畜の餌",
+			"item": "essentials:animal_feed",
+			"text": "<item>家畜の餌/$ は、すべての家畜(ウシ、ヒツジ、ブタ、オオカミなど)に使える繁殖用アイテムです。$(br2)ディスペンサーにも対応しています。$(br2)この餌を使えば、完全自動繁殖農場を作ることができます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:animal_feed" : 0
+	}
+}

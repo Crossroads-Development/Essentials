@@ -1,0 +1,28 @@
+{
+	"category": "essentials:essentials",
+	"name": "ようこそ!",
+	"icon": "minecraft:paper",
+	"sortnum": 0,
+	"priority": true,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "ようこそ!",
+			"item": "minecraft:paper",
+			"text": "Essentialsへようこそ！ EssentialsはTechnomancerによるバニラ風の自動化をテーマにしたmodです。誰でも理解しやすく、シンプルかつ柔軟な機能で自動化の可能性を拡張します。$(br2)この本には、Essentialsに関する必要な情報が全て揃っています。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "Essentialsへようこそ！質問や提案がある場合は、$(l:https://discord.gg/6g47knp)Discord/$に気軽に参加してください。バグを見つけた場合は、$(l:https://discord.gg/6g47knp)Discord/$や$(l:https://github.com/Da-Technomancer/Essentials/)Github/$で報告をお願いします。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"anchor": "crossroads",
+			"text": "Crossroadsは同じ開発者によ別modです。導入されていれば、この本に解説が追加されます。Crossroadsは、大規模な工業modで、面白いけど少し複雑で、やりがいのある自動化を楽しめます。終盤の要素などもコンフィグで細かく設定できます。$(br2)$(l:https://www.curseforge.com/minecraft/mc-mods/crossroads-mc)ぜひ試してみてください！/$$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"minecraft:paper" : 0
+	}
+}

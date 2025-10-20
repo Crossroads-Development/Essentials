@@ -1,0 +1,40 @@
+{
+	"category": "essentials:essentials",
+	"name": "ホッパーフィルター",
+	"icon": "essentials:hopper_filter",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "ホッパーフィルター",
+			"item": "essentials:hopper_filter",
+			"text": "<item>ホッパーフィルター/$ は、フィルターに一致しないアイテムがホッパーを通過できなくなる装置です。$(br2)このブロックをホッパーとアイテム取得元の間に設置して、不一致のアイテムの取り出しを防いだり、ホッパーと輸送先の間に設置して不一致アイテムの輸送を防ぐこともできます。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "また、<item>$(l:essentials/sorting_hopper)仕分けホッパー/$または <item>$(l:essentials/speed_hopper)高速ホッパー/$ の上に設置することで、フィルターに一致しないアイテムを取り出さないようにできます。(※バニラのホッパーでは機能しません)$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "フィルターは、対象アイテムを右クリックで設定でき、シュルカーボックスをフィルターに設定すると、その中身のアイテム全てがフィルターに設定されます。$(br2)"
+		},
+		{
+			"type": "patchouli:image",
+			"border": "true",
+			"title": "ホッパーフィルターの使い方",
+			"images": [
+				"essentials:textures/book/hopper_filter_dual.png"
+			],
+			"text": "これはホッパーフィルターを使った機械。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "左は、上のチェストから板材だけが吸い出されます。右は、チェストの中身すべてがホッパーに送られますが、ホッパーが下のチェストに送るのは丸石だけです。$(br2)また、<item>ホッパーフィルター/$ は横向きに設置することも可能です。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:hopper_filter" : 0
+	}
+}
