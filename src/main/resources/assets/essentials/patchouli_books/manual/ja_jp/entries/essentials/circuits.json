@@ -1,0 +1,103 @@
+{
+	"name": "回路",
+	"category": "essentials:essentials",
+	"icon": "essentials:circuit_wrench",
+	"read_by_default": true,
+	"extra_recipe_mappings": {
+		"essentials:circuit_wrench": 0,
+		"essentials:wire_circuit": 0
+	},
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "回路",
+			"item": "essentials:circuit_wrench",
+			"text": "<item>回路/$ は、リピーターやコンパレーターのようなレッドストーン装置で、低負荷かつ高性能な論理処理をコンパクトかつ簡単に、そして低コストで実現できます。$(br2)<item>回路配線板/$ を設置し、<item>回路用レンチ/$ を使用して配線を選択した回路に変換します（回路1つごとにネザークォーツ1個を消費します）。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "<item>回路用レンチ/$ をスニーク+右クリックをすると、配置する回路選択画面が開き、各回路の説明を確認できます。$(br2)また、設置済みの回路に、<item>回路用レンチ/$ でスニーク+右クリックをすると、その回路を回転できます。(<item>$(l:essentials/wrench)レンチ/$ でも回転可能です)\n代表的な回路には <item>AND/$、<item>XOR/$、<item>乗算/$ などがあり、名前の通りの動作を行います。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "<item>回路/$ は、隣接しているか <item>配線板/$ で接続されている場合、バニラの0〜15の整数信号だけでなく、最大10億までの値、小数、さらには負の値も伝達できます。<item>回路/$ は、バニラのレッドストーンとも接続可能です。$(br2)また、<item>配線接続板/$ を使えば <item>配線板/$ とバニラのレッドストーンをつなぐこともできます。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "<item>配線板/$ と<item>配線接続板/$ を除くすべての回路には2tick(1レッドストーンtick) の遅延があります。$(br2)<item>回路用レンチ/$ を持つと、<item>回路/$ の信号強度が可視化されます。同じ <item>配線板/$ に複数の回路が出力している場合、ゼロから最も遠い値が優先されます。（例：3＞2、-3＞2、3＞-3）$(br2)<item>回路/$ はいくつかのカテゴリに分類されます："
+		},
+		{
+			"type": "patchouli:image",
+			"anchor": "reader",
+			"border": "true",
+			"title": "信号検出回路",
+			"images": [
+				"essentials:textures/book/circuit_reader.png"
+			],
+			"text": "<item>配線分岐点/$ や <item>定数回路/$ のような基本的な回路は、<item>回路用レンチ/$ を使って設置してもネザークォーツを消費しません。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "これらは基本的な処理を行う回路であり、ほとんどの回路構成に含まれます。$(br2)<item>定数回路/$ はUI上で出力する定数値を設定でき、pi*(3-2)E-2 のような数式も入力可能です。<item>信号検出回路/$ はコンパレーターのように動作し、インベントリや機械の値を読み取ることができます。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "一部のmodの機械(特に$(l:essentials/welcome#crossroads)Crossroads/$ のもの) は、<item>信号検出回路/$ を通じて15以上の値や非整数値を出力できます。$(br2)"
+		},
+		{
+			"type": "patchouli:image",
+			"anchor": "logic",
+			"border": "true",
+			"title": "2つのAND回路",
+			"images": [
+				"essentials:textures/book/circuit_and.png"
+			],
+			"text": "<item>AND/$ や <item>NOT/$ などの論理回路は、基本的な論理演算を行います。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "これらの回路は、0と負の値をfalse、0より大きい値をtrueとして扱います。trueなら1、falseなら0を出力します。"
+		},
+		{
+			"type": "patchouli:image",
+			"anchor": "math",
+			"border": "true",
+			"title": "二次方程式の公式",
+			"images": [
+				"essentials:textures/book/circuit_math.png"
+			],
+			"text": "<item>加算回路/$ や <item>対数回路/$ などの数学回路は、各種の数値演算を行います。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "結果が無効になる場合（例：√(-4) のようなもの）は、代わりに 0 を出力します。"
+		},
+		{
+			"type": "patchouli:image",
+			"anchor": "time",
+			"border": "true",
+			"title": "クロック回路の出力",
+			"images": [
+				"essentials:textures/book/circuit_timer.png"
+			],
+			"text": "<item>クロック回路/$ や <item>遅延回路/$ などの時間回路は、レッドストーンパルスに関する処理を行います。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "<item>クロック回路/$ は、UIで設定された持続時間と周期でパルスを生成します。$(br2)<item>遅延回路/$ は、入力信号の変化をUIで設定された時間（レッドストーンtick単位、最小1）だけ遅延させてから出力します。$(br2)バニラのリピーターと違い、信号の長さや強度は変わりません。$(br2)"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "また、<item>回路用レンチ/$ のUIで赤色のシンボルが表示されている回路は、tick単位で動作する機能を持っています。$(br2)これらの回路はバニラのレッドストーン回路より軽い設計ですが、多用しすぎるとラグが発生する可能性があります。"
+		},
+		{
+			"type": "patchouli:text",
+			"anchor": "computercraft",
+			"text": "ComputerCraft（または CC-Tweaked などの類似Mod）が導入されている場合、<item>回路/$ は <thing>ComputerCraft/$ と統合されます。<item>配線板/$ は ComputerCraft の周辺機器として機能します。$(br2)<item>配線板/$ の出力側に接続したコンピューターは、それを「circuit_reader」周辺機器として認識し、getCircuitOutput() メソッドで回路の信号を取得できます。"
+		},
+		{
+			"type": "patchouli:text",
+			"text": "入力側に接続した場合は「circuit_emitter」周辺機器として認識し、setCircuitOutput(double newSignal) メソッドで回路の信号を出力できます。"
+		}
+	]
+}

@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "レンチ",
+	"icon": "essentials:wrench",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "レンチ",
+			"item": "essentials:wrench",
+			"text": "$(item)レンチ/$ は、EssentialsとCrossroadsで使える調整ツールです。$(br2)耐久値はなく、多くの他mod製レンチにも対応しています。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:wrench" : 0
+	}
+}

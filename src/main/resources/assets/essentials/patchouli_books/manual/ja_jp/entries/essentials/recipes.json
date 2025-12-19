@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "追加レシピ",
+	"icon": "minecraft:name_tag",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "追加レシピ",
+			"item": "minecraft:name_tag",
+			"text": "Essentialsは、鞍や名札の簡単なレシピを追加します。また、ピストンの2×2レシピや銅ブロックの酸化を早める製錬レシピも追加されています。これらのレシピは、Just Enough Itemsなどのレシピmodで確認できます。$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"minecraft:name_tag" : 0
+	}
+}

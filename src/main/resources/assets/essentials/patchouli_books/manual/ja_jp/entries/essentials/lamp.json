@@ -1,0 +1,19 @@
+{
+	"category": "essentials:essentials",
+	"name": "アナログランプ",
+	"icon": "essentials:analog_lamp",
+	"sortnum": 0,
+	"priority": false,
+	"read_by_default": "true",
+	"pages": [
+		{
+			"type": "patchouli:spotlight",
+			"title": "アナログランプ",
+			"item": "essentials:analog_lamp",
+			"text": "<item>アナログランプ/$は、通常のレッドストーンランプと同じですが、入力された信号強度に応じて光源レベルが変化します。(最大15)$(br2)"
+		}
+	],
+	"extra_recipe_mappings": {
+		"essentials:analog_lamp" : 0
+	}
+}
