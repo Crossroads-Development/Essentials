@@ -32,7 +32,7 @@ public abstract class BlockMenuScreen<T extends BlockMenuContainer<U>, U extends
 
 	@Override
 	public void render(GuiGraphics matrix, int mouseX, int mouseY, float partialTicks){
-		renderBackground(matrix, mouseX, mouseY, partialTicks);
+//		renderBackground(matrix, mouseX, mouseY, partialTicks);
 		super.render(matrix, mouseX, mouseY, partialTicks);
 		renderTooltip(matrix, mouseX, mouseY);
 		if(getSlotUnderMouse() == null){
