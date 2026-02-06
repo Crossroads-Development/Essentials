@@ -1,26 +1,20 @@
 {
+	"type" : "minecraft:crafting_shapeless",
 	"result" : {
-		"id" : "essentials:fertile_soil",
-		"count" : 3
+		"id" : "essentials:fertile_soil"
 	},
-	"pattern" : [
-		"#$#",
-		"***",
-		"^^^"
-	],
-	"type" : "minecraft:crafting_shaped",
-	"key" : {
-		"#" : {
+	"ingredients" : [
+		{
+			"item" : "minecraft:gunpowder"
+		},
+		{
 			"tag" : "essentials:fertile_soil_filler"
 		},
-		"$" : {
-			"item" : "minecraft:fermented_spider_eye"
-		},
-		"*" : {
+		{
 			"item" : "minecraft:clay_ball"
 		},
-		"^" : {
+		{
 			"item" : "minecraft:dirt"
 		}
-	}
+	]
 }

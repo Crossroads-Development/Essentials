@@ -140,7 +140,7 @@ dependencies {
 
 	//Patchouli
 	compileOnly "vazkii.patchouli:Patchouli:$patchouli_version-NEOFORGE"
-//	runtimeOnly "vazkii.patchouli:Patchouli:$patchouli_version-NEOFORGE"
+	runtimeOnly "vazkii.patchouli:Patchouli:$patchouli_version-NEOFORGE"
 
 	//CC Tweaked
 	compileOnly "cc.tweaked:cc-tweaked-${minecraft_version}-forge-api:${cctweaked_version}"

@@ -8,16 +8,18 @@
 	"type" : "minecraft:crafting_shapeless",
 	"result" : {
 		"id" : "essentials:guide_book",
-		"nbt" : {
+		"components": {
 			"patchouli:book" : "essentials:manual"
 		},
 		"count" : 1
 	},
 	"ingredients" : [
 		{
-			"type" : "forge:nbt",
-			"item" : "patchouli:guide_book",
-			"nbt" : {
+			"type" : "neoforge:components",
+			"items" : [
+				"patchouli:guide_book"
+			],
+			"components": {
 				"patchouli:book" : "essentials:manual"
 			}
 		}

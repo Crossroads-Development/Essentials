@@ -1,14 +1,8 @@
 {
-	"conditions": [
-		{
-			"type": "neoforge:mod_loaded",
-			"modid": "patchouli"
-		}
-	],
 	"parent": "minecraft:recipes/root",
 	"rewards": {
 		"recipes": [
-			"essentials:essentials_guide_book"
+			"essentials:slotted_chest_barrel"
 		]
 	},
 	"criteria": {
@@ -17,7 +11,7 @@
 			"conditions": {
 				"items": [
 					{
-						"item": "minecraft:book"
+						"item": "minecraft:barrel"
 					}
 				]
 			}
@@ -25,7 +19,7 @@
 		"has_recipe": {
 			"trigger": "minecraft:recipe_unlocked",
 			"conditions": {
-				"recipe": "essentials:essentials_guide_book"
+				"recipe": "essentials:slotted_chest_barrel"
 			}
 		}
 	},
