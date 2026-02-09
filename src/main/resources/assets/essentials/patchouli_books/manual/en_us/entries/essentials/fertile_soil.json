@@ -1,31 +1,21 @@
 {
+	"name": "Fertile Soil",
 	"category": "essentials:essentials",
-	"name": "{",
-	"icon": "	"format": 2,",
-	"sortnum": 0,
-	"priority": false,
-	"read_by_default": "true",
+	"icon": "essentials:fertile_soil",
+	"read_by_default": true,
+	"extra_recipe_mappings": {
+		"essentials:fertile_soil": 0
+	},
 	"pages": [
 		{
 			"type": "patchouli:spotlight",
-			"title": "{",
-			"item": "	"format": 2,",
-			"text": "	\"category\": \"essentials:essentials\",$(br2)	\"icon\": \"essentials:fertile_soil\",$(br2)	\"read_by_default\": true,$(br2)	\"extra_recipe_mappings\": {$(br2)"
+			"title": "Fertile Soil",
+			"item": "essentials:circuit_wrench",
+			"text": "<item>Fertile Soil/$ is an aid to farming. Plants (crops, saplings, etc.) can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.\n\nAt random intervals, the plant on top of the soil will spread to adjacent soil (both to more "
 		},
 		{
 			"type": "patchouli:text",
-			"text": "		\"essentials:fertile_soil\": 0$(br2)	},$(br2)	\"pages\": [$(br2)		{$(br2)			\"type\": \"patchouli:spotlight\",$(br2)			\"title\": \"Fertile Soil\",$(br2)			\"item\": "
-		},
-		{
-			"type": "patchouli:text",
-			"text": "\"essentials:circuit_wrench\",$(br2)			\"text\": \"<item>Fertile Soil/$ is an aid to farming. Plants (crops, saplings, etc.) can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.\n\nAt random intervals, the plant on top of the soil will spread to adjacent soil (both "
-		},
-		{
-			"type": "patchouli:text",
-			"text": "to more <item>Fertile Soil/$ and to regular soil), saving the trouble of replanting and enabling the automation of farming without villagers, as long as you leave at least one plant unharvested.\"$(br2)		}$(br2)	]$(br2)}$(br2)"
+			"text": "<item>Fertile Soil/$ and to regular soil), saving the trouble of replanting and enabling the automation of farming without villagers, as long as you leave at least one plant unharvested."
 		}
-	],
-	"extra_recipe_mappings": {
-		""name": "Fertile Soil"" : 0
-	}
+	]
 }

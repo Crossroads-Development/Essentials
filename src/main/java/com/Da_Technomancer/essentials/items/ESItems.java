@@ -4,6 +4,7 @@ import com.Da_Technomancer.essentials.Essentials;
 import com.Da_Technomancer.essentials.api.LinkHelper;
 import com.Da_Technomancer.essentials.integration.ESIntegration;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -22,7 +23,7 @@ public class ESItems{
 
 	public static CreativeModeTab ESSENTIALS_TAB;
 
-	public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.DataComponents.createDataComponents(Essentials.MODID);
+	public static final DeferredRegister.DataComponents DATA_COMPONENTS = DeferredRegister.DataComponents.createDataComponents(Registries.DATA_COMPONENT_TYPE, Essentials.MODID);
 
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<LinkHelper.LinkedPosition>> LINKING_POS_DATA = DATA_COMPONENTS.registerComponentType("linking_pos", builder -> builder.persistent(LinkHelper.LinkedPosition.CODEC).networkSynchronized(LinkHelper.LinkedPosition.STREAM_CODEC));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<CircuitWrench.Selection>> WRENCH_SELECTION_DATA = DATA_COMPONENTS.registerComponentType("wrench_selection", builder -> builder.persistent(CircuitWrench.Selection.CODEC).networkSynchronized(CircuitWrench.Selection.STREAM_CODEC));

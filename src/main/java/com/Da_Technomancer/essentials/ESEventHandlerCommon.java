@@ -46,7 +46,7 @@ import java.util.function.Supplier;
 
 public class ESEventHandlerCommon{
 
-	@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = Essentials.MODID)
+	@EventBusSubscriber(modid = Essentials.MODID)
 	public static class ESModEventsCommon{
 
 		@SuppressWarnings("unused")

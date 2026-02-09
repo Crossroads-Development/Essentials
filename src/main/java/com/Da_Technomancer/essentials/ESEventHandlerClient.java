@@ -38,7 +38,7 @@ import java.util.ArrayList;
 
 public class ESEventHandlerClient{
 
-	@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, modid = Essentials.MODID, value = Dist.CLIENT)
+	@EventBusSubscriber(modid = Essentials.MODID, value = Dist.CLIENT)
 	public static class ESModEventsClient{
 
 		@SubscribeEvent
