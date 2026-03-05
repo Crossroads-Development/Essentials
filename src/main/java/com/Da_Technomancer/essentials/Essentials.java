@@ -51,6 +51,7 @@ public final class Essentials{
 	}
 
 	private void serverInit(@SuppressWarnings("unused") FMLDedicatedServerSetupEvent e){
-		NeoForge.EVENT_BUS.register(ESEventHandlerServer.class);
+//		Keep commented until we need an event handler
+//		NeoForge.EVENT_BUS.register(ESEventHandlerServer.class);
 	}
 }

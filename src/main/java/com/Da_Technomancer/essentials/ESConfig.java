@@ -20,7 +20,6 @@ public class ESConfig{
 	protected static void init(ModContainer modContainer){
 		//Client config
 		ModConfigSpec.Builder clientBuilder = new ModConfigSpec.Builder();
-		addWrench = clientBuilder.worldRestart().comment("Should the Wrench show up in the creative menu?").define("creative_wrench", true);
 		numberDisplay = clientBuilder.comment("How should very large and small numbers be displayed?", "Options are: NORMAL, SCIENTIFIC, ENGINEERING, and HEX").defineEnum("num_display", ConfigUtil.NumberTypes.SCIENTIFIC);
 
 		ModConfigSpec clientSpec = clientBuilder.build();
@@ -34,6 +33,7 @@ public class ESConfig{
 		fertileSoilRate = serverBuilder.comment("Percent of normal speed Fertile Soil should work at", "Set to 0 to disable").defineInRange("fertile_rate", 100, 0, 100);
 		maxRedstoneRange = serverBuilder.comment("Range of signals through Circuit Wire").defineInRange("redstone_range", 16, 1, 128);
 		wirelessRange = serverBuilder.comment("Range of signals through Redstone Receivers/Transmitters").defineInRange("wireless_range", 32, 0, 128);
+		addWrench = serverBuilder.comment("Should the Wrench show up in the creative menu?").define("creative_wrench", true);
 
 		ModConfigSpec serverSpec = serverBuilder.build();
 		modContainer.registerConfig(ModConfig.Type.SERVER, serverSpec);
