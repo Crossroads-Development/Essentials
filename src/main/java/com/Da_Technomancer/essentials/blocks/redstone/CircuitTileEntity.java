@@ -31,7 +31,7 @@ import static com.Da_Technomancer.essentials.blocks.ESBlocks.*;
 
 public class CircuitTileEntity extends BlockEntity implements IFloatReceiver, IRedstoneCapable{
 
-	public static final BlockEntityType<CircuitTileEntity> TYPE = ESTileEntity.createType(CircuitTileEntity::new, andCircuit, orCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit);
+	public static final BlockEntityType<CircuitTileEntity> TYPE = ESTileEntity.createType(CircuitTileEntity::new, andCircuit, orCircuit, notCircuit, xorCircuit, maxCircuit, minCircuit, sumCircuit, difCircuit, prodCircuit, quotCircuit, powCircuit, invCircuit, cosCircuit, sinCircuit, tanCircuit, asinCircuit, acosCircuit, atanCircuit, readerCircuit, moduloCircuit, moreCircuit, lessCircuit, equalsCircuit, absCircuit, signCircuit, roundCircuit, floorCircuit, ceilCircuit, logCircuit);
 
 	public boolean builtConnections = false;
 	private final ArrayList<IRedstoneHandler> dependents = new ArrayList<>(1);
