@@ -304,7 +304,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 		final IItemHandler otherHandler = getInputHandler();
 
 		//Transfer from IItemHandler
-		if(otherHandler != null){
+		if(otherHandler != null && !(otherHandler instanceof HopperFilterTileEntity.ProxyItemHandler proxyItemHandler && proxyItemHandler.isNakedHandler())){
 			for(int i = 0; i < otherHandler.getSlots(); i++){
 				ItemStack extractItem = otherHandler.extractItem(i, transferQuantity(), true);
 				if(!extractItem.isEmpty()){

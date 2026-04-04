@@ -1,8 +1,9 @@
 package com.Da_Technomancer.essentials.integration;
 
+import com.Da_Technomancer.essentials.Essentials;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import vazkii.patchouli.common.book.Book;
-import vazkii.patchouli.common.book.BookRegistry;
+import net.minecraft.world.item.Items;
 import vazkii.patchouli.common.item.PatchouliDataComponents;
 
 public class PatchouliProxy{
@@ -17,13 +18,11 @@ public class PatchouliProxy{
 	}
 
 	public static ItemStack getBookStack(){
-		for(Book book : BookRegistry.INSTANCE.books.values()){
-			if(book.getBookItem().getItem() == ESIntegration.bookItem && !book.isExternal){
-				ItemStack stack = new ItemStack(ESIntegration.bookItem);
-				stack.set(PatchouliDataComponents.BOOK, book.id);
-				return stack;
-			}
-		};
-		return ItemStack.EMPTY;
+		if(ESIntegration.bookItem == null){
+			return new ItemStack(Items.BOOK);//Failsafe so we don't have an empty stack
+		}
+		ItemStack stack = new ItemStack(ESIntegration.bookItem);
+		stack.set(PatchouliDataComponents.BOOK, ResourceLocation.fromNamespaceAndPath(Essentials.MODID, "manual"));
+		return stack;
 	}
 }

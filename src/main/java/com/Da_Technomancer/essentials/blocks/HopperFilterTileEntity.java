@@ -138,22 +138,24 @@ public class HopperFilterTileEntity extends BlockEntity implements INBTReceiver,
 		return null;
 	}
 
-	private class ProxyItemHandler implements IItemHandler{
+	public class ProxyItemHandler implements IItemHandler{
 
 		private final Direction side;
-		private BlockCapabilityCache<IItemHandler, Direction> src;
+		private final BlockCapabilityCache<IItemHandler, Direction> src;
 
 		private ProxyItemHandler(Direction side){
 			this.side = side;
+			BlockPos checkPos = worldPosition.relative(side.getOpposite());
+			src = level instanceof ServerLevel sLevel ? BlockCapabilityCache.create(Capabilities.ItemHandler.BLOCK, sLevel, checkPos, side) : null;
+		}
+
+		public boolean isNakedHandler(){
+			return getHandler() == null;
 		}
 
 		@Nullable
 		private IItemHandler getHandler(){
-			if(src == null && level instanceof ServerLevel sLevel){
-				BlockPos checkPos = worldPosition.relative(side.getOpposite());
-				src = BlockCapabilityCache.create(Capabilities.ItemHandler.BLOCK, sLevel, checkPos, side);
-			}
-			return src.getCapability();
+			return src == null ? null : src.getCapability();
 		}
 
 		@Override
