@@ -6,19 +6,16 @@ import com.Da_Technomancer.essentials.blocks.redstone.CircuitTileEntity;
 import com.Da_Technomancer.essentials.blocks.redstone.InterfaceCircuitTileEntity;
 import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.lua.LuaFunction;
-import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.PeripheralCapability;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.ticks.TickPriority;
 import net.neoforged.neoforge.capabilities.IBlockCapabilityProvider;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Objects;
 
 public class ComputerCraftIntegration{
 
@@ -27,13 +24,13 @@ public class ComputerCraftIntegration{
 	}
 
 	private static final IBlockCapabilityProvider<IPeripheral, Direction> CIRCUIT_PERIPHERAL_PROVIDER = (level, pos, state, te, side) -> {
-		if(state.getBlock() == ESBlocks.interfaceCircuit){
+		if(te instanceof InterfaceCircuitTileEntity interfaceTE && state.getBlock() == ESBlocks.interfaceCircuit){
 			Direction circuitFace = state.getValue(ESProperties.HORIZ_FACING);
 			CircuitTileEntity.Orient orient = CircuitTileEntity.Orient.getOrient(side, circuitFace);
 			if(orient == CircuitTileEntity.Orient.FRONT){
-				return new CircuitInPeripheral(level, pos);
+				return new CircuitInPeripheral(interfaceTE);
 			}else if(orient == CircuitTileEntity.Orient.BACK){
-				return new CircuitOutPeripheral(level, pos);
+				return new CircuitOutPeripheral(interfaceTE);
 			}
 		}
 		return null;
@@ -41,24 +38,10 @@ public class ComputerCraftIntegration{
 
 	public static class CircuitOutPeripheral implements IPeripheral{
 
-		private final Level level;
-		private final BlockPos pos;
-		private InterfaceCircuitTileEntity te;
+		private final InterfaceCircuitTileEntity te;
 
-		public CircuitOutPeripheral(Level level, BlockPos pos){
-			this.level = level;
-			this.pos = pos;
-		}
-
-		@Nullable
-		private InterfaceCircuitTileEntity getTE(){
-			if(te == null){
-				BlockEntity newTE = level.getBlockEntity(pos);
-				if(newTE instanceof InterfaceCircuitTileEntity){
-					te = (InterfaceCircuitTileEntity) newTE;
-				}
-			}
-			return te;
+		public CircuitOutPeripheral(InterfaceCircuitTileEntity te){
+			this.te = te;
 		}
 
 		@Nonnull
@@ -68,24 +51,16 @@ public class ComputerCraftIntegration{
 		}
 
 		@Override
-		public boolean equals(@Nullable IPeripheral other){
-			return other == this || (other instanceof CircuitOutPeripheral cPer && cPer.getTE() == getTE());
+		public boolean equals(@Nullable IPeripheral o){
+			if(o == null) return false;
+			CircuitOutPeripheral that = (CircuitOutPeripheral) o;
+			return Objects.equals(te, that.te);
 		}
 
 		@Nullable
 		@Override
 		public Object getTarget(){
-			return getTE();
-		}
-
-		@Override
-		public void detach(@Nonnull IComputerAccess computer){
-			InterfaceCircuitTileEntity te = getTE();
-			if(te != null && te.externalInput != null){
-				te.externalInput = null;
-				te.setChanged();
-				te.handleInputChange(TickPriority.HIGH);
-			}
+			return te;
 		}
 
 		/**
@@ -94,9 +69,8 @@ public class ComputerCraftIntegration{
 		 * @throws LuaException If the block entity doesn't exist and should
 		 */
 		@SuppressWarnings("unused")
-		@LuaFunction
+		@LuaFunction(mainThread = true)
 		public final void setCircuitOutput(double signal) throws LuaException{
-			InterfaceCircuitTileEntity te = getTE();
 			if(te == null){
 				throw new LuaException("Circuit peripheral does not exist as a block entity");
 			}
@@ -104,28 +78,29 @@ public class ComputerCraftIntegration{
 			te.setChanged();
 			te.handleInputChange(TickPriority.HIGH);
 		}
+
+		/**
+		 * Stops computer control of the output signal of an attached wire splice plate
+		 * @throws LuaException If the block entity doesn't exist and should
+		 */
+		@SuppressWarnings("unused")
+		@LuaFunction(mainThread = true)
+		public final void resetCircuitOutput() throws LuaException{
+			if(te == null){
+				throw new LuaException("Circuit peripheral does not exist as a block entity");
+			}
+			te.externalInput = null;
+			te.setChanged();
+			te.handleInputChange(TickPriority.HIGH);
+		}
 	}
 
 	public static class CircuitInPeripheral implements IPeripheral{
 
-		private final Level level;
-		private final BlockPos pos;
-		private InterfaceCircuitTileEntity te;
+		private final InterfaceCircuitTileEntity te;
 
-		public CircuitInPeripheral(Level level, BlockPos pos){
-			this.level = level;
-			this.pos = pos;
-		}
-
-		@Nullable
-		private InterfaceCircuitTileEntity getTE(){
-			if(te == null){
-				BlockEntity newTE = level.getBlockEntity(pos);
-				if(newTE instanceof InterfaceCircuitTileEntity){
-					te = (InterfaceCircuitTileEntity) newTE;
-				}
-			}
-			return te;
+		public CircuitInPeripheral(InterfaceCircuitTileEntity te){
+			this.te = te;
 		}
 
 		@Nonnull
@@ -135,14 +110,16 @@ public class ComputerCraftIntegration{
 		}
 
 		@Override
-		public boolean equals(@Nullable IPeripheral other){
-			return other == this || (other instanceof CircuitInPeripheral cPer && cPer.getTE() == getTE());
+		public boolean equals(@Nullable IPeripheral o){
+			if(o == null) return false;
+			CircuitInPeripheral that = (CircuitInPeripheral) o;
+			return Objects.equals(te, that.te);
 		}
 
 		@Nullable
 		@Override
 		public Object getTarget(){
-			return getTE();
+			return te;
 		}
 
 		/**
@@ -151,9 +128,8 @@ public class ComputerCraftIntegration{
 		 * @return Current circuit signal strength
 		 */
 		@SuppressWarnings("unused")
-		@LuaFunction
+		@LuaFunction(mainThread = true)
 		public final float getCircuitOutput() throws LuaException{
-			InterfaceCircuitTileEntity te = getTE();
 			if(te == null){
 				throw new LuaException("Circuit peripheral does not exist as a block entity");
 			}

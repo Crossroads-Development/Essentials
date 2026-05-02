@@ -206,7 +206,7 @@ public class LinkHelper{
 					if(prevLinkTe.getLinks().contains(relLinkPos)){
 						prevLinkTe.removeLinkSource(relLinkPos);
 						linkTE.removeLinkEnd(prevTE.getBlockPos());
-						player.displayClientMessage(Component.translatable("tt.essentials.linking.remove", prevTE.getBlockPos(), linkTE.getTE().getBlockPos()), true);
+						player.displayClientMessage(Component.translatable("tt.essentials.linking.remove", BlockUtil.blockPosToChatComponent(prevTE.getBlockPos()), BlockUtil.blockPosToChatComponent(linkTE.getTE().getBlockPos())), true);
 					}else{
 						//Otherwise, create it
 						if(prevLinkTe.getLinks().size() < prevLinkTe.getMaxLinks()){

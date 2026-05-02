@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials;
 
+import com.Da_Technomancer.essentials.api.ConfigUtil;
 import com.Da_Technomancer.essentials.api.ESProperties;
 import com.Da_Technomancer.essentials.api.IFluidCapable;
 import com.Da_Technomancer.essentials.api.IItemCapable;
@@ -13,6 +14,7 @@ import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.integration.ESIntegration;
 import com.Da_Technomancer.essentials.items.ESItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -33,6 +35,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -172,6 +175,21 @@ public class ESEventHandlerCommon{
 				}
 			}
 			e.cancelWithResult(ItemInteractionResult.sidedSuccess(e.getLevel().isClientSide));
+		}
+	}
+
+	@SubscribeEvent
+	public static void allowWrenchWithSneakOffhand(PlayerInteractEvent.RightClickBlock e){
+		//Let me explain what the heck this does:
+		//So default vanilla behavior is that shift-right-clicking with an item in your main hand lets the block react to the item
+		//BUT if you shift right click with an item in your main hand, but with ANY item in your off-hand, the block doesn't get a chance to react at all
+		//Which is really annoying, because a lot of CR/Essentials machines need to be adjusted by shift-right-clicking with a wrench, and that doesn't work if you also use your offhand for stuff
+		//So this specifically allows shift-right-click wrenching CR/Essentials blocks to still work when you have something in your offhand
+		if((ConfigUtil.isWrench(e.getItemStack()) || e.getItemStack().is(ESItems.linkingTool))){
+			ResourceLocation registryLocation = BuiltInRegistries.BLOCK.getKey(e.getLevel().getBlockState(e.getPos()).getBlock());
+			if(Essentials.MODID.equals(registryLocation.getNamespace()) || "crossroads".equals(registryLocation.getNamespace())){
+				e.setUseBlock(TriState.TRUE);
+			}
 		}
 	}
 }

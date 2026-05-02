@@ -62,7 +62,7 @@
 		{
 			"type": "patchouli:text",
 			"anchor": "computercraft",
-			"text": "There is <thing>ComputerCraft integration/$ with <item>circuits/$ if ComputerCraft (or a similar mod, like CC-Tweaked) is installed. <item>Wire Splice Plates/$ are ComputerCraft peripherals.\n\nA computer connected to the output of a <item>Wire Splice Plate/$ sees it as a 'circuit_reader' peripheral, which has the method getCircuitOutput() to read the circuit signal value. A computer connected to the input of a <item>Wire Splice Plate/$ sees it as a 'circuit_emitter' peripheral, which has the method setCircuitOutput(double newSignal) to emit a circuit signal.\n\n"
+			"text": "There is <thing>ComputerCraft integration/$ with <item>circuits/$ if ComputerCraft (or a similar mod, like CC-Tweaked) is installed. <item>Wire Splice Plates/$ are ComputerCraft peripherals.\n\nA computer connected to the output of a <item>Wire Splice Plate/$ sees it as a 'circuit_reader' peripheral, which has the method getCircuitOutput() to read the circuit signal value. A computer connected to the input of a <item>Wire Splice Plate/$ sees it as a 'circuit_emitter' peripheral, which has the method setCircuitOutput(double newSignal) to emit a circuit signal and resetCircuitOutput() to make it act like a normal Splice Plate again.\n\n"
 		}
 	]
 }
