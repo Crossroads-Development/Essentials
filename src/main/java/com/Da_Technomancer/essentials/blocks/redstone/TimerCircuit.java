@@ -41,8 +41,8 @@ public class TimerCircuit extends AbstractCircuit{
 
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		if(te instanceof TimerCircuitTileEntity){
-			return ((TimerCircuitTileEntity) te).timerOutput();
+		if(te instanceof TimerCircuitTileEntity timerTE){
+			return timerTE.calculatedOutput();
 		}
 
 		return 0;

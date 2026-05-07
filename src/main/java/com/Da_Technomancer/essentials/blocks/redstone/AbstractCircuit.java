@@ -119,8 +119,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		BlockEntity te = worldIn.getBlockEntity(pos);
 
-		if(te instanceof CircuitTileEntity){
-			CircuitTileEntity cte = (CircuitTileEntity) te;
+		if(te instanceof CircuitTileEntity cte){
 			if(blockIn == Blocks.REDSTONE_WIRE || blockIn instanceof DiodeBlock){
 				//Simple optimization- if the source of the block update is just a redstone signal changing, we don't need to force a full connection rebuild
 				cte.handleInputChange(TickPriority.HIGH);
@@ -176,9 +175,10 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	@Override
 	public void tick(BlockState state, ServerLevel worldIn, BlockPos pos, RandomSource random){
+		//This is called by Level::scheduleTick after a delay. Level::scheduleTick invoked by CircuitTileEntity::handleInputChange
 		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof CircuitTileEntity){
-			((CircuitTileEntity) te).recalculateOutput();
+		if(te instanceof CircuitTileEntity cte){
+			cte.recalculateOutput();
 		}
 	}
 
@@ -202,6 +202,7 @@ public abstract class AbstractCircuit extends AbstractTile{
 
 	/**
 	 * Calculates the output strength
+	 * Actual circuit output only changes when CircuitTileEntity::setPower is called (which is handled automatically for changes in in0, in1, or in2, but not necessarily for changes in anything else)
 	 * @param in0 CW input
 	 * @param in1 Back input
 	 * @param in2 CCW input

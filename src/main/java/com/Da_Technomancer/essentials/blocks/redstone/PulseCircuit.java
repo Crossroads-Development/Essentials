@@ -48,8 +48,8 @@ public class PulseCircuit extends AbstractCircuit{
 
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		if(te instanceof PulseCircuitTileEntity){
-			return ((PulseCircuitTileEntity) te).currentOutput(0);
+		if(te instanceof PulseCircuitTileEntity pulseTE){
+			return pulseTE.calculatedOutput();
 		}
 
 		return 0;

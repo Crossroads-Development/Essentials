@@ -194,9 +194,9 @@
 	"tt.essentials.decoration": "Safe for decoration",
 	"tt.essentials.analog_lamp.desc": "Emits light equal to the redstone signal strength",
 	"tt.essentials.delay_circuit": "Delays all signals and pulses by a constant time set via UI (minimum 1 reds. tick)",
-	"tt.essentials.pulse_circuit_rising": "Outputs a pulse of 1 for (setting) ticks at the start of a signal",
-	"tt.essentials.pulse_circuit_falling": "Outputs a pulse of 1 for (setting) ticks at the end of a signal",
-	"tt.essentials.pulse_circuit_dual": "Outputs a pulse of 1 for (setting) ticks at the start and end of a signal",
+	"tt.essentials.pulse_circuit_rising": "Outputs a pulse for (setting) ticks at the start of a positive signal",
+	"tt.essentials.pulse_circuit_falling": "Outputs a pulse for (setting) ticks at the end of a positive signal",
+	"tt.essentials.pulse_circuit_dual": "Outputs a pulse for (setting) ticks at the start and end of a positive signal",
 	"tt.essentials.d_counter_circuit": "Outputs the sum of all signals ever received from the back (counts as a new signal when value changes). Reset with a side pulse",
 	"tt.essentials.block_pos": "[x%1$d, y%2$d, z%3$d]",
 

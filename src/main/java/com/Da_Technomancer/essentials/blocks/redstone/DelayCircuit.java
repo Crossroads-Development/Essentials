@@ -41,8 +41,8 @@ public class DelayCircuit extends AbstractCircuit{
 
 	@Override
 	public float getOutput(float in0, float in1, float in2, CircuitTileEntity te){
-		if(te instanceof DelayCircuitTileEntity){
-			return ((DelayCircuitTileEntity) te).currentOutput();
+		if(te instanceof DelayCircuitTileEntity delayTE){
+			return delayTE.calculatedOutput();
 		}
 
 		return 0;

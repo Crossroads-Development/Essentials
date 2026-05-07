@@ -1,6 +1,5 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
 import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.blocks.ESBlocks;
@@ -20,10 +19,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
+import java.util.Iterator;
 
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.timerCircuit;
 
-public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, ITickableTileEntity{
+public class TimerCircuitTileEntity extends AbstractTimeCircuitTileEntity implements MenuProvider, INBTReceiver{
 
 	public static final BlockEntityType<TimerCircuitTileEntity> TYPE = ESTileEntity.createType(TimerCircuitTileEntity::new, timerCircuit);
 
@@ -35,8 +35,6 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	public int settingDuration = 2;
 	public String settingStrDuration = "2";
 
-	private long ticksExisted = 0;
-
 	public TimerCircuitTileEntity(BlockPos pos, BlockState state){
 		super(TYPE, pos, state);
 	}
@@ -46,23 +44,35 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 		return ESBlocks.timerCircuit;
 	}
 
-	public int timerOutput(){
-		//Divide by RedstoneUtil.DELAY to convert from gameticks to redstone ticks
-		if((ticksExisted / RedstoneUtil.DELAY) % settingPeriod < settingDuration){
-			return 1;
-		}else{
-			return 0;
-		}
-	}
-
 	@Override
-	public void tick(){
-		ticksExisted++;
+	public void serverTick(){
+		super.serverTick();
 
-		int clockTime = (int) (ticksExisted / RedstoneUtil.DELAY) % settingPeriod;
-		if(!level.isClientSide && ticksExisted % RedstoneUtil.DELAY == 0 && (clockTime == 0 || clockTime == settingDuration)){
-			//Force circuits to recalculate when output changes
-			recalculateOutput();
+		//Occasionally validate the pulse queue and purge anything that shouldn't be in it
+		if((settingPeriod <= 0 || (ticksExisted / RedstoneUtil.DELAY % settingPeriod) == 0) && !queuedPulses.isEmpty()){
+			Iterator<Pulse> pulseIterator = queuedPulses.iterator();
+			final long standardTickCount = standardizedTickCount();
+			while(pulseIterator.hasNext()){
+				Pulse pulse = pulseIterator.next();
+				if(pulse.isExpired(standardTickCount)){
+					pulseIterator.remove();
+				}else if(pulse.startTickStandardized() - standardTickCount > 3L * RedstoneUtil.DELAY * settingPeriod){
+					//Shouldn't be anything this delayed in the queue
+					pulseIterator.remove();
+				}else if(pulse.endTickStandardized() - pulse.startTickStandardized() != (long) RedstoneUtil.DELAY * settingDuration){
+					//Duration is wrong
+					pulseIterator.remove();
+				}
+			}
+		}
+
+		//Keep a next pulse queued up
+		if(queuedPulses.size() < 2 && settingDuration > 0){
+			if(queuedPulses.isEmpty()){
+				queuePulse(Pulse.createDefinitePulse(standardizedTickCount(), settingDuration, 1, 1F));
+			}
+			Pulse lastPulse = queuedPulses.getLast();
+			queuePulse(lastPulse.withDelay(settingPeriod));
 		}
 	}
 
@@ -73,7 +83,6 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 		nbt.putString("setting_s_p", settingStrPeriod);
 		nbt.putInt("setting_d", settingDuration);
 		nbt.putString("setting_s_d", settingStrDuration);
-		nbt.putLong("existed", ticksExisted);
 	}
 
 	@Override
@@ -83,7 +92,6 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 		nbt.putString("setting_s_p", settingStrPeriod);
 		nbt.putInt("setting_d", settingDuration);
 		nbt.putString("setting_s_d", settingStrDuration);
-		nbt.putLong("existed", ticksExisted);
 		return nbt;
 	}
 
@@ -94,7 +102,6 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 		settingStrPeriod = nbt.getString("setting_s_p");
 		settingDuration = nbt.getInt("setting_d");
 		settingStrDuration = nbt.getString("setting_s_d");
-		ticksExisted = nbt.getLong("existed");
 	}
 
 	@Override
@@ -110,11 +117,17 @@ public class TimerCircuitTileEntity extends CircuitTileEntity implements MenuPro
 
 	@Override
 	public void receiveNBT(CompoundTag nbt, @Nullable ServerPlayer sender){
+		int prevPeriod = settingPeriod;
+		int prevDuration = settingDuration;
 		settingPeriod = Math.max(MIN_PERIOD, Math.round(nbt.getFloat("value_0")));
 		settingStrPeriod = nbt.getString("text_0");
 		settingDuration = Math.max(MIN_DURATION, Math.round(nbt.getFloat("value_1")));
 		settingStrDuration = nbt.getString("text_1");
+		if(prevPeriod != settingPeriod || prevDuration != settingDuration){
+			//Reset the pulses
+			queuedPulses.clear();
+			recalculateOutput();
+		}
 		setChanged();
-		recalculateOutput();
 	}
 }

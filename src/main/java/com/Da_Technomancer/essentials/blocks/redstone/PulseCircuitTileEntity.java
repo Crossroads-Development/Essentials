@@ -1,8 +1,6 @@
 package com.Da_Technomancer.essentials.blocks.redstone;
 
-import com.Da_Technomancer.essentials.api.ITickableTileEntity;
 import com.Da_Technomancer.essentials.api.packets.INBTReceiver;
-import com.Da_Technomancer.essentials.api.redstone.RedstoneUtil;
 import com.Da_Technomancer.essentials.blocks.ESTileEntity;
 import com.Da_Technomancer.essentials.gui.container.CircuitContainer;
 import com.Da_Technomancer.essentials.gui.container.PulseCircuitContainer;
@@ -24,7 +22,7 @@ import javax.annotation.Nullable;
 
 import static com.Da_Technomancer.essentials.blocks.ESBlocks.*;
 
-public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuProvider, INBTReceiver, ITickableTileEntity{
+public class PulseCircuitTileEntity extends AbstractTimeCircuitTileEntity implements MenuProvider, INBTReceiver{
 
 	public static final BlockEntityType<PulseCircuitTileEntity> TYPE = ESTileEntity.createType(PulseCircuitTileEntity::new, pulseCircuitRising, pulseCircuitFalling, pulseCircuitDual);
 
@@ -33,23 +31,16 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuPro
 	public int settingDuration = 1;
 	public String settingStrDuration = "1";
 
-	private long ticksExisted = 0;
-	private long pulseStTime = -10;//Negative value means no pulse in progress
-	private boolean hadInput = false;
+	private float lastInput = 0;
 
 	public PulseCircuitTileEntity(BlockPos pos, BlockState state){
 		super(TYPE, pos, state);
 	}
 
-	public float currentOutput(int offset){
-		long currTime = ticksExisted + offset;
-		return pulseStTime <= currTime && settingDuration > (currTime - pulseStTime - 1) / RedstoneUtil.DELAY ? 1 : 0;
-	}
-
 	private PulseCircuit.Edge getEdge(){
 		Block b = getBlockState().getBlock();
-		if(b instanceof PulseCircuit){
-			return ((PulseCircuit) b).edge;
+		if(b instanceof PulseCircuit pulseCircuit){
+			return pulseCircuit.edge;
 		}
 		setRemoved();
 		return PulseCircuit.Edge.RISING;
@@ -57,33 +48,18 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuPro
 
 	@Override
 	public void handleInputChange(TickPriority priority){
-		//Instead of using the vanilla block tick queue, we use our own to allow several different values to be queued in order
 		float[] inputs = getInputs(getOwner());
 		float input = inputs[1];
 
-		boolean activeInput = input > 0;
-		if(activeInput != hadInput){
-			hadInput = activeInput;
-			boolean addPulse;
-			if(activeInput){
-				addPulse = getEdge().start;
-			}else{
-				addPulse = getEdge().end;
+		if(lastInput != input){
+			boolean activeInput = input > 0;
+			boolean wasActive = lastInput > 0;
+			if(activeInput != wasActive){
+				if(activeInput ? getEdge().start : getEdge().end){
+					queuePulse(Pulse.createDefinitePulse(standardizedTickCount(), settingDuration, 1, Math.max(lastInput, input)));
+				}
 			}
-
-			if(addPulse){
-				pulseStTime = ticksExisted;
-			}
-			setChanged();
-		}
-	}
-
-	@Override
-	public void tick(){
-		ticksExisted++;
-		if(!level.isClientSide && RedstoneUtil.didChange(currentOutput(-2), currentOutput(-1))){
-			//Force circuits to recalculate when output changes
-			recalculateOutput();
+			lastInput = input;
 			setChanged();
 		}
 	}
@@ -93,9 +69,7 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuPro
 		super.saveAdditional(nbt, registries);
 		nbt.putInt("setting_d", settingDuration);
 		nbt.putString("setting_s_d", settingStrDuration);
-		nbt.putLong("existed", ticksExisted);
-		nbt.putLong("st_time", pulseStTime);
-		nbt.putBoolean("input", hadInput);
+		nbt.putFloat("last_input", lastInput);
 	}
 
 	@Override
@@ -103,9 +77,7 @@ public class PulseCircuitTileEntity extends CircuitTileEntity implements MenuPro
 		super.loadAdditional(nbt, registries);
 		settingDuration = nbt.getInt("setting_d");
 		settingStrDuration = nbt.getString("setting_s_d");
-		ticksExisted = nbt.getLong("existed");
-		pulseStTime = nbt.getLong("st_time");
-		hadInput = nbt.getBoolean("input");
+		lastInput = nbt.getBoolean("input") ? 1 : nbt.getFloat("last_input");
 	}
 
 	@Override

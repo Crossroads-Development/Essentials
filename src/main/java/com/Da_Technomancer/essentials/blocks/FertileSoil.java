@@ -70,11 +70,12 @@ public class FertileSoil extends Block{
 		BlockPos upPos = pos.relative(Direction.UP);
 		BlockState upState = worldIn.getBlockState(upPos);
 		if(appliesToPlant(upState)){
+			BlockState stateToPlace = upState.getBlock().defaultBlockState();
 			for(int i = 0; i < 4; i++){
 				Direction offset = Direction.from2DDataValue(i);
 				BlockPos offsetPos = upPos.relative(offset);
-				if(worldIn.getBlockState(offsetPos).isAir() && upState.canSurvive(worldIn, offsetPos)){
-					worldIn.setBlockAndUpdate(offsetPos, upState);
+				if(worldIn.getBlockState(offsetPos).isAir() && stateToPlace.canSurvive(worldIn, offsetPos)){
+					worldIn.setBlockAndUpdate(offsetPos, stateToPlace);
 				}
 			}
 		}

@@ -72,7 +72,12 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver, IR
 		return Direction.NORTH;
 	}
 
-	public float getOutput(){
+	/**
+	 * Gets the current circuit output
+	 * Changing this value should be done with setPower()
+	 * @return Current circuit output
+	 */
+	public final float getOutput(){
 		buildConnections();
 		return output;
 	}
@@ -160,7 +165,7 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver, IR
 	}
 
 	/**
-	 * Forces the circuit to recalculate the power output, and propagate any changes to the world and dependents
+	 * Forces the circuit to recalculate and update the power output immediately, and propagate any changes to the world and dependents
 	 * Virtual server side ONLY
 	 */
 	public void recalculateOutput(){
@@ -256,7 +261,7 @@ public class CircuitTileEntity extends BlockEntity implements IFloatReceiver, IR
 	}
 
 	/**
-	 * Called when the received input strength may have changed
+	 * Called immediately when the received input strength may have changed
 	 * @param priority The priority this tick should be scheduled with
 	 */
 	public void handleInputChange(TickPriority priority){

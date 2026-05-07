@@ -25,8 +25,6 @@ import static com.Da_Technomancer.essentials.blocks.ESBlocks.brazier;
 
 public class BrazierTileEntity extends BlockEntity implements ITickableTileEntity, IItemCapable{
 
-	//TODO rework and remodel
-
 	/**
 	 * Dirty optimization as a faster way of finding all braziers within range of events. Server-side only.
 	 * When brazier tile entities load, they add their positions. When they unload, they remove them.
