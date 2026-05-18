@@ -56,6 +56,11 @@ public class WireTileEntity extends BlockEntity implements IRedstoneCapable{
 		}
 
 		@Override
+		public boolean shouldMuteOutput(){
+			return true;
+		}
+
+		@Override
 		public void findDependents(IRedstoneHandler src, int dist, Direction fromSide, Direction nominalSide){
 			if(dist + 1 >= RedstoneUtil.getMaxRange()){
 				return;

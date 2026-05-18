@@ -22,6 +22,14 @@ public interface IRedstoneHandler{
 	float getOutput();
 
 	/**
+	 * Indicates that getOutput() has a dummy implementation and does not give useful information
+	 * @return Whether to pretend this handler doesn't implement getOutput()
+	 */
+	default boolean shouldMuteOutput(){
+		return false;
+	}
+
+	/**
 	 * Should be true when this block has unloaded or been removed
 	 * @return Whether this handler should no longer be interacted with or kept in caches
 	 */

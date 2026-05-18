@@ -3,6 +3,7 @@ package com.Da_Technomancer.essentials;
 import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.api.ConfigUtil;
 import com.Da_Technomancer.essentials.api.packets.ConfigureWrenchOnServer;
+import com.Da_Technomancer.essentials.api.redstone.IRedstoneHandler;
 import com.Da_Technomancer.essentials.api.redstone.IWireConnect;
 import com.Da_Technomancer.essentials.blocks.WitherCannon;
 import com.Da_Technomancer.essentials.blocks.redstone.CircuitTileEntity;
@@ -78,7 +79,8 @@ public class ESEventHandlerClient{
 			MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
 			matrix.translate(-eyePos.x, -eyePos.y, -eyePos.z);
 			for(BlockEntity te : BlockUtil.getAllLoadedBlockEntitiesRange(player.level(), player.blockPosition(), RANGE)){
-				if(te instanceof CircuitTileEntity circuit){
+				IRedstoneHandler handler;
+				if(te instanceof CircuitTileEntity circuit && ((handler = circuit.getRedstoneHandler(null)) == null || !handler.shouldMuteOutput())){
 					float output = circuit.getOutput();
 					float[] relPos = {te.getBlockPos().getX() + 0.5F, te.getBlockPos().getY() + 0.5F, te.getBlockPos().getZ() + 0.5F};
 					if(RANGE * RANGE > Minecraft.getInstance().getEntityRenderDispatcher().distanceToSqr(relPos[0], relPos[1], relPos[2])){
