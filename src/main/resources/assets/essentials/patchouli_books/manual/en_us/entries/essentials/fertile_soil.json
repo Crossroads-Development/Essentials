@@ -10,7 +10,7 @@
 		{
 			"type": "patchouli:spotlight",
 			"title": "Fertile Soil",
-			"item": "essentials:circuit_wrench",
+			"item": "essentials:fertile_soil",
 			"text": "<item>Fertile Soil/$ is an aid to farming. Plants (crops, saplings, etc.) can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.\n\nAt random intervals, the plant on top of "
 		},
 		{
