@@ -202,7 +202,7 @@ public class ItemShifterTileEntity extends AbstractShifterTileEntity<IItemHandle
 
 	@Override
 	public boolean stillValid(Player player){
-		return worldPosition.distToCenterSqr(player.position()) < 64;
+		return BlockUtil.playerInRangeOfUI(player, this);
 	}
 
 	@Override

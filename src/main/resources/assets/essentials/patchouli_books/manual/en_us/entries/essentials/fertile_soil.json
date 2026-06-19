@@ -11,11 +11,11 @@
 			"type": "patchouli:spotlight",
 			"title": "Fertile Soil",
 			"item": "essentials:circuit_wrench",
-			"text": "<item>Fertile Soil/$ is an aid to farming. Plants (crops, saplings, etc.) can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.\n\nAt random intervals, the plant on top of the soil will spread to adjacent soil (both to more "
+			"text": "<item>Fertile Soil/$ is an aid to farming. Plants (crops, saplings, etc.) can be planted on <item>Fertile Soil/$ like it was farmland, and they grow as if on hydrated farmland even without water. They also cannot be trampled.\n\nAt random intervals, the plant on top of "
 		},
 		{
 			"type": "patchouli:text",
-			"text": "<item>Fertile Soil/$ and to regular soil), saving the trouble of replanting and enabling the automation of farming without villagers, as long as you leave at least one plant unharvested."
+			"text": "the soil will spread to adjacent soil (both to more <item>Fertile Soil/$ and to regular soil), saving the trouble of replanting and enabling the automation of farming without villagers, as long as you leave at least one plant unharvested."
 		}
 	]
 }

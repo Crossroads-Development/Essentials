@@ -9,6 +9,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -136,5 +138,24 @@ public class BlockUtil{
 
 	public static Component blockPosToChatComponent(BlockPos pos){
 		return Component.translatable("tt.essentials.block_pos", pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	/**
+	 * @param player The interacting player
+	 * @param te The TE to be interacted with
+	 * @return Whether to allow the player to interact with the UI of a machine
+	 */
+	public static boolean playerInRangeOfUI(Player player, BlockEntity te){
+		return Container.stillValidBlockEntity(te, player, 8);
+	}
+
+	/**
+	 * Use the version that takes a TE as parameter if applicable
+	 * @param player The interacting player
+	 * @param containerPos Position of the tile entity being interacted with
+	 * @return Whether to allow the player to interact with the UI of a machine
+	 */
+	public static boolean playerInRangeOfUI(Player player, BlockPos containerPos){
+		return player.canInteractWithBlock(containerPos, 8);
 	}
 }

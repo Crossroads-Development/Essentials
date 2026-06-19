@@ -10,11 +10,11 @@
 			"type": "patchouli:spotlight",
 			"title": "Sorting Hopper",
 			"item": "essentials:sorting_hopper",
-			"text": "The <item>Sorting Hoppers/$ acts like a normal hopper, except it prevents items being drawn from it if the <item>Sorting Hoppers/$ can output them.$(br2)A column of <item>Sorting Hoppers/$ pointed sideways will sort out items at each layer. This pairs well with the <item>$(l:essentials/hopper_filter)Hopper Filter/$ or <item>$(l:essentials/slotted_chest)Slotted "
+			"text": "The <item>Sorting Hoppers/$ acts like a normal hopper, except it prevents items being drawn from it if the <item>Sorting Hoppers/$ can output them.$(br2)A column of <item>Sorting Hoppers/$ pointed sideways will sort out items at each layer. "
 		},
 		{
 			"type": "patchouli:text",
-			"text": "<item>$(l:essentials/slotted_chest)Chest/$!$(br2)"
+			"text": "This pairs well with the <item>$(l:essentials/hopper_filter)Hopper Filter/$ or <item>$(l:essentials/slotted_chest)Slotted Chest/$!$(br2)"
 		},
 		{
 			"type": "patchouli:image",

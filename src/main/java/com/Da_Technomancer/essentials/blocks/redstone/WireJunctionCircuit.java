@@ -5,20 +5,17 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class WireJunctionCircuit extends AbstractTile{
+public class WireJunctionCircuit extends GenericWireBypass{
 
 	public WireJunctionCircuit(){
 		super("wire_junction_circuit");
@@ -29,36 +26,6 @@ public class WireJunctionCircuit extends AbstractTile{
 		return ESBlocks.WIRE_JUNCTION_CIRCUIT_TYPE.value();
 	}
 
-	@Override
-	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
-		//Wire junctions propagate block updates horizontally to make sure any attached circuit can update when a new connection is made/broken
-		BlockEntity te = worldIn.getBlockEntity(pos);
-		if(te instanceof WireTileEntity wte){
-
-			//Prevent the repeated updating of the same wire within a gametick
-			long worldTime = worldIn.getGameTime();
-			if(worldTime == wte.lastUpdateTime){
-				return;
-			}
-
-			wte.lastUpdateTime = worldTime;
-
-			if(fromPos == null || fromPos.equals(pos)){
-				for(Direction dir : Direction.Plane.HORIZONTAL){
-					worldIn.neighborChanged(pos.relative(dir), this, pos);
-				}
-			}else{
-				//If possible, only propagate the block update along the direction it came from- as this is a junction
-				Direction dir = Direction.getNearest(pos.getX() - fromPos.getX(), pos.getY() - fromPos.getY(), pos.getZ() - fromPos.getZ());
-				if(dir.getAxis() != Direction.Axis.Y){
-					worldIn.neighborChanged(pos.relative(dir), this, pos);
-				}
-			}
-		}
-
-		super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-	}
-
 	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state){
@@ -66,12 +33,13 @@ public class WireJunctionCircuit extends AbstractTile{
 	}
 
 	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack){
-		worldIn.neighborChanged(pos, this, pos);
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn){
+		tooltip.add(Component.translatable("tt.essentials.wire_junction_circuit"));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(Component.translatable("tt.essentials.wire_junction_circuit"));
+	public Direction[] getMappedDirection(Direction fromDirection, BlockState state){
+		//Route signals in straight lines
+		return new Direction[] {fromDirection.getOpposite()};
 	}
 }

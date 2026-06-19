@@ -1,0 +1,6 @@
+{
+	"variants": {
+		"horiz_orient=x": { "model": "essentials:block/circuit/wire_bypass" },
+		"horiz_orient=z": { "model": "essentials:block/circuit/wire_bypass", "y": 90 }
+	}
+}

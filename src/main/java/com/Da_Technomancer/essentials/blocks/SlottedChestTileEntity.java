@@ -213,7 +213,7 @@ public class SlottedChestTileEntity extends BlockEntity implements INBTReceiver,
 
 	@Override
 	public boolean stillValid(Player playerEntity){
-		return true;
+		return BlockUtil.playerInRangeOfUI(playerEntity, this);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.gui.container;
 
+import com.Da_Technomancer.essentials.api.BlockUtil;
 import com.Da_Technomancer.essentials.api.FluidSlotManager;
 import com.Da_Technomancer.essentials.api.IntDeferredRef;
 import com.Da_Technomancer.essentials.blocks.FluidShifterTileEntity;
@@ -95,7 +96,7 @@ public class FluidShifterContainer extends AbstractContainerMenu{
 
 	@Override
 	public boolean stillValid(Player playerIn){
-		return pos.distToCenterSqr(playerIn.position()) <= 64;
+		return inv.stillValid(playerIn);
 	}
 
 	@Override
