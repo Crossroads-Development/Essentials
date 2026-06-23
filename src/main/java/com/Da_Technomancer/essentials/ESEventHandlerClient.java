@@ -84,7 +84,7 @@ public class ESEventHandlerClient{
 					float output = circuit.getOutput();
 					float[] relPos = {te.getBlockPos().getX() + 0.5F, te.getBlockPos().getY() + 0.5F, te.getBlockPos().getZ() + 0.5F};
 					if(RANGE * RANGE > Minecraft.getInstance().getEntityRenderDispatcher().distanceToSqr(relPos[0], relPos[1], relPos[2])){
-						renderNameplate(e.getPoseStack(), buffer, relPos, ConfigUtil.formatFloat(output, null));
+						renderNameplate(e.getPoseStack(), buffer, relPos, ConfigUtil.formatNumberClient(output));
 					}
 				}
 			}

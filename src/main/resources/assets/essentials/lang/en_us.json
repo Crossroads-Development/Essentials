@@ -31,6 +31,7 @@
 
 	"block.essentials.wire_circuit": "Circuit Wire Plate",
 	"block.essentials.wire_junction_circuit": "Wire Junction",
+	"block.essentials.wire_bypass_circuit": "Wire Bypass",
 	"block.essentials.interface_circuit": "Wire Splice Plate",
 	"block.essentials.and_circuit": "AND Circuit",
 	"block.essentials.cons_circuit": "Constant Circuit",
@@ -151,6 +152,7 @@
 	"tt.essentials.basic_fluid_splitter.mode": "Sending %1$d/%2$d of fluid to the non-blue output side",
 	"tt.essentials.wire_circuit": "A simple wire for connecting circuits",
 	"tt.essentials.wire_junction_circuit": "Allows wires to cross without connecting",
+	"tt.essentials.wire_bypass_circuit": "Allows wires to turn near each other without connecting",
 	"tt.essentials.cons_circuit": "Has a constant output set via a UI that accepts mathematical expressions",
 	"tt.essentials.interface_circuit": "Connects vanilla redstone with Essentials wire plates",
 	"tt.essentials.not_circuit": "NOT gate- outputs 1 iff the back input is off",
@@ -207,7 +209,7 @@
 
 	"book.essentials.name": "Essentials Guidebook",
 	"book.essentials.subtext": "Guide to Essentials",
-	"book.essentials.landing": "Welcome to Essentials!$(br2)This book contains documentation on Essentials, and also Crossroads if it is installed.",
+	"book.essentials.landing": "This book documents Essentials, and also Crossroads if it's installed.",
 
 	"item_group.essentials": "Essentials",
 

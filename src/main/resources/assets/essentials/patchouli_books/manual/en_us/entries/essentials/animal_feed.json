@@ -10,7 +10,11 @@
 			"type": "patchouli:spotlight",
 			"title": "Animal Feed",
 			"item": "essentials:animal_feed",
-			"text": "<item>Animal Feed/$ is an animal breeding item that works on all types of livestock (cows, sheep, pigs, wolves, etc.).$(br2)It can also be used by dispensers.$(br2)It makes fully automated animal farms possible.$(br2)"
+			"text": "<item>Animal Feed/$ is an animal breeding item that works on all types of livestock (cows, sheep, pigs, wolves, etc.).$(br2)It can also be used by dispensers.$(br2)It makes fully automated "
+		},
+		{
+			"type": "patchouli:text",
+			"text": "animal farms possible.$(br2)"
 		}
 	],
 	"extra_recipe_mappings": {

@@ -5,6 +5,7 @@
 	"sortnum": 0,
 	"priority": true,
 	"read_by_default": "true",
+	"format": 2,
 	"pages": [
 		{
 			"type": "patchouli:text",
@@ -33,5 +34,7 @@
 			"text": "Report bugs or make suggestions on the Essentials Github page."
 		}
 	],
-	"extra_recipe_mappings": {}
+	"extra_recipe_mappings": {
+
+	}
 }

@@ -1,5 +1,6 @@
 package com.Da_Technomancer.essentials.gui.container;
 
+import com.Da_Technomancer.essentials.api.BlockUtil;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -40,7 +41,7 @@ public abstract class CircuitContainer extends AbstractContainerMenu{
 
 	@Override
 	public boolean stillValid(Player playerIn){
-		return pos != null && pos.distToCenterSqr(playerIn.position()) <= 64;
+		return BlockUtil.playerInRangeOfUI(playerIn, pos);
 	}
 
 	public abstract int inputBars();

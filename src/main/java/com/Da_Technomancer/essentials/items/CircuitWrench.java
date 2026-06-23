@@ -56,6 +56,7 @@ public class CircuitWrench extends Item{
 	static{
 		RedstoneUtil.registerCircuit(ESBlocks.wireCircuit, ResourceLocation.fromNamespaceAndPath(Essentials.MODID, "textures/gui/circuit/wire.png"));
 		RedstoneUtil.registerCircuit(ESBlocks.wireJunctionCircuit, ResourceLocation.fromNamespaceAndPath(Essentials.MODID, "textures/gui/circuit/wire_junction.png"));
+		RedstoneUtil.registerCircuit(ESBlocks.wireBypassCircuit, ResourceLocation.fromNamespaceAndPath(Essentials.MODID, "textures/gui/circuit/wire_bypass.png"));
 		RedstoneUtil.registerCircuit(ESBlocks.interfaceCircuit, ResourceLocation.fromNamespaceAndPath(Essentials.MODID, "textures/gui/circuit/interface.png"));
 		RedstoneUtil.registerCircuit(ESBlocks.readerCircuit, ResourceLocation.fromNamespaceAndPath(Essentials.MODID, "textures/gui/circuit/reader.png"));
 		RedstoneUtil.registerCircuit(ESBlocks.consCircuit, ResourceLocation.fromNamespaceAndPath(Essentials.MODID, "textures/gui/circuit/constant.png"));
@@ -161,12 +162,23 @@ public class CircuitWrench extends Item{
 				}
 
 				if(allowed){
-					if(toPlace.hasProperty(ESProperties.HORIZ_FACING)){
-						if(state.hasProperty(ESProperties.HORIZ_FACING)){
-							toPlace = toPlace.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING));
-						}else{
-							toPlace = toPlace.setValue(ESProperties.HORIZ_FACING, context.getPlayer().getMotionDirection());
+					try{
+						if(toPlace.hasProperty(ESProperties.HORIZ_FACING)){
+							if(state.hasProperty(ESProperties.HORIZ_FACING)){
+								toPlace = toPlace.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING));
+							}else{
+								toPlace = toPlace.setValue(ESProperties.HORIZ_FACING, context.getPlayer().getMotionDirection());
+							}
 						}
+						if(toPlace.hasProperty(ESProperties.HORIZ_ORIENT)){
+							if(state.hasProperty(ESProperties.HORIZ_ORIENT)){
+								toPlace = toPlace.setValue(ESProperties.HORIZ_ORIENT, state.getValue(ESProperties.HORIZ_ORIENT));
+							}else{
+								toPlace = toPlace.setValue(ESProperties.HORIZ_ORIENT, context.getPlayer().getMotionDirection().getAxis());
+							}
+						}
+					}catch(IllegalArgumentException e){
+						Essentials.logger.catching(e);
 					}
 					context.getLevel().setBlockAndUpdate(context.getClickedPos(), toPlace);
 					return InteractionResult.SUCCESS;
@@ -179,6 +191,9 @@ public class CircuitWrench extends Item{
 				//Rotate circuit
 				if(state.hasProperty(ESProperties.HORIZ_FACING)){
 					context.getLevel().setBlockAndUpdate(context.getClickedPos(), state.setValue(ESProperties.HORIZ_FACING, state.getValue(ESProperties.HORIZ_FACING).getClockWise()));
+					return InteractionResult.SUCCESS;
+				}else if(state.hasProperty(ESProperties.HORIZ_ORIENT)){
+					context.getLevel().setBlockAndUpdate(context.getClickedPos(), state.cycle(ESProperties.HORIZ_ORIENT));
 					return InteractionResult.SUCCESS;
 				}
 			}

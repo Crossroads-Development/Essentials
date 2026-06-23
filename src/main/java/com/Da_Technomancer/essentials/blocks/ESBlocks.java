@@ -66,6 +66,8 @@ public class ESBlocks{
 	public static InterfaceCircuit interfaceCircuit;
 	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<WireJunctionCircuit>> WIRE_JUNCTION_CIRCUIT_TYPE = BLOCK_TYPES.register("wire_junction_circuit", singletonBlockType(WireJunctionCircuit::new));
 	public static WireJunctionCircuit wireJunctionCircuit;
+	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<WireBypassCircuit>> WIRE_BYPASS_CIRCUIT_TYPE = BLOCK_TYPES.register("wire_bypass_circuit", singletonBlockType(WireBypassCircuit::new));
+	public static WireBypassCircuit wireBypassCircuit;
 	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<ConsCircuit>> CONS_CIRCUIT_TYPE = BLOCK_TYPES.register("cons_circuit", singletonBlockType(ConsCircuit::new));
 	public static ConsCircuit consCircuit;
 	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<GenericACircuit>> GENERIC_A_CIRCUIT_TYPE = BLOCK_TYPES.register("generic_a_circuit", () -> GenericACircuit.CODEC);
@@ -204,6 +206,7 @@ public class ESBlocks{
 		//Circuits
 		wireCircuit = new WireCircuit();
 		wireJunctionCircuit = new WireJunctionCircuit();
+		wireBypassCircuit = new WireBypassCircuit();
 		consCircuit = new ConsCircuit();
 		//The function outputs will be sanitized regardless, so no sanity-checks are included in the function
 		interfaceCircuit = new InterfaceCircuit("interface", false);

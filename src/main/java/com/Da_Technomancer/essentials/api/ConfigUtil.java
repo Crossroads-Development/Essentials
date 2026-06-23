@@ -10,7 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.ItemAbility;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -32,40 +32,118 @@ public class ConfigUtil{
 		return stack.is(WRENCH) || stack.canPerformAction(WRENCH_ACTION);
 	}
 
-	private static final NumberFormat plain = new DecimalFormat("0.000");
-	private static final NumberFormat scientific = new DecimalFormat("0.000E0");
-	private static final NumberFormat engineering = new DecimalFormat("##0.000E0");
+	private static final NumberFormat PLAIN = new DecimalFormat("0.000");
+	private static final NumberFormat SCIENTIFIC = new DecimalFormat("0.000E0");
+	private static final NumberFormat ENGINEERING = new DecimalFormat("##0.000E0");
 
 	/**
 	 * Formats floating point values for display
 	 * @param value The value to format
-	 * @param format The format to conform the value to. Uses the value in the config if null.
+	 * @param format The format to conform the value to.
 	 * @return The formatted string version, for display
 	 */
-	public static String formatFloat(float value, @Nullable NumberTypes format){
-		if(format == null){
-			format = ESConfig.numberDisplay.get();
+	public static String formatFloat(float value, @Nonnull NumberTypes format){
+		if(format == NumberTypes.HEX){
+			//This option exists mainly for debugging. It shows the entire hex definition of the float value
+			return Float.toHexString(value);
 		}
+
 		float absValue = Math.abs(value);
-		switch(format){
-			case HEX:
-				//This option exists mainly for debugging. It shows the entire hex definition of the float value
-				return Float.toHexString(value);
-			case SCIENTIFIC:
-				if(absValue >= 10_000 || absValue < 0.001F){
-					return scientific.format(value);
-				}
-				break;
-			case ENGINEERING:
-				if(absValue >= 10_000 || absValue < 0.001F){
-					return engineering.format(value);
-				}
-				break;
-		}
 		if(absValue == 0){
 			return "0";
 		}
-		return plain.format(value);
+		if(absValue >= 10_000 || absValue < 0.001F){
+			if(format == NumberTypes.SCIENTIFIC){
+				return SCIENTIFIC.format(value);
+			}else if(format == NumberTypes.ENGINEERING){
+				return ENGINEERING.format(value);
+			}
+		}
+		return PLAIN.format(value);
+	}
+
+	/**
+	 * Formats floating point values for display
+	 * @param value The value to format
+	 * @param format The format to conform the value to.
+	 * @return The formatted string version, for display
+	 */
+	public static String formatDouble(double value, @Nonnull NumberTypes format){
+		if(format == NumberTypes.HEX){
+			//This option exists mainly for debugging. It shows the entire hex definition of the double value
+			return Double.toHexString(value);
+		}
+
+		double absValue = Math.abs(value);
+		if(absValue == 0){
+			return "0";
+		}
+		if(absValue >= 10_000 || absValue < 0.001F){
+			if(format == NumberTypes.SCIENTIFIC){
+				return SCIENTIFIC.format(value);
+			}else if(format == NumberTypes.ENGINEERING){
+				return ENGINEERING.format(value);
+			}
+		}
+		return PLAIN.format(value);
+	}
+
+	private static final DecimalFormat INTEGER_PLAIN = new DecimalFormat("0");
+	private static final DecimalFormat INTEGER_SCIENTIFIC = new DecimalFormat("0.000E0");
+	private static final DecimalFormat INTEGER_ENGINEERING = new DecimalFormat("##0.000E0");
+
+	/**
+	 * Formats integer values for display
+	 * @param i The value to format
+	 * @param format The format to conform the value to.
+	 * @return The formatted string version, for display
+	 */
+	public static String formatInteger(int i, @Nonnull NumberTypes format){
+		if(format == ConfigUtil.NumberTypes.HEX){
+			return Integer.toHexString(i);
+		}
+		final int absValue = Math.abs(i);
+		switch(format){
+			case SCIENTIFIC:
+				if(absValue >= 10000){
+					return INTEGER_SCIENTIFIC.format(i);
+				}
+				break;
+			case ENGINEERING:
+				if(absValue >= 10000){
+					return INTEGER_ENGINEERING.format(i);
+				}
+				break;
+		}
+
+		return INTEGER_PLAIN.format(i);
+	}
+
+	/**
+	 * Virtual client-side only - may crash otherwise
+	 * @param d Value to be formatted for display
+	 * @return String representing the number
+	 */
+	public static String formatNumberClient(double d){
+		return formatDouble(d, ESConfig.numberDisplay.get());
+	}
+
+	/**
+	 * Virtual client-side only - may crash otherwise
+	 * @param f Value to be formatted for display
+	 * @return String representing the number
+	 */
+	public static String formatNumberClient(float f){
+		return formatFloat(f, ESConfig.numberDisplay.get());
+	}
+
+	/**
+	 * Virtual client-side only - may crash otherwise
+	 * @param i Value to be formatted for display
+	 * @return String representing the number
+	 */
+	public static String formatNumberClient(int i){
+		return formatInteger(i, ESConfig.numberDisplay.get());
 	}
 
 	public enum NumberTypes{

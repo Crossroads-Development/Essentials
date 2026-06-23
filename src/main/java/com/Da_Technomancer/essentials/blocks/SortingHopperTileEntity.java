@@ -226,7 +226,7 @@ public class SortingHopperTileEntity extends BlockEntity implements ITickableTil
 	 */
 	@Override
 	public boolean stillValid(Player player){
-		return level.getBlockEntity(worldPosition) == this && player.distanceToSqr(Vec3.atCenterOf(worldPosition)) <= 64D;
+		return BlockUtil.playerInRangeOfUI(player, this);
 	}
 
 	@Override
