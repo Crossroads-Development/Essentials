@@ -9,7 +9,7 @@
 		{
 			"type": "patchouli:spotlight",
 			"title": "沃土",
-			"item": "essentials:circuit_wrench",
+			"item": "essentials:fertile_soil",
 			"text": "<item>沃土/$是农业的一大助力。它有 13 种变体，包括小麦、胡萝卜、马铃薯、甜菜根、地狱疣、6种树苗和两种蘑菇。作物能像种在耕地上一样种在<item>沃土/$上，而且即使没有水，也像种在湿润耕地上一样。另外，沃土不会被踩坏。$(br2)"
 		},
 		{
