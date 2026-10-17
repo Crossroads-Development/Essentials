@@ -123,7 +123,7 @@
 	"tt.essentials.linking.invalid": "Invalid pair; Cancelling linking",
 	"tt.essentials.linking.range": "Out of range; Canceling linking",
 	"tt.essentials.linking.clear": "Clearing links",
-	"tt.essentials.linking.full": "All $1%d links already occupied; Cancelling linking",
+	"tt.essentials.linking.full": "All %1$d links already occupied; Cancelling linking",
 	"tt.essentials.linking.success": "Linked device at %1$s to send to %2$s",
 	"tt.essentials.linking.remove": "Unlinked device at %1$s to %2$s",
 	"tt.essentials.linking.none": "Not linking",
