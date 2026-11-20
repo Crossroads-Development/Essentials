@@ -160,7 +160,7 @@ public class BasicFluidSplitterTileEntity extends AbstractSplitterTE<IFluidHandl
 				//Done iteratively, as the pattern is unpredictable and the total remainder is necessarily small (< numerator)
 				int remainder = stack.getAmount() - accepted;
 				for(int i = 0; i < remainder; i++){
-					boolean shouldGoDown = distribution.shouldDispense(mode, transferred + i);
+					boolean shouldGoDown = distribution.shouldDispense(getMode(), transferred + i);
 					if(shouldGoDown){
 						if(spaceDown <= 0){
 							//Stop
